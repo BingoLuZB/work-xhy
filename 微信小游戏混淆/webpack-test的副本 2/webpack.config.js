@@ -3,7 +3,7 @@ const CleanPlugin = require('clean-webpack-plugin');
 const JavaScriptObfuscator = require('webpack-obfuscator');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 // 入口配置
-const entry = require('./config/entry.config_jjzx.js');
+const entry = require('./config/entry.config_jzzx.js');
 let all = false
 
 module.exports = {
