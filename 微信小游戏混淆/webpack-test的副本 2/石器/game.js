@@ -12,3 +12,4 @@ require('src/shell');
 ''
 
 window.extendLib=require('src/senjinwechat');
+
