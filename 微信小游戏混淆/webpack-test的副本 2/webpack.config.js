@@ -61,8 +61,7 @@ module.exports = {
             //  stringArrayThreshold:1, 
             unicodeEscapeSequence: false,
             transformObjectKeys: false, //是否启动对象健转换
-            // stringArrayEncoding: 'base64',
-            stringArrayEncoding: 'rc4',
+            stringArrayEncoding: entry.config.stringArrayEncoding || 'base64',
             //  seed: 0.5,
             target: 'browser-no-eval',
             //  nameList: getNumArr()
