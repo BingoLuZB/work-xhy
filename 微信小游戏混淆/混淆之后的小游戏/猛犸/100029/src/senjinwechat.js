@@ -97,10 +97,8 @@ var MirInterRuntime = (function () {
                 var the_content = the_data.content;
                 console.log('开始调用渠道的初始化');
                 huoSdk.init({
-                    app_id: 6,
-                    mp_id: 'wx92bddf441f89bf9a'
-                    // app_id: the_content.app_id,
-                    // mp_id: the_content.mp_id
+                    app_id: the_content.app_id,
+                    mp_id: the_content.mp_id
                 }).then(res => {
                     console.log(res);
                     var return_message = {
