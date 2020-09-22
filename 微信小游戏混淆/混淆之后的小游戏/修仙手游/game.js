@@ -194,6 +194,6 @@ function intoGame() {
 
 // 进壳
 function intoMiniGame() {
-	const Main = require('./challenge/DoiBdmkpmain')
+	const Main = require('./MYGAME/js/main')
 	new Main.default()
 }
