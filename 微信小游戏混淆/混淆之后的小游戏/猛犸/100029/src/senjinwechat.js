@@ -25,7 +25,7 @@ var MirInterRuntime = (function () {
             user_id: "",
             channel_id: "8573",//以商务提供的为准
             game_id: "245",//以商务提供的为准
-            game_channel_id: "115421",//以商务提供的为准
+            game_channel_id: "115444",//以商务提供的为准
             time: "",
             token: "",
             l_h5_sign: "",

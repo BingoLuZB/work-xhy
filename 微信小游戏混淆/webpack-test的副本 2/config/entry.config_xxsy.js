@@ -2,8 +2,8 @@
 const entry = {
     config: {
         identifierNamesGenerator: 'mangled',
-        stringArrayThreshold: 0.6,
-        stringArrayEncoding: 'rc4'
+        stringArrayThreshold: 0.4,
+        // stringArrayEncoding: 'rc4'
     },
     path: {
         '修仙手游/': {

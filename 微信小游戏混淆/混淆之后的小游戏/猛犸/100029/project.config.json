@@ -1,7 +1,7 @@
 {
   "description": "项目配置文件。",
   "setting": {
-    "urlCheck": false,
+    "urlCheck": true,
     "es6": true,
     "enhance": false,
     "postcss": true,
@@ -34,7 +34,7 @@
   "compileType": "game",
   "libVersion": "game",
   "appid": "wxf8cf5c16ed0fed04",
-  "projectname": "%E4%B8%9B%E6%9E%97%E7%8C%8E%E4%BA%BA",
+  "projectname": "丛林猎人",
   "simulatorType": "wechat",
   "simulatorPluginLibVersion": {},
   "condition": {

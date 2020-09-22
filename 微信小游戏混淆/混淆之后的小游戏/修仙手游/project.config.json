@@ -25,7 +25,7 @@
       "disablePlugins": [],
       "outputPath": ""
     },
-    "useIsolateContext": true,
+    "useIsolateContext": false,
     "useCompilerModule": true,
     "userConfirmedUseCompilerModuleSwitch": false,
     "packNpmManually": false,

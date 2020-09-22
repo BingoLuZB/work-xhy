@@ -7,7 +7,7 @@ const entry = require('./config/entry.config_xxsy.js');
 let all = false
 
 module.exports = {
-    entry: all ? enrty : getEntryPath(),
+    entry: all ? entry : getEntryPath(),
     output: {
         filename: "[name].js", //输出文件名，[name]表示入口文件js名
         path: path.join(__dirname, `dist`) //输出文件路径
@@ -64,9 +64,8 @@ module.exports = {
             stringArrayEncoding: entry.config.stringArrayEncoding || 'base64',
             //  seed: 0.5,
             target: 'browser-no-eval',
-            //  nameList: getNumArr()
             nameList: all ? getNumArr() : getEntryPath(true), //json文件列表
-            isNeedOneJson: false //是否需要合并一个json文件
+            isNeedOneJson: true //是否需要合并一个json文件
         }, ['excluded_bundle_name.js']),
         new CleanPlugin(['./dist'], {
             root: path.resolve(__dirname, ''),
@@ -100,13 +99,19 @@ function getEntryPath(getNames) {
 }
 
 function getNumArr() {
-    let obj = entry
-    let arr = []
-    for (const key in obj) {
-        let end = key.lastIndexOf('/')
-        let str = key.slice(end + 1, key.length)
-        arr.push(str)
+    const obj = entry.path
+    const arr = []
+    for(let i in obj) {
+        for (const key in obj[i]) {
+            let end = key.lastIndexOf('/')
+            let str = key.slice(end + 1, key.length)
+            if(str.includes('.')) {
+                str = str.slice(0, str.indexOf('.'))
+            }
+            arr.push(str)
+        }
     }
+
     console.log(arr, '===nameArr')
     return arr
 }

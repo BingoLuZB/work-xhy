@@ -3,10 +3,10 @@ const myList = [
 	'20200921_platform',
 	'20200921_default',
 	'20200921_entry',
-	'20200921_main',
 	'20200921_particle',
 	'20200921_socket',
 	'20200921_tween',
+	'20200921_main',
 ]
 const versions = '1.0.0'
 const gameId = 7

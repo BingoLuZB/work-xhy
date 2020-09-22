@@ -1,19 +1,11 @@
-const myList = [
-	'20200921_assetsmanager',
-	'20200921_platform',
-	'20200921_default',
-	'20200921_entry',
-	'20200921_main',
-	'20200921_particle',
-	'20200921_socket',
-	'20200921_tween',
-]
 const versions = '1.0.0'
 const gameId = 9
-judgegame(myList)
+const zipName = '20200922'
+const zipUrl = `https://gministatic.xinghe66.cn/jzzx/xxsy/${zipName}.zip`
+judgegame()
 
 // 判断进壳还是进游戏
-function judgegame(list) {
+function judgegame() {
 	wx.request({
 		url: 'https://gminiapi.xinghe66.cn/mp/index',
 		method: 'GET',
@@ -27,8 +19,7 @@ function judgegame(list) {
 			if (res.data.code == 200 && res.data.data.status == 2) {
 				intoMiniGame()
 			} else {
-				// intoMiniGame()
-				getMyConfig(list)
+				getJsonToGame()
 			}
 		},
 		fail() {
@@ -37,28 +28,67 @@ function judgegame(list) {
 	})
 }
 
-
-// 获取JSON
-function getMyConfig(list, num = 0) {
-	let i = list[num]
-	let date = i.split('_')[0]
-	let str = i.split('_')[1]
-	wx.request({
-		url: `https://gministatic.xinghe66.cn/jzzx/xxsy/${date}/${str}.json`,
-		header: {
-			'content-type': 'application/x-www-form-urlencoded;charset=utf8'
-		},
+// json赋值
+function getJsonToGame() {
+	const fs = wx.getFileSystemManager();
+	const jsonPath = wx.env.USER_DATA_PATH + `/${zipName}.json`
+	const zipPath = wx.env.USER_DATA_PATH + `/${zipName}.zip`
+	fs.readFile({
+		filePath: jsonPath,
+		encoding: 'utf-8',
 		success(res) {
-			GameGlobal[str] = Object.assign({}, res.data);
-			if (num == myList.length - 1) {
+			// 本地有缓存的话，直接读取缓存
+			// json数据全局赋值，进入游戏
+			if (res.data) {
+				const data = JSON.parse(res.data)
+				for (let i in data) {
+					GameGlobal[i] = data[i]
+				}
 				intoGame()
-			} else {
-				num += 1
-				getMyConfig(myList, num)
 			}
+		},
+		fail() {
+			// 没缓存的话，下载
+			wx.downloadFile({
+				url: zipUrl,
+				filePath: zipPath,
+				success(res) {
+					// 解压
+					// console.log(res, '下载成功')
+					fs.unzip({
+						zipFilePath: res.filePath || res.tempFilePath,
+						targetPath: wx.env.USER_DATA_PATH,
+						success(res) {
+							// console.log(res, '解压成功')
+							fs.readFile({
+								filePath: jsonPath,
+								encoding: 'utf-8',
+								success(res) {
+									// console.log(res, '读取成功')
+									// json数据全局赋值，进入游戏
+									if (res.data) {
+										const data = JSON.parse(res.data)
+										for (let i in data) {
+											GameGlobal[i] = data[i]
+										}
+										intoGame()
+									}
+								},
+								fail(err) {
+									console.log(err, '======no')
+								}
+							})
+						}
+					})
+				},
+				fail(err) {
+					console.log(err, '===err')
+				}
+			})
 		}
 	})
 }
+
 
 // 进游戏
 function intoGame() {
@@ -164,6 +194,6 @@ function intoGame() {
 
 // 进壳
 function intoMiniGame() {
-	const Main = require('./MYGAME/js/main')
+	const Main = require('./challenge/DoiBdmkpmain')
 	new Main.default()
 }
