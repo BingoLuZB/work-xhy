@@ -1,0 +1,59 @@
+{
+  "description": "项目配置文件。",
+  "setting": {
+    "urlCheck": false,
+    "es6": true,
+    "enhance": false,
+    "postcss": true,
+    "preloadBackgroundData": false,
+    "minified": true,
+    "newFeature": true,
+    "coverView": true,
+    "nodeModules": false,
+    "autoAudits": false,
+    "showShadowRootInWxmlPanel": false,
+    "scopeDataCheck": false,
+    "uglifyFileName": false,
+    "checkInvalidKey": true,
+    "checkSiteMap": true,
+    "uploadWithSourceMap": true,
+    "compileHotReLoad": false,
+    "useMultiFrameRuntime": false,
+    "useApiHook": false,
+    "babelSetting": {
+      "ignore": [],
+      "disablePlugins": [],
+      "outputPath": ""
+    },
+    "useIsolateContext": false,
+    "useCompilerModule": true,
+    "userConfirmedUseCompilerModuleSwitch": true,
+    "packNpmManually": false,
+    "packNpmRelationList": []
+  },
+  "compileType": "game",
+  "libVersion": "2.13.0",
+  "appid": "wx0f1cdfbc658e0add",
+  "projectname": "%E9%A9%AC%E7%94%B213%EF%BC%88%E6%8C%82%E6%9C%BA%E4%BB%99%E4%BE%A0%EF%BC%89_%E6%B7%B7%E6%B7%86",
+  "simulatorType": "wechat",
+  "simulatorPluginLibVersion": {},
+  "isGameTourist": true,
+  "condition": {
+    "search": {
+      "current": -1,
+      "list": []
+    },
+    "conversation": {
+      "current": -1,
+      "list": []
+    },
+    "game": {
+      "list": [],
+      "current": -1
+    },
+    "miniprogram": {
+      "current": -1,
+      "list": []
+    }
+  }
+}
