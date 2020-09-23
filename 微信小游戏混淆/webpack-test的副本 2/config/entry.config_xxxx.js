@@ -1,4 +1,5 @@
 //仙侠修仙
+// 对应新修仙
 const entry = {
     config: {
         identifierNamesGenerator: 'mangled',

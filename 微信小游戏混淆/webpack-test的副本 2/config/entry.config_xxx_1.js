@@ -2,7 +2,7 @@
 const entry = {
     config: {
         identifierNamesGenerator: 'mangled',
-        stringArrayThreshold: 0.6,
+        stringArrayThreshold: 0.8,
         // stringArrayEncoding: 'rc4'
     },
     path: {
