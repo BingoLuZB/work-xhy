@@ -3,7 +3,7 @@ const CleanPlugin = require('clean-webpack-plugin');
 const JavaScriptObfuscator = require('webpack-obfuscator');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 // 入口配置
-const entry = require('./config/entry.config_mj14.js');
+const entry = require('./config/entry.config_jzzx2.js');
 let all = false
 
 module.exports = {
@@ -65,7 +65,7 @@ module.exports = {
             //  seed: 0.5,
             target: 'browser-no-eval',
             nameList: all ? getNumArr() : getEntryPath(true), //json文件列表
-            isNeedOneJson: true //是否需要合并一个json文件
+            isNeedOneJson: false, //是否需要合并一个json文件
         }, ['excluded_bundle_name.js']),
         new CleanPlugin(['./dist'], {
             root: path.resolve(__dirname, ''),
