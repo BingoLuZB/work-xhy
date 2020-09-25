@@ -7,14 +7,14 @@ const fs = wx.getFileSystemManager();
 let num = 0
 
 var jsonList = [
-	'20200924_platform',
-	'20200924_assetsmanager',
-	'20200924_default',
-	'20200924_entry',
-	'20200924_particle',
-	'20200924_socket',
-	'20200924_tween',
-	'20200924_main.zip',
+	'20200925_platform',
+	'20200925_assetsmanager',
+	'20200925_default',
+	'20200925_entry',
+	'20200925_particle',
+	'20200925_socket',
+	'20200925_tween',
+	'20200925_main.zip',
 ]
 
 judgegame()
@@ -116,20 +116,33 @@ function getJsonToGame() {
 							filePath: path,
 							success(res) {
 								// 如果是json的文件
-								if (end) {
-									readJson(path, str)
+								if (res.statusCode === 200) {
+									if (end) {
+										readJson(path, str)
+									} else {
+										// 如果是zip的压缩文件
+										fs.unzip({
+											zipFilePath: res.filePath || res.tempFilePath,
+											targetPath: rootPath,
+											success(res) {
+												// console.log(res, '解压成功')
+												str = str.split('.')[0]
+												readJson(`${rootPath}/${str}.json`, str)
+											},
+											fail(err) {
+												console.log(err, '==解压失败')
+											}
+										})
+									}
 								} else {
-									// 如果是zip的压缩文件
-									fs.unzip({
-										zipFilePath: res.filePath || res.tempFilePath,
-										targetPath: rootPath,
+									console.error('下载失败，文件不存在')
+									fs.unlink({
+										filePath: `${rootPath}/${date}/${str}${end}`,
 										success(res) {
-											// console.log(res, '解压成功')
-											str = str.split('.')[0]
-											readJson(`${rootPath}/${str}.json`, str)
+											// console.log(res, '删除成功')
 										},
 										fail(err) {
-											console.log(err, '==解压失败')
+											// console.log(err, '删除失败')
 										}
 									})
 								}
@@ -144,7 +157,6 @@ function getJsonToGame() {
 		})
 	}
 }
-
 
 
 // 进游戏

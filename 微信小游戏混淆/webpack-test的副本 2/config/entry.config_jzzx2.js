@@ -1,4 +1,5 @@
 //剑阵诛仙2 新修仙的包
+// 自己写的数组
 const entry = {
     config: {
         identifierNamesGenerator: 'hexadecimal',
