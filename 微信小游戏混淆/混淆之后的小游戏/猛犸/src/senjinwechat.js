@@ -25,7 +25,7 @@ var MirInterRuntime = (function () {
             user_id: "",
             channel_id: "8573",//以商务提供的为准
             game_id: "245",//以商务提供的为准
-            game_channel_id: "115444",//以商务提供的为准
+            game_channel_id: "115421",//以商务提供的为准
             time: "",
             token: "",
             l_h5_sign: "",
@@ -97,8 +97,8 @@ var MirInterRuntime = (function () {
                 var the_content = the_data.content;
                 console.log('开始调用渠道的初始化');
                 huoSdk.init({
-                    app_id: the_content.app_id,
-                    mp_id: the_content.mp_id
+                    app_id: 20,
+                    mp_id: 'wx37694092af7812dd'
                 }).then(res => {
                     console.log(res);
                     var return_message = {

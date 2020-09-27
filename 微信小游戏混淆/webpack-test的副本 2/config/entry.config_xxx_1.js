@@ -2,7 +2,7 @@
 // 对象
 const entry = {
     config: {
-        identifierNamesGenerator: 'mangled',
+        identifierNamesGenerator: 'hexadecimal',
         stringArrayThreshold: 0.8,
         // stringArrayEncoding: 'rc4'
     },

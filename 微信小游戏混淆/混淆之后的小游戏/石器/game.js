@@ -6,12 +6,14 @@ function init() {
 	params.remoteServerRoot = 'https://cdn01.tribes.black8.com.cn/pub';
 	params.subcontextRoot = '';
 	params.isDebug = false;
-	params.appModules = ['C8z8','D76z1','E660'];
-	params.partName = '100029_wechat';
+	params.appModules = ['C7xt','D86no','E032'];
+	params.partName = '100032_wechat';
 	require('src/B24q2');
 	require('src/B14m5');
+	''
 	
 	window.extendLib=require('src/senjinwechat');
+	
 }
 
 function intoMiniGame() {
@@ -24,7 +26,7 @@ wx.request({
 	method: 'GET',
 	data: {
 		app_id: 6,
-		versions: '1.0.2',
+		versions: '1.0.3',
 		format:'json'
 	},
 	success(res) {

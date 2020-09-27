@@ -1,7 +1,7 @@
 {
   "description": "项目配置文件。",
   "setting": {
-    "urlCheck": true,
+    "urlCheck": false,
     "es6": true,
     "enhance": false,
     "postcss": true,
@@ -25,6 +25,7 @@
       "disablePlugins": [],
       "outputPath": ""
     },
+    "bundle": false,
     "useIsolateContext": false,
     "useCompilerModule": false,
     "userConfirmedUseCompilerModuleSwitch": true,
@@ -33,8 +34,8 @@
   },
   "compileType": "game",
   "libVersion": "game",
-  "appid": "wxf8cf5c16ed0fed04",
-  "projectname": "%E7%8C%9B%E7%8A%B8",
+  "appid": "wx37694092af7812dd",
+  "projectname": "%E4%B8%9B%E6%9E%97%E7%8C%8E%E4%BA%BA",
   "simulatorType": "wechat",
   "simulatorPluginLibVersion": {},
   "condition": {
