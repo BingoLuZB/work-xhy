@@ -32,9 +32,9 @@
     "packNpmRelationList": []
   },
   "compileType": "game",
-  "libVersion": "game",
+  "libVersion": "2.12.2",
   "appid": "wxf8cf5c16ed0fed04",
-  "projectname": "丛林猎人",
+  "projectname": "%E4%B8%9B%E6%9E%97%E7%8C%8E%E4%BA%BA",
   "simulatorType": "wechat",
   "simulatorPluginLibVersion": {},
   "condition": {

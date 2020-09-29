@@ -1,4 +1,4 @@
-const versions = '1.0.0'
+const versions = '1.0.1'
 const gameId = 19
 const downloadUrl = `https://gministatic.xinghe66.cn/jzzx/jzzx2`
 
@@ -281,6 +281,6 @@ function intoGame() {
 
 // 进壳
 function intoMiniGame() {
-	const Main = require('./tree/js/main')
+	const Main = require('./tree/js/main.js')
 	new Main.default()
 }

@@ -6,12 +6,12 @@ function init() {
 	params.remoteServerRoot = 'https://cdn01.tribes.black8.com.cn/pub';
 	params.subcontextRoot = '';
 	params.isDebug = false;
-	params.appModules = ['C7xt','D86no','E032'];
-	params.partName = '100032_wechat';
+	params.appModules = ['C910n','D374r','F1uv'];
+	params.partName = '100029_wechat';
 	require('src/B24q2');
 	require('src/B14m5');
 	''
-	
+	window.extendMixin=require('src/miniBase');
 	window.extendLib=require('src/senjinwechat');
 	
 }

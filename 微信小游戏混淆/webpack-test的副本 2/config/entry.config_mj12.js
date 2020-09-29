@@ -7,16 +7,16 @@ const entry = {
     },
     path: {
         '马甲12（仙侠修仙高爆版）/': {
-            // 'platform': './马甲12（仙侠修仙高爆版）/platform.js'
+            // 'platform': './新修仙/platform.js'
         },
         '马甲12（仙侠修仙高爆版）/js': {
-            // 'assetsmanager.min': './马甲12（仙侠修仙高爆版）/js/assetsmanager.min.js',
-            // 'default.thm': './马甲12（仙侠修仙高爆版）/js/default.thm.js',
-            'entry.min': './马甲12（仙侠修仙高爆版）/js/entry.min.js',
-            'main.min': './马甲12（仙侠修仙高爆版）/js/main.min.js',
-            // 'particle.min': './马甲12（仙侠修仙高爆版）/js/particle.min.js',
-            // 'socket.min': './马甲12（仙侠修仙高爆版）/js/socket.min.js',
-            // 'tween.min': './马甲12（仙侠修仙高爆版）/js/tween.min.js'
+            // 'assetsmanager.min': './新修仙/js/assetsmanager.min.js',
+            // 'default.thm': './新修仙/js/default.thm.js',
+            'entry.min': './新修仙/js/entry.min.js',
+            'main.min': './新修仙/js/main.min.js',
+            // 'particle.min': './新修仙/js/particle.min.js',
+            // 'socket.min': './新修仙/js/socket.min.js',
+            // 'tween.min': './新修仙/js/tween.min.js'
         },
     }
 };
