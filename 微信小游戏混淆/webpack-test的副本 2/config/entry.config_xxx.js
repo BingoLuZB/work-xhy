@@ -6,7 +6,7 @@ const entry = {
     },
     path: {
         '新仙侠/': {
-            // 'platform': './新仙侠/platform.js'
+            'platform': './新仙侠/platform.js'
         },
         '新仙侠/js': {
             // 'assetsmanager.min': './新仙侠/js/assetsmanager.min.js',

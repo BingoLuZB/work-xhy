@@ -7,7 +7,7 @@ const entry = {
     },
     path: {
         '修仙手游/': {
-            // 'platform': './修仙手游/platform.js'
+            'platform': './修仙手游/platform.js'
         },
         '修仙手游/js': {
             // 'assetsmanager.min': './修仙手游/js/assetsmanager.min.js',
