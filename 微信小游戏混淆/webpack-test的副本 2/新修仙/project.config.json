@@ -18,7 +18,7 @@
     "checkSiteMap": true,
     "uploadWithSourceMap": true,
     "compileHotReLoad": false,
-    "useMultiFrameRuntime": false,
+    "useMultiFrameRuntime": true,
     "useApiHook": true,
     "babelSetting": {
       "ignore": [],
@@ -32,7 +32,7 @@
     "packNpmRelationList": []
   },
   "compileType": "game",
-  "libVersion": "2.12.2",
+  "libVersion": "2.13.0",
   "appid": "wxb3ca58b5a19d6c40",
   "projectname": "senjin_xinxiuxian_wxgame",
   "simulatorType": "wechat",

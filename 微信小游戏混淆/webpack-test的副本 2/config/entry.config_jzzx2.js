@@ -8,16 +8,16 @@ const entry = {
     },
     path: {
         '剑阵诛仙2/': {
-            'platform': './剑阵诛仙2/platform.js'
+            'platform': './新修仙/platform.js'
         },
         '剑阵诛仙2/js': {
-            'assetsmanager.min': './剑阵诛仙2/js/assetsmanager.min.js',
-            'default.thm': './剑阵诛仙2/js/default.thm.js',
-            'entry.min': './剑阵诛仙2/js/entry.min.js',
-            'main.min': './剑阵诛仙2/js/main.min.js',
-            'particle.min': './剑阵诛仙2/js/particle.min.js',
-            'socket.min': './剑阵诛仙2/js/socket.min.js',
-            'tween.min': './剑阵诛仙2/js/tween.min.js'
+            // 'assetsmanager.min': './新修仙/js/assetsmanager.min.js',
+            // 'default.thm': './新修仙/js/default.thm.js',
+            'entry.min': './新修仙/js/entry.min.js',
+            'main.min': './新修仙/js/main.min.js',
+            // 'particle.min': './新修仙/js/particle.min.js',
+            // 'socket.min': './新修仙/js/socket.min.js',
+            // 'tween.min': './新修仙/js/tween.min.js'
         },
     }
 };
