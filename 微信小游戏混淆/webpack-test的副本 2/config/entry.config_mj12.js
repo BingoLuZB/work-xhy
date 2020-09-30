@@ -7,7 +7,7 @@ const entry = {
     },
     path: {
         '马甲12（仙侠修仙高爆版）/': {
-            // 'platform': './新修仙/platform.js'
+            'platform': './新修仙/platform.js'
         },
         '马甲12（仙侠修仙高爆版）/js': {
             // 'assetsmanager.min': './新修仙/js/assetsmanager.min.js',

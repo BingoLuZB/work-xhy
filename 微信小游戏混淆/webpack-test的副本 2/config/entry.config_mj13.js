@@ -21,5 +21,5 @@ const entry = {
     }
 };
 
-// 对象
+// 林泽数组
 module.exports = entry;

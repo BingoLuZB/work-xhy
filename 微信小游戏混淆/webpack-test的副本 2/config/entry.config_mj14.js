@@ -7,7 +7,7 @@ const entry = {
     },
     path: {
         '马甲14（仙侠ol）/': {
-            // 'platform': './新修仙/platform.js'
+            'platform': './新修仙/platform.js'
         },
         '马甲14（仙侠ol）/js': {
             // 'assetsmanager.min': './新修仙/js/assetsmanager.min.js',
