@@ -3,7 +3,7 @@
 const entry = {
     config: {
         identifierNamesGenerator: 'hexadecimal',
-        stringArrayThreshold: 1,
+        stringArrayThreshold: 0.8,
         // stringArrayEncoding: 'rc4'
     },
     path: {
@@ -13,7 +13,9 @@ const entry = {
         '剑阵诛仙2/js': {
             // 'assetsmanager.min': './新修仙/js/assetsmanager.min.js',
             // 'default.thm': './新修仙/js/default.thm.js',
+            'egret.min': './新修仙/js/egret.min.js',
             'entry.min': './新修仙/js/entry.min.js',
+            // 'game.min': './新修仙/js/game.min.js',
             'main.min': './新修仙/js/main.min.js',
             // 'particle.min': './新修仙/js/particle.min.js',
             // 'socket.min': './新修仙/js/socket.min.js',
@@ -22,5 +24,4 @@ const entry = {
     }
 };
 
-// 对象 0.6
 module.exports = entry;

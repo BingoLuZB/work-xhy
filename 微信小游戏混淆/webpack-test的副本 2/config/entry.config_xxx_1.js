@@ -3,7 +3,7 @@
 const entry = {
     config: {
         identifierNamesGenerator: 'hexadecimal',
-        stringArrayThreshold: 0.8,
+        stringArrayThreshold: 0.85,
         // stringArrayEncoding: 'rc4'
     },
     path: {
@@ -13,6 +13,7 @@ const entry = {
         '新修仙/js': {
             // 'assetsmanager.min': './新修仙/js/assetsmanager.min.js',
             // 'default.thm': './新修仙/js/default.thm.js',
+            'egret.min': './新修仙/js/egret.min.js',
             'entry.min': './新修仙/js/entry.min.js',
             'main.min': './新修仙/js/main.min.js',
             // 'particle.min': './新修仙/js/particle.min.js',
