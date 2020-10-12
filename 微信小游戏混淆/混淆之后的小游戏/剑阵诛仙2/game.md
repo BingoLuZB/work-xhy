@@ -12,6 +12,7 @@ var jsonList = [
 	'20200927_default',
 	'20201009_entry',
 	'20201009_egret',
+	'20201009_eui',
 	'20200927_particle',
 	'20200927_socket',
 	'20200927_tween',
@@ -233,7 +234,7 @@ window.urlParam = {
 	root: 'https://z1c.h5eco.com/1/z1client/',
 	apiRoot: 'https://z1api.h5eco.com/',
 	reportRoot: `https://z1back.h5eco.com/`,
-	ev: 88,
+	ev: 91,
 };
 
 window.getUrl = (url) => {

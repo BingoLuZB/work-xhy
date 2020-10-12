@@ -11,6 +11,7 @@ const entry = {
         '新仙侠/js': {
             // 'assetsmanager.min': './新仙侠/js/assetsmanager.min.js',
             // 'default.thm': './新仙侠/js/default.thm.js',
+            'egret.min': './新仙侠/js/egret.min.js',
             'entry.min': './新仙侠/js/entry.min.js',
             'main.min': './新仙侠/js/main.min.js',
             // 'particle.min': './新仙侠/js/particle.min.js',
