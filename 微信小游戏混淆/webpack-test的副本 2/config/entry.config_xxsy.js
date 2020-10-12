@@ -12,7 +12,7 @@ const entry = {
         '修仙手游/js': {
             // 'assetsmanager.min': './修仙手游/js/assetsmanager.min.js',
             // 'default.thm': './修仙手游/js/default.thm.js',
-            'egret.min': './修仙手游/js/egret.min.js',
+            // 'egret.min': './修仙手游/js/egret.min.js',
             'entry.min': './修仙手游/js/entry.min.js',
             'main.min': './修仙手游/js/main.min.js',
             // 'particle.min': './修仙手游/js/particle.min.js',

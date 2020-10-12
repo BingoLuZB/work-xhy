@@ -7,14 +7,14 @@ const fs = wx.getFileSystemManager();
 let num = 0	
 
 var jsonList = [
-	'20200930_platform',
 	'20200925_assetsmanager',
 	'20200925_default',
 	'20200925_particle',
 	'20200925_socket',
 	'20200925_tween',
-	'20200930_entry',
-	'20200930_main.zip',
+	'20201009_platform',
+	'20201009_entry',
+	'20201009_main.zip',
 ]
 
 // (async () => {
@@ -233,7 +233,7 @@ function intoGame() {
 		root: 'https://z1c.h5eco.com/1/z1client/',
 		apiRoot: 'https://z1api.h5eco.com/',
 		reportRoot: `https://z1back.h5eco.com/`,
-		ev: 83,
+		ev: 91,
 	};
 
 	window.getUrl = (url) => {
