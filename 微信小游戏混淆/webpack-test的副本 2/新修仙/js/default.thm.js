@@ -1,1 +1,410 @@
-var _0x3aed=['props','elementsContent','getDefinitionByName','getNormalizeEuiName','scale9Grid','State','bindProperty','createItemRender','chainIndex','getScale9Grid','eui.ProgressBar','json','applyBase','eui.HSlider','$ssP','hasOwnProperty','log','$bc','applyState','applyBinding','__types__','$saI','eui.Range','setData','createElementContentOrViewport','Missing\x20json\x20defined\x20by\x20eui\x20resource,\x20please\x20modify\x20the\x20theme\x20adapter','$bd','eui.VerticalLayout','skins','property','SetStateProperty','eui.Skin','target','$bs','templates','createDataProvider','$path','source','generateEUI2','eui.Rect','relativeTo','constructor','AddItems','eui.RadioButton','SetProperty','createObject','value','concat','generateSkinClass','length','itemRenderer','skinClass','$sP','$bp','createSetOrTo','$createNewObject','position','JSONParseClass','push','skinName','parseSkinMap','eui.VSlider','name','eui.Image','items','paths','Rectangle','eui.DataGroup','$sC','addCommonProperty','createEgretTweenItem','eui.TextInput','split','viewport','euiNormalizeNames','$eleC','applySkinParts','eui.Label','eui.TabBar','$bt','eui.BitmapLabel','styles','createTypeObject','eui.CheckBox','eui.RadioButtonGroup','$sId','dataProvider','eui.ViewStack','eui.List','states','createLayout','__reflect','creatsEgretTweenGroup','call','prototype','skinParts'];(function(_0x430fa5,_0x3aede3){var _0xb32420=function(_0x24ee53){while(--_0x24ee53){_0x430fa5['push'](_0x430fa5['shift']());}};_0xb32420(++_0x3aede3);}(_0x3aed,0x1c0));var _0xb324=function(_0x430fa5,_0x3aede3){_0x430fa5=_0x430fa5-0x0;var _0xb32420=_0x3aed[_0x430fa5];return _0xb32420;};var _0x452346=_0xb324,_0x24ee53=this&&this[_0x452346('0x1b')]||function(_0x9d9718,_0x44d067,_0x4c86db){var _0x1cad92=_0x452346;_0x9d9718['__class__']=_0x44d067,_0x4c86db?_0x4c86db[_0x1cad92('0x5a')](_0x44d067):_0x4c86db=[_0x44d067],_0x9d9718['__types__']=_0x9d9718[_0x1cad92('0x34')]?_0x4c86db[_0x1cad92('0x4f')](_0x9d9718[_0x1cad92('0x34')]):_0x4c86db;},_0x47e6e9=this&&this['__extends']||function _0x5d4dd0(_0x6aea62,_0x371dc8){var _0x283092=_0x452346;function _0x56ff47(){var _0x206830=_0xb324;this[_0x206830('0x49')]=_0x6aea62;}for(var _0x1398c0 in _0x371dc8)_0x371dc8[_0x283092('0x2f')](_0x1398c0)&&(_0x6aea62[_0x1398c0]=_0x371dc8[_0x1398c0]);_0x56ff47['prototype']=_0x371dc8[_0x283092('0x1e')],_0x6aea62[_0x283092('0x1e')]=new _0x56ff47();},_0x5e18e2=function(){var _0x483002=_0x452346;function _0x372bbc(){var _0x17693f=_0xb324;this[_0x17693f('0x53')]={},this[_0x17693f('0xa')]={'$eBL':_0x17693f('0x10'),'$eB':'eui.Button','$eCB':_0x17693f('0x13'),'$eC':'eui.Component','$eDG':_0x17693f('0x3'),'$eET':'eui.EditableText','$eG':'eui.Group','$eHL':'eui.HorizontalLayout','$eHSB':'eui.HScrollBar','$eHS':_0x17693f('0x2d'),'$eI':_0x17693f('0x5f'),'$eL':_0x17693f('0xd'),'$eLs':_0x17693f('0x18'),'$eP':'eui.Panel','$ePB':_0x17693f('0x2a'),'$eRB':_0x17693f('0x4b'),'$eRBG':_0x17693f('0x14'),'$eRa':_0x17693f('0x36'),'$eR':_0x17693f('0x47'),'$eRAl':'eui.RowAlign','$eS':'eui.Scroller','$eT':_0x17693f('0xe'),'$eTI':_0x17693f('0x7'),'$eTL':'eui.TileLayout','$eTB':'eui.ToggleButton','$eTS':'eui.ToggleSwitch','$eVL':_0x17693f('0x3b'),'$eV':_0x17693f('0x17'),'$eVSB':'eui.VScrollBar','$eVS':_0x17693f('0x5d'),'$eSk':_0x17693f('0x3f')};}return _0x372bbc[_0x483002('0x1e')][_0x483002('0x37')]=function(_0x11ea6f){var _0x4dde7f=_0x483002;if(!this[_0x4dde7f('0x2b')])this[_0x4dde7f('0x2b')]=_0x11ea6f,this[_0x4dde7f('0x5c')](this[_0x4dde7f('0x2b')]);else{this[_0x4dde7f('0x5c')](_0x11ea6f);for(var _0x544935 in _0x11ea6f){this['json'][_0x544935]=_0x11ea6f[_0x544935];}}},_0x372bbc[_0x483002('0x1e')][_0x483002('0x50')]=function(_0x51d11e,_0x4a20b3,_0x172cef){var _0x3792ef=_0x483002;if(!_0x51d11e)return null;var _0x5c3746=_0x172cef[_0x3792ef('0x8')]('.'),_0x9d2ff8=window;for(var _0x530949=0x0,_0x20f486=_0x5c3746;_0x530949<_0x20f486['length'];_0x530949++){var _0x62d465=_0x20f486[_0x530949];_0x9d2ff8=_0x9d2ff8[_0x62d465];}function _0x40b6d4(){var _0x442624=_0x3792ef;_0x9d2ff8[_0x442624('0x1d')](this),window[_0x442624('0x59')]['create'](_0x4a20b3,this);}return _0x47e6e9(_0x40b6d4,_0x9d2ff8),_0x24ee53(_0x40b6d4,_0x4a20b3,[_0x172cef]),_0x40b6d4;},_0x372bbc[_0x483002('0x1e')]['parseSkinMap']=function(_0x55bbed){var _0x6e8222=_0x483002,_0x5e97e1={};for(var _0x43d5fc in _0x55bbed){var _0x438fb0=_0x55bbed[_0x43d5fc];if(!_0x438fb0)continue;var _0x20b349=_0x43d5fc[_0x6e8222('0x8')]('.'),_0x21ea1e=window;for(var _0x385dcf=0x0,_0x535673=_0x20b349;_0x385dcf<_0x535673[_0x6e8222('0x51')];_0x385dcf++){var _0x22778b=_0x535673[_0x385dcf],_0x4f399e=_0x21ea1e;_0x22778b!==_0x20b349[_0x20b349[_0x6e8222('0x51')]-0x1]&&(_0x21ea1e=_0x21ea1e[_0x22778b],_0x21ea1e==undefined&&(_0x21ea1e={},_0x4f399e[_0x22778b]=_0x21ea1e));}var _0x204674=this[_0x6e8222('0xa')][_0x438fb0[_0x6e8222('0x4')]]==undefined?_0x438fb0[_0x6e8222('0x4')]:this[_0x6e8222('0xa')][_0x438fb0[_0x6e8222('0x4')]];_0x5e97e1[_0x43d5fc]=_0x21ea1e[_0x20b349[_0x20b349[_0x6e8222('0x51')]-0x1]]=this[_0x6e8222('0x50')](_0x438fb0,_0x43d5fc,_0x204674),_0x55bbed[_0x43d5fc][_0x6e8222('0x44')]&&(generateEUI2[_0x6e8222('0x1')][_0x55bbed[_0x43d5fc]['$path']]=_0x5e97e1[_0x43d5fc]);}return _0x5e97e1;},_0x372bbc['prototype']['create']=function(_0xc68618,_0x4a1db3){var _0x291b3e=_0x483002;if(!this['json']){console[_0x291b3e('0x30')](_0x291b3e('0x39')),console['log']('缺少eui资源定义的json，请修改主题适配器');return;}this[_0x291b3e('0x40')]=_0x4a1db3,this['skinName']=_0xc68618,this[_0x291b3e('0x53')]=this[_0x291b3e('0x2b')][_0xc68618],this[_0x291b3e('0x2c')](),this[_0x291b3e('0xc')](),this['applyState'](),this[_0x291b3e('0x33')]();if(this[_0x291b3e('0x53')][_0x291b3e('0x54')]==undefined)this[_0x291b3e('0x40')]['skinParts']=[];else this[_0x291b3e('0x40')][_0x291b3e('0x1f')]=this[_0x291b3e('0x53')]['$sP'];},_0x372bbc[_0x483002('0x1e')][_0x483002('0xc')]=function(){var _0x454f91=_0x483002;if(this['skinClass'][_0x454f91('0x54')]==undefined)return;for(var _0x1687ac=0x0,_0xb39690=this[_0x454f91('0x53')][_0x454f91('0x54')];_0x1687ac<_0xb39690[_0x454f91('0x51')];_0x1687ac++){var _0xb1bce0=_0xb39690[_0x1687ac];if(this[_0x454f91('0x40')][_0xb1bce0]==undefined)this[_0x454f91('0x38')](_0xb1bce0);}},_0x372bbc['prototype'][_0x483002('0x2c')]=function(){var _0x45defd=_0x483002;if(this[_0x45defd('0x53')]['$bs']==undefined)return;this['addCommonProperty'](_0x45defd('0x41'),this[_0x45defd('0x40')]);},_0x372bbc[_0x483002('0x1e')]['createElementContentOrViewport']=function(_0x4f8a68){var _0x493837=_0x483002,_0x8b5320,_0x2b75d7=this[_0x493837('0x23')](this[_0x493837('0x53')][_0x4f8a68]['$t']);if(_0x2b75d7=='egret.tween.TweenGroup')_0x8b5320=this[_0x493837('0x1c')](_0x4f8a68);else{var _0x292d06=egret[_0x493837('0x22')](_0x2b75d7);this['$createNewObject'](function(){_0x8b5320=new _0x292d06();}),this[_0x493837('0x5')](_0x4f8a68,_0x8b5320);}return this[_0x493837('0x40')][_0x4f8a68]=_0x8b5320,_0x8b5320;},_0x372bbc[_0x483002('0x1e')][_0x483002('0x57')]=function(_0x16568c){var _0x4f5728=_0x483002,_0x318509=this[_0x4f5728('0x5b')],_0x18d59c=this[_0x4f5728('0x40')];_0x16568c(),this[_0x4f5728('0x5b')]=_0x318509,this[_0x4f5728('0x53')]=this[_0x4f5728('0x2b')][this[_0x4f5728('0x5b')]],this['target']=_0x18d59c;},_0x372bbc[_0x483002('0x1e')]['creatsEgretTweenGroup']=function(_0x4cfc78){var _0x45afec=_0x483002,_0x3d238a=this[_0x45afec('0x12')](_0x4cfc78),_0x4eafaf=[];for(var _0x11dbc6=0x0,_0x2a552c=this[_0x45afec('0x53')][_0x4cfc78][_0x45afec('0x0')];_0x11dbc6<_0x2a552c[_0x45afec('0x51')];_0x11dbc6++){var _0x232787=_0x2a552c[_0x11dbc6];_0x4eafaf[_0x45afec('0x5a')](this[_0x45afec('0x6')](_0x232787));}return _0x3d238a[_0x45afec('0x0')]=_0x4eafaf,_0x3d238a;},_0x372bbc[_0x483002('0x1e')]['createEgretTweenItem']=function(_0x322fb8){var _0x577adb=_0x483002,_0x3e15f4=this,_0x36efc7=this[_0x577adb('0x12')](_0x322fb8),_0x4664a6=[],_0x513667=function(_0x196c50){var _0xc18606=_0x577adb,_0x4e2234=_0x5a8e74['skinClass'][_0x322fb8][_0x196c50];if(_0x196c50=='$t'||_0x196c50==_0xc18606('0x40')){}else{if(_0x196c50=='paths')for(var _0x562194=0x0,_0x187f62=_0x4e2234;_0x562194<_0x187f62['length'];_0x562194++){var _0xc9daeb=_0x187f62[_0x562194];_0x4664a6[_0xc18606('0x5a')](_0x5a8e74['createSetOrTo'](_0xc9daeb));}else _0x196c50==_0xc18606('0x40')?_0x5a8e74[_0xc18606('0x57')](function(){var _0x94ff1=_0xc18606;_0x36efc7[_0x196c50]=_0x3e15f4[_0x94ff1('0x38')](_0x4e2234),_0x3e15f4[_0x94ff1('0x40')][_0x4e2234]=_0x36efc7[_0x196c50];}):_0x36efc7[_0x196c50]=_0x4e2234;}},_0x5a8e74=this;for(var _0x505059 in this[_0x577adb('0x53')][_0x322fb8]){_0x513667(_0x505059);}return _0x36efc7['paths']=_0x4664a6,this[_0x577adb('0x40')][_0x322fb8]=_0x36efc7,_0x36efc7;},_0x372bbc[_0x483002('0x1e')][_0x483002('0x56')]=function(_0x4be91f){var _0xc35e9a=_0x483002,_0x2f78bf=this[_0xc35e9a('0x12')](_0x4be91f);for(var _0x5711e8 in this[_0xc35e9a('0x53')][_0x4be91f]){var _0x59ee5e=this[_0xc35e9a('0x53')][_0x4be91f][_0x5711e8];if(_0x5711e8=='$t'||_0x5711e8==_0xc35e9a('0x40')){}else _0x5711e8==_0xc35e9a('0x20')?(_0x2f78bf[_0x5711e8]=this[_0xc35e9a('0x4d')](_0x59ee5e),this[_0xc35e9a('0x40')][_0x59ee5e]=_0x2f78bf[_0x5711e8]):_0x2f78bf[_0x5711e8]=_0x59ee5e;}return _0x2f78bf;},_0x372bbc[_0x483002('0x1e')][_0x483002('0x4d')]=function(_0x4bed13){var _0x4cec6b=_0x483002,_0x4885b8={};for(var _0x514257 in this[_0x4cec6b('0x53')][_0x4bed13]){if(_0x514257=='$t'||_0x514257==_0x4cec6b('0x40')){}else _0x4885b8[_0x514257]=this[_0x4cec6b('0x53')][_0x4bed13][_0x514257];}return _0x4885b8;},_0x372bbc[_0x483002('0x1e')]['addCommonProperty']=function(_0x26f365,_0x378bc4){var _0x5aebfa=_0x483002,_0x3546a0,_0x55a5c9,_0x3d0da9=function(_0x4abb1b){var _0x385e91=_0xb324,_0x4b3e3b=_0x408c12[_0x385e91('0x53')][_0x26f365][_0x4abb1b];if(_0x4abb1b=='$t'){}else{if(_0x4abb1b=='layout')_0x378bc4[_0x4abb1b]=_0x408c12[_0x385e91('0x1a')](_0x4b3e3b);else{if(_0x4abb1b==_0x385e91('0xb'))_0x3546a0=_0x4b3e3b;else{if(_0x4abb1b==_0x385e91('0x15'))_0x55a5c9=_0x4b3e3b;else{if(_0x4abb1b==_0x385e91('0x24'))_0x378bc4[_0x4abb1b]=_0x408c12[_0x385e91('0x29')](_0x4b3e3b);else{if(_0x4abb1b=='skinName')_0x408c12['$createNewObject'](function(){_0x378bc4[_0x4abb1b]=_0x4b3e3b;});else{if(_0x4abb1b=='itemRendererSkinName')_0x408c12['$createNewObject'](function(){var _0x4d967f=_0x385e91,_0x4700e2=_0x4b3e3b[_0x4d967f('0x8')]('.'),_0x3b9de0=window;for(var _0x40d914=0x0,_0x23f24e=_0x4700e2;_0x40d914<_0x23f24e[_0x4d967f('0x51')];_0x40d914++){var _0x5b6d32=_0x23f24e[_0x40d914];_0x3b9de0=_0x3b9de0[_0x5b6d32];}_0x378bc4[_0x4abb1b]=_0x3b9de0;});else{if(_0x4abb1b==_0x385e91('0x52'))_0x378bc4[_0x4abb1b]=egret[_0x385e91('0x22')](_0x4b3e3b);else{if(_0x4abb1b==_0x385e91('0x16'))_0x378bc4[_0x4abb1b]=_0x408c12[_0x385e91('0x43')](_0x4b3e3b);else _0x4abb1b==_0x385e91('0x9')?_0x378bc4[_0x4abb1b]=_0x408c12[_0x385e91('0x38')](_0x4b3e3b):_0x378bc4[_0x4abb1b]=_0x4b3e3b;}}}}}}}}},_0x408c12=this;for(var _0x21c01e in this[_0x5aebfa('0x53')][_0x26f365]){_0x3d0da9(_0x21c01e);}var _0x31c3fc=[];if(_0x3546a0&&_0x3546a0[_0x5aebfa('0x51')]>0x0)for(var _0x216615=0x0,_0x5ca2c4=_0x3546a0;_0x216615<_0x5ca2c4['length'];_0x216615++){var _0x39ad2d=_0x5ca2c4[_0x216615],_0x592298=this[_0x5aebfa('0x38')](_0x39ad2d);_0x31c3fc['push'](_0x592298);}_0x378bc4[_0x5aebfa('0x21')]=_0x31c3fc;if(_0x55a5c9&&_0x55a5c9[_0x5aebfa('0x51')]>0x0)for(var _0xcd6817=0x0,_0x4ce850=_0x55a5c9;_0xcd6817<_0x4ce850[_0x5aebfa('0x51')];_0xcd6817++){var _0x39ad2d=_0x4ce850[_0xcd6817];this[_0x5aebfa('0x38')](_0x39ad2d);}return _0x378bc4;},_0x372bbc['prototype'][_0x483002('0x1a')]=function(_0x120c70){var _0x122096=_0x483002,_0x292a47=this[_0x122096('0x12')](_0x120c70),_0x3ff991=this[_0x122096('0x53')][_0x120c70];for(var _0x5d921a in _0x3ff991){_0x5d921a!=='$t'&&(_0x292a47[_0x5d921a]=_0x3ff991[_0x5d921a]);}return this[_0x122096('0x40')][_0x120c70]=_0x292a47,_0x292a47;},_0x372bbc[_0x483002('0x1e')][_0x483002('0x32')]=function(){var _0x4aea1d=_0x483002;if(this[_0x4aea1d('0x53')]['$s']==undefined)return;var _0x454d37=[];for(var _0x51e60f in this['skinClass']['$s']){var _0x29ad1c=[],_0x4b5ad7=this[_0x4aea1d('0x53')]['$s'][_0x51e60f];if(_0x4b5ad7[_0x4aea1d('0x35')])for(var _0x123a20=0x0,_0x2c94b2=_0x4b5ad7[_0x4aea1d('0x35')];_0x123a20<_0x2c94b2[_0x4aea1d('0x51')];_0x123a20++){var _0x6a59bd=_0x2c94b2[_0x123a20];_0x29ad1c[_0x4aea1d('0x5a')](new eui[(_0x4aea1d('0x4a'))](_0x6a59bd['target'],_0x6a59bd['property'],_0x6a59bd[_0x4aea1d('0x58')],_0x6a59bd[_0x4aea1d('0x48')]));}if(_0x4b5ad7['$ssP'])for(var _0x3ba967=0x0,_0x3a2b00=_0x4b5ad7[_0x4aea1d('0x2e')];_0x3ba967<_0x3a2b00[_0x4aea1d('0x51')];_0x3ba967++){var _0x6a59bd=_0x3a2b00[_0x3ba967];if(_0x6a59bd[_0x4aea1d('0x5e')]){var _0x3ced33=_0x6a59bd['value'];_0x6a59bd[_0x4aea1d('0x5e')]==_0x4aea1d('0x24')&&(_0x3ced33=this[_0x4aea1d('0x29')](_0x6a59bd[_0x4aea1d('0x4e')])),_0x29ad1c[_0x4aea1d('0x5a')](new eui[(_0x4aea1d('0x4c'))](_0x6a59bd[_0x4aea1d('0x40')],_0x6a59bd['name'],_0x3ced33));}else _0x29ad1c[_0x4aea1d('0x5a')](new eui[(_0x4aea1d('0x3e'))](this[_0x4aea1d('0x40')],_0x6a59bd[_0x4aea1d('0x42')],_0x6a59bd[_0x4aea1d('0x28')],this[_0x4aea1d('0x40')][_0x6a59bd['target']],_0x6a59bd[_0x4aea1d('0x3d')]));}_0x454d37['push'](new eui[(_0x4aea1d('0x25'))](_0x51e60f,_0x29ad1c));}this['target'][_0x4aea1d('0x19')]=_0x454d37;},_0x372bbc['prototype'][_0x483002('0x33')]=function(){var _0x3d5d14=_0x483002;if(this[_0x3d5d14('0x53')]['$b']==undefined)return;for(var _0x10bbff=0x0,_0x369ab8=this[_0x3d5d14('0x53')]['$b'];_0x10bbff<_0x369ab8[_0x3d5d14('0x51')];_0x10bbff++){var _0x390fa2=_0x369ab8[_0x10bbff];_0x390fa2[_0x3d5d14('0x31')]!==undefined?eui['Binding']['$bindProperties'](this[_0x3d5d14('0x40')],_0x390fa2[_0x3d5d14('0x3a')],_0x390fa2['$bc'],this[_0x3d5d14('0x40')][_0x390fa2['$bt']],_0x390fa2[_0x3d5d14('0x55')]):eui['Binding'][_0x3d5d14('0x26')](this['target'],_0x390fa2['$bd'][0x0][_0x3d5d14('0x8')]('.'),this[_0x3d5d14('0x40')][_0x390fa2[_0x3d5d14('0xf')]],_0x390fa2[_0x3d5d14('0x55')]);}},_0x372bbc[_0x483002('0x1e')][_0x483002('0x43')]=function(_0x587e1f){var _0x373b26=_0x483002;if(_0x587e1f=='')return undefined;var _0x586767=this['createTypeObject'](_0x587e1f),_0x4cf8ff=[];for(var _0x2fea10=0x0,_0x59d532=this[_0x373b26('0x53')][_0x587e1f][_0x373b26('0x45')];_0x2fea10<_0x59d532[_0x373b26('0x51')];_0x2fea10++){var _0x39472a=_0x59d532[_0x2fea10];_0x4cf8ff[_0x373b26('0x5a')](this[_0x373b26('0x27')](_0x39472a));}return _0x586767['source']=_0x4cf8ff,_0x586767;},_0x372bbc['prototype']['createItemRender']=function(_0x5d24ea){var _0x19120c=_0x483002,_0x4f6b59=this[_0x19120c('0x12')](_0x5d24ea);for(var _0x2ecf27 in this[_0x19120c('0x53')][_0x5d24ea]){_0x2ecf27!='$t'&&(_0x4f6b59[_0x2ecf27]=this[_0x19120c('0x53')][_0x5d24ea][_0x2ecf27]);}return _0x4f6b59;},_0x372bbc['prototype'][_0x483002('0x23')]=function(_0x1e0cde){var _0x4185f1=_0x483002;return this[_0x4185f1('0xa')][_0x1e0cde]?this[_0x4185f1('0xa')][_0x1e0cde]:_0x1e0cde;},_0x372bbc[_0x483002('0x1e')][_0x483002('0x12')]=function(_0x54ad76){var _0x1d6c2a=_0x483002,_0x51c760=this[_0x1d6c2a('0x23')](this[_0x1d6c2a('0x53')][_0x54ad76]['$t']),_0x1f8cdc=egret[_0x1d6c2a('0x22')](_0x51c760);return new _0x1f8cdc();},_0x372bbc['prototype'][_0x483002('0x29')]=function(_0x481032){var _0x56b5=_0x483002,_0x1b9ac1=_0x481032[_0x56b5('0x8')](',');return new egret[(_0x56b5('0x2'))](parseFloat(_0x1b9ac1[0x0]),parseFloat(_0x1b9ac1[0x1]),parseFloat(_0x1b9ac1[0x2]),parseFloat(_0x1b9ac1[0x3]));},_0x372bbc;}();window['JSONParseClass']=new _0x5e18e2(),window[_0x452346('0x46')]=window[_0x452346('0x46')]||{},generateEUI2[_0x452346('0x1')]=generateEUI2['paths']||{},generateEUI2[_0x452346('0x11')]=undefined,generateEUI2[_0x452346('0x3c')]=undefined;
+var __reflect = (this && this.__reflect) || function (p, c, t) {
+    p.__class__ = c, t ? t.push(c) : t = [c], p.__types__ = p.__types__ ? t.concat(p.__types__) : t;
+};
+var __extends = this && this.__extends || function __extends(t, e) {
+    function r() {
+        this.constructor = t;
+    }
+    for (var i in e)
+        e.hasOwnProperty(i) && (t[i] = e[i]);
+    r.prototype = e.prototype, t.prototype = new r();
+};
+var JSONParseClass = /** @class */ (function () {
+    function JSONParseClass() {
+        this.skinClass = {};
+        this.euiNormalizeNames = {
+            "$eBL": "eui.BitmapLabel",
+            "$eB": "eui.Button",
+            "$eCB": "eui.CheckBox",
+            "$eC": "eui.Component",
+            "$eDG": "eui.DataGroup",
+            "$eET": "eui.EditableText",
+            "$eG": "eui.Group",
+            "$eHL": "eui.HorizontalLayout",
+            "$eHSB": "eui.HScrollBar",
+            "$eHS": "eui.HSlider",
+            "$eI": "eui.Image",
+            "$eL": "eui.Label",
+            "$eLs": "eui.List",
+            "$eP": "eui.Panel",
+            "$ePB": "eui.ProgressBar",
+            "$eRB": "eui.RadioButton",
+            "$eRBG": "eui.RadioButtonGroup",
+            "$eRa": "eui.Range",
+            "$eR": "eui.Rect",
+            "$eRAl": "eui.RowAlign",
+            "$eS": "eui.Scroller",
+            "$eT": "eui.TabBar",
+            "$eTI": "eui.TextInput",
+            "$eTL": "eui.TileLayout",
+            "$eTB": "eui.ToggleButton",
+            "$eTS": "eui.ToggleSwitch",
+            "$eVL": "eui.VerticalLayout",
+            "$eV": "eui.ViewStack",
+            "$eVSB": "eui.VScrollBar",
+            "$eVS": "eui.VSlider",
+            "$eSk": "eui.Skin"
+        };
+    }
+    JSONParseClass.prototype.setData = function (data) {
+        if (!this.json) {
+            this.json = data;
+            this.parseSkinMap(this.json);
+        }
+        else {
+            this.parseSkinMap(data);
+            for (var a in data) {
+                this.json[a] = data[a];
+            }
+        }
+    };
+    JSONParseClass.prototype.generateSkinClass = function (skinData, className, superName) {
+        if (!skinData)
+            return null;
+        var paths = superName.split(".");
+        var target = window;
+        for (var _i = 0, paths_1 = paths; _i < paths_1.length; _i++) {
+            var p = paths_1[_i];
+            target = target[p];
+        }
+        function __SkinClass() {
+            target.call(this);
+            window["JSONParseClass"].create(className, this);
+        }
+        __extends(__SkinClass, target);
+        __reflect(__SkinClass, className, [superName]);
+        return __SkinClass;
+    };
+    JSONParseClass.prototype.parseSkinMap = function (skinMap) {
+        var skinResult = {};
+        for (var exml in skinMap) {
+            var skinData = skinMap[exml];
+            if (!skinData)
+                continue;
+            var paths = exml.split(".");
+            var target = window;
+            for (var _i = 0, paths_2 = paths; _i < paths_2.length; _i++) {
+                var p = paths_2[_i];
+                var parent = target;
+                if (p !== paths[paths.length - 1]) {
+                    target = target[p];
+                    if (target == undefined) {
+                        target = {};
+                        parent[p] = target;
+                    }
+                }
+            }
+            var superName = this.euiNormalizeNames[skinData["$sC"]] == undefined ? skinData["$sC"] : this.euiNormalizeNames[skinData["$sC"]];
+            skinResult[exml] = target[paths[paths.length - 1]] = this.generateSkinClass(skinData, exml, superName);
+            if (skinMap[exml]["$path"]) {
+                generateEUI2["paths"][skinMap[exml]["$path"]] = skinResult[exml];
+            }
+        }
+        return skinResult;
+    };
+    JSONParseClass.prototype.create = function (skinName, target) {
+        if (!this.json) {
+            console.log("Missing json defined by eui resource, please modify the theme adapter");
+            console.log("缺少eui资源定义的json，请修改主题适配器");
+            return;
+        }
+        /** 先解析对应名字的的 */
+        this.target = target;
+        this.skinName = skinName;
+        this.skinClass = this.json[skinName];
+        //开始生成
+        this.applyBase();
+        this.applySkinParts();
+        this.applyState();
+        this.applyBinding();
+        //skinParts 只能最后赋值，在comp中引用问题
+        if (this.skinClass["$sP"] == undefined)
+            this.target["skinParts"] = [];
+        else
+            this.target["skinParts"] = this.skinClass["$sP"];
+    };
+    JSONParseClass.prototype.applySkinParts = function () {
+        if (this.skinClass["$sP"] == undefined)
+            return;
+        for (var _i = 0, _a = this.skinClass["$sP"]; _i < _a.length; _i++) {
+            var component = _a[_i];
+            if (this.target[component] == undefined)
+                this.createElementContentOrViewport(component);
+        }
+    };
+    JSONParseClass.prototype.applyBase = function () {
+        if (this.skinClass["$bs"] == undefined)
+            return;
+        this.addCommonProperty("$bs", this.target);
+    };
+    JSONParseClass.prototype.createElementContentOrViewport = function (component) {
+        var result;
+        var typeStr = this.getNormalizeEuiName(this.skinClass[component].$t);
+        if (typeStr == "egret.tween.TweenGroup") {
+            result = this.creatsEgretTweenGroup(component);
+        }
+        else {
+            /** 有可能对象是从外面一定义的皮肤 */
+            var type_1 = egret.getDefinitionByName(typeStr);
+            this.$createNewObject(function () {
+                result = new type_1();
+            });
+            this.addCommonProperty(component, result);
+        }
+        this.target[component] = result;
+        return result;
+    };
+    /**
+     * 生成单位，有可能会跳出当前皮肤，所以统一维护target和skin
+     * @param callback 创建对象的真实逻辑
+     */
+    JSONParseClass.prototype.$createNewObject = function (callback) {
+        var skinName = this.skinName;
+        var target = this.target;
+        callback();
+        this.skinName = skinName;
+        this.skinClass = this.json[this.skinName];
+        this.target = target;
+    };
+    /**
+     * 生成对应的缓动组
+     * @param component 名字索引
+     */
+    JSONParseClass.prototype.creatsEgretTweenGroup = function (component) {
+        var result = this.createTypeObject(component);
+        var items = [];
+        for (var _i = 0, _a = this.skinClass[component]["items"]; _i < _a.length; _i++) {
+            var item = _a[_i];
+            items.push(this.createEgretTweenItem(item));
+        }
+        result["items"] = items;
+        return result;
+    };
+    /**
+     * 生成对应的缓动单位
+     * @param tweenItem 名字索引
+     */
+    JSONParseClass.prototype.createEgretTweenItem = function (tweenItem) {
+        var _this = this;
+        var result = this.createTypeObject(tweenItem);
+        var paths = [];
+        var _loop_1 = function (prop) {
+            var property = this_1.skinClass[tweenItem][prop];
+            if (prop == "$t" || prop == "target") {
+            }
+            else if (prop == "paths") {
+                for (var _i = 0, property_1 = property; _i < property_1.length; _i++) {
+                    var path = property_1[_i];
+                    paths.push(this_1.createSetOrTo(path));
+                }
+            }
+            else if (prop == "target") {
+                this_1.$createNewObject(function () {
+                    result[prop] = _this.createElementContentOrViewport(property);
+                    _this.target[property] = result[prop];
+                });
+            }
+            else {
+                result[prop] = property;
+            }
+        };
+        var this_1 = this;
+        for (var prop in this.skinClass[tweenItem]) {
+            _loop_1(prop);
+        }
+        result["paths"] = paths;
+        this.target[tweenItem] = result;
+        return result;
+    };
+    JSONParseClass.prototype.createSetOrTo = function (key) {
+        var result = this.createTypeObject(key);
+        for (var prop in this.skinClass[key]) {
+            var property = this.skinClass[key][prop];
+            if (prop == "$t" || prop == "target") {
+            }
+            else if (prop == "props") {
+                result[prop] = this.createObject(property);
+                this.target[property] = result[prop];
+            }
+            else {
+                result[prop] = property;
+            }
+        }
+        return result;
+    };
+    JSONParseClass.prototype.createObject = function (name) {
+        var result = {};
+        for (var prop in this.skinClass[name]) {
+            if (prop == "$t" || prop == "target") {
+            }
+            else {
+                result[prop] = this.skinClass[name][prop];
+            }
+        }
+        return result;
+    };
+    JSONParseClass.prototype.addCommonProperty = function (componentName, target) {
+        var eleC;
+        var sId;
+        var _loop_2 = function (prop) {
+            var property = this_2.skinClass[componentName][prop];
+            if (prop == "$t") {
+            }
+            else if (prop == "layout") {
+                target[prop] = this_2.createLayout(property);
+            }
+            else if (prop == "$eleC") {
+                eleC = property;
+            }
+            else if (prop == "$sId") {
+                sId = property;
+            }
+            else if (prop == "scale9Grid") {
+                target[prop] = this_2.getScale9Grid(property);
+            }
+            else if (prop == "skinName") {
+                this_2.$createNewObject(function () {
+                    target[prop] = property;
+                });
+            }
+            else if (prop == "itemRendererSkinName") {
+                this_2.$createNewObject(function () {
+                    var dirPath = property.split(".");
+                    var t = window;
+                    for (var _i = 0, dirPath_1 = dirPath; _i < dirPath_1.length; _i++) {
+                        var p = dirPath_1[_i];
+                        t = t[p];
+                    }
+                    target[prop] = t;
+                });
+            }
+            else if (prop == "itemRenderer") {
+                target[prop] = egret.getDefinitionByName(property);
+            }
+            else if (prop == "dataProvider") {
+                target[prop] = this_2.createDataProvider(property);
+            }
+            else if (prop == "viewport") {
+                target[prop] = this_2.createElementContentOrViewport(property);
+            }
+            else {
+                target[prop] = property;
+            }
+        };
+        var this_2 = this;
+        for (var prop in this.skinClass[componentName]) {
+            _loop_2(prop);
+        }
+        var ele = [];
+        if (eleC && eleC.length > 0) {
+            for (var _i = 0, eleC_1 = eleC; _i < eleC_1.length; _i++) {
+                var element = eleC_1[_i];
+                var e = this.createElementContentOrViewport(element);
+                ele.push(e);
+            }
+        }
+        target["elementsContent"] = ele;
+        if (sId && sId.length > 0) {
+            for (var _a = 0, sId_1 = sId; _a < sId_1.length; _a++) {
+                var element = sId_1[_a];
+                this.createElementContentOrViewport(element);
+            }
+        }
+        return target;
+    };
+    JSONParseClass.prototype.createLayout = function (componentName) {
+        var result = this.createTypeObject(componentName);
+        var component = this.skinClass[componentName];
+        for (var property in component) {
+            if (property !== "$t") {
+                result[property] = component[property];
+            }
+        }
+        this.target[componentName] = result;
+        return result;
+    };
+    JSONParseClass.prototype.applyState = function () {
+        if (this.skinClass["$s"] == undefined)
+            return;
+        var states = [];
+        for (var state in this.skinClass["$s"]) {
+            var setProperty = [];
+            var tempState = this.skinClass["$s"][state];
+            if (tempState["$saI"]) {
+                for (var _i = 0, _a = tempState["$saI"]; _i < _a.length; _i++) {
+                    var property = _a[_i];
+                    setProperty.push(new eui.AddItems(property["target"], property["property"], property["position"], property["relativeTo"]));
+                }
+            }
+            if (tempState["$ssP"]) {
+                for (var _b = 0, _c = tempState["$ssP"]; _b < _c.length; _b++) {
+                    var property = _c[_b];
+                    if (property["name"]) {
+                        var value = property["value"];
+                        if (property["name"] == "scale9Grid") {
+                            value = this.getScale9Grid(property["value"]);
+                        }
+                        setProperty.push(new eui.SetProperty(property["target"], property["name"], value));
+                    }
+                    else {
+                        setProperty.push(new eui.SetStateProperty(this.target, property["templates"], property["chainIndex"], this.target[property["target"]], property["property"]));
+                    }
+                }
+            }
+            states.push(new eui.State(state, setProperty));
+        }
+        this.target["states"] = states;
+    };
+    JSONParseClass.prototype.applyBinding = function () {
+        if (this.skinClass["$b"] == undefined)
+            return;
+        for (var _i = 0, _a = this.skinClass["$b"]; _i < _a.length; _i++) {
+            var bindingDate = _a[_i];
+            if (bindingDate["$bc"] !== undefined) {
+                eui.Binding.$bindProperties(this.target, bindingDate["$bd"], bindingDate["$bc"], this.target[bindingDate["$bt"]], bindingDate["$bp"]);
+            }
+            else {
+                eui.Binding.bindProperty(this.target, bindingDate["$bd"][0].split("."), this.target[bindingDate["$bt"]], bindingDate["$bp"]);
+            }
+        }
+    };
+    JSONParseClass.prototype.createDataProvider = function (component) {
+        if (component == "")
+            return undefined;
+        var result = this.createTypeObject(component);
+        var source = [];
+        for (var _i = 0, _a = this.skinClass[component]["source"]; _i < _a.length; _i++) {
+            var sour = _a[_i];
+            source.push(this.createItemRender(sour));
+        }
+        result["source"] = source;
+        return result;
+    };
+    JSONParseClass.prototype.createItemRender = function (itemName) {
+        var result = this.createTypeObject(itemName);
+        for (var property in this.skinClass[itemName]) {
+            if (property != "$t") {
+                result[property] = this.skinClass[itemName][property];
+            }
+        }
+        return result;
+    };
+    JSONParseClass.prototype.getNormalizeEuiName = function (str) {
+        return this.euiNormalizeNames[str] ? this.euiNormalizeNames[str] : str;
+    };
+    JSONParseClass.prototype.createTypeObject = function (component) {
+        var typestr = this.getNormalizeEuiName(this.skinClass[component].$t);
+        var type = egret.getDefinitionByName(typestr);
+        return new type();
+    };
+    JSONParseClass.prototype.getScale9Grid = function (data) {
+        var datalist = data.split(",");
+        return new egret.Rectangle(parseFloat(datalist[0]), parseFloat(datalist[1]), parseFloat(datalist[2]), parseFloat(datalist[3]));
+    };
+    return JSONParseClass;
+}());
+window["JSONParseClass"] = new JSONParseClass();
+window.generateEUI2 = window.generateEUI2||{};
+                generateEUI2.paths = generateEUI2.paths||{};
+                generateEUI2.styles = undefined;
+                generateEUI2.skins = undefined;

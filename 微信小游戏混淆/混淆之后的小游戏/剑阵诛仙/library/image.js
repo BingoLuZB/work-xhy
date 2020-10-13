@@ -133,9 +133,6 @@ function download(url, target) {
  * 所以开发者应根据URL进行判断，将特定资源进行本地缓存
  */
 function needCache(root, url) {
-	if (url.indexOf('icon/') == 0) {
-		return true;
-	}
 	if (root.indexOf("miniGame/resource/") >= 0) {
 		return true;
 	} else {

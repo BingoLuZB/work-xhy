@@ -18,7 +18,7 @@
     "checkSiteMap": true,
     "uploadWithSourceMap": true,
     "compileHotReLoad": false,
-    "useMultiFrameRuntime": true,
+    "useMultiFrameRuntime": false,
     "useApiHook": true,
     "babelSetting": {
       "ignore": [],
@@ -26,15 +26,15 @@
       "outputPath": ""
     },
     "useIsolateContext": true,
-    "useCompilerModule": false,
+    "useCompilerModule": true,
     "userConfirmedUseCompilerModuleSwitch": false,
     "packNpmManually": false,
     "packNpmRelationList": []
   },
   "compileType": "game",
-  "libVersion": "2.12.2",
-  "appid": "wx08d3987bdee67314",
-  "projectname": "xxtx",
+  "libVersion": "2.13.0",
+  "appid": "wxd4b0b710ad25f7f8",
+  "projectname": "senjin_xinxiuxian_wxgame",
   "simulatorType": "wechat",
   "simulatorPluginLibVersion": {},
   "isGameTourist": true,

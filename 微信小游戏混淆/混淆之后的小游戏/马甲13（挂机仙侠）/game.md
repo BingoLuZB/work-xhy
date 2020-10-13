@@ -1,4 +1,4 @@
-const versions = '1.0.1'
+const versions = '1.0.3'
 const gameId = 13
 const downloadUrl = `https://gministatic.xinghe66.cn/jzzx/mj13`
 
@@ -7,14 +7,15 @@ const fs = wx.getFileSystemManager();
 let num = 0
 
 var jsonList = [
-	'20200928_platform',
-	'20200928_assetsmanager',
-	'20200928_default',
-	'20200928_entry',
-	'20200928_particle',
-	'20200928_socket',
-	'20200928_tween',
-	'20200928_main.zip',
+  '20201012_assetsmanager',
+	'20201012_default',
+	'20201012_particle',
+	'20201012_socket',
+	'20201012_tween',
+	'20201012_platform',
+	'20201012_entry',
+	'20201012_eui',
+	'20201012_main.zip',
 ]
 
 // (async () => {
@@ -233,7 +234,7 @@ function intoGame() {
 		root: 'https://z1c.h5eco.com/1/z1client/',
 		apiRoot: 'https://z1api.h5eco.com/',
 		reportRoot: `https://z1back.h5eco.com/`,
-		ev: 80,
+		ev: 92,
 	};
 
 	window.getUrl = (url) => {

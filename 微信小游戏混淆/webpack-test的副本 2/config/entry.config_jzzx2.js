@@ -13,7 +13,7 @@ const entry = {
         '剑阵诛仙2/js': {
             // 'assetsmanager.min': './新修仙/js/assetsmanager.min.js',
             // 'default.thm': './新修仙/js/default.thm.js',
-            'egret.min': './新修仙/js/egret.min.js',
+            // 'egret.min': './新修仙/js/egret.min.js',
             'entry.min': './新修仙/js/entry.min.js',
             'eui.min': './新修仙/js/eui.min.js',
             // 'game.min': './新修仙/js/game.min.js',

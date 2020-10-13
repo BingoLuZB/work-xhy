@@ -3,7 +3,7 @@ const entry = {
     config: {
         identifierNamesGenerator: 'hexadecimal',
         stringArrayThreshold: 0.6,
-        stringArrayEncoding: 'rc4'
+        // stringArrayEncoding: 'rc4'
     },
     path: {
         '仙侠修仙ol/': {
@@ -13,6 +13,7 @@ const entry = {
             'assetsmanager.min': './新修仙/js/assetsmanager.min.js',
             'default.thm': './新修仙/js/default.thm.js',
             'entry.min': './新修仙/js/entry.min.js',
+            'eui.min': './新修仙/js/eui.min.js',
             'main.min': './新修仙/js/main.min.js',
             'particle.min': './新修仙/js/particle.min.js',
             'socket.min': './新修仙/js/socket.min.js',
@@ -21,5 +22,5 @@ const entry = {
     }
 };
 
-// 林泽数组
+// 改林泽的数组
 module.exports = entry;

@@ -38,7 +38,33 @@ class WxgameOpenDataContext {
 window.platform = {
 	name: 'wxgame',
 	openDataContext: new WxgameOpenDataContext(),
+	sdkInit() {
+		return new Promise((resolve, reject) => {
+			if (urlParam.isLocation) {
+				//内网
+				resolve();
+				return;
+			}
 
+			h5gamecn._init({
+				//获取登陆参数回调
+				getLoginParamsCallBack: function (params) {
+					for (const key in params) {
+						let keyName = key == "passId" ? "appid" : key;
+						urlParam[keyName] = params[key];
+					}
+					console.log("_init参数：", urlParam);
+					resolve();
+				},
+				shareInfo: {
+					title: '全新仙侠游戏，挂机收菜，好玩不累！仙宫炼丹，天梯斗法，Boss挑战，神装打造等海量玩法等你体验！',
+					imgUrl: window.getUrl(`icon/shareicon.jpg`),
+					query: "", //查询字符串，必须是 key1=val1&key2=val2 的格式
+				},
+			});
+
+		});
+	},
 	login() {
 		return new Promise((resolve, reject) => {
 			if (urlParam.isLocation) {
@@ -57,69 +83,52 @@ window.platform = {
 					window["phoneType"] = res.platform;
 				},
 				complete() {
-
-					h5gamecn._init({
-						//获取登陆参数回调
-						getLoginParamsCallBack: function (params) {
-							for (const key in params) {
-								let keyName = key == "passId" ? "appid" : key;
-								urlParam[keyName] = params[key];
-							}
-
-							// 登录某个玩家
-							if (0) {
-								var search = '?&apptype=1&root=https://z1c.h5eco.com/1/z1client/&apiRoot=https://z1api.h5eco.com/&reportRoot=https://z1back.h5eco.com/&openId=f6f596daf86060d8b5cf5a80d5e74fbc&passId=30007&appid=30007&srvid=20001&wss=wss://z1s1.h5eco.com:9016&gameId=103&ts=1598924714&nonce=mjwCy&sign=a55e82102d2c0c7e4bfab0e5867615d5&ev=60&gv=59&actorid=4541985&isnew=false&other=false&page=1';
-								var param = search.split("&");
-								for (var i = 0; i < param.length; i++) {
-									var strArr = param[i].split("=");
-									urlParam[strArr[0]] = strArr[1];
-								}
-							}
-
-							//获取后台ev
-							var aipEv = 0;
+					// 登录某个玩家
+					if (0) {
+						var search = '?&apptype=1&root=https://z1c.h5eco.com/1/z1client/&apiRoot=https://z1api.h5eco.com/&reportRoot=https://z1back.h5eco.com/&openId=f6f596daf86060d8b5cf5a80d5e74fbc&passId=30007&appid=30007&srvid=20001&wss=wss://z1s1.h5eco.com:9016&gameId=103&ts=1598924714&nonce=mjwCy&sign=a55e82102d2c0c7e4bfab0e5867615d5&ev=60&gv=59&actorid=4541985&isnew=false&other=false&page=1';
+						var param = search.split("&");
+						for (var i = 0; i < param.length; i++) {
+							var strArr = param[i].split("=");
+							urlParam[strArr[0]] = strArr[1];
+						}
+					}
+					//获取后台ev
+					var aipEv = 0;
+					wx.request({
+						url: urlParam.apiRoot + 'api/ev?appid=' + urlParam.appid,
+						success: res => aipEv = res.data.ev,
+						complete: () => {
+							console.log("aipEv:", aipEv);
+							let url = urlParam.apiRoot + 'api/login?openId=' + urlParam.openId +
+								'&apptype=' + urlParam.apptype +
+								'&appid=' + urlParam.appid +
+								'&gameId=' + urlParam.gameId +
+								'&ts=' + urlParam.ts +
+								'&nonce=' + urlParam.nonce +
+								'&sign=' + urlParam.sign +
+								'&pf=' + pfType +
+								'&test=' + (urlParam.ev > aipEv ? 1 : 0);
 							wx.request({
-								url: urlParam.apiRoot + 'api/ev?appid=' + urlParam.appid,
-								success: res => aipEv = res.data.ev,
-								complete: () => {
-									console.log("aipEv:", aipEv);
-									let url = urlParam.apiRoot + 'api/login?openId=' + urlParam.openId +
-										'&apptype=' + urlParam.apptype +
-										'&appid=' + urlParam.appid +
-										'&gameId=' + urlParam.gameId +
-										'&ts=' + urlParam.ts +
-										'&nonce=' + urlParam.nonce +
-										'&sign=' + urlParam.sign +
-										'&pf=' + pfType +
-										'&test=' + (urlParam.ev > aipEv ? 1 : 0);
-									wx.request({
-										url: url,
-										success: function (res) {
-											if (!res || !res.data) {
-												alert(`登录失败`);
-												return;
-											}
-											if (res.data.err) {
-												alert(e.err);
-												return;
-											}
-											urlParam.__proto__ = res.data;
-											urlParam["isShenhe"] = res.data.other;
-											console.log("登陆参数：", urlParam);
-											resolve();
-										},
-										fail: function (res) {
-											alert(`登录失败`);
-										}
-									})
+								url: url,
+								success: function (res) {
+									if (!res || !res.data) {
+										alert(`登录失败`);
+										return;
+									}
+									if (res.data.err) {
+										alert(e.err);
+										return;
+									}
+									urlParam.__proto__ = res.data;
+									urlParam["isShenhe"] = res.data.other;
+									console.log("登陆参数：", urlParam);
+									resolve();
+								},
+								fail: function (res) {
+									alert(`登录失败`);
 								}
-							});
-						},
-						shareInfo: {
-							title: '全新仙侠游戏，挂机收菜，好玩不累！仙宫炼丹，天梯斗法，Boss挑战，神装打造等海量玩法等你体验！',
-							imgUrl: window.getUrl(`icon/shareicon.jpg`),
-							query: "", //查询字符串，必须是 key1=val1&key2=val2 的格式
-						},
+							})
+						}
 					});
 				}
 			});
@@ -187,23 +196,27 @@ window.platform = {
 		this.reportSDK('register')
 	},
 	reportSDK: (type) => {
-		var actor = window['Actor'] ? Actor.ins() : {};
+		if (!window['Actor']) {
+			//如果角色数据不存在，不上报
+			return;
+		}
+		var actor = Actor.ins();
 		h5gamecn.reportData({
 			action: type,//行为  login:登陆 create_role: 创建角色  levelup: 升级事件上报 server: 选择服务器   register：注册 logout：登出      pay:支付上报(选接)
 			app_openid: '',//app_openid 在后端接口getUserInfo会返回
 			server: urlParam.srvid,
-			serverName: urlParam.srvid, //没有传服务器id
+			serverName: actor.serverName,
 			openId: urlParam.openId,//进入游戏时链接内所带的openId
 			nickName: actor.myName, //取不到昵称时传游戏角色名
-			roleId: actor.actorID,//角色id
+			roleId: actor.actorID + "",//角色id
 			roleName: actor.myName,
 			level: actor.level,//等级
 			power: actor.power,//综合实力(战斗力)
 			vip: actor.sVipLv,// vip等级
-			partyName: window['GuildSys'] ? GuildSys.ins().guildName : '',//帮派名(没有帮派不传)
-			balance: window['GFunc'] ? GFunc.getItemCount(CurType.yb) : 0,//剩余元宝数量
+			partyName: GuildSys.ins().guildName,//帮派名(没有帮派不传)
+			balance: actor.getCurrency(2),//剩余元宝数量
 			relifeLevel: actor.zsId,//转生等级
-			createRoleTime: actor ? (new Date(actor.createRoleTime)).getTime() : 0,//创角时间戳（每次上报都需要该字段，某些渠道要求）
+			createRoleTime: (actor.createRoleTime ? (new Date(actor.createRoleTime)).getTime() : 0) + "",//创角时间戳（每次上报都需要该字段，某些渠道要求）
 			// money: '1000',//充值金额（单位分），action为pay需要上报
 			// payType: 'wx',//支付类型，action为pay需要上报
 			// isSuccess: 'true',//支付结果，action为pay需要上报
@@ -265,7 +278,7 @@ window.platform = {
 
 	optios: () => {
 		var obj = wx.getLaunchOptionsSync();
-		obj["isApplets"] = obj.scene == 1089;//从小程序入口
+		obj["isApplets"] = false;//微信不显示
 		console.log("optios：", obj);
 		return obj;
 	},
@@ -316,10 +329,10 @@ window.platform = {
 									let seh = h / 1280
 									let sw = 124 * w / 720;
 									let sh = 58 * seh;
-									let tampH= liuhai ? 40 : 0;
+									let tampH = liuhai ? 40 : 0;
 									button.style.left = (w - sw) / 2;
 									button.style.top = (h - sh) / 2 + 130 * seh;
-					
+
 									button.show();
 								}
 							},
@@ -391,6 +404,7 @@ window.platform = {
 };
 
 wx.onError(function (res) {
+	var result = "senjinGame "
 	if (res) {
 		if (res.stack) {
 			result += res.stack;

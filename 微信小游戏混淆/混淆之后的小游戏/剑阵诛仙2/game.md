@@ -1,4 +1,4 @@
-const versions = '1.0.2'
+const versions = '1.0.3'
 const gameId = 19
 const downloadUrl = `https://gministatic.xinghe66.cn/jzzx/jzzx2`
 
