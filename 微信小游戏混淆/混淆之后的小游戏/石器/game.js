@@ -6,10 +6,10 @@ function init() {
 	params.remoteServerRoot = 'https://cdn01.tribes.black8.com.cn/pub';
 	params.subcontextRoot = '';
 	params.isDebug = false;
-	params.appModules = ['C910n','D374r','F1uv'];
-	params.partName = '100029_wechat';
-	require('src/B24q2');
-	require('src/B14m5');
+	params.appModules = ['B710v','C276y','E6114'];
+	params.partName = '100032_wechat';
+	require('src/A44q4');
+	require('src/A34m7');
 	''
 	window.extendMixin=require('src/miniBase');
 	window.extendLib=require('src/senjinwechat');
@@ -26,7 +26,7 @@ wx.request({
 	method: 'GET',
 	data: {
 		app_id: 6,
-		versions: '1.0.3',
+		versions: '1.0.4',
 		format:'json'
 	},
 	success(res) {

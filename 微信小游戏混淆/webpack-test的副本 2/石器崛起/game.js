@@ -5,10 +5,10 @@ params.isWeChatGame = true;
 params.remoteServerRoot = 'https://cdn01.tribes.black8.com.cn/pub';
 params.subcontextRoot = '';
 params.isDebug = false;
-params.appModules = ['C1zl','D76qz','F9gn'];
+params.appModules = ['B710v','C276y','E6114'];
 params.partName = '100032_wechat';
-require('src/B24q2');
-require('src/B14m5');
+require('src/A44q4');
+require('src/A34m7');
 ''
 window.extendMixin=require('src/miniBase');
 window.extendLib=require('src/senjinwechat');
