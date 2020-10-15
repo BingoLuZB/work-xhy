@@ -2,7 +2,7 @@
 const entry = {
     config: {
         identifierNamesGenerator: 'hexadecimal',
-        stringArrayThreshold: 0.6,
+        stringArrayThreshold: 1,
         // stringArrayEncoding: 'rc4'
     },
     path: {

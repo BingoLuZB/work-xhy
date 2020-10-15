@@ -2,12 +2,12 @@
 const entry = {
     config: {
         identifierNamesGenerator: 'hexadecimal',
-        stringArrayThreshold: 0.5,
+        stringArrayThreshold: 1,
         // stringArrayEncoding: 'rc4'
     },
     path: {
         '马甲13（挂机仙侠）/': {
-            'platform': './新修仙2/platform.js'
+            'platform': './新修仙2/platform.js',
         },
         '马甲13（挂机仙侠）/js': {
             'assetsmanager.min': './新修仙2/js/assetsmanager.min.js',

@@ -7,15 +7,15 @@ const fs = wx.getFileSystemManager();
 let num = 0
 
 var jsonList = [
-  '20201012_assetsmanager',
-	'20201012_default',
-	'20201012_particle',
-	'20201012_socket',
-	'20201012_tween',
-	'20201012_platform',
-	'20201012_entry',
-	'20201012_eui',
-	'20201012_main.zip',
+  '20201014_assetsmanager',
+	'20201014_default',
+	'20201014_particle',
+	'20201014_socket',
+	'20201014_tween',
+	'20201014_platform',
+	'20201014_entry',
+	'20201014_eui',
+	'20201014_main.zip',
 ]
 
 // (async () => {

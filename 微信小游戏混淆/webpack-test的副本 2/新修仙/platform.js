@@ -1,1 +1,434 @@
-var _0x5437=['api/login?openId=','loadSubpackage','renderMode','destroy','getLaunchOptionsSync','Bitmap','level','openId','passId','wxgame','ins','gameId','&srvId=','api/ev?appid=','&pf=','left','startTick','登陆参数：','onError','verify_fail','&openId=','myName','message','登录失败','myBaseName','reportSDK','userInfo','isCustomerBtn','postMessage','content','actorId=','授权:','result','网络异常','fail','context','isOpenShare','webGLTexture','getSetting','&sign=','wxBindCanvasTexture','actorID','error：','backlog/log?type=clienterror','调起分享','checkChat','province','stringify','data','top','Capabilities','login','isLocation','icon/userInfo.png','platform','getSystemInfoSync','avatarUrl','&nonce=','Actor','getOpenDataContext','style','ios','shareAppMessage','shareAppMessage\x20share\x20fail','senjinGame\x20','&ts=','power','getUserInfo','getSystemInfo','getFocusState','upLoadUserInfo','WebGLRenderContext','getUrl','sVipLv','isShenhe','&gameId=','screenHeight','android','全新仙侠游戏，挂机收菜，好玩不累！仙宫炼丹，天梯斗法，Boss挑战，神装打造等海量玩法等你体验！','Texture','showVerify','_setBitmapData','_init参数：','getInstance','BitmapData','log','icon/shareicon.jpg','createDisplayObject','code','createRoleTime','err','getVerifyInfo','$deleteSource','authSetting','pay','create_role','height','&apptype=','&test=','getCurrency','gender','country','guildName','zsId','show','request','nickName','有违禁词','_init','已被禁言','image','reportRoot','server','appid','apptype','serverName','getUserInfo:ok','deleteWebGLTexture','apiRoot','srvid','webgl','serverID','city','optios：'];(function(_0x5aa9e9,_0x54375c){var _0x4ddaf1=function(_0x57e3d7){while(--_0x57e3d7){_0x5aa9e9['push'](_0x5aa9e9['shift']());}};_0x4ddaf1(++_0x54375c);}(_0x5437,0xc5));var _0x4dda=function(_0x5aa9e9,_0x54375c){_0x5aa9e9=_0x5aa9e9-0x0;var _0x4ddaf1=_0x5437[_0x5aa9e9];return _0x4ddaf1;};var _0x2bc1fa=_0x4dda;class _0x57e3d7{[_0x2bc1fa('0xe')](_0xa7d8cc,_0x563172,_0x54bde6){var _0x5768ed=_0x2bc1fa;const _0x5ba241=new egret[(_0x5768ed('0xb'))](sharedCanvas);_0x5ba241[_0x5768ed('0x13')]=![];const _0x3711cd=new egret[(_0x5768ed('0x6'))]();_0x3711cd[_0x5768ed('0x8')](_0x5ba241);const _0x579e07=new egret[(_0x5768ed('0x38'))](_0x3711cd);_0x579e07['width']=_0x563172,_0x579e07[_0x5768ed('0x17')]=_0x54bde6;if(egret[_0x5768ed('0x65')][_0x5768ed('0x35')]==_0x5768ed('0x2f')){const _0x46d0ff=egret['wxgame'][_0x5768ed('0x7a')][_0x5768ed('0xa')](),_0x314ffd=_0x46d0ff[_0x5768ed('0x56')];!_0x314ffd[_0x5768ed('0x5b')]&&egret[_0x5768ed('0x43')](_0x193c0b=>{var _0x5d9289=_0x5768ed;return egret['WebGLUtils'][_0x5d9289('0x2c')](_0x5ba241['webGLTexture']),_0x5ba241[_0x5d9289('0x58')]=null,![];},this);}return _0x579e07;}[_0x2bc1fa('0x4f')](_0x5b4c01){var _0x3548e8=_0x2bc1fa;const _0x5be560=wx[_0x3548e8('0x6e')]();_0x5be560['postMessage'](_0x5b4c01);}}window['platform']={'name':_0x2bc1fa('0x3c'),'openDataContext':new _0x57e3d7(),'sdkInit'(){return new Promise((_0xeb165f,_0x294812)=>{var _0x26bec6=_0x4dda;if(urlParam['isLocation']){_0xeb165f();return;}h5gamecn[_0x26bec6('0x23')]({'getLoginParamsCallBack':function(_0x4053b2){var _0x50d24d=_0x26bec6;for(const _0x254f76 in _0x4053b2){let _0xef5c96=_0x254f76==_0x50d24d('0x3b')?_0x50d24d('0x28'):_0x254f76;urlParam[_0xef5c96]=_0x4053b2[_0x254f76];}console[_0x50d24d('0xc')](_0x50d24d('0x9'),urlParam),_0xeb165f();},'shareInfo':{'title':_0x26bec6('0x5'),'imgUrl':window['getUrl']('icon/shareicon.jpg'),'query':''}});});},'login'(){return new Promise((_0x5a9d06,_0x4d5db9)=>{var _0xa34169=_0x4dda;if(urlParam[_0xa34169('0x67')]){_0x5a9d06();return;}var _0x3dcd01=0x0;wx[_0xa34169('0x77')]({'success'(_0xde0924){var _0x51aa5a=_0xa34169;if(_0xde0924[_0x51aa5a('0x69')]==_0x51aa5a('0x70'))_0x3dcd01=0x2;else _0xde0924['platform']==_0x51aa5a('0x4')&&(_0x3dcd01=0x1);window['phoneType']=_0xde0924[_0x51aa5a('0x69')];},'complete'(){var _0x3638e0=_0xa34169;if(0x0){var _0x446406='?&apptype=1&root=https://z1c.h5eco.com/1/z1client/&apiRoot=https://z1api.h5eco.com/&reportRoot=https://z1back.h5eco.com/&openId=f6f596daf86060d8b5cf5a80d5e74fbc&passId=30007&appid=30007&srvid=20001&wss=wss://z1s1.h5eco.com:9016&gameId=103&ts=1598924714&nonce=mjwCy&sign=a55e82102d2c0c7e4bfab0e5867615d5&ev=60&gv=59&actorid=4541985&isnew=false&other=false&page=1',_0x2d6c34=_0x446406['split']('&');for(var _0x229cbe=0x0;_0x229cbe<_0x2d6c34['length'];_0x229cbe++){var _0x45276d=_0x2d6c34[_0x229cbe]['split']('=');urlParam[_0x45276d[0x0]]=_0x45276d[0x1];}}var _0x5bdd1d=0x0;wx[_0x3638e0('0x20')]({'url':urlParam[_0x3638e0('0x2d')]+_0x3638e0('0x40')+urlParam[_0x3638e0('0x28')],'success':_0x5a71ee=>_0x5bdd1d=_0x5a71ee[_0x3638e0('0x63')]['ev'],'complete':()=>{var _0x12a466=_0x3638e0;console[_0x12a466('0xc')]('aipEv:',_0x5bdd1d);let _0x182a8f=urlParam[_0x12a466('0x2d')]+_0x12a466('0x33')+urlParam[_0x12a466('0x3a')]+_0x12a466('0x18')+urlParam[_0x12a466('0x29')]+'&appid='+urlParam['appid']+_0x12a466('0x2')+urlParam[_0x12a466('0x3e')]+_0x12a466('0x74')+urlParam['ts']+_0x12a466('0x6c')+urlParam['nonce']+_0x12a466('0x5a')+urlParam['sign']+_0x12a466('0x41')+_0x3dcd01+_0x12a466('0x19')+(urlParam['ev']>_0x5bdd1d?0x1:0x0);wx[_0x12a466('0x20')]({'url':_0x182a8f,'success':function(_0x1041c1){var _0x4ea871=_0x12a466;if(!_0x1041c1||!_0x1041c1['data']){alert(_0x4ea871('0x4a'));return;}if(_0x1041c1['data'][_0x4ea871('0x11')]){alert(e[_0x4ea871('0x11')]);return;}urlParam['__proto__']=_0x1041c1[_0x4ea871('0x63')],urlParam[_0x4ea871('0x1')]=_0x1041c1['data']['other'],console[_0x4ea871('0xc')](_0x4ea871('0x44'),urlParam),_0x5a9d06();},'fail':function(_0x34f3f2){var _0x5c6742=_0x12a466;alert(_0x5c6742('0x4a'));}});}});}});});},'setShareInfo':()=>{var _0x2f7a05=_0x2bc1fa,_0x4304ab=window[_0x2f7a05('0x6d')][_0x2f7a05('0x3d')](),_0x396d37={'title':_0x2f7a05('0x5'),'imgUrl':window[_0x2f7a05('0x7b')]('icon/shareicon.jpg'),'query':_0x2f7a05('0x51')+_0x4304ab['actorID']+_0x2f7a05('0x3f')+_0x4304ab[_0x2f7a05('0x30')]+'&openId='+urlParam[_0x2f7a05('0x3a')]};h5gamecn['shareInfo']=_0x396d37;},'paySDK':(_0x437641,_0x473cfa,_0x3b42b5,_0x27cfaf)=>{var _0x5b9285=_0x2bc1fa;h5gamecn[_0x5b9285('0x15')](_0x437641,{'gameOrderId':_0x473cfa,'openId':urlParam[_0x5b9285('0x3a')],'roleId':Actor[_0x5b9285('0x3d')]()[_0x5b9285('0x5c')],'roleName':Actor['ins']()[_0x5b9285('0x48')],'roleLevel':Actor[_0x5b9285('0x3d')]()[_0x5b9285('0x39')],'serverId':urlParam[_0x5b9285('0x2e')],'serverName':Actor['ins']()[_0x5b9285('0x2a')],'goodsName':_0x3b42b5,'goodsDesc':_0x27cfaf,'ext':'','goodsId':_0x437641+''});},'getUserInfo'(){return new Promise((_0x3aafad,_0xb25e2)=>{var _0x4968ef=_0x4dda;wx[_0x4968ef('0x76')]({'withCredentials':!![],'success':function(_0x21ae21){var _0x5b43f1=_0x4968ef,_0x2c4013=_0x21ae21[_0x5b43f1('0x4d')],_0x2e8ab0=_0x2c4013[_0x5b43f1('0x21')],_0xed873b=_0x2c4013[_0x5b43f1('0x6b')],_0x5a0009=_0x2c4013[_0x5b43f1('0x1b')],_0x34d7a5=_0x2c4013[_0x5b43f1('0x61')],_0x2198af=_0x2c4013[_0x5b43f1('0x31')],_0x13dbd5=_0x2c4013[_0x5b43f1('0x1c')];_0x3aafad(_0x2c4013);}});});},'reportLogin':function(){var _0x4ef28f=_0x2bc1fa;this['reportSDK'](_0x4ef28f('0x66'));},'reportCreateRole':function(){var _0x4770ae=_0x2bc1fa;this[_0x4770ae('0x4c')](_0x4770ae('0x16'));},'reportLevelup':function(){var _0x43b1ca=_0x2bc1fa;this[_0x43b1ca('0x4c')]('levelup');},'reportSelectServer':function(){var _0x14ac36=_0x2bc1fa;this[_0x14ac36('0x4c')](_0x14ac36('0x27'));},'reportRegister':function(){var _0x1934bc=_0x2bc1fa;this[_0x1934bc('0x4c')]('register');},'reportSDK':_0xa791d=>{var _0x316426=_0x2bc1fa;if(!window[_0x316426('0x6d')])return;var _0x590931=Actor[_0x316426('0x3d')]();h5gamecn['reportData']({'action':_0xa791d,'app_openid':'','server':urlParam[_0x316426('0x2e')],'serverName':_0x590931[_0x316426('0x2a')],'openId':urlParam[_0x316426('0x3a')],'nickName':_0x590931[_0x316426('0x48')],'roleId':_0x590931[_0x316426('0x5c')]+'','roleName':_0x590931[_0x316426('0x48')],'level':_0x590931[_0x316426('0x39')],'power':_0x590931[_0x316426('0x75')],'vip':_0x590931[_0x316426('0x0')],'partyName':GuildSys['ins']()[_0x316426('0x1d')],'balance':_0x590931[_0x316426('0x1a')](0x2),'relifeLevel':_0x590931[_0x316426('0x1e')],'createRoleTime':(_0x590931[_0x316426('0x10')]?new Date(_0x590931['createRoleTime'])['getTime']():0x0)+''});},'checkStr':(_0x318623,_0x2daf46,_0x3315ef)=>{return new Promise((_0x4a65a7,_0xe14f92)=>{var _0x5bc2ff=_0x4dda,_0x502523=window['Actor'][_0x5bc2ff('0x3d')](),_0x17b975={'server_id':urlParam['srvid']+'','server_name':urlParam['srvid']+'','chat_type':0x1,'chat_channel':_0x3315ef+'','chat_scene':_0x2daf46+'','chat_content':_0x318623,'sender_openId':urlParam['openId']+'','sender_level':_0x502523[_0x5bc2ff('0x39')]+'','sender_name':_0x502523[_0x5bc2ff('0x4b')],'sender_vip_level':_0x502523['vipLv'],'open_time':_0x502523['serverOpenDay']+''};h5gamecn[_0x5bc2ff('0x60')](_0x17b975,function(_0x5f3245){var _0x2184bd=_0x5bc2ff,_0x3dbacb=_0x5f3245[_0x2184bd('0x53')];if(_0x3dbacb=='success')_0x4a65a7(_0x5f3245[_0x2184bd('0x50')]);else{if(_0x3dbacb==_0x2184bd('0x46')){var _0x1e7839=_0x5f3245[_0x2184bd('0xf')],_0xfb6572='';if(_0x1e7839==-0x1)_0xfb6572=_0x2184bd('0x22');else{if(_0x1e7839==-0x2)_0xfb6572=_0x2184bd('0x24');else{if(_0x1e7839==-0x3){}}}alert(_0xfb6572),_0xe14f92(_0xfb6572);}else _0x3dbacb==_0x2184bd('0x55')&&_0x5f3245[_0x2184bd('0xf')]==-0x9&&(alert(_0x2184bd('0x54')),_0xe14f92(_0x2184bd('0x54')));}});});},'loadJs'(_0x5b0dac){return new Promise(_0x399546=>{var _0x422ea5=_0x4dda;wx[_0x422ea5('0x34')]({'name':_0x5b0dac,'success':_0x399546,'fail':()=>{}});});},'optios':()=>{var _0x5a2529=_0x2bc1fa,_0x21c4b5=wx[_0x5a2529('0x37')]();return _0x21c4b5['isApplets']=![],console[_0x5a2529('0xc')](_0x5a2529('0x32'),_0x21c4b5),_0x21c4b5;},'getUserInfoBtn':_0xdb3c97=>{return new Promise(_0x3b5a08=>{var _0xe27de1=_0x4dda;wx[_0xe27de1('0x59')]({'complete'(_0x341588){var _0xb3bfe9=_0xe27de1;let _0x24fb81=!!_0x341588[_0xb3bfe9('0x14')]['scope.userInfo'];if(!_0x24fb81){let _0xef2c40=wx['getSystemInfoSync']();var _0x3efea7=_0xef2c40['screenWidth'],_0xf805a4=_0xef2c40['screenHeight'];let _0x3e8999=_0xf805a4/0x500,_0x302ae1=0x7c*_0x3efea7/0x2d0,_0x41e78e=0x3a*_0x3e8999;const _0x4294d5=wx['createUserInfoButton']({'type':_0xb3bfe9('0x25'),'image':window[_0xb3bfe9('0x7b')](_0xb3bfe9('0x68')),'style':{'left':(_0x3efea7-_0x302ae1)/0x2,'top':(_0xf805a4-_0x41e78e)/0x2+0x96*_0x3e8999,'width':_0x302ae1,'height':_0x41e78e}});_0x4294d5['onTap'](_0xcf339b=>{var _0x6b3f1e=_0xb3bfe9,_0x28ce1b=!![];_0xcf339b['errMsg']==_0x6b3f1e('0x2b')&&(_0x4294d5[_0x6b3f1e('0x36')](),_0x28ce1b=![]),console[_0x6b3f1e('0xc')](_0x6b3f1e('0x52'),_0xcf339b),h5gamecn[_0x6b3f1e('0x79')](_0xcf339b),_0xdb3c97(_0x28ce1b);}),_0x4294d5['hide'](),_0x3b5a08([!![],_0x4a0749=>{var _0x528972=_0xb3bfe9;if(_0x4294d5){let _0x29ff80=wx[_0x528972('0x6a')]();var _0x5ba438=_0x29ff80['screenWidth'],_0x290806=_0x29ff80[_0x528972('0x3')];let _0x2869f2=_0x290806/0x500,_0x23933c=0x7c*_0x5ba438/0x2d0,_0x226127=0x3a*_0x2869f2,_0x55a771=_0x4a0749?0x28:0x0;_0x4294d5['style'][_0x528972('0x42')]=(_0x5ba438-_0x23933c)/0x2,_0x4294d5[_0x528972('0x6f')][_0x528972('0x64')]=(_0x290806-_0x226127)/0x2+0x82*_0x2869f2,_0x4294d5[_0x528972('0x1f')]();}},()=>{_0x4294d5&&_0x4294d5['hide']();}]);}else _0x3b5a08([![]]);}});});},'getLoadingBg':()=>{return'bg2.jpg';},'getFocus':()=>new Promise(_0x3bfb3f=>h5gamecn[_0x2bc1fa('0x78')]({'openId':urlParam['openId']},_0x40840c=>_0x3bfb3f([_0x40840c==0x0,_0x40840c==0x1,()=>h5gamecn['showQrCode']()]))),'getVerify':()=>new Promise(_0x3374cb=>h5gamecn[_0x2bc1fa('0x12')](_0x157833=>_0x3374cb([_0x157833,_0x108e4b=>h5gamecn[_0x2bc1fa('0x7')](_0x108e4b)]))),'getShare':_0x199f04=>new Promise(_0x409d0c=>h5gamecn[_0x2bc1fa('0x57')](_0x88c70c=>{h5gamecn['setShareCallback'](_0x199f04),_0x409d0c([!!_0x88c70c,!![],()=>{var _0x19c686=_0x4dda,_0x1651d7=window[_0x19c686('0x6d')][_0x19c686('0x3d')](),_0x5e82df={'title':_0x19c686('0x5'),'imgUrl':window[_0x19c686('0x7b')](_0x19c686('0xd')),'query':_0x19c686('0x51')+_0x1651d7['actorID']+_0x19c686('0x3f')+_0x1651d7[_0x19c686('0x30')]+_0x19c686('0x47')+urlParam[_0x19c686('0x3a')]};h5gamecn['showShare'](_0x5e82df);}]);})),'shareAppMessage':()=>{var _0x33546c=_0x2bc1fa,_0x2981af=window[_0x33546c('0x6d')][_0x33546c('0x3d')]();console['log'](_0x33546c('0x5f')),wx[_0x33546c('0x71')]({'title':_0x33546c('0x5'),'imageUrl':window[_0x33546c('0x7b')](_0x33546c('0xd')),'query':'actorId='+_0x2981af[_0x33546c('0x5c')]+_0x33546c('0x3f')+_0x2981af[_0x33546c('0x30')]+_0x33546c('0x47')+urlParam[_0x33546c('0x3a')],'success':function(_0x36544e){var _0xe7d077=_0x33546c;console[_0xe7d077('0xc')]('shareAppMessage\x20share\x20success');},'fail':function(_0x9058d9){var _0x5c9d2f=_0x33546c;console[_0x5c9d2f('0xc')](_0x5c9d2f('0x72'));}});},'getKeFu':()=>new Promise(_0x7119da=>h5gamecn[_0x2bc1fa('0x4e')](_0x101746=>_0x7119da(_0x101746[_0x2bc1fa('0x1f')]==0x1)))},wx[_0x2bc1fa('0x45')](function(_0x5d1980){var _0x57609a=_0x2bc1fa,_0x3e082f=_0x57609a('0x73');_0x5d1980?_0x5d1980['stack']?_0x3e082f+=_0x5d1980['stack']:_0x3e082f+=_0x57609a('0x5d')+_0x5d1980[_0x57609a('0x49')]:_0x3e082f+='error：';var _0x42c4d3=window[_0x57609a('0x6d')]?Actor[_0x57609a('0x3d')]():{};wx[_0x57609a('0x20')]({'url':urlParam[_0x57609a('0x26')]+_0x57609a('0x5e'),'method':'POST','data':JSON[_0x57609a('0x62')]({'openId':urlParam[_0x57609a('0x3a')],'name':_0x42c4d3['myName'],'apptype':urlParam['apptype']+'','appid':urlParam[_0x57609a('0x28')],'serverid':urlParam['srvid'],'ev':urlParam['ev'],'gv':urlParam['gv'],'text':_0x3e082f})}),alert(_0x3e082f);});
+/**
+ * 请在白鹭引擎的Main.ts中调用 platform.login() 方法调用至此处。
+ */
+class WxgameOpenDataContext {
+
+	createDisplayObject(type, width, height) {
+		const bitmapdata = new egret.BitmapData(sharedCanvas);
+		bitmapdata.$deleteSource = false;
+		const texture = new egret.Texture();
+		texture._setBitmapData(bitmapdata);
+		const bitmap = new egret.Bitmap(texture);
+		bitmap.width = width;
+		bitmap.height = height;
+
+		if (egret.Capabilities.renderMode == "webgl") {
+			const renderContext = egret.wxgame.WebGLRenderContext.getInstance();
+			const context = renderContext.context;
+			////需要用到最新的微信版本
+			////调用其接口WebGLRenderingContext.wxBindCanvasTexture(number texture, Canvas canvas)
+			////如果没有该接口，会进行如下处理，保证画面渲染正确，但会占用内存。
+			if (!context.wxBindCanvasTexture) {
+				egret.startTick((timeStarmp) => {
+					egret.WebGLUtils.deleteWebGLTexture(bitmapdata.webGLTexture);
+					bitmapdata.webGLTexture = null;
+					return false;
+				}, this);
+			}
+		}
+		return bitmap;
+	}
+
+
+	postMessage(data) {
+		const openDataContext = wx.getOpenDataContext();
+		openDataContext.postMessage(data);
+	}
+}
+window.platform = {
+	name: 'wxgame',
+	openDataContext: new WxgameOpenDataContext(),
+	sdkInit() {
+		return new Promise((resolve, reject) => {
+			if (urlParam.isLocation) {
+				//内网
+				resolve();
+				return;
+			}
+
+			h5gamecn._init({
+				//获取登陆参数回调
+				getLoginParamsCallBack: function (params) {
+					for (const key in params) {
+						let keyName = key == "passId" ? "appid" : key;
+						urlParam[keyName] = params[key];
+					}
+					console.log("_init参数：", urlParam);
+					resolve();
+				},
+				shareInfo: {
+					title: '全新仙侠游戏，挂机收菜，好玩不累！仙宫炼丹，天梯斗法，Boss挑战，神装打造等海量玩法等你体验！',
+					imgUrl: window.getUrl(`icon/shareicon.jpg`),
+					query: "", //查询字符串，必须是 key1=val1&key2=val2 的格式
+				},
+			});
+
+		});
+	},
+	login() {
+		return new Promise((resolve, reject) => {
+			if (urlParam.isLocation) {
+				//内网
+				resolve();
+				return;
+			}
+			var pfType = 0;
+			wx.getSystemInfo({
+				success(res) {
+					if (res.platform == "ios") {
+						pfType = 2;
+					} else if (res.platform == "android") {
+						pfType = 1;
+					}
+					window["phoneType"] = res.platform;
+				},
+				complete() {
+					// 登录某个玩家
+					if (0) {
+						var search = '?&apptype=1&root=https://z1c.h5eco.com/1/z1client/&apiRoot=https://z1api.h5eco.com/&reportRoot=https://z1back.h5eco.com/&openId=f6f596daf86060d8b5cf5a80d5e74fbc&passId=30007&appid=30007&srvid=20001&wss=wss://z1s1.h5eco.com:9016&gameId=103&ts=1598924714&nonce=mjwCy&sign=a55e82102d2c0c7e4bfab0e5867615d5&ev=60&gv=59&actorid=4541985&isnew=false&other=false&page=1';
+						var param = search.split("&");
+						for (var i = 0; i < param.length; i++) {
+							var strArr = param[i].split("=");
+							urlParam[strArr[0]] = strArr[1];
+						}
+					}
+					//获取后台ev
+					var aipEv = 0;
+					wx.request({
+						url: urlParam.apiRoot + 'api/ev?appid=' + urlParam.appid,
+						success: res => aipEv = res.data.ev,
+						complete: () => {
+							console.log("aipEv:", aipEv);
+							let url = urlParam.apiRoot + 'api/login?openId=' + urlParam.openId +
+								'&apptype=' + urlParam.apptype +
+								'&appid=' + urlParam.appid +
+								'&gameId=' + urlParam.gameId +
+								'&ts=' + urlParam.ts +
+								'&nonce=' + urlParam.nonce +
+								'&sign=' + urlParam.sign +
+								'&pf=' + pfType +
+								'&test=' + (urlParam.ev > aipEv ? 1 : 0);
+							wx.request({
+								url: url,
+								success: function (res) {
+									if (!res || !res.data) {
+										alert(`登录失败`);
+										return;
+									}
+									if (res.data.err) {
+										alert(e.err);
+										return;
+									}
+									urlParam.__proto__ = res.data;
+									urlParam["isShenhe"] = res.data.other;
+									console.log("登陆参数：", urlParam);
+									resolve();
+								},
+								fail: function (res) {
+									alert(`登录失败`);
+								}
+							})
+						}
+					});
+				}
+			});
+		})
+	},
+
+	//在设置actorID数据，重设分享数据
+	setShareInfo: () => {
+		var actor = window["Actor"].ins();
+		var param = {
+			title: "全新仙侠游戏，挂机收菜，好玩不累！仙宫炼丹，天梯斗法，Boss挑战，神装打造等海量玩法等你体验！",
+			imgUrl: window.getUrl(`icon/shareicon.jpg`),
+			query: `actorId=${actor.actorID}&srvId=${actor.serverID}&openId=${urlParam.openId}`,
+		};
+		h5gamecn.shareInfo = param;
+	},
+
+	paySDK: (money, order, name, desc) => {
+		h5gamecn.pay(money, {
+			gameOrderId: order,
+			openId: urlParam.openId,
+			roleId: Actor.ins().actorID,
+			roleName: Actor.ins().myName,
+			roleLevel: Actor.ins().level,
+			serverId: urlParam.srvid,
+			serverName: Actor.ins().serverName,
+			goodsName: name,
+			goodsDesc: desc,
+			ext: '',
+			goodsId: money + '',
+		});
+	},
+
+	getUserInfo() {
+		return new Promise((resolve, reject) => {
+			wx.getUserInfo({
+				withCredentials: true,
+				success: function (res) {
+					var userInfo = res.userInfo
+					var nickName = userInfo.nickName
+					var avatarUrl = userInfo.avatarUrl
+					var gender = userInfo.gender //性别 0：未知、1：男、2：女
+					var province = userInfo.province
+					var city = userInfo.city
+					var country = userInfo.country
+					resolve(userInfo);
+				}
+			})
+		})
+	},
+
+	reportLogin: function () {
+		this.reportSDK('login')
+	},
+	reportCreateRole: function () {
+		this.reportSDK('create_role')
+	},
+	reportLevelup: function () {
+		this.reportSDK('levelup')
+	},
+	reportSelectServer: function () {
+		this.reportSDK('server')
+	},
+	reportRegister: function () {
+		this.reportSDK('register')
+	},
+	reportSDK: (type) => {
+		if (!window['Actor']) {
+			//如果角色数据不存在，不上报
+			return;
+		}
+		var actor = Actor.ins();
+		h5gamecn.reportData({
+			action: type,//行为  login:登陆 create_role: 创建角色  levelup: 升级事件上报 server: 选择服务器   register：注册 logout：登出      pay:支付上报(选接)
+			app_openid: '',//app_openid 在后端接口getUserInfo会返回
+			server: urlParam.srvid,
+			serverName: actor.serverName,
+			openId: urlParam.openId,//进入游戏时链接内所带的openId
+			nickName: actor.myName, //取不到昵称时传游戏角色名
+			roleId: actor.actorID + "",//角色id
+			roleName: actor.myName,
+			level: actor.level,//等级
+			power: actor.power,//综合实力(战斗力)
+			vip: actor.sVipLv,// vip等级
+			partyName: GuildSys.ins().guildName,//帮派名(没有帮派不传)
+			balance: actor.getCurrency(2),//剩余元宝数量
+			relifeLevel: actor.zsId,//转生等级
+			createRoleTime: (actor.createRoleTime ? (new Date(actor.createRoleTime)).getTime() : 0) + "",//创角时间戳（每次上报都需要该字段，某些渠道要求）
+			// money: '1000',//充值金额（单位分），action为pay需要上报
+			// payType: 'wx',//支付类型，action为pay需要上报
+			// isSuccess: 'true',//支付结果，action为pay需要上报
+			// productId: '11002',//支付商品ID，action为pay需要上报
+		});
+	},
+
+	checkStr: (str, scenetype, type) => {
+		return new Promise((resolve, reject) => {
+			var actor = window["Actor"].ins();
+			var param = {
+				server_id: urlParam.srvid + "",
+				server_name: urlParam.srvid + "",
+				chat_type: 1,
+				chat_channel: type + "",
+				chat_scene: scenetype + "",
+				chat_content: str,
+				sender_openId: urlParam.openId + "",
+				sender_level: actor.level + "",
+				sender_name: actor.myBaseName,
+				sender_vip_level: actor.vipLv,
+				open_time: actor.serverOpenDay + "",
+			};
+			h5gamecn.checkChat(param, function (result) {
+				var resultStr = result.result
+				if (resultStr == "success") {
+					resolve(result.content);
+				} else if (resultStr == "verify_fail") {
+					var code = result.code;
+					var tipstr = "";
+					if (code == -1) {
+						tipstr = "有违禁词";
+					} else if (code == -2) {
+						tipstr = "已被禁言";
+					} else if (code == -3) {
+						//return;//没有任何提示
+					}
+					alert(tipstr);
+					reject(tipstr);
+				} else if (resultStr == "fail" && result.code == -9) {
+					alert("网络异常");
+					reject("网络异常");
+				}
+			})
+
+		});
+	},
+
+
+	loadJs(path) {
+		return new Promise(resolve => {
+			wx.loadSubpackage({
+				name: path,
+				success: resolve,
+				fail: () => { },
+			})
+		});
+	},
+
+	optios: () => {
+		var obj = wx.getLaunchOptionsSync();
+		obj["isApplets"] = false;//微信不显示
+		console.log("optios：", obj);
+		return obj;
+	},
+
+	getUserInfoBtn: (callback) => {
+		return new Promise((resolve) => {
+			wx.getSetting({
+				complete(res) {
+					let b = !!res.authSetting["scope.userInfo"];
+					if (!b) {
+						let sysInfo = wx.getSystemInfoSync();
+						//获取微信界面大小
+						var w = sysInfo.screenWidth;
+						var h = sysInfo.screenHeight;
+						let seh = h / 1280
+						let sw = 124 * w / 720;
+						let sh = 58 * seh;
+						const button = wx.createUserInfoButton({
+							type: 'image',
+							image: window.getUrl(`icon/userInfo.png`),
+							style: {
+								left: (w - sw) / 2,
+								top: (h - sh) / 2 + 150 * seh,
+								width: sw,
+								height: sh,
+							}
+						});
+						button.onTap((info) => {
+							var ishow = true;
+							if (info.errMsg == "getUserInfo:ok") {
+								button.destroy();
+								ishow = false;
+							}
+
+							console.log("授权:", info);
+							h5gamecn.upLoadUserInfo(info);
+							callback(ishow);
+						});
+						button.hide();//先隐藏
+
+						resolve([true,
+							(liuhai) => {
+								if (button) {
+									let sysInfo = wx.getSystemInfoSync();
+									//获取微信界面大小
+									var w = sysInfo.screenWidth;
+									var h = sysInfo.screenHeight;
+									let seh = h / 1280
+									let sw = 124 * w / 720;
+									let sh = 58 * seh;
+									let tampH = liuhai ? 40 : 0;
+									button.style.left = (w - sw) / 2;
+									button.style.top = (h - sh) / 2 + 130 * seh;
+
+									button.show();
+								}
+							},
+							() => {
+
+								button && button.hide();
+							}]);
+					} else {
+						resolve([false]);
+					}
+				}
+			});
+		});
+	},
+
+	//特殊loading背景
+	getLoadingBg: () => {
+		return "bg2.jpg";
+	},
+
+	getFocus: () => new Promise(resolve => h5gamecn.getFocusState({ openId: urlParam.openId }, (state) => resolve([
+		state == 0,	// state: -1 不显示关注按钮 0未关注 1已关注
+		state == 1,	// 是否已经关注
+		() => h5gamecn.showQrCode()
+	]))),
+	getVerify: () => new Promise(resolve => h5gamecn.getVerifyInfo((info) => resolve([
+		info,
+		(func) => h5gamecn.showVerify(func)
+	]))),
+
+
+	getShare: (callback) => new Promise(resolve => h5gamecn.isOpenShare((open) => {
+		//可以在这里领奖
+		//func(result); //result  true 分享成功 false 分享失败
+		h5gamecn.setShareCallback(callback);
+		resolve([
+			!!open,
+			true,
+			() => {
+				var actor = window["Actor"].ins();
+				var param = {
+					title: "全新仙侠游戏，挂机收菜，好玩不累！仙宫炼丹，天梯斗法，Boss挑战，神装打造等海量玩法等你体验！",
+					imgUrl: window.getUrl(`icon/shareicon.jpg`),
+					query: `actorId=${actor.actorID}&srvId=${actor.serverID}&openId=${urlParam.openId}`,
+				};
+				h5gamecn.showShare(param);
+			},
+		])
+	})),
+
+	//主动拉起转发分享
+	shareAppMessage: () => {
+		var actor = window["Actor"].ins();
+		console.log("调起分享");
+		wx.shareAppMessage({
+			title: "全新仙侠游戏，挂机收菜，好玩不累！仙宫炼丹，天梯斗法，Boss挑战，神装打造等海量玩法等你体验！",
+			imageUrl: window.getUrl(`icon/shareicon.jpg`),
+			query: `actorId=${actor.actorID}&srvId=${actor.serverID}&openId=${urlParam.openId}`,
+			success: function (e) {
+				console.log("shareAppMessage share success")
+			},
+			fail: function (e) {
+				console.log("shareAppMessage share fail")
+			}
+		})
+	},
+
+	getKeFu: () => new Promise(resolve => h5gamecn.isCustomerBtn((res) => resolve(res.show == 1))),
+};
+
+wx.onError(function (res) {
+	var result = "senjinGame "
+	if (res) {
+		if (res.stack) {
+			result += res.stack;
+		} else {
+			result += 'error：' + res.message;
+		}
+	} else {
+		result += 'error：';
+	}
+	// 上报
+	var actor = window['Actor'] ? Actor.ins() : {};
+	wx.request({
+		url: urlParam.reportRoot + 'backlog/log?type=clienterror',
+		method: "POST",
+		data: JSON.stringify({
+			openId: urlParam.openId,
+			name: actor.myName,
+			apptype: urlParam.apptype + '',
+			appid: urlParam.appid,
+			serverid: urlParam.srvid,
+			ev: urlParam.ev,
+			gv: urlParam.gv,
+			text: result
+		}),
+	})
+	alert(result);
+});

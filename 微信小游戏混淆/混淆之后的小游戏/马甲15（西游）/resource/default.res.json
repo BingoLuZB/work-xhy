@@ -1,0 +1,20 @@
+{
+	"groups": [
+		{
+			"keys": "touch_1a_png,touch_1b_png",
+			"name": "preload"
+		}
+	],
+	"resources": [
+		{
+			"url": "assets/touch_1a.png",
+			"type": "image",
+			"name": "touch_1a_png"
+		},
+		{
+			"url": "assets/touch_1b.png",
+			"type": "image",
+			"name": "touch_1b_png"
+		}
+	]
+}

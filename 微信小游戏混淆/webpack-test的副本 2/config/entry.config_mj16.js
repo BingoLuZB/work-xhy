@@ -1,22 +1,22 @@
-//马甲16（剑侠无双） 新修仙的包
+//马甲16（剑侠无双） 西游的包
 const entry = {
     config: {
-        identifierNamesGenerator: 'hexadecimal',
-        stringArrayThreshold: 0.8,
+        // identifierNamesGenerator: 'hexadecimal',
+        stringArrayThreshold: 0.6,
         // stringArrayEncoding: 'rc4'
     },
     path: {
-        '马甲16（剑侠无双）/': {
-            'platform': './新修仙/platform.js'
+        '马甲16/js': {
+            // 'index': './西游/js/index.js',
         },
-        '马甲16（剑侠无双）/js': {
-            'assetsmanager.min': './新修仙/js/assetsmanager.min.js',
-            'default.thm': './新修仙/js/default.thm.js',
-            'entry.min': './新修仙/js/entry.min.js',
-            'main.min': './新修仙/js/main.min.js',
-            'particle.min': './新修仙/js/particle.min.js',
-            'socket.min': './新修仙/js/socket.min.js',
-            'tween.min': './新修仙/js/tween.min.js'
+        '马甲16/publish': {
+            'start': './西游/publish/start.js',
+        },
+        '马甲16/stage1': {
+            'game': './西游/stage1/game.js',
+        },
+        '马甲16/stage2': {
+            'game2': './西游/stage2/game.js',
         },
     }
 };

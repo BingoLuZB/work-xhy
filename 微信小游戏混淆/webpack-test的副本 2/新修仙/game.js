@@ -50,7 +50,7 @@ window.urlParam = {
 	root: 'https://z1c.h5eco.com/1/z1client/',
 	apiRoot: 'https://z1api.h5eco.com/',
 	reportRoot: `https://z1back.h5eco.com/`,
-	ev: 88,
+	ev: 91,
 };
 
 window.getUrl = (url) => {

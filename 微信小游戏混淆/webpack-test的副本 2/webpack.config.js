@@ -54,6 +54,7 @@ module.exports = {
             //  identifierNamesGenerator:'hexadecimal', //数组长标识符
             log: true, //是否允许打印
             renameGlobals: true,
+            reservedStrings: ['/\0/'],
             rotateStringArray: true,
             selfDefending: false,
             stringArray: true,
