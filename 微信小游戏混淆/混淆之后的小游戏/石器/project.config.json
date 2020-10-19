@@ -35,6 +35,8 @@
   "libVersion": "game",
   "appid": "wx92bddf441f89bf9a",
   "projectname": "丛林猎人",
+  "simulatorType": "wechat",
+  "simulatorPluginLibVersion": {},
   "condition": {
     "search": {
       "current": -1,

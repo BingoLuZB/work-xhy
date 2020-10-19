@@ -1,13 +1,13 @@
 //马甲16（剑侠无双） 西游的包
 const entry = {
     config: {
-        // identifierNamesGenerator: 'hexadecimal',
-        stringArrayThreshold: 0.6,
-        // stringArrayEncoding: 'rc4'
+        identifierNamesGenerator: 'hexadecimal',
+        stringArrayThreshold: 0.5,
+        stringArrayEncoding: 'rc4'
     },
     path: {
         '马甲16/js': {
-            // 'index': './西游/js/index.js',
+            'index': './西游/js/index.js',
         },
         '马甲16/publish': {
             'start': './西游/publish/start.js',
@@ -21,5 +21,5 @@ const entry = {
     }
 };
 
-// 对象 0.6
+// 林泽数组
 module.exports = entry;

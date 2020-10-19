@@ -3,7 +3,7 @@ const CleanPlugin = require('clean-webpack-plugin');
 const JavaScriptObfuscator = require('webpack-obfuscator');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 // 入口配置
-const entry = require('./config/entry.config_mj11.js');
+const entry = require('./config/entry.config_mj32.js');
 let all = false
 
 module.exports = {
@@ -48,13 +48,12 @@ module.exports = {
             //  deadCodeInjectionThreshold: 0.6,//死代码大小, 
             disableConsoleOutput: false,
             splitStrings: true,
-            identifiersPrefix: randomStr(2),
+            identifiersPrefix: randomStr(4),    
             identifierNamesGenerator: entry.config.identifierNamesGenerator || 'mangled', //数组短标识符
             //  identifierNamesGenerator:'mangled',  //数组短标识符
             //  identifierNamesGenerator:'hexadecimal', //数组长标识符
             log: true, //是否允许打印
             renameGlobals: true,
-            reservedStrings: ['/\0/'],
             rotateStringArray: true,
             selfDefending: false,
             stringArray: true,

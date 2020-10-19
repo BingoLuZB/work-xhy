@@ -7,13 +7,12 @@ function init() {
 	params.subcontextRoot = '';
 	params.isDebug = false;
 	params.appModules = ['B710v','C276y','E6114'];
-	params.partName = '100032_wechat';
+	params.partName = '100029_wechat';
 	require('src/A44q4');
 	require('src/A34m7');
 	''
 	window.extendMixin=require('src/miniBase');
 	window.extendLib=require('src/senjinwechat');
-	
 }
 
 function intoMiniGame() {

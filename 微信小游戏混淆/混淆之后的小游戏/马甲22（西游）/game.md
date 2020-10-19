@@ -10,6 +10,7 @@ var jsonList = [
 	'20201014_game2',
 	'20201014_start',
 	'20201014_game.zip',
+	'20201014_index',
 ]
 
 // (async () => {

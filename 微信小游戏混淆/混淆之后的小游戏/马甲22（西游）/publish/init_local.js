@@ -13,8 +13,8 @@ window["RES_VERSION_B"] = "1_";//全局资源版本
 window["VersionDict"] = {};
 
 //星河月自定义参数
-window["__HUOSDK_XHY_APPID__"]=22;
-window["__HUOSDK_XHY_MPID__"]="wx4aebbc736ee94fbf";
+window["__HUOSDK_XHY_APPID__"]=18;
+window["__HUOSDK_XHY_MPID__"]="wx4a1931c9f4e9098d";
 
 window["huoSdk"] = require('./sdk-1.0.1');
 

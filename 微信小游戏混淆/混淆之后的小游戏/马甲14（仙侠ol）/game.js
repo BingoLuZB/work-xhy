@@ -1,1 +1,286 @@
-const versions='1.0.2';const gameId=0xe;const downloadUrl='https://gministatic.xinghe66.cn/jzzx/mj14';const rootPath=wx['env']['USER_DATA_PATH'];const fs=wx['getFileSystemManager']();let num=0x0;var jsonList=['20201009_platform','20200927_assetsmanager','20200927_default','20201009_entry','20200927_particle','20200927_socket','20200927_tween','20201009_main.zip'];judgegame()['then'](()=>{var _0x3aad64={'rVQpK':function(_0x10854d){return _0x10854d();}};_0x3aad64['rVQpK'](getJsonToGame);})['catch'](()=>{var _0x5d6717={'xKEPb':function(_0x474233){return _0x474233();}};_0x5d6717['xKEPb'](intoMiniGame);});function judgegame(){var _0x21adef={'MVVxB':function(_0x5f358f,_0x2012d7){return _0x5f358f==_0x2012d7;},'XHVXt':function(_0x4ad135){return _0x4ad135();},'esPbX':'https://gminiapi.xinghe66.cn/mp/index','HZZrj':'GET','JdzuA':'json'};return new Promise((_0x426046,_0x48108d)=>{var _0x295482={'zBuCA':function(_0x81a3fe,_0x515159){return _0x21adef['MVVxB'](_0x81a3fe,_0x515159);},'dwoOW':function(_0x19228b,_0x5d1c93){return _0x21adef['MVVxB'](_0x19228b,_0x5d1c93);},'OehSo':function(_0x19818e){return _0x21adef['XHVXt'](_0x19818e);},'MOogO':function(_0x185c70){return _0x21adef['XHVXt'](_0x185c70);}};wx['request']({'url':_0x21adef['esPbX'],'method':_0x21adef['HZZrj'],'data':{'app_id':gameId,'versions':versions,'format':_0x21adef['JdzuA']},'success'(_0x3c3c5f){if(_0x295482['zBuCA'](_0x3c3c5f['data']['code'],0xc8)&&_0x295482['dwoOW'](_0x3c3c5f['data']['data']['status'],0x2)){_0x295482['OehSo'](_0x48108d);}else{_0x295482['MOogO'](_0x426046);}},'fail'(){_0x295482['MOogO'](_0x48108d);}});});}function hasJsonToGame(_0x21b856,_0xd35271){var _0xccf85e={'SRkoV':function(_0x2a6c6c,_0x37129d){return _0x2a6c6c-_0x37129d;},'mOhMh':function(_0x5a9bb0,_0x1b2f3d){return _0x5a9bb0==_0x1b2f3d;},'OMIAY':function(_0x390270){return _0x390270();}};GameGlobal[_0x21b856]=JSON['parse'](_0xd35271);let _0xcc83ad=_0xccf85e['SRkoV'](jsonList['length'],0x1);if(_0xccf85e['mOhMh'](num,_0xcc83ad)){console['log'](0x15b3);_0xccf85e['OMIAY'](intoGame);}num++;}function wxReadFile(_0xf8287c,_0x3dd815,_0xb56b9c){var _0x2814b6={'ifztb':function(_0x4bab8b,_0x5b9646,_0xa1a044){return _0x4bab8b(_0x5b9646,_0xa1a044);},'JpAKz':function(_0x23c8f9,_0x521d39){return _0x23c8f9(_0x521d39);},'XEYcU':'utf-8'};return new Promise((_0xaea84,_0x54b68a)=>{var _0x4f62ab={'Qdrvx':function(_0xd5cc99,_0x5b5301,_0x387240){return _0x2814b6['ifztb'](_0xd5cc99,_0x5b5301,_0x387240);},'ziJaV':function(_0x1c4a41,_0x4cac2e){return _0x2814b6['JpAKz'](_0x1c4a41,_0x4cac2e);},'rIHvH':function(_0x19a0b3,_0x4dfb55){return _0x2814b6['JpAKz'](_0x19a0b3,_0x4dfb55);}};fs['readFile']({'filePath':_0xf8287c,'encoding':_0x2814b6['XEYcU'],'success'(_0x2c82f5){if(_0xb56b9c&&_0x2c82f5['data']){_0x4f62ab['Qdrvx'](hasJsonToGame,_0x3dd815,_0x2c82f5['data']);}_0x4f62ab['ziJaV'](_0xaea84,_0x2c82f5);},'fail'(_0x5daa31){_0x4f62ab['rIHvH'](_0x54b68a,_0x5daa31);}});});}function getJsonToGame(){var _0x4e91de={'vrnrA':function(_0x3425f8,_0x368aba,_0x168a81){return _0x3425f8(_0x368aba,_0x168a81);},'hEIIA':function(_0x4d1c11,_0x5359a5,_0xa191ff,_0x474930){return _0x4d1c11(_0x5359a5,_0xa191ff,_0x474930);},'EePKR':'==解压失败','tzjMn':function(_0xf733f0,_0x2fd5c4){return _0xf733f0===_0x2fd5c4;},'oECpJ':'下载失败，文件不存在','bXXGm':'====下载失败','xNqLv':function(_0x52c7e6,_0x22cdb7){return _0x52c7e6(_0x22cdb7);},'ngGIr':function(_0xac1b0b,_0x5e2b0f){return _0xac1b0b<_0x5e2b0f;},'JtQtG':'.zip','WzYMB':'.json'};for(let _0x2cb0be=0x0;_0x4e91de['ngGIr'](_0x2cb0be,jsonList['length']);_0x2cb0be++){let _0x552dd1=jsonList[_0x2cb0be]['split']('_')[0x0];let _0x24304d=jsonList[_0x2cb0be]['split']('_')[0x1];let _0x2c04b9=_0x24304d['includes'](_0x4e91de['JtQtG'])?'':_0x4e91de['WzYMB'];const _0x4fe130=rootPath+'/'+_0x552dd1+'/'+_0x24304d+_0x2c04b9;const _0x2f99cc=!_0x2c04b9&&_0x24304d['split']('.')[0x0];const _0x314ba9=rootPath+'/'+_0x2f99cc+'.json';fs['access']({'path':rootPath+'/'+_0x552dd1,'success'(_0x23acb2){},'fail'(_0x14e946){fs['mkdir']({'dirPath':rootPath+'/'+_0x552dd1,'recursive':!![],'success'(_0x58a4c4){}});},'complete'(){_0x4e91de['xNqLv'](wxReadFile,_0x4fe130)['then'](_0x581d72=>{if(_0x2c04b9){_0x4e91de['vrnrA'](hasJsonToGame,_0x24304d,_0x581d72['data']);}else{_0x4e91de['hEIIA'](wxReadFile,_0x314ba9,_0x2f99cc,!![]);}})['catch'](_0x5170c5=>{var _0x13dfb8={'AyRcr':_0x4e91de['EePKR'],'XyvzD':function(_0x5198c9,_0x1fb823,_0xdaaaa0,_0x3414da){return _0x4e91de['hEIIA'](_0x5198c9,_0x1fb823,_0xdaaaa0,_0x3414da);},'DYyIr':function(_0x4e9bf2,_0x9f84e1){return _0x4e91de['tzjMn'](_0x4e9bf2,_0x9f84e1);},'VbkbA':function(_0x301edf,_0x1dab2e,_0x38eaf6,_0xa2fbad){return _0x4e91de['hEIIA'](_0x301edf,_0x1dab2e,_0x38eaf6,_0xa2fbad);},'IwzZL':_0x4e91de['oECpJ'],'fNFRc':_0x4e91de['bXXGm']};wx['downloadFile']({'url':downloadUrl+'/'+_0x552dd1+'/'+_0x24304d+_0x2c04b9,'filePath':_0x4fe130,'success'(_0xfbc25d){var _0x29817d={'YkSTT':function(_0x1b0b2d,_0x159d31,_0x34fd35,_0x13236c){return _0x13dfb8['XyvzD'](_0x1b0b2d,_0x159d31,_0x34fd35,_0x13236c);}};if(_0x13dfb8['DYyIr'](_0xfbc25d['statusCode'],0xc8)){if(_0x2c04b9){_0x13dfb8['VbkbA'](wxReadFile,_0x4fe130,_0x24304d,!![]);}else{fs['unzip']({'zipFilePath':_0xfbc25d['filePath']||_0xfbc25d['tempFilePath'],'targetPath':rootPath,'success'(_0x73745f){_0x29817d['YkSTT'](wxReadFile,_0x314ba9,_0x2f99cc,!![]);},'fail'(_0x53a794){console['log'](_0x53a794,_0x13dfb8['AyRcr']);}});}}else{console['error'](_0x13dfb8['IwzZL']);fs['unlink']({'filePath':rootPath+'/'+_0x552dd1+'/'+_0x24304d+_0x2c04b9,'success'(_0x2ec664){},'fail'(_0x3aec4){}});}},'fail'(_0x38e73e){console['log'](_0x38e73e,_0x13dfb8['fNFRc']);}});});}});}}function intoGame(){var _0x5f0afb={'laCOu':'ver.json','cqEyu':function(_0x2c9fc3,_0x3112cc){return _0x2c9fc3+_0x3112cc;},'ylyhn':function(_0x544cc4,_0x144dd0){return _0x544cc4+_0x144dd0;},'sDKeO':'/ver.json','dtmxK':function(_0x415c94,_0x4b184e){return _0x415c94+_0x4b184e;},'BXqGi':function(_0x2a2936,_0x23d319){return _0x2a2936+_0x23d319;},'VsJzl':function(_0x488282,_0x1808ab){return _0x488282+_0x1808ab;},'xNeIh':function(_0xad5777,_0x44e04e){return _0xad5777/_0x44e04e;},'ToLZM':'Main','JEeov':'auto','Dccam':'fixedNarrow','CfANr':'x:0,y:0,size:12,textColor:0xffffff,bgAlpha:0.9','HApVb':'webgl','QexCA':function(_0x3759b6,_0x313821){return _0x3759b6(_0x313821);},'FiIVx':'./library/userfilemgr.js','oRBXB':'./weapp-adapter.js','YybbQ':function(_0x4185fd,_0x1ab4af){return _0x4185fd(_0x1ab4af);},'wzUxF':'./senjin_wx_xxtx_littleGame.js','Trikt':function(_0x446203,_0x1b97c1){return _0x446203(_0x1b97c1);},'qTVnP':'./platform.js','YOHuq':'./manifest.js','SqeAq':'./egret.wxgame.js','ZiTIJ':function(_0x357cca,_0x8fcb0a){return _0x357cca===_0x8fcb0a;},'KsUQn':'function','sEcnt':function(_0x267285,_0x1b7aaa){return _0x267285(_0x1b7aaa);},'PSHUJ':'./library/image.js','AsbWU':function(_0x15f276,_0x4d093a){return _0x15f276(_0x4d093a);},'iCUaL':'./library/text.js','wFZqS':'./library/sound.js','yfujR':'./library/binary.js','irKVi':'https://z1c.h5eco.com/1/z1client/','mRXoD':'https://z1api.h5eco.com/','uYbvg':function(_0xf4f670,_0x150a4f){return _0xf4f670+_0x150a4f;},'nZehE':function(_0x2aa099,_0x144845){return _0x2aa099+_0x144845;},'AWtoM':'/ev.json'};const {userfileMgr}=_0x5f0afb['QexCA'](require,_0x5f0afb['FiIVx']);_0x5f0afb['QexCA'](require,_0x5f0afb['oRBXB']);_0x5f0afb['YybbQ'](require,_0x5f0afb['wzUxF']);_0x5f0afb['Trikt'](require,_0x5f0afb['qTVnP']);_0x5f0afb['Trikt'](require,_0x5f0afb['YOHuq']);_0x5f0afb['Trikt'](require,_0x5f0afb['SqeAq']);if(_0x5f0afb['ZiTIJ'](typeof wx['getUpdateManager'],_0x5f0afb['KsUQn'])){const _0x4548b7=wx['getUpdateManager']();_0x4548b7['onCheckForUpdate'](function(_0x5095f7){console['log']('-------',_0x5095f7);});_0x4548b7['onUpdateReady'](function(){console['log']('下载完成--更新版本');_0x4548b7['applyUpdate']();});_0x4548b7['onUpdateFailed'](function(){console['log']('更新版本网络异常');});}if(window['RES']&&RES['processor']){_0x5f0afb['sEcnt'](require,_0x5f0afb['PSHUJ']);_0x5f0afb['AsbWU'](require,_0x5f0afb['iCUaL']);_0x5f0afb['AsbWU'](require,_0x5f0afb['wFZqS']);_0x5f0afb['AsbWU'](require,_0x5f0afb['yfujR']);}window['alert']=console['error'];window['verData']={};window['urlParam']={'apptype':'3','root':_0x5f0afb['irKVi'],'apiRoot':_0x5f0afb['mRXoD'],'reportRoot':'https://z1back.h5eco.com/','ev':0x5b};window['getUrl']=_0x551e31=>{if(~_0x551e31['indexOf'](_0x5f0afb['laCOu']))return _0x5f0afb['cqEyu'](_0x5f0afb['ylyhn'](urlParam['root'],urlParam['gv']),_0x5f0afb['sDKeO']);let _0x354b69=urlParam['gv']||urlParam['ev'];return _0x5f0afb['dtmxK'](_0x5f0afb['BXqGi'](urlParam['root'],_0x354b69?_0x5f0afb['VsJzl'](verData[_0x551e31]||0x0,'/'):''),_0x551e31);};wx['request']({'url':_0x5f0afb['uYbvg'](_0x5f0afb['nZehE'](urlParam['root'],urlParam['ev']),_0x5f0afb['AWtoM']),'success':_0x4290e4=>window['verData']=_0x4290e4['data'],'complete':()=>{egret['runEgret']({'entryClassName':_0x5f0afb['ToLZM'],'orientation':_0x5f0afb['JEeov'],'frameRate':0x3c,'scaleMode':_0x5f0afb['Dccam'],'contentWidth':0x2d0,'contentHeight':0x500,'showFPS':![],'fpsStyles':_0x5f0afb['CfANr'],'showLog':![],'maxTouches':0x2,'renderMode':_0x5f0afb['HApVb'],'audioType':0x0,'calculateCanvasScaleFactor':function(_0x3bfa5e){var _0x2ef02f=_0x3bfa5e['backingStorePixelRatio']||_0x3bfa5e['webkitBackingStorePixelRatio']||_0x3bfa5e['mozBackingStorePixelRatio']||_0x3bfa5e['msBackingStorePixelRatio']||_0x3bfa5e['oBackingStorePixelRatio']||_0x3bfa5e['backingStorePixelRatio']||0x1;return _0x5f0afb['xNeIh'](window['devicePixelRatio']||0x1,_0x2ef02f);}});}});}function intoMiniGame(){var _0x241cdc={'lMtUJ':function(_0x1d65d6,_0x3c7699){return _0x1d65d6(_0x3c7699);},'QdYSE':'./MYGAME/js/main'};const _0x6f1a1d=_0x241cdc['lMtUJ'](require,_0x241cdc['QdYSE']);new _0x6f1a1d['default']();}
+const versions = '1.0.3'
+const gameId = 14
+const downloadUrl = `https://gministatic.xinghe66.cn/jzzx/mj14`
+
+const rootPath = wx.env.USER_DATA_PATH
+const fs = wx.getFileSystemManager();
+let num = 0
+
+var jsonList = [
+	'20201017_platform',
+	'20200927_assetsmanager',
+	'20200927_default',
+	'20201017_entry',
+	'20200927_particle',
+	'20200927_socket',
+	'20200927_tween',
+	'20201017_main.zip',
+]
+
+// (async () => {
+// 	try {
+// 		await judgegame()
+// 		intoMiniGame()
+// 	} catch (error) {
+// 		getJsonToGame()
+// 	}
+// })()
+judgegame()
+	.then(() => {
+		// 进游戏
+		getJsonToGame()
+	})
+	.catch(() => {
+		// 进壳
+		intoMiniGame()
+	})
+
+// 判断进壳还是进游戏
+function judgegame() {
+	return new Promise((resolve, reject) => {
+		wx.request({
+			url: 'https://gminiapi.xinghe66.cn/mp/index',
+			method: 'GET',
+			data: {
+				app_id: gameId,
+				versions,
+				format: 'json'
+			},
+			success(res) {
+				// status 2 提审状态
+				if (res.data.code == 200 && res.data.data.status == 2) {
+					reject()
+				} else {
+					resolve()
+				}
+			},
+			fail() {
+				reject()
+			}
+		})
+	})
+}
+
+// 赋值json给全局
+function hasJsonToGame(str, data) {
+	GameGlobal[str] = JSON.parse(data)
+	let l = jsonList.length - 1
+	if (num == l) {
+		// debugger
+		console.log(5555)
+		intoGame()
+	}
+	num++
+}
+// 微信api 读取文件
+function wxReadFile(filePath, str, toGame) {
+	return new Promise((resolve, reject) => {
+		fs.readFile({
+			filePath,
+			encoding: 'utf-8',
+			success(res) {
+				// console.log('读取成功')
+				if (toGame && res.data) {
+					hasJsonToGame(str, res.data)
+				}
+				resolve(res)
+			},
+			fail(err) {
+				// console.log(err, '读取失败')
+				reject(err)
+			}
+		})
+	})
+}
+
+// 拿到游戏的json
+function getJsonToGame() {
+	for (let i = 0; i < jsonList.length; i++) {
+		let date = jsonList[i].split('_')[0]
+		let str = jsonList[i].split('_')[1]
+		let end = str.includes('.zip') ? '' : '.json'
+		const path = `${rootPath}/${date}/${str}${end}`
+		const zip2JsonName = !end && str.split('.')[0]
+		const zip2JsonPath = `${rootPath}/${zip2JsonName}.json`
+
+		fs.access({
+			path: `${rootPath}/${date}`,
+			success(res) {
+				// console.log(res, '==目录存在')
+			},
+			fail(err) {
+				// console.log('目录不存在')
+				fs.mkdir({
+					dirPath: `${rootPath}/${date}`,
+					recursive: true,
+					success(res) {
+						// console.log('目录创建成功')
+					}
+				})
+			},
+			complete() {
+				wxReadFile(path)
+					.then(res => {
+						// 有缓存，直接读取
+						if (end) {
+							// 如果是json文件，直接赋值给全局
+							hasJsonToGame(str, res.data)
+						} else {
+							// 如果是zip文件，直接读取已经解压了的文件
+							wxReadFile(zip2JsonPath, zip2JsonName, true)
+						}
+					})
+					.catch(err => {
+						// 没缓存，下载
+						wx.downloadFile({
+							url: `${downloadUrl}/${date}/${str}${end}`,
+							filePath: path,
+							success(res) {
+								// 如果是json的文件
+								if (res.statusCode === 200) {
+									if (end) {
+										wxReadFile(path, str, true)
+									} else {
+										// 如果是zip的压缩文件
+										fs.unzip({
+											zipFilePath: res.filePath || res.tempFilePath,
+											targetPath: rootPath,
+											success(res) {
+												// console.log(res, '解压成功')
+												wxReadFile(zip2JsonPath, zip2JsonName, true)
+											},
+											fail(err) {
+												console.log(err, '==解压失败')
+											}
+										})
+									}
+								} else {
+									console.error('下载失败，文件不存在')
+									fs.unlink({
+										filePath: `${rootPath}/${date}/${str}${end}`,
+										success(res) {
+											// console.log(res, '删除成功')
+										},
+										fail(err) {
+											// console.log(err, '删除失败')
+										}
+									})
+								}
+							},
+							fail(err) {
+								console.log(err, '====下载失败')
+							}
+						})
+					})
+			}
+		})
+	}
+}
+
+
+// 进游戏
+function intoGame() {
+	const {
+		userfileMgr
+	} = require('./library/userfilemgr.js');
+	require('./weapp-adapter.js');
+	require('./senjin_wx_xxtx_littleGame.js');
+	require('./platform.js');
+	require('./manifest.js');
+	require('./egret.wxgame.js');
+
+	if (typeof wx.getUpdateManager === "function") {
+		const updateManager = wx.getUpdateManager()
+
+		updateManager.onCheckForUpdate(function (res) {
+			// 请求完新版本信息的回调
+			console.log(`-------`, res)
+		})
+
+		updateManager.onUpdateReady(function () {
+			// 新的版本已经下载好，调用 applyUpdate 应用新版本并重启
+			console.log(`下载完成--更新版本`)
+			updateManager.applyUpdate();
+		})
+
+		updateManager.onUpdateFailed(function () {
+			// 新版本下载失败
+			console.log(`更新版本网络异常`)
+		})
+	}
+
+	// 启动wx小游戏本地缓存，如果开发者不需要此功能，只需注释即可
+	// 只有使用 assetsmanager 的项目可以使用
+	if (window.RES && RES.processor) {
+		require('./library/image.js');
+		require('./library/text.js');
+		require('./library/sound.js');
+		require('./library/binary.js');
+	}
+
+	window.alert = console.error;
+	window.verData = {};
+	//内网
+	// window.urlParam = {
+	// 	apptype: '3',
+	// 	appid: "",
+	// 	root: 'http://192.168.0.160/z1/',
+	// 	isLocation: true,//是否内网测试
+	// };
+	//外网
+	window.urlParam = {
+		apptype: '3',
+		root: 'https://z1c.h5eco.com/1/z1client/',
+		apiRoot: 'https://z1api.h5eco.com/',
+		reportRoot: `https://z1back.h5eco.com/`,
+		ev: 92,
+	};
+
+	window.getUrl = (url) => {
+		if (~url.indexOf('ver.json')) return urlParam.root + urlParam.gv + '/ver.json';
+		let v = urlParam.gv || urlParam.ev;
+		return urlParam.root + (v ? (verData[url] || 0) + '/' : '') + url;
+	};
+
+	wx.request({
+		url: urlParam.root + urlParam.ev + '/ev.json',
+		success: res => window.verData = res.data,
+		complete: () => {
+			// userfileMgr.clear1DayRes();
+			egret.runEgret({
+				//以下为自动修改，请勿修改
+				//The following is automatically modified, please do not modify
+				//----auto option start----
+				entryClassName: "Main",
+				orientation: "auto",
+				frameRate: 60,
+				scaleMode: "fixedNarrow",
+				contentWidth: 720,
+				contentHeight: 1280,
+				showFPS: false,
+				fpsStyles: "x:0,y:0,size:12,textColor:0xffffff,bgAlpha:0.9",
+				showLog: false,
+				maxTouches: 2,
+				//----auto option end----
+				renderMode: 'webgl',
+				audioType: 0,
+				calculateCanvasScaleFactor: function (context) {
+					var backingStore = context.backingStorePixelRatio ||
+						context.webkitBackingStorePixelRatio ||
+						context.mozBackingStorePixelRatio ||
+						context.msBackingStorePixelRatio ||
+						context.oBackingStorePixelRatio ||
+						context.backingStorePixelRatio || 1;
+					return (window.devicePixelRatio || 1) / backingStore;
+				}
+			});
+		}
+	});
+
+}
+
+// 进壳
+function intoMiniGame() {
+  const Main = require('./MYGAME/js/main')
+  new Main.default()
+}

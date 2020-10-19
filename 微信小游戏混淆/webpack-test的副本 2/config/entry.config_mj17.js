@@ -7,7 +7,7 @@ const entry = {
     },
     path: {
         '马甲17/js': {
-            // 'index': './西游/js/index.js',
+            'index': './西游/js/index.js',
         },
         '马甲17/publish': {
             'start': './西游/publish/start.js',

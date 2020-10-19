@@ -120,7 +120,7 @@ window.platform = {
 										return;
 									}
 									urlParam.__proto__ = res.data;
-									urlParam["isShenhe"] = res.data.other;
+									// urlParam["isShenhe"] = res.data.other;
 									console.log("登陆参数：", urlParam);
 									resolve();
 								},
