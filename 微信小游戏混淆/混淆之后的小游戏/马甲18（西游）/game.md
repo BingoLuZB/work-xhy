@@ -1,6 +1,6 @@
 const versions = '1.0.0'
-const gameId = 17
-const downloadUrl = `https://gministatic.xinghe66.cn/jsonList/xiyou/mj17`
+const gameId = 18
+const downloadUrl = `https://gministatic.xinghe66.cn/jsonList/xiyou/mj18`
 
 const rootPath = wx.env.USER_DATA_PATH
 const fs = wx.getFileSystemManager();
@@ -24,7 +24,8 @@ var jsonList = [
 judgegame()
 	.then(() => {
 		// 进游戏
-    getJsonToGame()
+		intoGame()
+    //getJsonToGame()
     // intoMiniGame()
 	})
 	.catch(() => {
