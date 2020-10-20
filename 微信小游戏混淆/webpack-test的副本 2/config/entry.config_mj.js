@@ -2,14 +2,14 @@
 const entry = {
     config: {
         identifierNamesGenerator: 'hexadecimal',
-        stringArrayThreshold: 0.7,
+        stringArrayThreshold: 0.8,
         // stringArrayEncoding: 'rc4'
     },
     path: {
-        '马甲31（三国）/js': {
-            // 'customlib.min': './三国/js/customlib.min.js',  //rc4
+        '三国/js': {
+            'customlib.min': './三国/js/customlib.min.js',  //base64
         },
-        '马甲31（三国）/package1': {
+        '三国/package1': {
             'main': './三国/package1/main.js',  //base64
         }
     }

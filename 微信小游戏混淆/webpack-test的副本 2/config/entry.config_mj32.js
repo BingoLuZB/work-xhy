@@ -6,10 +6,10 @@ const entry = {
         // stringArrayEncoding: 'rc4'
     },
     path: {
-        '三国/js': {
+        '马甲32（三国）/js': {
             // 'customlib.min': './三国/js/customlib.min.js',  //base64
         },
-        '三国/package1': {
+        '马甲32（三国）/package1': {
             'main': './三国/package1/main.js',  //base64
         }
     }
