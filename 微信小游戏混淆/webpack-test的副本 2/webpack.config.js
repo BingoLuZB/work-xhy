@@ -12,7 +12,7 @@ const finalConfig = Object.assign(config, {
     identifierNamesGenerator: entry.config.identifierNamesGenerator || 'mangled',
     nameList: all ? getNumArr() : getEntryPath(true), //json文件列表
     isNeedOneJson: false, //是否需要合并一个json文件,
-    isDelJsonList: true,
+    isDelJsonList: true, //是否需要重置jsonList文件夹
     mjNum,
 })
 
