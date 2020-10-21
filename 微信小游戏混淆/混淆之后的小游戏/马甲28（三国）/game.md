@@ -1,14 +1,14 @@
 const versions = '1.0.0'
-const gameId = 26
-const downloadUrl = `https://gministatic.xinghe66.cn/jsonList/sg/guanbao`
+const gameId = 28
+const downloadUrl = `https://gministatic.xinghe66.cn/jsonList/sg/mj28`
 
 const rootPath = wx.env.USER_DATA_PATH
 const fs = wx.getFileSystemManager();
 let num = 0
 
 var jsonList = [
-	'20201015_customlib',
-	'20201015_main',
+	'20201020_customlib.zip',
+	'20201020_main.zip',
 ]
 
 // (async () => {
@@ -23,6 +23,7 @@ var jsonList = [
 judgegame()
 	.then(() => {
 		// 进游戏
+		// intoGame()
     getJsonToGame()
 	})
 	.catch(() => {
@@ -133,6 +134,7 @@ function getJsonToGame() {
 						wx.downloadFile({
 							url: `${downloadUrl}/${date}/${str}${end}`,
 							filePath: path,
+							timeout: 10000,
 							success(res) {
 								// 如果是json的文件
 								if (res.statusCode === 200) {

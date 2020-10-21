@@ -1,7 +1,7 @@
 //三国个人包  改林泽的数组
 const entry = {
     config: {
-        // identifierNamesGenerator: 'hexadecimal',
+        identifierNamesGenerator: 'hexadecimal',
         stringArrayThreshold: 0.8,
         // stringArrayEncoding: 'rc4'
     },
