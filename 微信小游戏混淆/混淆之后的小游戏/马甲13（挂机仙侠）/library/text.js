@@ -82,15 +82,25 @@ function loadText(xhrURL) {
 			// 解压文件
 			let zipFile = unZipDir + `${fileName}.json`;
 
-			if (fs.existsSync(zipFile) && !window.urlParam.isLocation) {
+			let isDownload = true;
+			if (fs.existsSync(zipFile)) {
 				//只用外网才读取本地文件
 				// console.log(`命中文件`)
 
 				// 本地已经有文件，直接返回
-				resolve(fs.readSync(zipFile));
-			} else {
-				// console.log(`开始下载`)
+				try {
+					let data = fs.readSync(zipFile);
+					let jsonData = JSON.parse(data.toString());
+					if (!jsonData.confLen || data.toString().length > jsonData.confLen) {
+						isDownload = false;
+						resolve(data);
+					}
+				} catch (error) {}
 
+			}
+
+			if (isDownload) {
+				// console.log(`开始下载`)
 				// 没有文件，先删除同名的文件夹
 				fs.remove(fileName);
 				// 创建同名文件夹

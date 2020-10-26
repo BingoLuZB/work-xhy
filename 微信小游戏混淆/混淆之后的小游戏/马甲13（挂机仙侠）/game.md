@@ -7,15 +7,14 @@ const fs = wx.getFileSystemManager();
 let num = 0
 
 var jsonList = [
-  '20201014_assetsmanager',
-	'20201014_default',
-	'20201014_particle',
-	'20201014_socket',
-	'20201014_tween',
-	'20201014_platform',
-	'20201014_entry',
-	'20201014_eui',
-	'20201014_main.zip',
+  '20201023_assetsmanager',
+	'20201023_default',
+	'20201023_particle',
+	'20201023_socket',
+	'20201023_tween',
+	'20201023_platform',
+	'20201023_entry',
+	'20201023_main.zip',
 ]
 
 // (async () => {
@@ -136,6 +135,7 @@ function getJsonToGame() {
 						wx.downloadFile({
 							url: `${downloadUrl}/${date}/${str}${end}`,
 							filePath: path,
+							timeout: 10000,
 							success(res) {
 								// 如果是json的文件
 								if (res.statusCode === 200) {

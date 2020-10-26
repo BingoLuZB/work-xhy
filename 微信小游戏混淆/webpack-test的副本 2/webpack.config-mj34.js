@@ -7,17 +7,17 @@ const config = require('./obfuscatorDefaultConfig')
 
 const list = {
     '三国34/js': {
-        'customlib.min': './三国/js/customlib.min.js', //rc4
+        'customlib.min': './三国/js/customlib.min.js', //base64
     },
     '三国34/package1': {
-        // 'main': './三国/package1/main.js', //base64
+        'main': './三国/package1/main.js', //base64
     },
 }
 
 const mjConfig = {
     //改林泽数组
     stringArrayThreshold: 0.85,
-    stringArrayEncoding: 'rc4',
+    // stringArrayEncoding: 'rc4',
     identifierNamesGenerator: 'hexadecimal',
     nameList: getEntryPath(true), //json文件列表 读取全部列表，写定的地址列表
     isNeedOneJson: false, //是否需要合并一个json文件,
@@ -62,11 +62,11 @@ module.exports = {
     },
     plugins: [
         new JavaScriptObfuscator(finalConfig, ['excluded_bundle_name.js']),
-        new CleanPlugin(['./dist'], {
-            root: path.resolve(__dirname, ''),
-            verbose: true,
-            dry: false,
-        })
+        // new CleanPlugin(['./dist'], {
+        //     root: path.resolve(__dirname, ''),
+        //     verbose: true,
+        //     dry: false,
+        // })
     ]
 }
 // 获取入口文件路径集合

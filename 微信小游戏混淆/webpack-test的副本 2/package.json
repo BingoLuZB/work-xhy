@@ -6,10 +6,13 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "set NODE_ENV=build&webpack --config webpack.config.js",
+    "build-26": "set NODE_ENV=build&webpack --config webpack.config-mj26.js",
     "build-34": "set NODE_ENV=build&webpack --config webpack.config-mj34.js",
     "build-35": "set NODE_ENV=build&webpack --config webpack.config-mj35.js",
     "build-36": "set NODE_ENV=build&webpack --config webpack.config-mj36.js",
-    "build-37": "set NODE_ENV=build&webpack --config webpack.config-mj37.js"
+    "build-37": "set NODE_ENV=build&webpack --config webpack.config-mj37.js",
+    "build-38": "set NODE_ENV=build&webpack --config webpack.config-mj38.js",
+    "build-41": "set NODE_ENV=build&webpack --config webpack.config-mj41.js"
   },
   "author": "",
   "license": "ISC",

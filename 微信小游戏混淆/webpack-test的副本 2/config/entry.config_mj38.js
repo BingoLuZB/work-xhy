@@ -2,7 +2,7 @@
 const entry = {
     config: {
         // identifierNamesGenerator: 'hexadecimal',
-        stringArrayThreshold: 0.7,
+        stringArrayThreshold: 0.85,
         // stringArrayEncoding: 'rc4'
     },
     path: {
@@ -10,7 +10,7 @@ const entry = {
             'customlib.min': './三国/js/customlib.min.js',
         },
         '三国38/package1': {
-            // 'main': './三国/package1/main.js',
+            'main': './三国/package1/main.js',
         },
         
     }

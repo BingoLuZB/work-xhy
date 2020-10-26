@@ -10,15 +10,15 @@ const list = {
         'customlib.min': './三国/js/customlib.min.js', //base64
     },
     '三国38/package1': {
-        // 'main': './三国/package1/main.js', //base64
+        'main': './三国/package1/main.js', //base64
     },
 }
 
 const mjConfig = {
-    //改林泽数组
-    stringArrayThreshold: 0.7,
-    stringArrayEncoding: 'rc4',
-    identifierNamesGenerator: 'hexadecimal',
+    //对象
+    stringArrayThreshold: 0.85,
+    // stringArrayEncoding: 'rc4',
+    // identifierNamesGenerator: 'hexadecimal',
     nameList: getEntryPath(true), //json文件列表 读取全部列表，写定的地址列表
     isNeedOneJson: false, //是否需要合并一个json文件,
     mjNum: 38,
