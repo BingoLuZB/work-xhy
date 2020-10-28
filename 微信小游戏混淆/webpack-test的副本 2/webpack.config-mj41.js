@@ -7,7 +7,7 @@ const config = require('./obfuscatorDefaultConfig')
 
 const list = {
     '官包41（仙侠）/': {
-        // 'platform': './新修仙/platform.js',
+        'platform': './新修仙/platform.js',
     },
     '官包41（仙侠）/js': {
         'assetsmanager.min': './新修仙/js/assetsmanager.min.js',

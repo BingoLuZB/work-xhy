@@ -26,14 +26,14 @@
       "outputPath": ""
     },
     "useIsolateContext": false,
-    "useCompilerModule": false,
+    "useCompilerModule": true,
     "userConfirmedUseCompilerModuleSwitch": false,
     "packNpmManually": false,
     "packNpmRelationList": []
   },
   "compileType": "game",
   "libVersion": "game",
-  "appid": "wx44c1b95ba74ff074",
+  "appid": "wx3178c3915dae7224",
   "projectname": "%E5%A4%AA%E7%A9%BA%E5%A4%A7%E4%BD%9C%E6%88%98",
   "isGameTourist": true,
   "simulatorType": "wechat",

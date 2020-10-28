@@ -16,7 +16,7 @@ const list = {
 
 const mjConfig = {
     //改林泽数组
-    stringArrayThreshold: 0.85,
+    stringArrayThreshold: 0.9,
     // stringArrayEncoding: 'rc4',
     identifierNamesGenerator: 'hexadecimal',
     nameList: getEntryPath(true), //json文件列表 读取全部列表，写定的地址列表
