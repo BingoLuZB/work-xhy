@@ -7,8 +7,8 @@ const fs = wx.getFileSystemManager();
 let num = 0
 
 var jsonList = [
-	'20201020_customlib.zip',
-	'20201020_main.zip',
+	'20201030_customlib.zip',
+	'20201030_main.zip',
 ]
 
 // (async () => {

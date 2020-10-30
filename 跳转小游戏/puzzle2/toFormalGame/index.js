@@ -2,7 +2,7 @@
 const imgUrl = 'https://gministatic.xinghe66.cn/toMiniGameImg'
 // 展示的图片
 const imgData = {
-  url: `${imgUrl}/sg/img1.png`
+  url: `${imgUrl}/sg/img2.png`
 }
 // 分享内容
 const shareData = {
@@ -22,7 +22,7 @@ const context = canvas.getContext('2d') // 创建一个 2d context
 function draw() {
   context.fillStyle = 'black' // 矩形颜色
   context.fillRect(0, 0, windowWidth, windowHeight)
-  const gap = 0.1
+  const gap = 0.05 //上下隔开距离
   var image = wx.createImage()
   var imgX = canvas.width / 2 - imgData.width / 2
   var imgY = windowHeight * 0.7
@@ -30,8 +30,8 @@ function draw() {
   image.onload = function () {
     context.clearRect(0, 0, windowWidth, windowHeight)
     // context.drawImage(image, imgX, imgY)
-    // context.drawImage(image, 0, 0, windowWidth, windowHeight)
-    context.drawImage(image, 0, windowHeight * gap, windowWidth, windowHeight * (1 - 2 * gap))
+    context.drawImage(image, 0, 0, windowWidth, windowHeight)
+    // context.drawImage(image, 0, windowHeight * gap, windowWidth, windowHeight * (1 - 2 * gap))
   }
 }
 

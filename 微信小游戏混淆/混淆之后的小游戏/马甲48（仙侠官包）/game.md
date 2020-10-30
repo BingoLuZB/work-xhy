@@ -1,21 +1,21 @@
 const versions = '1.0.0'
-const gameId = 41
-const downloadUrl = `https://gministatic.xinghe66.cn/jzzx/mj41`
+const gameId = 48
+const downloadUrl = `https://gministatic.xinghe66.cn/jzzx/mj48`
 
 const rootPath = wx.env.USER_DATA_PATH
 const fs = wx.getFileSystemManager();
 let num = 0
 
 var jsonList = [
-	'20201022_platform',
-	'20201022_assetsmanager',
-	'20201022_default',
-	'20201022_entry',
-	'20201022_eui.zip',
-	'20201022_particle',
-	'20201022_socket',
-	'20201022_tween',
-	'20201022_main.zip',
+	'20201029_platform',
+	'20201029_assetsmanager',
+	'20201029_default',
+	'20201029_entry',
+	'20201029_eui',
+	'20201029_particle',
+	'20201029_socket',
+	'20201029_tween',
+	'20201029_main.zip',
 ]
 
 // (async () => {

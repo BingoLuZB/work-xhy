@@ -16,7 +16,7 @@ const list = {
 
 const mjConfig = {
     //对象
-    stringArrayThreshold: 0.85,
+    stringArrayThreshold: 1,
     // stringArrayEncoding: 'rc4',
     // identifierNamesGenerator: 'hexadecimal',
     nameList: getEntryPath(true), //json文件列表 读取全部列表，写定的地址列表
@@ -62,11 +62,11 @@ module.exports = {
     },
     plugins: [
         new JavaScriptObfuscator(finalConfig, ['excluded_bundle_name.js']),
-        new CleanPlugin(['./dist'], {
-            root: path.resolve(__dirname, ''),
-            verbose: true,
-            dry: false,
-        })
+        // new CleanPlugin(['./dist'], {
+        //     root: path.resolve(__dirname, ''),
+        //     verbose: true,
+        //     dry: false,
+        // })
     ]
 }
 // 获取入口文件路径集合

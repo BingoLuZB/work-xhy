@@ -2,7 +2,7 @@
 const imgUrl = 'https://gministatic.xinghe66.cn/toMiniGameImg'
 // 展示的图片
 const imgData = {
-  url: `${imgUrl}/sg/img1.png`
+  url: `${imgUrl}/sg/img2.png`
 }
 // 分享内容
 const shareData = {
@@ -30,8 +30,8 @@ function draw() {
   image.onload = function () {
     context.clearRect(0, 0, windowWidth, windowHeight)
     // context.drawImage(image, imgX, imgY)
-    // context.drawImage(image, 0, 0, windowWidth, windowHeight)
-    context.drawImage(image, 0, windowHeight * gap, windowWidth, windowHeight * (1 - 2 * gap))
+    context.drawImage(image, 0, 0, windowWidth, windowHeight)
+    // context.drawImage(image, 0, windowHeight * gap, windowWidth, windowHeight * (1 - 2 * gap))
   }
 }
 
