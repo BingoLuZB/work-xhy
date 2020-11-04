@@ -1,4 +1,4 @@
-const gameId = 78,
+const gameId = 83,
     versions = '1.0.0'
 
 judgegame()
