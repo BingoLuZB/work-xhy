@@ -1,6 +1,6 @@
 {
 	"deviceOrientation": "portrait",
-	"resizable":true,
+	"resizable": true,
 	"networkTimeout": {
 		"request": 30000,
 		"connectSocket": 30000,
@@ -15,7 +15,7 @@
 		},
 		{
 			"name": "main.min.js",
-			"root": "js/main.min.js"
+			"root": "main/"
 		}
 	]
 }

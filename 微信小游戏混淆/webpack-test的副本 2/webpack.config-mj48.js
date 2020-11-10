@@ -13,17 +13,21 @@ const list = {
         'assetsmanager.min': './新修仙/js/assetsmanager.min.js',
         'default.thm': './新修仙/js/default.thm.js',
         'entry.min': './新修仙/js/entry.min.js',
-        'eui.min': './新修仙/js/eui.min.js',
-        'main.min': './新修仙/js/main.min.js',
+        // 'eui.min': './新修仙/js/eui.min.js',
+        'game.min': './新修仙/js/game.min.js',
         'particle.min': './新修仙/js/particle.min.js',
         'socket.min': './新修仙/js/socket.min.js',
         'tween.min': './新修仙/js/tween.min.js'
     },
+    '官包48（仙侠）/main': {
+        'main.min': './新修仙/main/main.min.js',
+        'subpack.min': './新修仙/main/subpack.min.js',
+    },
 }
 
 const mjConfig = {
-    //对象相加
-    stringArrayThreshold: 0.8,
+    //改林泽数组
+    stringArrayThreshold: 1,
     // stringArrayEncoding: 'rc4',
     identifierNamesGenerator: 'hexadecimal',
     nameList: getEntryPath(true), //json文件列表 读取全部列表，写定的地址列表

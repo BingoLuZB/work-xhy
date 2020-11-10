@@ -73,7 +73,7 @@ function loadImage(imageURL, scale9grid) {
 	return new Promise((resolve, reject) => {
 		const image = wx.createImage();
 
-
+		
 		image.onload = () => {
 			const bitmapdata = new egret.BitmapData(image);
 			const texture = new egret.Texture();

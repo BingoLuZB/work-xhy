@@ -88,16 +88,13 @@ function loadText(xhrURL) {
 				// console.log(`命中文件`)
 
 				// 本地已经有文件，直接返回
-				try {
-					let data = fs.readSync(zipFile);
-					let jsonData = JSON.parse(data.toString());
-					if (!jsonData.confLen || data.toString().length > jsonData.confLen) {
-						isDownload = false;
-						resolve(data);
-					}
-				} catch (error) {}
-
-			}
+				let data = fs.readSync(zipFile);
+				let jsonData = JSON.parse(data.toString());
+				if (!jsonData.confLen  || data.toString().length > jsonData.confLen) {
+					isDownload = false;
+					resolve(data);
+				}
+			} 
 
 			if (isDownload) {
 				// console.log(`开始下载`)

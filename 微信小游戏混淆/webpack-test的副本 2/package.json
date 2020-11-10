@@ -26,7 +26,8 @@
     "build-109": "set NODE_ENV=build&webpack --config webpack.config-mj109.js",
     "build-110": "set NODE_ENV=build&webpack --config webpack.config-mj110.js",
     "build-111": "set NODE_ENV=build&webpack --config webpack.config-mj111.js",
-    "build-112": "set NODE_ENV=build&webpack --config webpack.config-mj112.js"
+    "build-112": "set NODE_ENV=build&webpack --config webpack.config-mj112.js",
+    "build-120": "set NODE_ENV=build&webpack --config webpack.config-mj120.js"
   },
   "author": "",
   "license": "ISC",

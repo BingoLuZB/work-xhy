@@ -37,31 +37,25 @@ if (window.RES && RES.processor) {
 
 window.alert = console.error;
 window.verData = {};
-//内网
-// window.urlParam = {
-// 	apptype: '3',
-// 	appid: "",
-// 	root: 'http://192.168.0.160/z1/',
-// 	isLocation: true,//是否内网测试
-// };
+window.evData = {};
 //外网
 window.urlParam = {
 	apptype: '3',
 	root: 'https://z1c.h5eco.com/1/z1client/',
-	apiRoot: 'https://z1api.h5eco.com/',
+	apiRoot: 'https://mzapi.h5eco.com/z1/',
 	reportRoot: `https://z1back.h5eco.com/`,
-	ev: 92,
+	ev: 104,
 };
 
 window.getUrl = (url) => {
 	if (~url.indexOf('ver.json')) return urlParam.root + urlParam.gv + '/ver.json';
 	let v = urlParam.gv || urlParam.ev;
-	return urlParam.root + (v ? (verData[url] || 0) + '/' : '') + url;
+	return urlParam.root + (v ? (evData[url] || verData[url] || 0) + '/' : '') + url;
 };
 
 wx.request({
 	url: urlParam.root + urlParam.ev + '/ev.json',
-	success: res => window.verData = res.data,
+	success: res => window.evData = res.data,
 	complete: () => {
 		// userfileMgr.clear1DayRes();
 		egret.runEgret({

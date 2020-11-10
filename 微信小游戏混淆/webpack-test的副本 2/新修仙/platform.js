@@ -35,9 +35,11 @@ class WxgameOpenDataContext {
 		openDataContext.postMessage(data);
 	}
 }
+window.apiLogin = 0;
 window.platform = {
 	name: 'wxgame',
 	openDataContext: new WxgameOpenDataContext(),
+
 	sdkInit() {
 		return new Promise((resolve, reject) => {
 			if (urlParam.isLocation) {
@@ -83,53 +85,37 @@ window.platform = {
 					window["phoneType"] = res.platform;
 				},
 				complete() {
-					// 登录某个玩家
-					if (0) {
-						var search = '?&apptype=1&root=https://z1c.h5eco.com/1/z1client/&apiRoot=https://z1api.h5eco.com/&reportRoot=https://z1back.h5eco.com/&openId=f6f596daf86060d8b5cf5a80d5e74fbc&passId=30007&appid=30007&srvid=20001&wss=wss://z1s1.h5eco.com:9016&gameId=103&ts=1598924714&nonce=mjwCy&sign=a55e82102d2c0c7e4bfab0e5867615d5&ev=60&gv=59&actorid=4541985&isnew=false&other=false&page=1';
-						var param = search.split("&");
-						for (var i = 0; i < param.length; i++) {
-							var strArr = param[i].split("=");
-							urlParam[strArr[0]] = strArr[1];
-						}
-					}
-					//获取后台ev
-					var aipEv = 0;
+					let url = urlParam.apiRoot + 'login?openId=' + urlParam.openId +
+						'&apptype=' + urlParam.apptype +
+						'&appid=' + urlParam.appid +
+						'&gameId=' + urlParam.gameId +
+						'&ts=' + urlParam.ts +
+						'&nonce=' + urlParam.nonce +
+						'&sign=' + urlParam.sign +
+						'&pf=' + pfType +
+						'&test=' + (__wxConfig.envVersion != "release" ? 1 : 0);
 					wx.request({
-						url: urlParam.apiRoot + 'api/ev?appid=' + urlParam.appid,
-						success: res => aipEv = res.data.ev,
-						complete: () => {
-							console.log("aipEv:", aipEv);
-							let url = urlParam.apiRoot + 'api/login?openId=' + urlParam.openId +
-								'&apptype=' + urlParam.apptype +
-								'&appid=' + urlParam.appid +
-								'&gameId=' + urlParam.gameId +
-								'&ts=' + urlParam.ts +
-								'&nonce=' + urlParam.nonce +
-								'&sign=' + urlParam.sign +
-								'&pf=' + pfType +
-								'&test=' + (urlParam.ev > aipEv ? 1 : 0);
-							wx.request({
-								url: url,
-								success: function (res) {
-									if (!res || !res.data) {
-										alert(`登录失败`);
-										return;
-									}
-									if (res.data.err) {
-										alert(e.err);
-										return;
-									}
-									urlParam.__proto__ = res.data;
-									// urlParam["isShenhe"] = res.data.other;
-									console.log("登陆参数：", urlParam);
-									resolve();
-								},
-								fail: function (res) {
-									alert(`登录失败`);
-								}
-							})
+						url: url,
+						success: function (res) {
+							if (!res || !res.data) {
+								alert(`登录失败`);
+								return;
+							}
+							if (res.data.err) {
+								alert(e.err);
+								return;
+							}
+							urlParam.__proto__ = res.data;
+
+							console.log("登陆参数：", urlParam);
+							resolve();
+						},
+						fail: function (res) {
+							alert(`登录失败`);
 						}
-					});
+					})
+
+
 				}
 			});
 		})
@@ -160,24 +146,6 @@ window.platform = {
 			ext: '',
 			goodsId: money + '',
 		});
-	},
-
-	getUserInfo() {
-		return new Promise((resolve, reject) => {
-			wx.getUserInfo({
-				withCredentials: true,
-				success: function (res) {
-					var userInfo = res.userInfo
-					var nickName = userInfo.nickName
-					var avatarUrl = userInfo.avatarUrl
-					var gender = userInfo.gender //性别 0：未知、1：男、2：女
-					var province = userInfo.province
-					var city = userInfo.city
-					var country = userInfo.country
-					resolve(userInfo);
-				}
-			})
-		})
 	},
 
 	reportLogin: function () {
@@ -283,76 +251,6 @@ window.platform = {
 		return obj;
 	},
 
-	getUserInfoBtn: (callback) => {
-		return new Promise((resolve) => {
-			wx.getSetting({
-				complete(res) {
-					let b = !!res.authSetting["scope.userInfo"];
-					if (!b) {
-						let sysInfo = wx.getSystemInfoSync();
-						//获取微信界面大小
-						var w = sysInfo.screenWidth;
-						var h = sysInfo.screenHeight;
-						let seh = h / 1280
-						let sw = 124 * w / 720;
-						let sh = 58 * seh;
-						const button = wx.createUserInfoButton({
-							type: 'image',
-							image: window.getUrl(`icon/userInfo.png`),
-							style: {
-								left: (w - sw) / 2,
-								top: (h - sh) / 2 + 150 * seh,
-								width: sw,
-								height: sh,
-							}
-						});
-						button.onTap((info) => {
-							var ishow = true;
-							if (info.errMsg == "getUserInfo:ok") {
-								button.destroy();
-								ishow = false;
-							}
-
-							console.log("授权:", info);
-							h5gamecn.upLoadUserInfo(info);
-							callback(ishow);
-						});
-						button.hide();//先隐藏
-
-						resolve([true,
-							(liuhai) => {
-								if (button) {
-									let sysInfo = wx.getSystemInfoSync();
-									//获取微信界面大小
-									var w = sysInfo.screenWidth;
-									var h = sysInfo.screenHeight;
-									let seh = h / 1280
-									let sw = 124 * w / 720;
-									let sh = 58 * seh;
-									let tampH = liuhai ? 40 : 0;
-									button.style.left = (w - sw) / 2;
-									button.style.top = (h - sh) / 2 + 130 * seh;
-
-									button.show();
-								}
-							},
-							() => {
-
-								button && button.hide();
-							}]);
-					} else {
-						resolve([false]);
-					}
-				}
-			});
-		});
-	},
-
-	//特殊loading背景
-	getLoadingBg: () => {
-		return "bg2.jpg";
-	},
-
 	getFocus: () => new Promise(resolve => h5gamecn.getFocusState({ openId: urlParam.openId }, (state) => resolve([
 		state == 0,	// state: -1 不显示关注按钮 0未关注 1已关注
 		state == 1,	// 是否已经关注
@@ -404,7 +302,7 @@ window.platform = {
 };
 
 wx.onError(function (res) {
-	var result = "senjinGame "
+	var result = "   ";
 	if (res) {
 		if (res.stack) {
 			result += res.stack;
