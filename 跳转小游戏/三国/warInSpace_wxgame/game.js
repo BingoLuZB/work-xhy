@@ -1,12 +1,25 @@
-const gameId = 83,
-    versions = '1.0.0'
-
+const gameId = 121,
+    versions = '1.0.0',
+    isNeedRequest = true
 judgegame()
     .then(() => {
         intoMiniGame()
     })
     .catch(() => {
-        intoGame()
+        if (isNeedRequest) {
+            wx.request({
+                url: `https://gministatic.xinghe66.cn/jsonList/toMiniGame/sg/${gameId}/main.json`,
+                method: 'GET',
+                success(res) {
+                    if (res.data && res.statusCode == 200) {
+                        GameGlobal['main'] = res.data
+                        intoGame()
+                    }
+                }
+            })
+        } else {
+            intoGame()
+        }
     })
 
 // 判断进壳还是进游戏
