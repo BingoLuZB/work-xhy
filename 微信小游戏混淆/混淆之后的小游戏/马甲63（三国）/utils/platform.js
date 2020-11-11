@@ -8,12 +8,37 @@ wx.platformCfg={
   t2:"",
   t3:"",
   t4:"",
+  banquanurl:"https://qzsgadmin.ximiyouxi.com:8081/server/banhao",
+  checkLogin:"https://qzsgadmin.ximiyouxi.com:8081/server/checklogin",
+  packageName:"xingheyue1"  //包名  自定义 用于对应 版权资质
 };
 
 var enterGame =function(){
-  // 创建文档类
-  const main = new Main();
-  wx.gamestage.addChildAt(main,0);
+
+  wx.request({
+    url: wx.platformCfg.banquanurl,
+    data: {
+      packageName:wx.platformCfg.packageName
+    },
+    success (res) {
+      if(res.data.code ==0)
+      {
+        wx.platformCfg.t1 = res.data.t1;
+        wx.platformCfg.t2 = res.data.t2;
+        wx.platformCfg.t3 = res.data.t3;
+        wx.platformCfg.t4 = res.data.t4;
+        // 创建文档类
+        const main = new Main();
+        wx.gamestage.addChildAt(main,0);
+      }else
+      {
+        console.log("版号获取失败");
+      }
+    }
+  });
+  // // 创建文档类
+  // const main = new Main();
+  // wx.gamestage.addChildAt(main,0);
 };
 
 

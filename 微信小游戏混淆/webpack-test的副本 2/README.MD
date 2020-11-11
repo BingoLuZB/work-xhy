@@ -4,5 +4,5 @@
 
 
 遍历 array数组
->> $array = 84,83,82,80,78,77,73,72
->> foreach ($n in $array){npm run build-$n}
+$array = 84,83,82,80,78,77,73,72
+foreach ($n in $array){npm run build-$n}

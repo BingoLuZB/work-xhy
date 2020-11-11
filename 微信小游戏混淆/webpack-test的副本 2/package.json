@@ -27,6 +27,9 @@
     "build-110": "set NODE_ENV=build&webpack --config webpack.config-mj110.js",
     "build-111": "set NODE_ENV=build&webpack --config webpack.config-mj111.js",
     "build-112": "set NODE_ENV=build&webpack --config webpack.config-mj112.js",
+    "build-113": "set NODE_ENV=build&webpack --config webpack.config-mj113.js",
+    "build-114": "set NODE_ENV=build&webpack --config webpack.config-mj114.js",
+    "build-115": "set NODE_ENV=build&webpack --config webpack.config-mj115.js",
     "build-120": "set NODE_ENV=build&webpack --config webpack.config-mj120.js"
   },
   "author": "",
