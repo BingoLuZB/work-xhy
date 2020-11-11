@@ -6,20 +6,20 @@ const JavaScriptObfuscator = require('webpack-obfuscator');
 const config = require('./obfuscatorDefaultConfig')
 
 const list = {
-    '官包48（仙侠）/': {
+    '官包48（修仙Q传）/': {
         'platform': './新修仙/platform.js',
     },
-    '官包48（仙侠）/js': {
+    '官包48（修仙Q传）/js': {
         'assetsmanager.min': './新修仙/js/assetsmanager.min.js',
         'default.thm': './新修仙/js/default.thm.js',
         'entry.min': './新修仙/js/entry.min.js',
         // 'eui.min': './新修仙/js/eui.min.js',
-        'game.min': './新修仙/js/game.min.js',
+        // 'game.min': './新修仙/js/game.min.js',
         'particle.min': './新修仙/js/particle.min.js',
         'socket.min': './新修仙/js/socket.min.js',
         'tween.min': './新修仙/js/tween.min.js'
     },
-    '官包48（仙侠）/main': {
+    '官包48（修仙Q传）/main': {
         'main.min': './新修仙/main/main.min.js',
         'subpack.min': './新修仙/main/subpack.min.js',
     },
