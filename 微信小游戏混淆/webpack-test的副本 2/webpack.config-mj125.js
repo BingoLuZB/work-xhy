@@ -72,11 +72,11 @@ module.exports = {
     },
     plugins: [
         new JavaScriptObfuscator(finalConfig, ['excluded_bundle_name.js']),
-        new CleanPlugin(['./dist'], {
-            root: path.resolve(__dirname, ''),
-            verbose: true,
-            dry: false,
-        })
+        // new CleanPlugin(['./dist'], {
+        //     root: path.resolve(__dirname, ''),
+        //     verbose: true,
+        //     dry: false,
+        // })
     ]
 }
 // 获取入口文件路径集合

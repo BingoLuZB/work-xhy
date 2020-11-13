@@ -19,7 +19,7 @@
     "uploadWithSourceMap": true,
     "compileHotReLoad": false,
     "useMultiFrameRuntime": false,
-    "useApiHook": false,
+    "useApiHook": true,
     "babelSetting": {
       "ignore": [],
       "disablePlugins": [],
@@ -29,30 +29,27 @@
     "useCompilerModule": true,
     "userConfirmedUseCompilerModuleSwitch": false,
     "packNpmManually": false,
-    "packNpmRelationList": []
+    "packNpmRelationList": [],
+    "minifyWXSS": true
   },
   "compileType": "game",
   "libVersion": "2.13.0",
   "appid": "wxa0266d4d29df84db",
-  "projectname": "senjin_xinxiuxian_wxgame",
+  "projectname": "%E9%A9%AC%E7%94%B27%EF%BC%88%E4%BB%99%E4%BE%A0%E5%AE%98%E5%8C%85%EF%BC%89",
   "simulatorType": "wechat",
   "simulatorPluginLibVersion": {},
   "isGameTourist": true,
   "condition": {
     "search": {
-      "current": -1,
       "list": []
     },
     "conversation": {
-      "current": -1,
       "list": []
     },
     "game": {
-      "list": [],
-      "current": -1
+      "list": []
     },
     "miniprogram": {
-      "current": -1,
       "list": []
     }
   }

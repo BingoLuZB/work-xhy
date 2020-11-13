@@ -25,34 +25,32 @@
       "disablePlugins": [],
       "outputPath": ""
     },
+    "enableEngineNative": false,
     "useIsolateContext": true,
     "useCompilerModule": true,
     "userConfirmedUseCompilerModuleSwitch": false,
     "packNpmManually": false,
-    "packNpmRelationList": []
+    "packNpmRelationList": [],
+    "minifyWXSS": true
   },
   "compileType": "game",
   "libVersion": "2.13.0",
   "appid": "wx0f1cdfbc658e0add",
-  "projectname": "xxtx",
+  "projectname": "%E9%A9%AC%E7%94%B27%EF%BC%88%E4%BB%99%E4%BE%A0%E5%AE%98%E5%8C%85%EF%BC%89",
   "simulatorType": "wechat",
   "simulatorPluginLibVersion": {},
   "isGameTourist": true,
   "condition": {
     "search": {
-      "current": -1,
       "list": []
     },
     "conversation": {
-      "current": -1,
       "list": []
     },
     "game": {
-      "list": [],
-      "current": -1
+      "list": []
     },
     "miniprogram": {
-      "current": -1,
       "list": []
     }
   }

@@ -11,7 +11,7 @@
     "coverView": true,
     "nodeModules": false,
     "autoAudits": false,
-    "showShadowRootInWxmlPanel": true,
+    "showShadowRootInWxmlPanel": false,
     "scopeDataCheck": false,
     "uglifyFileName": false,
     "checkInvalidKey": true,
@@ -26,34 +26,31 @@
       "outputPath": ""
     },
     "bundle": false,
-    "useIsolateContext": true,
+    "useIsolateContext": false,
     "useCompilerModule": true,
     "userConfirmedUseCompilerModuleSwitch": false,
     "packNpmManually": false,
-    "packNpmRelationList": []
+    "packNpmRelationList": [],
+    "minifyWXSS": true
   },
   "compileType": "game",
-  "libVersion": "2.13.0",
+  "libVersion": "2.14.0",
   "appid": "wxd4b0b710ad25f7f8",
-  "projectname": "senjin_xinxiuxian_wxgame",
+  "projectname": "%E9%A9%AC%E7%94%B27%EF%BC%88%E4%BB%99%E4%BE%A0%E5%AE%98%E5%8C%85%EF%BC%89",
   "simulatorType": "wechat",
   "simulatorPluginLibVersion": {},
   "isGameTourist": true,
   "condition": {
     "search": {
-      "current": -1,
       "list": []
     },
     "conversation": {
-      "current": -1,
       "list": []
     },
     "game": {
-      "list": [],
-      "current": -1
+      "list": []
     },
     "miniprogram": {
-      "current": -1,
       "list": []
     }
   }
