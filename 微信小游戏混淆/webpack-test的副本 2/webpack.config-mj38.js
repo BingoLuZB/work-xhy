@@ -7,7 +7,7 @@ const config = require('./obfuscatorDefaultConfig')
 
 const list = {
     '三国38/js': {
-        'customlib.min': './三国/js/customlib.min.js', //base64
+        // 'customlib.min': './三国/js/customlib.min.js', //base64
     },
     '三国38/package1': {
         'main': './三国/package1/main.js', //base64

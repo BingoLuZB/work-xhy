@@ -1,4 +1,4 @@
-const versions = '1.0.0'
+const versions = '1.0.1'
 const gameId = 38
 const downloadUrl = `https://gministatic.xinghe66.cn/jsonList/sg/guanbao38`
 
@@ -8,7 +8,7 @@ let num = 0
 
 var jsonList = [
 	'20201030_customlib.zip',
-	'20201030_main.zip',
+	'20201113_main.zip',
 ]
 
 // (async () => {

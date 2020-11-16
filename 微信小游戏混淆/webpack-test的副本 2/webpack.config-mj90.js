@@ -15,7 +15,7 @@ const list = {
 }
 
 const mjConfig = {
-    //对象
+    //改林泽数组
     stringArrayThreshold: 0.9,
     // stringArrayEncoding: 'rc4',
     identifierNamesGenerator: 'hexadecimal',

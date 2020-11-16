@@ -8,12 +8,38 @@ wx.platformCfg={
   t2:"",
   t3:"",
   t4:"",
+  banquanurl:"https://qzsgadmin.ximiyouxi.com:8081/server/banhao",
+  checkLogin:"https://qzsgadmin.ximiyouxi.com:8081/server/checklogin",
+  packageName:"rexuesanguo3"  //包名  自定义 用于对应 版权资质
 };
 
 var enterGame =function(){
-  // 创建文档类
-  const main = new Main();
-  wx.gamestage.addChildAt(main,0);
+
+  wx.request({
+    url: wx.platformCfg.banquanurl,
+    data: {
+      packageName:wx.platformCfg.packageName
+    },
+    success (res) {
+      if(res.data.code ==0)
+      {
+        console.log(res, '========res')
+        wx.platformCfg.t1 = res.data.t1;
+        wx.platformCfg.t2 = res.data.t2;
+        wx.platformCfg.t3 = res.data.t3;
+        wx.platformCfg.t4 = res.data.t4;
+        // 创建文档类
+        const main = new Main();
+        wx.gamestage.addChildAt(main,0);
+      }else
+      {
+        console.log("版号获取失败");
+      }
+    }
+  });
+  // // 创建文档类
+  // const main = new Main();
+  // wx.gamestage.addChildAt(main,0);
 };
 
 
@@ -21,7 +47,7 @@ const huoSdk = require('./sdk-1.0.1.js');
 wx.huoSdk = huoSdk;
 huoSdk.init({
   app_id: 38,
-  mp_id: 'wx8865b1100d1472ef'
+  mp_id: 'wx304c8ddb5c274328'
 }).then(res => {
   console.log(res.msg);
   let opts = wx.getLaunchOptionsSync()
