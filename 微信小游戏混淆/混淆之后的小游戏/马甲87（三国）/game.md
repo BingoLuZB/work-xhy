@@ -1,14 +1,14 @@
 const versions = '1.0.0'
-const gameId = 37
-const downloadUrl = `https://gministatic.xinghe66.cn/jsonList/sg/mj37`
+const gameId = 87
+const downloadUrl = `https://gministatic.xinghe66.cn/jsonList/sg/mj${gameId}`
 
 const rootPath = wx.env.USER_DATA_PATH
 const fs = wx.getFileSystemManager();
 let num = 0
 
 var jsonList = [
-	'20201022_customlib.zip',
-	'20201022_main.zip',
+	'20201116_customlib.zip',
+	'20201116_main.zip',
 ]
 
 // (async () => {

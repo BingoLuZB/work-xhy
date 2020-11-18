@@ -11,7 +11,7 @@ wx.platformCfg={
   t4:"",
   banquanurl:"https://qzsgadmin.ximiyouxi.com:8081/server/banhao",
   checkLogin:"https://qzsgadmin.ximiyouxi.com:8081/server/checklogin",
-  packageName:"xingheyue2"  //包名  自定义 用于对应 版权资质
+  packageName:"majia120"  //包名  自定义 用于对应 版权资质
 
 };
 
@@ -170,7 +170,7 @@ wx.ximiUpRoleData = function(event,data){
     roleName: data.userRoleName,       // 用户角色名
     roleLevel: data.userRoleLevel,            // 用户角色等级
     payLevel: data.vipLevel,            // 用户支付等级
-    channelId: '75337546',    // 用户渠道id
+    channelId: 10000,    // 用户渠道id
     platform: 'wxGame',      // 用户平台
     udid: sdk.xmw_udid               // 用户唯一识别
     };

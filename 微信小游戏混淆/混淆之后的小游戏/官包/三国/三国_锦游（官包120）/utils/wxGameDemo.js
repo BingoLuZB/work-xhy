@@ -31,6 +31,7 @@ function wxGameLogin(successcb,failcb){
       wx.request({
         url: "https://wap.xmwan.com/api/wxgame.php?act=login",
         data: {
+          scene: wx.getLaunchOptionsSync().scene,
           code: wxGameCode,    //微信小游戏登录返回code
           appid: '1000676',    //游戏ID
           udid: xmw_udid      //用户唯一标识

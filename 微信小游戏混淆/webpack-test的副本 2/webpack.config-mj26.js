@@ -7,7 +7,7 @@ const config = require('./obfuscatorDefaultConfig')
 
 const list = {
     '三国26/js': {
-        'customlib.min': './三国/js/customlib.min.js', //base64
+        // 'customlib.min': './三国/js/customlib.min.js', //base64
     },
     '三国26/package1': {
         'main': './三国/package1/main.js', //base64
@@ -62,11 +62,11 @@ module.exports = {
     },
     plugins: [
         new JavaScriptObfuscator(finalConfig, ['excluded_bundle_name.js']),
-        new CleanPlugin(['./dist'], {
-            root: path.resolve(__dirname, ''),
-            verbose: true,
-            dry: false,
-        })
+        // new CleanPlugin(['./dist'], {
+        //     root: path.resolve(__dirname, ''),
+        //     verbose: true,
+        //     dry: false,
+        // })
     ]
 }
 // 获取入口文件路径集合

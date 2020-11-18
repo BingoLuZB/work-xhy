@@ -1,4 +1,4 @@
-const versions = '1.0.0'
+const versions = '1.0.1'
 const gameId = 26
 const downloadUrl = `https://gministatic.xinghe66.cn/jsonList/sg/guanbao`
 
@@ -8,7 +8,7 @@ let num = 0
 
 var jsonList = [
 	'20201019_customlib.zip',
-	'20201019_main.zip',
+	'20201117_main.zip'
 ]
 
 // (async () => {
@@ -57,7 +57,6 @@ function judgegame() {
 
 // 赋值json给全局
 function hasJsonToGame(str, data) {
-	console.log(str, '')
 	GameGlobal[str] = JSON.parse(data)
 	// wx.setStorage({
 	// 	key: str,
