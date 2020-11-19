@@ -13,7 +13,8 @@ function randomStr(min, max) {
 
 const md5 = require('md5.js');   //导入MD5加密js
 
-var xmw_username;  //全局变量  用于保存用户名
+var xmw_username='';  //全局变量  用于保存用户名
+var xmw_uid='';
 var xmw_udid = wx.getStorageSync('xmw_udid');
 if(!xmw_udid){     //生成用户唯一ID，保存到本地缓存
   xmw_udid = md5.hex_md5(randomStr(32, 32));
@@ -24,6 +25,8 @@ console.log("xmw_udid===="+xmw_udid)
 //登录方法。
 function wxGameLogin(successcb,failcb){
   var that = this
+  let opt = wx.getLaunchOptionsSync();
+  let extobj ={scene:opt.scene,query:{},referrerInfo:{}}
   //第一次静默登录  获取code
   wx.login({
     success: res => {
@@ -31,18 +34,18 @@ function wxGameLogin(successcb,failcb){
       wx.request({
         url: "https://wap.xmwan.com/api/wxgame.php?act=login",
         data: {
-          scene: wx.getLaunchOptionsSync().scene,
           code: wxGameCode,    //微信小游戏登录返回code
           appid: '1000676',    //游戏ID
-          udid: xmw_udid      //用户唯一标识
+          udid: xmw_udid,      //用户唯一标识
+          ext:JSON.stringify(extobj)
         },
         success: function (res) {
           if (res.data.status != 1) {     //此处返回不等于1，代表登录错误
             //failcb()     这里可以处理登录失败回调
           } else {
-            var xmw_uid = res.data.data[0].uid;    //登录后服务端返回的用户ID  跟udid不同!
-            xmw_username = res.data.data[0].user_name;
-            wx.platformCfg.uid = xmw_username;
+            wx.platformCfg.xmw_uid = res.data.data[0].uid;    //登录后服务端返回的用户ID  跟udid不同!
+            wx.platformCfg.xmw_username = res.data.data[0].user_name;
+            wx.platformCfg.uid = wx.platformCfg.xmw_username;
             wx.platformCfg.sid = res.data.data[0].sid;
             successcb()  // 这里可以处理登录成功回调
 
