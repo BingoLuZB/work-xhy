@@ -26,7 +26,8 @@ judgegame()
     getJsonToGame()
 	})
 	.catch(() => {
-    intoMiniGame()
+		// intoMiniGame()
+		getJsonToGame()
 	})
 
 // 判断进壳还是进游戏

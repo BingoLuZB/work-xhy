@@ -10,8 +10,8 @@ function randomStr(long) {
 }
 module.exports = {
     compact: true, //是否压缩成一行代码
-    controlFlowFlattening: true, //是否启用代码控制流平整
-     controlFlowFlatteningThreshold: 0.5, //转换将应用于任何给定节点的概率。
+    // controlFlowFlattening: true, //是否启用代码控制流平整
+    //  controlFlowFlatteningThreshold: 0.5, //转换将应用于任何给定节点的概率。
     // deadCodeInjection: true, //是否启动死代码
     // deadCodeInjectionThreshold: 0.1, //死代码大小, 
     disableConsoleOutput: false,

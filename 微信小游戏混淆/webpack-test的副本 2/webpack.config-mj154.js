@@ -32,6 +32,8 @@ const mjConfig = {
     // isNeedOneJson: false, //是否需要合并一个json文件,
     isDelJsonList: false, //是否需要重置jsonList文件夹
     mjNum: 154,
+    controlFlowFlattening: true, //是否启用代码控制流平整
+    controlFlowFlatteningThreshold: 0.5, //转换将应用于任何给定节点的概率。
 }
 
 const finalConfig = Object.assign(config, mjConfig)
