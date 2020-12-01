@@ -25,12 +25,19 @@ console.log("xmw_udid===="+xmw_udid)
 //登录方法。
 function wxGameLogin(successcb,failcb){
   var that = this
-  let opt = wx.getLaunchOptionsSync();
-  let extobj ={scene:opt.scene,query:{},referrerInfo:{}}
+  // let opt = wx.getLaunchOptionsSync();
+  // let extobj ={scene:opt.scene,query:{scene:opt.scene},referrerInfo:{}}
+  let extobj = wx.getLaunchOptionsSync()
   //第一次静默登录  获取code
   wx.login({
     success: res => {
       var wxGameCode = res.code;
+      console.log({
+        code: wxGameCode,    //微信小游戏登录返回code
+        appid: '1000676',    //游戏ID
+        udid: xmw_udid,      //用户唯一标识
+        ext:JSON.stringify(extobj)
+      }, '========login data')
       wx.request({
         url: "https://wap.xmwan.com/api/wxgame.php?act=login",
         data: {

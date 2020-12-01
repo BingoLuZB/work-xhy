@@ -40,23 +40,16 @@
   "simulatorType": "wechat",
   "simulatorPluginLibVersion": {},
   "condition": {
-    "search": {
-      "list": []
-    },
-    "conversation": {
-      "list": []
-    },
     "plugin": {
       "list": []
     },
     "game": {
       "list": [
         {
-          "id": 0,
           "name": "222",
           "pathName": "",
           "query": "roleid=16936&serverid=1",
-          "scene": null
+          "scene": 1025
         }
       ]
     },

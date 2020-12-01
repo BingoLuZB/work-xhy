@@ -1,4 +1,4 @@
-const versions = '1.0.1'
+const versions = '1.0.3'
 const gameId = 120
 const downloadUrl = `https://gministatic.xinghe66.cn/jsonList/sg/guanbao${gameId}`
 
