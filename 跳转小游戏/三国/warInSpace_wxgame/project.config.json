@@ -1,9 +1,9 @@
 {
   "description": "项目配置文件。",
   "setting": {
-    "urlCheck": false,
+    "urlCheck": true,
     "es6": true,
-    "enhance": false,
+    "enhance": true,
     "postcss": true,
     "preloadBackgroundData": false,
     "minified": true,
@@ -25,34 +25,44 @@
       "disablePlugins": [],
       "outputPath": ""
     },
-    "useIsolateContext": false,
+    "bundle": false,
+    "useIsolateContext": true,
     "useCompilerModule": true,
     "userConfirmedUseCompilerModuleSwitch": false,
     "packNpmManually": false,
-    "packNpmRelationList": []
+    "packNpmRelationList": [],
+    "minifyWXSS": true
   },
   "compileType": "game",
   "libVersion": "game",
-  "appid": "wx665bdca4fa13bcd5",
+  "appid": "wx78e4057e8d247e01",
   "projectname": "%E5%A4%AA%E7%A9%BA%E5%A4%A7%E4%BD%9C%E6%88%98",
   "isGameTourist": true,
   "simulatorType": "wechat",
   "simulatorPluginLibVersion": {},
   "condition": {
-    "search": {
-      "current": -1,
-      "list": []
-    },
-    "conversation": {
-      "current": -1,
+    "plugin": {
       "list": []
     },
     "game": {
-      "list": [],
-      "current": -1
+      "list": [
+        {
+          "name": "分享",
+          "pathName": "",
+          "query": "isShare=1",
+          "scene": 1044,
+          "shareInfo": {
+            "groupName": "测试模拟群1",
+            "shareName": "sR06v8IUcs0ibNRfe0QYurMcvtTruN8mxVGt9Ha4G64@cr4dev",
+            "shareKey": "LNzGPiFO3zcFXeCsJAZ-F92G_rxHCf24AFoentQF-EP5Is8Zfxs4bfORH_RquRnnbfe13Kt7I0hhbRFrR2C3Bw~~"
+          }
+        }
+      ]
+    },
+    "gamePlugin": {
+      "list": []
     },
     "miniprogram": {
-      "current": -1,
       "list": []
     }
   }
