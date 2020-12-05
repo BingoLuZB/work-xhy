@@ -40,7 +40,7 @@ window.verData = {};
 window.evData = {};
 //外网
 window.urlParam = {
-	apptype: '3',
+	apptype: '1',
 	root: 'https://z1c.h5eco.com/1/z1client/',
 	apiRoot: 'https://mzapi.h5eco.com/z1/',
 	reportRoot: `https://z1back.h5eco.com/`,

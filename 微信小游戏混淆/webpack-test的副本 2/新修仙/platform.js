@@ -37,17 +37,11 @@ class WxgameOpenDataContext {
 }
 window.apiLogin = 0;
 window.platform = {
-	name: 'wxgame',
+	name: 'senjin_wxgame',
 	openDataContext: new WxgameOpenDataContext(),
 
 	sdkInit() {
 		return new Promise((resolve, reject) => {
-			if (urlParam.isLocation) {
-				//内网
-				resolve();
-				return;
-			}
-
 			h5gamecn._init({
 				//获取登陆参数回调
 				getLoginParamsCallBack: function (params) {
@@ -69,11 +63,6 @@ window.platform = {
 	},
 	login() {
 		return new Promise((resolve, reject) => {
-			if (urlParam.isLocation) {
-				//内网
-				resolve();
-				return;
-			}
 			var pfType = 0;
 			wx.getSystemInfo({
 				success(res) {
@@ -132,7 +121,7 @@ window.platform = {
 		h5gamecn.shareInfo = param;
 	},
 
-	paySDK: (money, order, name, desc) => {
+	paySDK: (money, order, name, desc,goodsId) => {
 		h5gamecn.pay(money, {
 			gameOrderId: order,
 			openId: urlParam.openId,
@@ -144,7 +133,7 @@ window.platform = {
 			goodsName: name,
 			goodsDesc: desc,
 			ext: '',
-			goodsId: money + '',
+			goodsId: goodsId + '',
 		});
 	},
 
@@ -299,10 +288,14 @@ window.platform = {
 	},
 
 	getKeFu: () => new Promise(resolve => h5gamecn.isCustomerBtn((res) => resolve(res.show == 1))),
+	/**获得游戏版号信息 */
+	getGameVersion:() => {
+		return "审批文号:新广出审[2016]2120号,著作权人:北京指上缤纷科技有限公司\n出版单位:北京艺术与科学电子出版社,出版物号:ISBN 978-7-7979-0782-8";
+	},
 };
 
 wx.onError(function (res) {
-	var result = "   ";
+	var result = "senjin_wxgame:";
 	if (res) {
 		if (res.stack) {
 			result += res.stack;
