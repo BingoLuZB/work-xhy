@@ -46,10 +46,10 @@
     "game": {
       "list": [
         {
-          "name": "222",
+          "name": "分享",
           "pathName": "",
           "query": "roleid=16936&serverid=1",
-          "scene": 1025
+          "scene": 1044
         }
       ]
     },

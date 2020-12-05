@@ -160,10 +160,10 @@ wx.ximipay=function(uid,data)
 
 var eventArr=["","online","create","levelup","offline","other","delete"];
 wx.ximiUpRoleData = function(event,data){
-
+console.log(wx.platformCfg, '=====6')
   let obj = {
-    uid: sdk.xmw_username,             // 请求登录接口返回的用户uid
-    userName: sdk.xmw_username,        // 用户名
+    uid: wx.platformCfg.xmw_uid,             // 请求登录接口返回的用户uid
+    userName: wx.platformCfg.xmw_username,        // 用户名
     serverId: data.serverId,             // 用户服务器id
     serverName: data.serverName,      // 用户服务器
     roleID: data.userRoleId,        // 用户角色id
@@ -174,5 +174,6 @@ wx.ximiUpRoleData = function(event,data){
     platform: 'wxGame',      // 用户平台
     udid: sdk.xmw_udid               // 用户唯一识别
     };
+    console.log(obj, '=======obj')
   sdk.roleUpdate(JSON.stringify(obj));
 }

@@ -50,6 +50,8 @@ function wxGameLogin(successcb,failcb){
           if (res.data.status != 1) {     //此处返回不等于1，代表登录错误
             //failcb()     这里可以处理登录失败回调
           } else {
+            xmw_uid = res.data.data[0].uid;    //登录后服务端返回的用户ID  跟udid不同!
+            xmw_username = res.data.data[0].user_name;
             wx.platformCfg.xmw_uid = res.data.data[0].uid;    //登录后服务端返回的用户ID  跟udid不同!
             wx.platformCfg.xmw_username = res.data.data[0].user_name;
             wx.platformCfg.uid = wx.platformCfg.xmw_username;
@@ -65,7 +67,8 @@ function wxGameLogin(successcb,failcb){
                 data: {
                   appid: 1000676,            //游戏ID
                   uid: xmw_uid,                //登录后服务端返回的用户ID  跟udid不同!
-                  play_session: xmw_play_session     //游戏传入，随机字符串，用户每次登录成功之后随机一个出来
+                  play_session: xmw_play_session,     //游戏传入，随机字符串，用户每次登录成功之后随机一个出来
+                  ext: JSON.stringify(wx.getLaunchOptionsSync())
                 },
                 success: function (res) {
                   console.log('在线时长')
@@ -154,16 +157,19 @@ function wxGameLogin(successcb,failcb){
 // 事件统计
 try {
   const res = wx.getSystemInfoSync()   //获取用户相关信息
+  let data = {
+    appid: '1000676',
+    action_type: 'active',
+    udid: xmw_udid,      //用户唯一标识
+    data: res,
+    ext: JSON.stringify(wx.getLaunchOptionsSync())
+  }
   //激活
   wx.request({
     url: "https://wap.xmwan.com/api/wxgame.php?act=event",
-    data: {
-      appid: '1000676',
-      action_type: 'active',
-      udid: xmw_udid,      //用户唯一标识
-      data: res
-    },
+    data,
     success: function (res) {
+      console.log(data, '====jy_event_data')
       if (res.data.status != 1) {
         //failcb()
         console.log('激活出错~~~')

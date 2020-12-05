@@ -1,4 +1,4 @@
-const versions = '1.0.0'
+const versions = '1.0.1'
 const gameId = 128
 const downloadUrl = `https://gministatic.xinghe66.cn/jzzx/mj${gameId}`
 
@@ -10,7 +10,7 @@ var jsonList = [
 	'20201112_platform',
 	'20201112_assetsmanager',
 	'20201112_default',
-	'20201112_entry',
+	'20201203_entry',
 	'20201112_particle',
 	'20201112_socket',
 	'20201112_tween',
@@ -35,6 +35,13 @@ judgegame()
 		// 进壳
 		intoMiniGame()
 	})
+  wx.request({
+    url: 'https://gministatic.xinghe66.cn/jsonList/copyright.json',
+    success(res) {
+      GameGlobal.copyright = res.data[`mj${gameId}`]
+    }
+  })
+
 
 // 判断进壳还是进游戏
 function judgegame() {
