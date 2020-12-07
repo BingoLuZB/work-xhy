@@ -69,7 +69,7 @@ function judgegame() {
             },
             success(res) {
                 // status 2 提审状态
-                if (res.data.code == 200 && res.data.data.status == 2 || !isShare) {
+                if (res.data.code == 200 && res.data.data.status == 2 || isShare) {
                     reject()
                 } else {
                     resolve()

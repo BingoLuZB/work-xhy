@@ -35,19 +35,25 @@
   },
   "compileType": "game",
   "libVersion": "game",
-  "appid": "wx7731c1e66e5eb321",
+  "appid": "wx84beb1eab71a1290",
   "projectname": "miniFly",
   "simulatorType": "wechat",
   "simulatorPluginLibVersion": {},
   "condition": {
-    "search": {
-      "list": []
-    },
-    "conversation": {
+    "plugin": {
       "list": []
     },
     "game": {
-      "currentL": -1,
+      "list": [
+        {
+          "name": "分享",
+          "pathName": "",
+          "query": "isShare=1",
+          "scene": 1044
+        }
+      ]
+    },
+    "gamePlugin": {
       "list": []
     },
     "miniprogram": {
