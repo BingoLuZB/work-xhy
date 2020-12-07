@@ -127,6 +127,9 @@
     "build-265": "set NODE_ENV=build&webpack --config webpack.config-mj265.js",
     "build-266": "set NODE_ENV=build&webpack --config webpack.config-mj266.js",
     "build-267": "set NODE_ENV=build&webpack --config webpack.config-mj267.js",
+    "build-271": "set NODE_ENV=build&webpack --config webpack.config-mj271.js",
+    "build-273": "set NODE_ENV=build&webpack --config webpack.config-mj273.js",
+    "build-274": "set NODE_ENV=build&webpack --config webpack.config-mj274.js",
     "build-281": "set NODE_ENV=build&webpack --config webpack.config-mj281.js",
     "build-282": "set NODE_ENV=build&webpack --config webpack.config-mj282.js"
   },
