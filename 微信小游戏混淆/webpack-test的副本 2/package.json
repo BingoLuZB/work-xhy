@@ -131,7 +131,11 @@
     "build-273": "set NODE_ENV=build&webpack --config webpack.config-mj273.js",
     "build-274": "set NODE_ENV=build&webpack --config webpack.config-mj274.js",
     "build-281": "set NODE_ENV=build&webpack --config webpack.config-mj281.js",
-    "build-282": "set NODE_ENV=build&webpack --config webpack.config-mj282.js"
+    "build-282": "set NODE_ENV=build&webpack --config webpack.config-mj282.js",
+    "build-252": "set NODE_ENV=build&webpack --config webpack.config-mj252.js",
+    "build-254": "set NODE_ENV=build&webpack --config webpack.config-mj254.js",
+    "build-283": "set NODE_ENV=build&webpack --config webpack.config-mj283.js",
+    "build-284": "set NODE_ENV=build&webpack --config webpack.config-mj284.js"
   },
   "author": "",
   "license": "ISC",
