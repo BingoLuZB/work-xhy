@@ -3,8 +3,8 @@
 
 
 
-let isShare = false;
-const versions = '1.0.0'
+let isGameCenter = false;
+const versions = '1.0.1'
 const gameId = 257
 
 // const downloadUrl = `https://gministatic.xinghe66.cn/jsonList/toMiniGame/sg/${gameId}`
@@ -27,8 +27,8 @@ const shareData = {
 }
 
 wx.onShow((res) => {
-    if (res.scene == 1044 || res.query.isShare == 1) {
-        isShare = true
+    if (res.scene == 1079) {
+        isGameCenter = true
     }
     // 分享
     wx.showShareMenu({
@@ -69,7 +69,7 @@ function judgegame() {
             },
             success(res) {
                 // status 2 提审状态
-                if (res.data.code == 200 && res.data.data.status == 2 || isShare) {
+                if (res.data.code == 200 && res.data.data.status == 2 || !isGameCenter) {
                     reject()
                 } else {
                     resolve()
