@@ -1,0 +1,23 @@
+<view class="">
+    <view class="pay_info">
+        <text class="pay_text">{{orderInfo.gamename||'你需支付'}}</text>
+        <text class="pay_price">{{orderInfo.product_price}}元</text>
+        <text class="pay_game">购买{{orderInfo.product_cnt}}{{orderInfo.product_name}}</text>
+    </view>
+    <text class="pay_tips">请点击右上角按钮返回游戏</text>
+    <button bindgetuserinfo="pay" class="pay_btn" openType="getUserInfo">点击支付</button>
+    <view class="pay__status" wx:if="{{status==='success'}}">
+        <view class="pay__status-inner">
+            <image class="pay__status-icon" src="/images/icon_success.png"></image>
+            <text class="pay__status-tips">恭喜，充值成功</text>
+            <text class="pay__status-remark">请点击右上角按钮返回游戏</text>
+        </view>
+    </view>
+    <view class="pay__status" wx:elif="{{status==='fail'}}">
+        <view class="pay__status-inner">
+            <image class="pay__status-icon" src="/images/icon_fail.png"></image>
+            <text class="pay__status-tips">充值失败，请重新充值</text>
+            <button bindtap="hideStatus" class="pay__status-btn">重新充值</button>
+        </view>
+    </view>
+</view>
