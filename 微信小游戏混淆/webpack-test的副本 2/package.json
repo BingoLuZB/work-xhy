@@ -173,7 +173,16 @@
     "build-447": "set NODE_ENV=build&webpack --config webpack.config-mj447.js",
     "build-448": "set NODE_ENV=build&webpack --config webpack.config-mj448.js",
     "build-449": "set NODE_ENV=build&webpack --config webpack.config-mj449.js",
-    "build-450": "set NODE_ENV=build&webpack --config webpack.config-mj450.js"
+    "build-453": "set NODE_ENV=build&webpack --config webpack.config-mj453.js",
+    "build-454": "set NODE_ENV=build&webpack --config webpack.config-mj454.js",
+    "build-455": "set NODE_ENV=build&webpack --config webpack.config-mj455.js",
+    "build-456": "set NODE_ENV=build&webpack --config webpack.config-mj456.js",
+    "build-457": "set NODE_ENV=build&webpack --config webpack.config-mj457.js",
+    "build-458": "set NODE_ENV=build&webpack --config webpack.config-mj458.js",
+    "build-459": "set NODE_ENV=build&webpack --config webpack.config-mj459.js",
+    "build-460": "set NODE_ENV=build&webpack --config webpack.config-mj460.js",
+    "build-461": "set NODE_ENV=build&webpack --config webpack.config-mj461.js",
+    "build-462": "set NODE_ENV=build&webpack --config webpack.config-mj462.js"
   },
   "author": "",
   "license": "ISC",
