@@ -7,17 +7,19 @@ const config = require('./obfuscatorDefaultConfig')
 
 const list = {
     '官包41（仙侠）/': {
-        'platform': './新修仙/platform.js',
+        // 'platform': './新修仙/platform.js',
     },
     '官包41（仙侠）/js': {
         'assetsmanager.min': './新修仙/js/assetsmanager.min.js',
         'default.thm': './新修仙/js/default.thm.js',
         'entry.min': './新修仙/js/entry.min.js',
-        'eui.min': './新修仙/js/eui.min.js',
-        'main.min': './新修仙/js/main.min.js',
         'particle.min': './新修仙/js/particle.min.js',
         'socket.min': './新修仙/js/socket.min.js',
         'tween.min': './新修仙/js/tween.min.js'
+    },
+    '官包41（仙侠）/main': {
+        'main.min': './新修仙/main/main.min.js',
+        'subpack.min': './新修仙/main/subpack.min.js',
     },
 }
 
@@ -28,7 +30,7 @@ const mjConfig = {
     identifierNamesGenerator: 'hexadecimal',
     nameList: getEntryPath(true), //json文件列表 读取全部列表，写定的地址列表
     // isNeedOneJson: false, //是否需要合并一个json文件,
-    isDelJsonList: true, //是否需要重置jsonList文件夹
+    isDelJsonList: false, //是否需要重置jsonList文件夹
     mjNum: 41,
 }
 
@@ -70,11 +72,11 @@ module.exports = {
     },
     plugins: [
         new JavaScriptObfuscator(finalConfig, ['excluded_bundle_name.js']),
-        new CleanPlugin(['./dist'], {
-            root: path.resolve(__dirname, ''),
-            verbose: true,
-            dry: false,
-        })
+        // new CleanPlugin(['./dist'], {
+        //     root: path.resolve(__dirname, ''),
+        //     verbose: true,
+        //     dry: false,
+        // })
     ]
 }
 // 获取入口文件路径集合

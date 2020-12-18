@@ -18,8 +18,8 @@ const list = {
         // 'tween.min': './新修仙/js/tween.min.js'
     },
     '官包128（仙侠）/main': {
-        // 'main.min': './新修仙/main/main.min.js',
-        // 'subpack.min': './新修仙/main/subpack.min.js',
+        'main.min': './新修仙/main/main.min.js',
+        'subpack.min': './新修仙/main/subpack.min.js',
     },
 }
 

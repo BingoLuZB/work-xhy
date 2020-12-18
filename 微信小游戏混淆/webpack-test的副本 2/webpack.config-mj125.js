@@ -7,15 +7,15 @@ const config = require('./obfuscatorDefaultConfig')
 
 const list = {
     '官包125（仙侠）/': {
-        'platform': './新修仙/platform.js',
+        // 'platform': './新修仙/platform.js',
     },
     '官包125（仙侠）/js': {
-        'assetsmanager.min': './新修仙/js/assetsmanager.min.js',
-        'default.thm': './新修仙/js/default.thm.js',
+        // 'assetsmanager.min': './新修仙/js/assetsmanager.min.js',
+        // 'default.thm': './新修仙/js/default.thm.js',
         'entry.min': './新修仙/js/entry.min.js',
-        'particle.min': './新修仙/js/particle.min.js',
-        'socket.min': './新修仙/js/socket.min.js',
-        'tween.min': './新修仙/js/tween.min.js'
+        // 'particle.min': './新修仙/js/particle.min.js',
+        // 'socket.min': './新修仙/js/socket.min.js',
+        // 'tween.min': './新修仙/js/tween.min.js'
     },
     '官包125（仙侠）/main': {
         'main.min': './新修仙/main/main.min.js',
