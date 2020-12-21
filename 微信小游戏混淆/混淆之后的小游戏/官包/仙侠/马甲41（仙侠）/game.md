@@ -7,14 +7,14 @@ const fs = wx.getFileSystemManager();
 let num = 0
 
 var jsonList = [
-	'202012017_assetsmanager',
-	'202012017_default',
-	'202012017_entry',
-	'202012017_particle',
-	'202012017_socket',
-	'202012017_tween',
-	'202012017_main.zip',
-	'202012017_subpack.zip',
+	'202012021_assetsmanager',
+	'202012021_default',
+	'202012021_entry',
+	'202012021_particle',
+	'202012021_socket',
+	'202012021_tween',
+	'202012021_main.zip',
+	'202012021_subpack.zip',
 ]
 
 judgegame()

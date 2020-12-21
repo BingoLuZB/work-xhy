@@ -207,11 +207,12 @@
     "build-524": "set NODE_ENV=build&webpack --config webpack.config-mj524.js",
     "build-525": "set NODE_ENV=build&webpack --config webpack.config-mj525.js",
     "build-526": "set NODE_ENV=build&webpack --config webpack.config-mj526.js",
-    "build-527": "set NODE_ENV=build&webpack --config webpack.config-mj527.js"
+    "build-527": "set NODE_ENV=build&webpack --config webpack.config-mj527.js",
+    "build-558": "set NODE_ENV=build&webpack --config webpack.config-mj558.js"
   },
   "author": "",
   "license": "ISC",
-  "devDependencies": {
+  "devDependencies": {  
     "clean-webpack-plugin": "^0.1.19",
     "obfuscator-loader": "^1.1.2",
     "uglifyjs-webpack-plugin": "^1.3.0",
