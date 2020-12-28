@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <!-- swiper样式 -->
+    <link rel="stylesheet" href="./swiper.css">
+
+</head>
+
+<body>
+    <div id="module">
+    </div>
+</body>
+
+</html>
+<script>
+    window.config = {
+        "main": {
+            "cdn": "https://bhtg2.diaigame.com",
+            "domain": "https://bhtg2.diaigame.com",
+            "icp": "沪ICP备17012440号-1",
+            "copyright": "上海点爱网络科技有限公司"
+        },
+        "template": {
+            "type": "2",
+            "image": {
+                "image_1": "http://ldy.binghu666.com/storage/202007/LjY5GPdPhZbQFQm0S2aFlyXaL13niffYzhwgUPr7.gif",
+                "image_2": "http://ldy.binghu666.com/storage/202007/dqZjzRLDGUC0RgSS0hsNx6sZZwwPsl1WD0aaNFH1.gif",
+                "image_3": "",
+            },
+            "swiper": {
+                "image_1": "https://hd.qs921.com/h5/UploadsPicture/2017-08-01/598072d8f2691.jpg",
+                "image_2": "https://hd.qs921.com/h5/UploadsPicture/2017-08-01/598072dcbbfdd.jpg",
+                "image_3": "https://hd.qs921.com/h5/UploadsPicture/2017-08-01/598072e0a1557.jpg",
+                "image_3": "https://hd.qs921.com/h5/UploadsPicture/2017-08-01/598072e4b0855.jpg",
+            },
+            "download_time": "0",
+            "title": "测试",
+            "android_download_url": "https://download-1256444049.cos.ap-shanghai.myqcloud.com/apk/100004/100004_102_100819.apk",
+            "ios_download_url": "https://itunes.apple.com/cn/app/id1459613620?l=zh&ls=1&mt=8",
+            "download_url": "http://www.baidu.com",
+            "download_type": "1"
+        },
+        "module": 1
+    }
+</script>
+
+<script>
+    if (!window.config) {
+        console.error('未找到配置')
+    } else {
+        console.log(window.config)
+    }
+
+    const {
+        main,
+        template,
+        module
+    } = window.config
+
+    // 获取id
+    function getId(id) {
+        const obj = document.getElementById(id)
+        return obj
+    }
+    // 添加点击事件
+    function addClick(id, cb) {
+        getId(id).addEventListener('click', cb, true)
+    }
+    //  阻止冒泡
+    function stopPropaga(e) {
+        window.event ? window.event.cancelBubble = true : e.stopPropagation();
+    }
+    // 获取设备
+    function getEquipment() {
+        var equipmentType = "";
+        var agent = navigator.userAgent.toLowerCase();
+        var android = agent.indexOf("android");
+        var iphone = agent.indexOf("iphone");
+        var ipad = agent.indexOf("ipad");
+        if (android != -1) {
+            equipmentType = "android";
+        } else if (iphone != -1 || ipad != -1) {
+            equipmentType = "ios";
+        } else {
+            equipmentType = "pc";
+        }
+        return equipmentType;
+    }
+
+    // 跳转函数
+    function skipFn() {
+        window.location.href = template.download_url
+    }
+
+    // 添加顶部按钮
+    function addTopBtn(obj, i) {
+        let div = `
+                        <div id="${obj.name}_${i}" class="bh topBtn">
+                            <img src="${obj.url}" alt="">
+                        </div>
+                    `
+        getId('module').insertAdjacentHTML('beforeEnd', div)
+        if (parseInt(template.download_type) == 1 && obj.clickFn && typeof obj.clickFn == 'function') {
+            getId(`${obj.name}_${i}`).onclick = function (e) {
+                obj.clickFn()
+            }
+        }
+    }
+
+    // 添加底部按钮
+    function addBottomBtn(obj, i) {
+        let div = `
+                        <div id="${obj.name}_${i}" class="bh bottomBtn">
+                            <img src="${obj.url}" alt="">
+                        </div>
+                    `
+        getId('module').insertAdjacentHTML('beforeEnd', div)
+        if (parseInt(template.download_type) == 1 && obj.clickFn && typeof obj.clickFn == 'function') {
+            getId(`${obj.name}_${i}`).onclick = function (e) {
+                obj.clickFn()
+            }
+        }
+    }
+
+    // 添加普通图片的div
+    function addImg(obj, i) {
+        let div = `     
+                        <div id="${obj.name}_${i}" class="bh sticky">
+                            <img src="${obj.url}" alt="">
+                        </div>
+                            `
+        getId('module').insertAdjacentHTML('beforeEnd', div)
+        if (parseInt(template.download_type) == 1 && obj.clickFn && typeof obj.clickFn == 'function') {
+            getId(`${obj.name}_${i}`).onclick = function (e) {
+                obj.clickFn()
+            }
+        }
+    }
+
+    // 添加左右滑动的swiper
+    function addSwiper1(obj, i) {
+        // let str = obj.swiperList.map((item, index) => {
+        //    return all =`<div class="swiper-slide">
+        //                 <img src="${item}" alt="">
+        //             </div>`
+
+        // })
+        let str = ''
+        for (let i = 0; i < obj.swiperList.length; i++) {
+            let img = `
+                <div class="swiper-slide">
+                    <img src="${obj.swiperList[i]}" alt="">
+                </div>
+            `
+            str += img
+        }
+        let div = `
+        <div id="${obj.name}_${i}" class="swiper_wrap">
+            <div class="swiper-container">
+                <div class="swiper-wrapper">
+                    ${str}
+                </div>
+            </div>
+        </div>`
+        getId('module').insertAdjacentHTML('beforeEnd', div)
+        if (parseInt(template.download_type) == 1 && obj.clickFn && typeof obj.clickFn == 'function') {
+            getId(`${obj.name}_${i}`).onclick = function (e) {
+                obj.clickFn()
+            }
+        }
+    }
+
+    // 排版
+    function setModule(arr) {
+        for (let i = 0; i < arr.length; i++) {
+            let target = arr[i]
+            switch (target.name) {
+                case 'topBtn':
+                    addTopBtn(target, i)
+                    break;
+                case 'bottomBtn':
+                    addBottomBtn(target, i)
+                    break;
+                case 'img':
+                    addImg(target, i)
+                    break;
+                case 'swiper1':
+                    addSwiper1(target, i)
+                    break
+            }
+        }
+    }
+
+    // 初始化 动态添加div
+    function init() {
+        const obj = window.config
+
+        const image = obj.template.image
+        let imgList = []
+        for (let i in image) {
+            imgList.push(image[i])
+        }
+
+        const swiper = obj.template.swiper
+        let swiperList = []
+        for (let i in swiper) {
+            swiperList.push(swiper[i])
+        }
+        var arr = []
+        switch (parseInt(window.config.module)) {
+            case 1:
+                console.log('module1')
+                arr = [{
+                        name: 'topBtn',
+                        url: imgList[0],
+                        clickFn: () => {
+                            skipFn()
+                        }
+                    },
+                    {
+                        name: 'img',
+                        url: imgList[1],
+                    },
+                ]
+                break;
+            case 2:
+                console.log('module2')
+                arr = [{
+                        name: 'swiper1',
+                        swiperList: swiperList,
+                        clickFn: () => {
+                            skipFn()
+                        }
+                    },
+                    {
+                        name: 'img',
+                        url: imgList[1],
+                        click: true,
+                        clickFn: () => {
+
+                        }
+                    },
+                    {
+                        name: 'bottomBtn',
+                        url: imgList[0],
+                        clickFn: () => {
+                            skipFn()
+                        }
+                    },
+                ]
+                break
+        }
+        setModule(arr)
+    }
+    // 其他公用添加的东西
+    function comAddFun() {
+        if (main.icp && main.copyright) {
+            // 底部文字
+            let div = `
+                            <div id="elseFont" class="bh">
+                                <div>${main.copyright}</div>
+                                <div>${main.icp}</div>
+                            </div>
+                        `
+            getId('module').insertAdjacentHTML('beforeEnd', div)
+        }
+        if (template.title) {
+            document.title = template.title
+        }
+        if (template.download_type && parseInt(template.download_type) == 2) {
+            // download_type: 1 按钮点击  2 全屏点击
+            // 全屏点击
+            getId('module').onclick = function (e) {
+                console.log(getEquipment() + '====full')
+            }
+        }
+        if (template.download_time && parseInt(template.download_time) !== 0) {
+            setTimeout(() => {
+                skipFn()
+            }, template.download_time * 1000)
+        }
+    }
+
+    init()
+    comAddFun()
+</script>
+
+<!-- swiper配置 -->
+<script src="./swiper.js"></script>
+<script>
+    var mySwiper = new Swiper('.swiper-container', {
+        direction: 'vertical', // 垂直切换选项
+        loop: true, // 循环模式选项
+        direction: 'horizontal',
+        effect: 'coverflow',
+        slidesPerView: 1.5,
+        initialSlide: 1,
+        centeredSlides: true,
+        coverflowEffect: {
+            rotate: 30,
+            stretch: 10,
+            depth: 60,
+            modifier: 2,
+            slideShadows: true
+        },
+    })
+</script>
+
+
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+    }
+
+    /* swiper样式 */
+    .swiper-container {
+        width: 100%;
+        padding-top: 20px;
+        padding-bottom: 20px;
+        /* height: 300px; */
+    }
+
+    .swiper-slide {
+        /* width: 20%; */
+        /* height: 20%; */
+    }
+
+    .swiper-slide img {
+        width: 100%;
+        height: 100%;
+        border-radius: 5%;
+    }
+
+
+    /* 自己写的组件的样式 */
+    .bh img {
+        width: 100vw;
+        max-width: 100%;
+        vertical-align: bottom;
+    }
+
+    #module {
+        position: relative;
+        top: 0;
+        left: 0;
+    }
+
+    .topBtn {
+        position: sticky;
+        top: 0;
+        left: 0;
+        z-index: 999;
+    }
+
+    .bottomBtn {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        z-index: 999;
+    }
+
+    #elseFont {
+        width: 100vw;
+        max-width: 100%;
+        text-align: center;
+        position: absolute;
+        bottom: 0;
+        color: white;
+        font-size: 1vw;
+        z-index: 998;
+    }
+</style>
