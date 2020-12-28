@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "set NODE_ENV=build&webpack --config webpack.config.js",
-    "build-dog": "set NODE_ENV=build&webpack --config webpack.config-dog.js",
+    "build-dog": "set NODE_ENV=build&webpack --config webpack.config-dog.js ",
     "build-7": "set NODE_ENV=build&webpack --config webpack.config-mj7.js",
     "build-9": "set NODE_ENV=build&webpack --config webpack.config-mj9.js",
     "build-11": "set NODE_ENV=build&webpack --config webpack.config-mj11.js",
@@ -208,6 +208,11 @@
     "build-525": "set NODE_ENV=build&webpack --config webpack.config-mj525.js",
     "build-526": "set NODE_ENV=build&webpack --config webpack.config-mj526.js",
     "build-527": "set NODE_ENV=build&webpack --config webpack.config-mj527.js",
+    "build-544": "set NODE_ENV=build&webpack --config webpack.config-mj544.js",
+    "build-545": "set NODE_ENV=build&webpack --config webpack.config-mj545.js",
+    "build-546": "set NODE_ENV=build&webpack --config webpack.config-mj546.js",
+    "build-547": "set NODE_ENV=build&webpack --config webpack.config-mj547.js",
+    "build-548": "set NODE_ENV=build&webpack --config webpack.config-mj548.js",
     "build-558": "set NODE_ENV=build&webpack --config webpack.config-mj558.js"
   },
   "author": "",

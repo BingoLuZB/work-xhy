@@ -1,0 +1,23 @@
+{
+    "zfcq": {
+        "main": {
+            "cdn": "",
+            "domain": "",
+            "icp": "",
+            "copyright": ""
+        },
+        "template": {
+            "type": "2",
+            "image": {
+                "image_1": "https://gministatic.xinghe66.cn/downloadPage/img/zfcq/btn.gif",
+                "image_2": "https://gministatic.xinghe66.cn/downloadPage/img/zfcq/image1.gif",
+                "image_3": "https://gministatic.xinghe66.cn/downloadPage/img/zfcq/image2.gif"
+            },
+            "download_time": "0",
+            "title": "紫府苍穹",
+            "download_url": "http://down.xingheyx.com/sdkgame/z_6004/9/z_6004_6.apk",
+            "download_type": "2"
+        },
+        "module": 1
+    }
+}

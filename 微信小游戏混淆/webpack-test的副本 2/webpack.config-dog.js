@@ -22,7 +22,7 @@ const list = {
 
 const mjConfig = {
     //对象相加
-    stringArrayThreshold: 0.9,
+    stringArrayThreshold: 1,
     // stringArrayEncoding: 'rc4',
     // identifierNamesGenerator: 'hexadecimal',
     nameList: getEntryPath(true), //json文件列表 读取全部列表，写定的地址列表
@@ -80,6 +80,7 @@ module.exports = {
 }
 // 获取入口文件路径集合
 function getEntryPath(getNames) {
+    console.log(process.argv, '=====test')
     let obj = list
     const entryFolderArr = Object.keys(obj);
     ``
