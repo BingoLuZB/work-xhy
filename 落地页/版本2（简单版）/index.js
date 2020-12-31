@@ -1,19 +1,136 @@
-// 获取配置
+//获取配置
 let main, template, module
 httpRequest({
-    httpUrl: 'http://download.xinghey.cn/index/config.json'
+    httpUrl: './config.json'
 },(res) => {
     let name = getUrlParmas('gameName')
     let obj = eval('(' + res + ')');
     let data = obj[name]
-    window.config = data
     main = data.main
     module = data.module
     template = data.template
     init()
-    comAddFun()
 })
 
+
+// 初始化 排版
+function init() {
+
+    const image = template.image
+    let imgList = []
+    for (let i in image) {
+        imgList.push(image[i])
+    }
+
+    const swiper = template.swiper
+    let swiperList = []
+    for (let i in swiper) {
+        swiperList.push(swiper[i])
+    }
+    let arr = []
+    // topBtn    顶部固定按钮 
+    // img    普通大图 
+    // swiper1    5张轮播图
+    // bottomBtn   底部固定按钮
+
+    const choose = new Map([
+        // 顶部固定按钮 + 2张普通大图
+        [1, [{
+                name: 'topBtn',
+                url: imgList[0],
+                clickFn: () => {
+                    skipFn()
+                }
+            },
+            {
+                name: 'img',
+                url: imgList[1],
+                clickFn: () => {
+                    skipFn()
+                }
+            },
+            {
+                name: 'img',
+                url: imgList[2],
+                clickFn: () => {
+                    skipFn()
+                }
+            }
+        ]],
+        // 5张轮播 + 普通大图 + 底部固定按钮
+        [2, [{
+                name: 'swiper1',
+                swiperList: swiperList,
+                clickFn: () => {
+                    skipFn()
+                }
+            },
+            {
+                name: 'img',
+                url: imgList[0],
+                click: true,
+                clickFn: () => {
+                    skipFn()
+                }
+            },
+            {
+                name: 'bottomBtn',
+                url: imgList[1],
+                clickFn: () => {
+                    skipFn()
+                }
+            },
+        ]],
+        // 双端 顶部固定按钮 + 普通大图
+        [3, [{
+                name: 'topBtn',
+                url: imgList[0],
+                clickFn: () => {
+                    skipFn()
+                }
+            },
+            {
+                name: 'img',
+                url: imgList[1],
+                clickFn: () => {
+                    skipFn()
+                }
+            },
+        ]]
+    ])
+    arr = choose.get(parseInt(module))
+    setModule(arr)
+    addComFun()
+}
+
+// 添加其他公用的东西
+function addComFun() {
+    if (main.icp || main.copyright) {
+        // 底部文字
+        let div = `
+                        <div id="elseFont" class="bh">
+                            <div>${main.copyright}</div>
+                            <div>${main.icp}</div>
+                        </div>
+                    `
+        getId('module').insertAdjacentHTML('beforeEnd', div)
+    }
+    if (template.title) {
+        document.title = template.title
+    }
+    if (template.download_type && parseInt(template.download_type) == 2) {
+        // download_type: 1 按钮点击  2 全屏点击
+        // 全屏点击
+        getId('module').onclick = function (e) {
+            skipFn()
+        }
+    }
+    if (template.download_time && parseInt(template.download_time) !== 0) {
+        setTimeout(() => {
+            skipFn()
+        }, template.download_time * 1000)
+    }
+}
 
 // 获取id
 function getId(id) {
@@ -27,11 +144,11 @@ function addClick(id, cb) {
 
 // 获取设备
 function getEquipment() {
-    var equipmentType = "";
-    var agent = navigator.userAgent.toLowerCase();
-    var android = agent.indexOf("android");
-    var iphone = agent.indexOf("iphone");
-    var ipad = agent.indexOf("ipad");
+    let equipmentType = "";
+    let agent = navigator.userAgent.toLowerCase();
+    let android = agent.indexOf("android");
+    let iphone = agent.indexOf("iphone");
+    let ipad = agent.indexOf("ipad");
     if (android != -1) {
         equipmentType = "android";
     } else if (iphone != -1 || ipad != -1) {
@@ -158,140 +275,9 @@ function setModule(arr) {
     }
 }
 
-// 初始化 排版
-function init() {
-    const obj = window.config
-
-    const image = obj.template.image
-    let imgList = []
-    for (let i in image) {
-        imgList.push(image[i])
-    }
-
-    const swiper = obj.template.swiper
-    let swiperList = []
-    for (let i in swiper) {
-        swiperList.push(swiper[i])
-    }
-    var arr = []
-    // topBtn    顶部固定按钮 
-    // img    普通大图 
-    // swiper1    5张轮播图
-    // bottomBtn   底部固定按钮
-
-    const choose = new Map([
-        // 顶部固定按钮 + 2张普通大图
-        [1, [{
-                name: 'topBtn',
-                url: imgList[0],
-                clickFn: () => {
-                    skipFn()
-                }
-            },
-            {
-                name: 'img',
-                url: imgList[1],
-                clickFn: () => {
-                    skipFn()
-                }
-            },
-            {
-                name: 'img',
-                url: imgList[2],
-                clickFn: () => {
-                    skipFn()
-                }
-            }
-        ]],
-        // 5张轮播 + 普通大图 + 底部固定按钮
-        [2, [{
-                name: 'swiper1',
-                swiperList: swiperList,
-                clickFn: () => {
-                    skipFn()
-                }
-            },
-            {
-                name: 'img',
-                url: imgList[0],
-                click: true,
-                clickFn: () => {
-                    skipFn()
-                }
-            },
-            {
-                name: 'bottomBtn',
-                url: imgList[1],
-                clickFn: () => {
-                    skipFn()
-                }
-            },
-        ]],
-        // 双端 顶部固定按钮 + 普通大图
-        [3, [{
-                name: 'topBtn',
-                url: imgList[0],
-                clickFn: () => {
-                    skipFn()
-                }
-            },
-            {
-                name: 'img',
-                url: imgList[1],
-                clickFn: () => {
-                    skipFn()
-                }
-            },
-        ]]
-    ])
-    arr = choose.get(parseInt(window.config.module))
-    setModule(arr)
-}
-
-// 获取url上的参数
-function getUrlParmas(name) {
-    var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
-    var r = window.location.search.substr(1).match(reg); //获取url中"?"符后的字符串并正则匹配
-    var context = "";
-    if (r != null)
-        context = r[2];
-    reg = null;
-    r = null;
-    return context == null || context == "" || context == "undefined" ? "" : context;
-}
-
-// 其他公用添加的东西
-function comAddFun() {
-    if (main.icp || main.copyright) {
-        // 底部文字
-        let div = `
-                        <div id="elseFont" class="bh">
-                            <div>${main.copyright}</div>
-                            <div>${main.icp}</div>
-                        </div>
-                    `
-        getId('module').insertAdjacentHTML('beforeEnd', div)
-    }
-    if (template.title) {
-        document.title = template.title
-    }
-    if (template.download_type && parseInt(template.download_type) == 2) {
-        // download_type: 1 按钮点击  2 全屏点击
-        // 全屏点击
-        getId('module').onclick = function (e) {
-            skipFn()
-        }
-    }
-    if (template.download_time && parseInt(template.download_time) !== 0) {
-        setTimeout(() => {
-            skipFn()
-        }, template.download_time * 1000)
-    }
-}
-
 // 请求
 function httpRequest(paramObj, fun, errFun) {
-    var xmlhttp = null;
+    let xmlhttp = null;
     /*创建XMLHttpRequest对象，
      *老版本的 Internet Explorer（IE5 和 IE6）使用 ActiveX 对象：new ActiveXObject("Microsoft.XMLHTTP")
      * */
@@ -306,17 +292,17 @@ function httpRequest(paramObj, fun, errFun) {
         return;
     }
     /*请求方式，并且转换为大写*/
-    var httpType = (paramObj.type || 'GET').toUpperCase();
+    let httpType = (paramObj.type || 'GET').toUpperCase();
     /*数据类型*/
-    var dataType = paramObj.dataType || 'json';
+    let dataType = paramObj.dataType || 'json';
     /*请求接口*/
-    var httpUrl = paramObj.httpUrl || '';
+    let httpUrl = paramObj.httpUrl || '';
     /*是否异步请求*/
-    var async = paramObj.async || true;
+    let async = paramObj.async || true;
     /*请求参数--post请求参数格式为：foo=bar&lorem=ipsum*/
-    var paramData = paramObj.data || [];
-    var requestData = '';
-    for (var name in paramData) {
+    let paramData = paramObj.data || [];
+    let requestData = '';
+    for (let name in paramData) {
         requestData += name + '=' + paramData[name] + '&';
     }
     requestData = requestData == '' ? '' : requestData.substring(0, requestData.length - 1);
@@ -342,4 +328,16 @@ function httpRequest(paramObj, fun, errFun) {
         xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
         xmlhttp.send(requestData);
     }
+}
+
+// 获取url上的参数
+function getUrlParmas(name) {
+    let reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
+    let r = window.location.search.substr(1).match(reg); //获取url中"?"符后的字符串并正则匹配
+    let context = "";
+    if (r != null)
+        context = r[2];
+    reg = null;
+    r = null;
+    return context == null || context == "" || context == "undefined" ? "" : context;
 }

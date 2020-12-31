@@ -23,13 +23,10 @@
     // 测试数据
     // window.config = {
     //     "main": {
-    //         "cdn": "https://bhtg2.diaigame.com",
-    //         "domain": "https://bhtg2.diaigame.com",
     //         "icp": "沪ICP备17012440号-1",
     //         "copyright": "上海点爱网络科技有限公司"
     //     },
     //     "template": {
-    //         "type": "2",
     //         "image": {
     //             "image_1": "http://ldy.binghu666.com/storage/202007/LjY5GPdPhZbQFQm0S2aFlyXaL13niffYzhwgUPr7.gif",
     //             "image_2": "http://ldy.binghu666.com/storage/202007/dqZjzRLDGUC0RgSS0hsNx6sZZwwPsl1WD0aaNFH1.gif",
@@ -50,6 +47,30 @@
     //     },
     //     "module": 1
     // }
+
+        /*
+        main: {
+            icp,
+            copyright
+        }
+        这2个都是底部的公司信息
+
+        templete: {
+            image, //大图列表，这个对象会被转换成一个数组
+            swiper, //轮播图列表
+            title, //网页窗口标题
+            download_time, //进入网页，X秒之后自动下载
+            android_download_url, // 双端时，安卓下载地址
+            ios_download_url, // 双端时，ios下载地址
+            download_url， // 非双端时，下载地址
+            download_type, 是否全屏点击， 1为按钮点击下载， 2为全屏点击下载
+        }
+
+        module 排版样式
+            1 顶部固定按钮 + 2张普通大图
+            2 5张轮播 + 1张普通大图 + 底部固定按钮
+            3  双端 顶部固定按钮 + 1张普通大图
+        */
 </script>
 
 <!-- 模板js配置 -->

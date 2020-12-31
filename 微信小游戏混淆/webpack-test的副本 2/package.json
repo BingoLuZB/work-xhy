@@ -213,7 +213,9 @@
     "build-546": "set NODE_ENV=build&webpack --config webpack.config-mj546.js",
     "build-547": "set NODE_ENV=build&webpack --config webpack.config-mj547.js",
     "build-548": "set NODE_ENV=build&webpack --config webpack.config-mj548.js",
-    "build-558": "set NODE_ENV=build&webpack --config webpack.config-mj558.js"
+    "build-558": "set NODE_ENV=build&webpack --config webpack.config-mj558.js",
+    "build-560": "set NODE_ENV=build&webpack --config webpack.config-mj560.js",
+    "build-561": "set NODE_ENV=build&webpack --config webpack.config-mj561.js"
   },
   "author": "",
   "license": "ISC",
