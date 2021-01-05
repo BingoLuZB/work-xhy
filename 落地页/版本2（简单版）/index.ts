@@ -25,7 +25,7 @@ interface configType {
     moduleNum: number
 }
 
-type objType = {
+interface objType {
     name: string
     url?: string
     clickFn: (res?: any) => void | undefined
@@ -33,16 +33,41 @@ type objType = {
     click?: boolean
 }
 
+
+
 let main: maintype
 let template: templateType
 let moduleNum: number
+
+const enum moduleTypeNum {
+    // 排版方式编号
+    // 1 顶部按钮+2张大图  2 swpier+1张大图+底部按钮  3 顶部按钮+1张大图（双端）
+    tBtn_2img_ = 1,
+    swiper_1img_bbtn,
+    tbtn_1img_2clicnt
+}
+
+const enum downloadTypeNum {
+    // 点击方式编号
+    // 1按钮点击 2全屏点击
+    btnClick = 1,
+    allClick
+}
+
+const enum divName {
+    // 模块名
+    topBtn = 'topBtn',
+    img = 'img',
+    swiper1 = 'swiper1',
+    bottomBtn = 'bottomBtn',
+}
 
 //获取配置
 httpRequest({
     httpUrl: './config.json'
 }, (res: unknown) => {
-    let name = getUrlParmas('gameName')
-    let obj = eval('(' + res + ')');
+    let name: string | null = getUrlParmas('gameName')
+    let obj: any = eval('(' + res + ')');
     let data: configType = obj[name as string]
     main = data.main
     moduleNum = data.moduleNum
@@ -73,22 +98,22 @@ function init(): void {
 
     const choose: Map<number, objType[]> = new Map([
         // 顶部固定按钮 + 2张普通大图
-        [1, [{
-            name: 'topBtn',
+        [moduleTypeNum.tBtn_2img_, [{
+            name: divName.topBtn,
             url: imgList[0],
             clickFn: () => {
                 skipFn()
             }
         },
         {
-            name: 'img',
+            name: divName.img,
             url: imgList[1],
             clickFn: () => {
                 skipFn()
             }
         },
         {
-            name: 'img',
+            name: divName.img,
             url: imgList[2],
             clickFn: () => {
                 skipFn()
@@ -96,15 +121,15 @@ function init(): void {
         }
         ]],
         // 5张轮播 + 普通大图 + 底部固定按钮
-        [2, [{
-            name: 'swiper1',
+        [moduleTypeNum.swiper_1img_bbtn, [{
+            name: divName.swiper1,
             swiperList,
             clickFn: () => {
                 skipFn()
             }
         },
         {
-            name: 'img',
+            name: divName.img,
             url: imgList[0],
             click: true,
             clickFn: () => {
@@ -112,7 +137,7 @@ function init(): void {
             }
         },
         {
-            name: 'bottomBtn',
+            name: divName.bottomBtn,
             url: imgList[1],
             clickFn: () => {
                 skipFn()
@@ -120,15 +145,15 @@ function init(): void {
         },
         ]],
         // 双端 顶部固定按钮 + 普通大图
-        [3, [{
-            name: 'topBtn',
+        [moduleTypeNum.tbtn_1img_2clicnt, [{
+            name: divName.topBtn,
             url: imgList[0],
             clickFn: () => {
                 skipFn()
             }
         },
         {
-            name: 'img',
+            name: divName.img,
             url: imgList[1],
             clickFn: () => {
                 skipFn()
@@ -156,7 +181,7 @@ function addComFun(): void {
     if (template.title) {
         document.title = template.title
     }
-    if (template.download_type && template.download_type == 2) {
+    if (template.download_type && template.download_type == downloadTypeNum.allClick) {
         // download_type: 1 按钮点击  2 全屏点击
         // 全屏点击
         (getId('module') as HTMLElement).onclick = function (e) {
@@ -166,7 +191,7 @@ function addComFun(): void {
     if (template.download_time && template.download_type !== 0) {
         setTimeout(() => {
             skipFn()
-        }, (template.download_time as number) * 1000)
+        }, template.download_time * 1000)
     }
 }
 
@@ -223,7 +248,7 @@ function addTopBtn(obj: objType, i: number): void {
                     </div>
                 `;
     (getId('module') as any).insertAdjacentHTML('beforeEnd', div)
-    if (template.download_type == 1 && obj.clickFn && typeof obj.clickFn == 'function') {
+    if (template.download_type == downloadTypeNum.btnClick && obj.clickFn && typeof obj.clickFn == 'function') {
         (getId(`${obj.name}_${i}`) as HTMLElement).onclick = function (e) {
             obj.clickFn()
         }
@@ -238,7 +263,7 @@ function addBottomBtn(obj: objType, i: number): void {
                     </div>
                 `;
     (getId('module') as any).insertAdjacentHTML('beforeEnd', div)
-    if (template.download_type == 1 && obj.clickFn && typeof obj.clickFn == 'function') {
+    if (template.download_type == downloadTypeNum.btnClick && obj.clickFn && typeof obj.clickFn == 'function') {
         (getId(`${obj.name}_${i}`) as HTMLElement).onclick = function (e) {
             obj.clickFn()
         }
@@ -253,7 +278,7 @@ function addImg(obj: objType, i: number): void {
                     </div>
                         `;
     (getId('module') as any).insertAdjacentHTML('beforeEnd', div)
-    if (template.download_type == 1 && obj.clickFn && typeof obj.clickFn == 'function') {
+    if (template.download_type == downloadTypeNum.btnClick && obj.clickFn && typeof obj.clickFn == 'function') {
         (getId(`${obj.name}_${i}`) as HTMLElement).onclick = function (e) {
             obj.clickFn()
         }
@@ -285,7 +310,7 @@ function addSwiper1(obj: objType, i: number): void {
         </div>
     </div>`;
     (getId('module') as any).insertAdjacentHTML('beforeEnd', div)
-    if (template.download_type == 1 && obj.clickFn && typeof obj.clickFn == 'function') {
+    if (template.download_type == downloadTypeNum.btnClick && obj.clickFn && typeof obj.clickFn == 'function') {
         ( getId(`${obj.name}_${i}`) as HTMLElement).onclick = function (e) {
             obj.clickFn()
         }
@@ -297,16 +322,16 @@ function setModule(arr: objType[]): void {
     for (let i = 0; i < arr.length; i++) {
         let target = arr[i]
         switch (target.name) {
-            case 'topBtn':
+            case divName.topBtn:
                 addTopBtn(target, i)
                 break;
-            case 'bottomBtn':
+            case divName.bottomBtn:
                 addBottomBtn(target, i)
                 break;
-            case 'img':
+            case divName.img:
                 addImg(target, i)
                 break;
-            case 'swiper1':
+            case divName.swiper1:
                 addSwiper1(target, i)
                 break
         }
@@ -314,7 +339,7 @@ function setModule(arr: objType[]): void {
 }
 
 // 请求
-function httpRequest(paramObj: {type?: string, dataType?: string, httpUrl?: string, async?: boolean, data?: any}, fun: (res?: any) => void, errFun?: (err?: any) => void): void {
+function httpRequest<fn>(paramObj: {type?: string, dataType?: string, httpUrl?: string, async?: boolean, data?: any}, fun: (res?: any) => void, errFun?: (err?: any) => void): void {
     let xmlhttp: any;
     /*创建XMLHttpRequest对象，
      *老版本的 Internet Explorer（IE5 和 IE6）使用 ActiveX 对象：new ActiveXObject("Microsoft.XMLHTTP")
@@ -352,7 +377,7 @@ function httpRequest(paramObj: {type?: string, dataType?: string, httpUrl?: stri
             fun(xmlhttp.responseText);
         } else {
             /*失败回调函数*/
-            errFun;
+            errFun && errFun();
         }
     }
 
