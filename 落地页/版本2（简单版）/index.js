@@ -2,7 +2,7 @@
 let main, template, module
 httpRequest({
     httpUrl: './config.json'
-},(res) => {
+}, (res) => {
     let name = getUrlParmas('gameName')
     let obj = eval('(' + res + ')');
     let data = obj[name]
@@ -158,22 +158,34 @@ function getEquipment() {
     }
     return equipmentType;
 }
+// 判断是否微信环境
+function isWeixin() {
+    let ua = navigator.userAgent.toLowerCase();
+    if (ua.match(/MicroMessenger/i) == "micromessenger") {
+        return true;
+    }
+    return false;
+};
 
 // 跳转函数
 function skipFn() {
     const android = template.android_download_url
     const ios = template.ios_download_url
     const notBoth = template.download_url
-    if (android || ios || notBoth) {
-        let url = ''
-        if (android && ios) {
-            // 双端
-            url = getEquipment() == 'ios' ? ios : android
-        } else {
-            // 非双端
-            url = notBoth
+    if (isWeixin()) {
+        getId('dimback').style.display = 'block'
+    } else {
+        if (android || ios || notBoth) {
+            let url = ''
+            if (android && ios) {
+                // 双端
+                url = getEquipment() == 'ios' ? ios : android
+            } else {
+                // 非双端
+                url = notBoth
+            }
+            window.location.href = url
         }
-        window.location.href = url
     }
 }
 

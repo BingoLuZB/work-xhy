@@ -227,18 +227,31 @@ function skipFn(): void {
     const android = template.android_download_url
     const ios = template.ios_download_url
     const notBoth = template.download_url
-    if (android || ios || notBoth) {
-        let url: string = ''
-        if (android && ios) {
-            // 双端
-            url = getEquipment() == 'ios' ? ios : android
-        } else {
-            // 非双端
-            url = notBoth
+    if (isWeixin()) {
+        getId('dimback').style.display = 'block'
+    } else {
+        if (android || ios || notBoth) {
+            let url: string = ''
+            if (android && ios) {
+                // 双端
+                url = getEquipment() == 'ios' ? ios : android
+            } else {
+                // 非双端
+                url = notBoth
+            }
+            window.location.href = url
         }
-        window.location.href = url
     }
 }
+
+// 判断是否微信环境
+function isWeixin(): boolean {
+    let ua:any = navigator.userAgent.toLowerCase();
+    if (ua.match(/MicroMessenger/i) == "micromessenger") {
+        return true;
+    }
+    return false;
+};
 
 // 添加顶部按钮
 function addTopBtn(obj: objType, i: number): void {

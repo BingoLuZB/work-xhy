@@ -9,9 +9,9 @@
         "template": {
             "type": 2,
             "image": {
-                "image_1": "https://gministatic.xinghe66.cn/downloadPage/img/zfcq/btn.gif",
-                "image_2": "https://gministatic.xinghe66.cn/downloadPage/img/zfcq/image1.gif",
-                "image_3": "https://gministatic.xinghe66.cn/downloadPage/img/zfcq/image2.gif"
+                "image_1": "./img/zfcq/btn.gif",
+                "image_2": "./img/zfcq/image1.gif",
+                "image_3": "./img/zfcq/image2.gif"
             },
             "download_time": 0,
             "title": "紫府苍穹",
