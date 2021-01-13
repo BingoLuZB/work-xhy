@@ -337,7 +337,7 @@ function httpRequest(paramObj, fun, errFun) {
     } else if (httpType == 'POST') {
         xmlhttp.open("POST", httpUrl, async);
         //发送合适的请求头信息
-        xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+        xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded;charset=UTF-8");
         xmlhttp.send(requestData);
     }
 }
