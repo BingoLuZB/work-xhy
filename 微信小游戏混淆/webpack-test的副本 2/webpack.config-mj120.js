@@ -17,6 +17,7 @@ const list = {
 const mjConfig = {
     //对象
     stringArrayThreshold: 1,
+    identifiersPrefix: randomStr(4),
     // stringArrayEncoding: 'rc4',
     identifierNamesGenerator: 'hexadecimal',
     nameList: getEntryPath(true), //json文件列表 读取全部列表，写定的地址列表
@@ -109,4 +110,14 @@ function getNumArr() {
     }
     console.log(arr, '===nameArr')
     return arr
+}
+// 获取随机字母字符串 long为字符串长度
+function randomStr(long) {
+    let ruleStr = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
+    let finalStr = ''
+    for (let i = 0; i < long; i++) {
+        let num = Math.floor(Math.random() * ruleStr.length)
+        finalStr += ruleStr[num]
+    }
+    return finalStr
 }
