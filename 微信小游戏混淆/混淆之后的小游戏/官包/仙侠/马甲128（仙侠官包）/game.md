@@ -1,4 +1,4 @@
-const versions = '1.0.1'
+const versions = '1.0.2'
 const gameId = 128
 const downloadUrl = `https://gministatic.xinghe66.cn/jzzx/mj${gameId}`
 
@@ -6,17 +6,7 @@ const rootPath = wx.env.USER_DATA_PATH
 const fs = wx.getFileSystemManager();
 let num = 0
 
-var jsonList = [
-	'20201112_platform',
-	'20201112_assetsmanager',
-	'20201112_default',
-	'20201203_entry',
-	'20201112_particle',
-	'20201112_socket',
-	'20201112_tween',
-	'20201112_main.zip',
-	'20201112_subpack.zip',
-]
+var jsonList = ['20201112_platform','20201112_assetsmanager','20201112_default','20201221_entry','20201112_particle','20201112_socket','20201112_tween','20210118_main.zip','20210118_subpack.zip']
 
 // (async () => {
 // 	try {
@@ -229,25 +219,25 @@ if (window.RES && RES.processor) {
 
 window.alert = console.error;
 window.verData = {};
-window.evData = {};
+
 //外网
 window.urlParam = {
 	apptype: '3',
 	root: 'https://z1c.h5eco.com/1/z1client/',
 	apiRoot: 'https://mzapi.h5eco.com/z1/',
 	reportRoot: `https://z1back.h5eco.com/`,
-	ev: 104,
+	ev: 135,
 };
 
 window.getUrl = (url) => {
 	if (~url.indexOf('ver.json')) return urlParam.root + urlParam.gv + '/ver.json';
 	let v = urlParam.gv || urlParam.ev;
-	return urlParam.root + (v ? (evData[url] || verData[url] || 0) + '/' : '') + url;
+	return urlParam.root + (v ? (verData[url] || 0) + '/' : '') + url;
 };
 
 wx.request({
 	url: urlParam.root + urlParam.ev + '/ev.json',
-	success: res => window.evData = res.data,
+	success: res => window.verData = res.data,
 	complete: () => {
 		// userfileMgr.clear1DayRes();
 		egret.runEgret({
@@ -279,6 +269,11 @@ wx.request({
 		});
 	}
 });
+
+
+
+
+
 // require("egret.min.js")
 
 }

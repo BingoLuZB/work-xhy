@@ -1,4 +1,4 @@
-const versions = '1.0.0'
+const versions = '1.0.1'
 const gameId = 48
 const downloadUrl = `https://gministatic.xinghe66.cn/jzzx/mj48`
 
@@ -6,17 +6,8 @@ const rootPath = wx.env.USER_DATA_PATH
 const fs = wx.getFileSystemManager();
 let num = 0
 
-var jsonList = [
-	'20201110_platform',
-	'20201110_assetsmanager',
-	'20201110_default',
-	'20201110_entry',
-	'20201110_particle',
-	'20201110_socket',
-	'20201110_tween',
-	'20201110_main.zip',
-	'20201110_subpack.zip',
-]
+var jsonList = ['20201110_platform', '20201110_assetsmanager', '20201110_default', '20201221_entry', '20201110_particle', '20201110_socket', '20201110_tween', '20210118_main.zip', '20210118_subpack.zip'];
+
 
 // (async () => {
 // 	try {
@@ -183,8 +174,7 @@ function getJsonToGame() {
 
 // 进游戏
 function intoGame() {
-	const { userfileMgr } = require('./library/userfilemgr.js');
-
+const { userfileMgr } = require('./library/userfilemgr.js');
 require('./weapp-adapter.js');
 require('./senjin_wx_xxtx_littleGame.js');
 require('./platform.js');
@@ -222,25 +212,25 @@ if (window.RES && RES.processor) {
 
 window.alert = console.error;
 window.verData = {};
-window.evData = {};
+
 //外网
 window.urlParam = {
 	apptype: '3',
 	root: 'https://z1c.h5eco.com/1/z1client/',
 	apiRoot: 'https://mzapi.h5eco.com/z1/',
 	reportRoot: `https://z1back.h5eco.com/`,
-	ev: 104,
+	ev: 135,
 };
 
 window.getUrl = (url) => {
 	if (~url.indexOf('ver.json')) return urlParam.root + urlParam.gv + '/ver.json';
 	let v = urlParam.gv || urlParam.ev;
-	return urlParam.root + (v ? (evData[url] || verData[url] || 0) + '/' : '') + url;
+	return urlParam.root + (v ? (verData[url] || 0) + '/' : '') + url;
 };
 
 wx.request({
 	url: urlParam.root + urlParam.ev + '/ev.json',
-	success: res => window.evData = res.data,
+	success: res => window.verData = res.data,
 	complete: () => {
 		// userfileMgr.clear1DayRes();
 		egret.runEgret({
@@ -272,6 +262,11 @@ wx.request({
 		});
 	}
 });
+
+
+
+
+
 // require("egret.min.js")
 
 }
