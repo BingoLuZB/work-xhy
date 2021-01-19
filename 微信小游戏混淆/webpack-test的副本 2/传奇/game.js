@@ -48,10 +48,10 @@ window.reload = function () {
 // window['isOld'] = true;
 // window['logcdndnUrl'] = 'domres/logo/shabakelogo.png';
 window['logcdndnUrl'] = '';
-window["bgcdndnUrl"] = 'domres/bg/bg.jpg';
+window["bgcdndnUrl"] = 'domres/bg/xingheyue_202101151856.jpg';
 window['codetip'] = 'res/wxguide/zhizunbayebaize.jpg';
-window['channeltipname'] = '3.点击消息中的“沙巴克传奇”';
-window["officialaccountname"] ="白泽游戏中心";
+window['channeltipname'] = '3.点击消息中的“热血之刃”';
+window["officialaccountname"] ="热血之刃";
 window["channelRes"] ="zhizunbayebaize";
 window["channel"] = {};
 window["KtChannelId"] = window["channel"].channelID = 10070;

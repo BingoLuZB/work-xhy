@@ -12,7 +12,7 @@ const list = {
     '官包125（仙侠）/js': {
         // 'assetsmanager.min': './新修仙/js/assetsmanager.min.js',
         // 'default.thm': './新修仙/js/default.thm.js',
-        'entry.min': './新修仙/js/entry.min.js',
+        // 'entry.min': './新修仙/js/entry.min.js',
         // 'particle.min': './新修仙/js/particle.min.js',
         // 'socket.min': './新修仙/js/socket.min.js',
         // 'tween.min': './新修仙/js/tween.min.js'
