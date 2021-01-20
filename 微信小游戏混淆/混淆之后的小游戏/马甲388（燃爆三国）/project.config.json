@@ -20,7 +20,7 @@
     "compileHotReLoad": false,
     "useMultiFrameRuntime": true,
     "useApiHook": true,
-    "useApiHostProcess": true,
+    "useApiHostProcess": false,
     "babelSetting": {
       "ignore": [],
       "disablePlugins": [],
@@ -36,9 +36,9 @@
     "minifyWXSS": true
   },
   "compileType": "miniprogram",
-  "libVersion": "2.14.1",
+  "libVersion": "2.14.3",
   "appid": "wxe09eec343bef6b51",
-  "projectname": "gameout",
+  "projectname": "SG_WECHATYouXi",
   "qqappid": "1111318555",
   "qqLibVersion": "1.17.0",
   "scripts": {
