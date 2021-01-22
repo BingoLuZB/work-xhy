@@ -14,13 +14,33 @@ let starUtil = {
 
     starConfig.debug && console.log(new Date().getTime(), options.url, options.data)
     return new Promise((resolve, reject) => {
+      console.log('============ajax');
+      // 打点，判断是不是因为wx.request没有返回导致我们没有数据返回给cp
+      let timeout = setTimeout(() => {
+        wx.request({
+          url: 'https://vrapi.feb1st.cn/api/log/request',
+          method: 'POST',
+          data: {
+            content: options.url
+          },
+          complete(res) {
+            // 这是是为了证明wx.request有没有返回数据
+            wx.request({
+              url: 'https://vrapi.feb1st.cn/api/log/request',
+              method: 'POST',
+              data: {
+                content: `${options.url} complete, ${res.data.code}`
+              }
+            })
+          }
+        })
+      }, 3000)
       wx.request({
         ...options,
         success: res => {
           starConfig.debug && console.log(new Date().getTime(), options.url, res)
           // 关闭 loading，如果存在
           conf.showLoading && wx.hideLoading()
-          
           if (res.statusCode === 200 && (res.data && (res.data.code === undefined || res.data.code === 200))) {
             resolve(res)
           } else {
@@ -47,11 +67,14 @@ let starUtil = {
           }
 
           reject(res)
+        },
+        complete(res) {
+          clearTimeout(timeout)
+          console.log('======request complete');
         }
       })
     })
   },
-
   // 参数
   params (options) {
     // method

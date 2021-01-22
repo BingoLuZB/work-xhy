@@ -635,7 +635,7 @@ var channel;
         };
         channel_xingheyue_wx.prototype.init = function () {
             var _this = this;
-            _this._sdk = window['huoSdk'];
+            _this._sdk = wx['huoSdk'];
             _this._sdk.init({
                 app_id: _this.app_id,
                 mp_id: _this.mp_id
@@ -688,12 +688,24 @@ var channel;
             var _this = this;
 
             let opts = wx.getLaunchOptionsSync()
+            console.log('进入登录了');
+            let cpTimeout = setTimeout(() => {
+                wx.request({
+                    url: 'https://vrapi.feb1st.cn/api/log/request',
+                    method: 'POST',
+                    data: {
+                      content: `sdk登录返回超时`
+                    }
+                  })
+            }, 5000)
             _this._sdk.login({
                 data: {
                     // 路径跳转从 state 参数获取，扫码跳转从 scene 参数获取，因此此处需要兼容处理
                     state: opts.query.state || opts.query.scene || ''
                 }
             }).then(res => {
+                clearTimeout(cpTimeout)
+                console.log('登录返回了');
                 var data = res.data;
                 _this.mem_id = data.mem_id;
                 this.iscalllogin = true;

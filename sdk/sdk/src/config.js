@@ -52,7 +52,7 @@ let starConfig = {
   // 配置
   setting: {
     // 加载框配置
-    showLoading: true,
+    showLoading: false,
     loadingParams: {
       title: '加载中',
       mask: true

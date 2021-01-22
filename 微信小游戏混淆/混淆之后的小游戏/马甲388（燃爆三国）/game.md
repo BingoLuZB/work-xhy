@@ -7,9 +7,10 @@ const fs = wx.getFileSystemManager();
 let num = 0
 
 var jsonList = [
-	'20210119_boot.zip',
-	'20210119_com.zip',
-	'20210119_net.zip',
+	'20210121_boot.zip',
+	'20210121_com.zip',
+	'20210121_net.zip',
+	'20210121_pages.zip',
 ]
 // judgegame()
 // 	.then(() => {
