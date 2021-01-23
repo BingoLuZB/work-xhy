@@ -100,13 +100,31 @@ let starApi = {
 
   // 获取用户信息
   getSelfInfo (options) {
+    let timeout2 = setTimeout(() => {
+      wx.request({
+          url: 'https://vrapi.feb1st.cn/api/log/request',
+          method: 'POST',
+          data: {
+            content: `getSelfInfo返回超时`
+          }
+        })
+  }, 5000)
     return ajax({
       method: 'post',
       url: '/mp/wx/getuserinfo',
       ...options
     }).then(res => {
+      clearTimeout(timeout2)
       wx.setStorageSync('userInfo', res.data)
       return res
+    }, err => {
+      wx.request({
+        url: 'https://vrapi.feb1st.cn/api/log/request',
+        method: 'POST',
+        data: {
+          content: `getSelfInfo报错_${JSON.stringify(err) || ''}`
+        }
+      })
     })
   },
 

@@ -1,0 +1,23 @@
+{
+	"deviceOrientation": "portrait",
+	"networkTimeout": {
+		"request": 300000,
+		"connectSocket": 300000,
+		"uploadFile": 300000,
+		"downloadFile": 300000
+	},
+	"subpackages": [
+		{
+			"name": "stage1",
+			"root": "stage1"
+		},
+		{
+			"name": "stage2",
+			"root": "stage2"
+		}
+	],
+	"navigateToMiniProgramAppIdList": [
+		"wx8703ca93e029aeab",
+		"wxb90084ab6d56d48f"
+	]
+}

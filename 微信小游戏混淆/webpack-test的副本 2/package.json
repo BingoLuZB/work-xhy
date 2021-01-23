@@ -337,6 +337,7 @@
     "build-733": "set NODE_ENV=build&webpack --config webpack.config-mj733.js",
     "build-734": "set NODE_ENV=build&webpack --config webpack.config-mj734.js",
     "build-735": "set NODE_ENV=build&webpack --config webpack.config-mj735.js",
+    "build-736": "set NODE_ENV=build&webpack --config webpack.config-mj736.js",
     "build-737": "set NODE_ENV=build&webpack --config webpack.config-mj737.js",
     "build-738": "set NODE_ENV=build&webpack --config webpack.config-mj738.js",
     "build-739": "set NODE_ENV=build&webpack --config webpack.config-mj739.js",

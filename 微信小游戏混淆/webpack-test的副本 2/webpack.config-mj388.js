@@ -21,7 +21,7 @@ const list = {
 }
 
 const mjConfig = {
-    //对象
+    //数组相加
     stringArrayThreshold: 0.9,
     // stringArrayEncoding: 'rc4',
     // identifierNamesGenerator: 'hexadecimal',
