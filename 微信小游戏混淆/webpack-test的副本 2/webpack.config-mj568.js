@@ -10,7 +10,7 @@ const list = {
         // 'game': './传奇/core2/game.js', //base64
     },
     '马甲568（传奇）/core3': {
-        'game3': './传奇/core3/game.js', //base64
+        'game3': './传奇/core3/game.js', //hexadecimal
     },
     '马甲568（传奇）/libs': {
         // 'gamestart': './传奇/libs/gamestart.js', //base64
@@ -21,7 +21,7 @@ const mjConfig = {
     //单个数组
     stringArrayThreshold: 0.9,
     // stringArrayEncoding: 'rc4',
-    identifierNamesGenerator: 'hexadecimal',
+    identifierNamesGenerator: 'base64',
     nameList: getEntryPath(true), //json文件列表 读取全部列表，写定的地址列表
     isNeedOneJson: false, //是否需要合并一个json文件,
     mjNum: 568,
