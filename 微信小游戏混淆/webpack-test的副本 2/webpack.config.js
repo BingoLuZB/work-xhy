@@ -2,6 +2,7 @@ const path = require("path");
 const CleanPlugin = require('clean-webpack-plugin');
 const JavaScriptObfuscator = require('webpack-obfuscator');
 // 配置
+console.log('test')
 const mjNum = 32
 const all = false
 const config = require('./obfuscatorDefaultConfig')
