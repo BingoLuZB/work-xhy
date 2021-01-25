@@ -21,13 +21,13 @@ const list = {
 const mjConfig = {
     //单个数组
     stringArrayThreshold: 0.8,
-    // stringArrayEncoding: 'rc4',
-    // identifierNamesGenerator: 'hexadecimal',
+    stringArrayEncoding: 'rc4',
+    identifierNamesGenerator: 'hexadecimal',
     nameList: getEntryPath(true), //json文件列表 读取全部列表，写定的地址列表
     isNeedOneJson: false, //是否需要合并一个json文件,
     mjNum: 736,
     // controlFlowFlattening: true, //是否启用代码控制流平整
-    // controlFlowFlatteningThreshold: 0.2, //转换将应用于任何给定节点的概率。
+    // controlFlowFlatteningThreshold: 0.5, //转换将应用于任何给定节点的概率。
 }
 
 const finalConfig = Object.assign(config, mjConfig)

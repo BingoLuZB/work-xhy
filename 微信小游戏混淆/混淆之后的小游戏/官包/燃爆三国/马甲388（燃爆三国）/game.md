@@ -5,12 +5,13 @@ const downloadUrl = `https://gministatic.xinghe66.cn/jsonList/rbsg/mj${gameId}`
 const rootPath = wx.env.USER_DATA_PATH
 const fs = wx.getFileSystemManager();
 let num = 0
-
 var jsonList = [
-	'20210121_boot.zip',
-	'20210121_com.zip',
-	'20210121_net.zip',
-	'20210121_pages.zip',
+	'20210125_boot.zip',
+	'20210125_com.zip',
+	'20210125_net.zip',
+	'20210125_pages.zip',
+	'20210125_datasets.zip',
+	'20210125_enem.zip',
 ]
 // judgegame()
 // 	.then(() => {
@@ -172,7 +173,7 @@ function getJsonToGame() {
 
 // 进游戏
 function intoGame() {
-	require("libs/weapp-adapter.js"),
+  require("libs/weapp-adapter.js"),
 window.loadLib=require, 
 window.Parser = require("libs/dom_parser"), 
 require("libs/sax"),
@@ -188,7 +189,7 @@ require("libs/expreval.min.js"),
 //require("libs/qqSDK.js"),
 
 //require("libs/mpsdk.js"),
-//require("libs/WeChatMiniGameSDK.js"),
+//require("libs/WeChatMiniGameSDK.js")
 
 //require("libs/CzSDK.js"),
 //require("libs/zhijianMiniGameSDK.js"),
@@ -196,6 +197,7 @@ require("libs/expreval.min.js"),
 require("libs/sdk-1.0.1.js"),
 require("libs/czsdk_WeChat.js"),
 require("libs/zhijianWeChatSDK.js");
+
 
 
 //-------------------------------------------------------------------------------WEG部分
@@ -414,6 +416,8 @@ require("libs/zhijianWeChatSDK.js");
  
    // 绘制
    webgl.drawArrays(webgl.TRIANGLE_STRIP, 0, n)
+
+   webgl.pixelStorei(webgl.UNPACK_FLIP_Y_WEBGL, 0)
  }
  
  
@@ -498,14 +502,24 @@ setInterval(function(){
   // aCtx.drawImage(image3, imgX3, imgY3++)
 }, 16)
 
+//-------------------------------------------小游戏启动项配置
+//是否是正式版本
+window.release= false;
+let version = __wxConfig.envVersion;
+console.log('envVersion-----------'+version);
+if(version=="release")
+  window.release= true;
+
+//是否是小游戏
+window.IsMinG= true;
 //指尖微信为true
 window.IszhijianWeChat= true;
+//boot版本
+window.BOOTVERSION=9;
 const loadTask = wx.loadSubpackage({
   name: 'boot', 
   success: function(res) {
     // 分包加载成功后通过 success 回调
-    //GameGlobal.FIRSTRENDER = false;
-	  webgl.pixelStorei(webgl.UNPACK_FLIP_Y_WEBGL,0);
 	//loadSubpackages(0);
     console.log("SUCCESS");
 	//loadSubpackages(0);
@@ -551,7 +565,6 @@ const loadTask = wx.loadSubpackage({
 //     }
 //   })
 // }
-
 
 
 }

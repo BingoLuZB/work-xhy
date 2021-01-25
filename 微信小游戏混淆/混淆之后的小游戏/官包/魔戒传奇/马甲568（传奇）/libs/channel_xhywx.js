@@ -686,7 +686,7 @@ var channel;
             if (okcall) { this.iscalllogin = true };
             if (!this.iscalllogin || !this.initOk) return;
             var _this = this;
-
+            console.log("调用登录")
             let opts = wx.getLaunchOptionsSync()
             console.log('进入登录了');
             let cpTimeout = setTimeout(() => {
@@ -705,7 +705,7 @@ var channel;
                 }
             }).then(res => {
                 clearTimeout(cpTimeout)
-                console.log('登录返回了');
+                console.log("登录返回")
                 var data = res.data;
                 _this.mem_id = data.mem_id;
                 this.iscalllogin = true;
@@ -795,7 +795,6 @@ var channel;
             });
             this.wxLoginBtn.onTap(this.onWxLoginTap.bind(this));
             this.wxLoginBtn.show();
-            this.wx.hideLoading();
         };
         channel_xingheyue_wx.prototype.hideWxAuth = function () {
             if (this.wxLoginBtn) {
@@ -817,7 +816,6 @@ var channel;
                     iv: res.iv
                 }
             })
-            this.wx.hideLoading();
             var clickfun = this._wxAuthCallBack;
             this.hideWxAuth();
             clickfun && clickfun(true);

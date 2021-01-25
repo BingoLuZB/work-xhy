@@ -226,7 +226,7 @@ window.urlParam = {
 	root: 'https://z1c.h5eco.com/1/z1client/',
 	apiRoot: 'https://mzapi.h5eco.com/z1/',
 	reportRoot: `https://z1back.h5eco.com/`,
-	ev: 135,
+	ev: 143,
 };
 
 window.getUrl = (url) => {
@@ -269,9 +269,6 @@ wx.request({
 		});
 	}
 });
-
-
-
 
 
 // require("egret.min.js")

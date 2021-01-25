@@ -27489,7 +27489,10 @@ var Browser=(function(){
 				libs[j].f(win,doc,Laya);
 			}
 		}
+		Browser.IsMinG=Browser._window.IsMinG;
 		Browser.IszhijianWeChat=Browser._window.IszhijianWeChat;
+		Browser.release=Browser._window.release;
+		Browser.BOOTVERSION=Browser._window.BOOTVERSION;
 		if (u.indexOf("MiniGame")>-1 && Browser.window.hasOwnProperty("wx")){
 			Browser.onWXMiniGame=true;
 			console.log("1111111111111---------------------------在微信小游戏里面");
@@ -27659,6 +27662,8 @@ var Browser=(function(){
 	Browser._supportWebGL=false;
 	Browser.FIRSTRENDER2=false;
 	Browser.IszhijianWeChat=false;
+	Browser.IsMinG=false;
+	Browser.BOOTVERSION=0;
 	return Browser;
 })()
 
@@ -33017,7 +33022,7 @@ var LoaderManager=(function(_super){
 		/**延迟时间多久再进行错误重试，默认立即重试*/
 		this.retryDelay=0;
 		/**最大下载线程，默认为5个*/
-		this.maxLoader=5;
+		this.maxLoader=8;
 		/**@private */
 		this._loaders=[];
 		/**@private */

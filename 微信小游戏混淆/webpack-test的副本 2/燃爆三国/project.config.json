@@ -35,9 +35,9 @@
     "minifyWXSS": true
   },
   "compileType": "miniprogram",
-  "libVersion": "2.14.3",
+  "libVersion": "2.14.1",
   "appid": "wxe09eec343bef6b51",
-  "projectname": "SG_WECHATYouXi",
+  "projectname": "gameoldout",
   "qqappid": "1111318555",
   "qqLibVersion": "1.17.0",
   "scripts": {

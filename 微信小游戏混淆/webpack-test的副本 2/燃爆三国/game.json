@@ -2,7 +2,7 @@
 "subpackages": [
     {
         "name": "net",
-        "root": "net/"
+        "root": "js/net/net.js"
     },
     {
         "name": "boot",
@@ -10,23 +10,23 @@
     },
     {
         "name": "enem",
-        "root": "enem/"
+        "root": "js/enem/enem.js"
     },
     {
         "name": "com",
-        "root": "com/"
+        "root": "js/com/com.js"
     },
     {
         "name": "datasets",
-        "root": "datasets/"
+        "root": "js/datasets/datasets.js"
     },
     {
         "name": "engine",
-        "root": "engine/"
+        "root": "js/engine/engine.js"
     },
 		{
         "name": "pages",
-        "root": "/pages"
+        "root": "js/pages/pages.js"
     }
 ]
 }

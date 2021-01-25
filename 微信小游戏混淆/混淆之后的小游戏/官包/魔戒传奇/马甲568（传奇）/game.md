@@ -172,7 +172,9 @@ function getJsonToGame() {
 
 
 // 进游戏
-function intoGame() {require("libs/weapp-adapter.js");
+function intoGame() {
+
+require("libs/weapp-adapter.js");
 require("libs/laya.core.js");
 require("libs/laya.wxmini.js");
 require("libs/laya.webgl.js");
@@ -374,6 +376,7 @@ window['kth5sdk'].init();
 
 
 // throw 'asdfsadf';
+
 }
 
 // 进壳

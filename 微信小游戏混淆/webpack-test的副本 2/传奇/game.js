@@ -60,7 +60,7 @@ window["isbaize"] =true;
 window['ktgamepreloadjdk'] = {
     debug: false,
     //该值大于config.json配置中online,则意味着目前是审核状态
-    online: 79,
+    online: 89,
     renderMode: "webgl",
     isAutoEnter: true,
     iswxMode: true,

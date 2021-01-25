@@ -21,7 +21,7 @@ const mjConfig = {
     //单个数组
     stringArrayThreshold: 0.9,
     // stringArrayEncoding: 'rc4',
-    identifierNamesGenerator: 'base64',
+    identifierNamesGenerator: 'hexadecimal',
     nameList: getEntryPath(true), //json文件列表 读取全部列表，写定的地址列表
     isNeedOneJson: false, //是否需要合并一个json文件,
     mjNum: 568,
