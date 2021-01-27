@@ -2,7 +2,7 @@ const path = require('path') //获取路径
 const UglifyjsWebpackPlugin = require('uglifyjs-webpack-plugin') //优化js
 const { CleanWebpackPlugin } = require("clean-webpack-plugin") //清除之前打包生成的文件
 const webpack = require('webpack')
-const entry = require('./config/index_mjcqOL.js')
+const entry = require('./config/index_mjcq.js')
 
 // 获取入口文件路径集合
 function getEntryPath(getNames) {

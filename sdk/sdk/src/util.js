@@ -14,7 +14,6 @@ let starUtil = {
 
     starConfig.debug && console.log(new Date().getTime(), options.url, options.data)
     return new Promise((resolve, reject) => {
-      console.log('============ajax');
       // 打点，判断是不是因为wx.request没有返回导致我们没有数据返回给cp
       let timeout = setTimeout(() => {
         wx.request({

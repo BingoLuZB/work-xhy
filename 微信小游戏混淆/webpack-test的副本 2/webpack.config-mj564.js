@@ -5,25 +5,29 @@ const JavaScriptObfuscator = require('webpack-obfuscator');
 // 配置
 const config = require('./obfuscatorDefaultConfig')
 
+const name = '魔戒传奇OL'
 const list = {
-    '马甲564（三国）/js': {
-        'customlib.min': './三国/js/customlib.min.js', //base64
+    '马甲564（魔戒传奇OL）/js': {
+        'Buffer.min': `./${name}/js/Buffer.min.js`, //base64
     },
-    '马甲564（三国）/package1': {
-        'main': './三国/package1/main.js', //base64
+    '马甲564（魔戒传奇OL）/stage1': {
+        'main.min': `./${name}/stage1/main.min.js`, //base64
+    },
+    '马甲564（魔戒传奇OL）/stage2': {
+        'default.thm': `./${name}/js/default.thm.js`, //base64
     },
 }
 
 const mjConfig = {
-    //自己的数组
+    //单个数组
     stringArrayThreshold: 0.9,
     // stringArrayEncoding: 'rc4',
-    // identifierNamesGenerator: 'hexadecimal',
+    identifierNamesGenerator: 'hexadecimal',
     nameList: getEntryPath(true), //json文件列表 读取全部列表，写定的地址列表
     isNeedOneJson: false, //是否需要合并一个json文件,
     mjNum: 564,
-    controlFlowFlattening: true, //是否启用代码控制流平整
-    controlFlowFlatteningThreshold: 0.5, //转换将应用于任何给定节点的概率。
+    // controlFlowFlattening: true, //是否启用代码控制流平整
+    // controlFlowFlatteningThreshold: 0.5, //转换将应用于任何给定节点的概率。
 }
 
 const finalConfig = Object.assign(config, mjConfig)

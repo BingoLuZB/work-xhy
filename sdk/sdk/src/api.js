@@ -6,10 +6,12 @@ let ajax = function (options) {
   return new Promise((resolve, reject) => {
     starUtil.ajax(options).then(res => {
       if (res.data && res.data.data) {
+        console.log('======ajax resolve111')
         resolve({
           data: res.data.data
         })
       } else {
+        console.log('======ajax resolve222')
         resolve({
           msg: 'success'
         })
@@ -46,6 +48,7 @@ let starApi = {
       url: '/mp/wx/login',
       ...options
     }).then(res => {
+      console.log('========api login success')
       if (res) {
         wx.setStorageSync('userInfo', res.data)
       }
@@ -100,31 +103,25 @@ let starApi = {
 
   // 获取用户信息
   getSelfInfo (options) {
-    let timeout2 = setTimeout(() => {
-      wx.request({
-          url: 'https://vrapi.feb1st.cn/api/log/request',
-          method: 'POST',
-          data: {
-            content: `getSelfInfo返回超时`
-          }
-        })
-  }, 5000)
     return ajax({
       method: 'post',
       url: '/mp/wx/getuserinfo',
       ...options
     }).then(res => {
-      clearTimeout(timeout2)
-      wx.setStorageSync('userInfo', res.data)
+      console.log('===========api getSelfInfo success')
+      try {
+        console.log('====sdk getSelfInfo try')
+        wx.setStorage({
+          key:"userInfo",
+          data: res.data
+        })
+      } catch (error) {
+        console.log(error, '====sdk catch error')
+        wx.setStorageSync('userInfo', res.data)
+      }
       return res
     }, err => {
-      wx.request({
-        url: 'https://vrapi.feb1st.cn/api/log/request',
-        method: 'POST',
-        data: {
-          content: `getSelfInfo报错_${JSON.stringify(err) || ''}`
-        }
-      })
+      console.log('===========api getSelfInfo fail')
     })
   },
 

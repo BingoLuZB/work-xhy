@@ -42,12 +42,14 @@ let huoSdk = {
         success: res => {
           // session_key 有效，尝试获取用户信息
           // 若用户未授权则无法获取
-          this.getSelfInfo(options).then(res => {
+          starApi.getSelfInfo(options).then(res => {
+            console.log(JSON.stringify(res), '=====login里面的getSelfInfo success1')
             resolve({
               ...res,
               msg: 'success'
             })
           }, err => {
+            console.log('=====login里面的getSelfInfo fail2')
             reject({
               msg: err.msg || 'fail'
             })
@@ -56,17 +58,20 @@ let huoSdk = {
         fail: res => {
           // session_key 失效，重新登录
           starApi.wxLogin(options).then(res => {
-            this.getSelfInfo(options).then(res => {
+            starApi.getSelfInfo(options).then(res => {
+              console.log(JSON.stringify(res), '=====login里面的getSelfInfo success3')
               resolve({
                 ...res,
                 msg: 'success'
               })
             }, err => {
+              console.log('=====login里面的getSelfInfo fail4')
               reject({
                 msg: err.msg || 'fail'
               })
             })
           }, err => {
+            console.log('=====login里面的getSelfInfo fail5')
             reject({
               msg: err.msg || 'fail'
             })
@@ -107,10 +112,11 @@ let huoSdk = {
     })
   },
 
-  // 获取用户信息
-  getSelfInfo (options = {}) {
-    return starApi.getSelfInfo(options)
-  },
+  // // 获取用户信息
+  // getSelfInfo (options = {}) {
+  //   console.log('starApi getSelfInfo')
+  //   return starApi.getSelfInfo(options)
+  // },
 
   // 获取分享内容
   getShareInfo (options = {}) {

@@ -1,4 +1,4 @@
-const versions = '1.0.1'
+const versions = '1.0.2'
 const gameId = 568
 const downloadUrl = `https://gministatic.xinghe66.cn/jsonList/cq/mj${gameId}`
 
@@ -7,13 +7,13 @@ const fs = wx.getFileSystemManager();
 let num = 0
 
 var jsonList = [
-    '20210118_game.zip',
-    '20210118_game3.zip',
-    '20210118_gamestart.zip',
+    '20210127_game.zip',
+    '20210123_game3.zip',
+    '20210127_gamestart.zip',
 ]
 
 // judgegame()
-//     .then(() => {
+//     .then(() => { 
 //         // 进游戏
 //         getJsonToGame()
 //     })
@@ -184,7 +184,7 @@ require("libs/laya.ani.js");
 require("libs/laya.filter.js");
 require("libs/zlib.min.js");
 // window['awsdk'] = require('libs/sdk_wxa.js');
-GameGlobal.huoSdk = require("libs/sdk-1.0.1.js")
+wx.huoSdk = require("libs/sdk-1.0.1.js")
 window['sdkChannelName']="xingheyue_wx_mjcq";
 
 // require("hortor/sdk.js");

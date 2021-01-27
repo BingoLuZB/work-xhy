@@ -7,7 +7,7 @@ entry.path = {
     //     'game': './src/马甲568（传奇）/core2/game.js',
     // },
     // '马甲568（传奇）/core3': {
-    //     'game3': './src/马甲568（传奇）/core3/game3.js'
+    //     'game': './src/马甲568（传奇）/core3/game3.js'
     // },
     '马甲568（传奇）/libs': {
         'gamestart': './src/马甲568（传奇）/libs/gamestart.js'
