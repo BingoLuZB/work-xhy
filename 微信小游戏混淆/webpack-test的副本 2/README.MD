@@ -25,3 +25,6 @@ output
     3、打包结束后，用node在input里面复制对应的游戏包到output，然后在output里面修改对应游戏的appid,游戏id（这些在config里面的配置文件设置），再把dist里面混淆好的文件覆盖到output的游戏里面去
 
     4、用node删除步骤1新生成的webpack.config.js，压缩config里面规定的文件，打包结束
+
+需要工具：
+npm install concurrently --save 这个可以同时执行多个命令

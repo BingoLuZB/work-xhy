@@ -18,7 +18,7 @@ const list = {
 }
 
 const mjConfig = {
-    //林泽数组
+    //林泽数组 (不过审)
     stringArrayThreshold: 0.7,
     // stringArrayEncoding: 'rc4',
     // identifierNamesGenerator: 'hexadecimal',
