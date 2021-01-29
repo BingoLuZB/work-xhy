@@ -3,7 +3,7 @@ const readline = require('readline');
 const http = require("http");
 const cp = require('child_process');
 const { openHtml } = require('./nodeUtil')
-// const packageIdArr = [666, 55 ,11]
+let packageIdArr = [666, 55 ,11]
 
 const jsonCopyStr = {
     key: 'newBuild-key',
@@ -17,13 +17,13 @@ async function init() {
     console.log(res)
 }
 
-init()
 
 
 // 新增webpackConfig package.json
 function addWebpackConfig() {
     // 读取config里面的配置文件
-    let allStr = "concurrently "
+    // let allStr = "concurrently "
+    let allStr = ""
     packageIdArr.forEach((item, index) => {
         const name = `mj${item}`
         // 新建webpack.config.js
@@ -33,18 +33,17 @@ function addWebpackConfig() {
         // fs.writeFileSync(`webpack.config-${name}.js`, data, {flag: 'w+'})
 
         // 配置package.json
-        let webpackStr = `\\"npm run set NODE_ENV=build&webpack --config webpack.config-${name}.js\\" `
+        // let webpackStr = `\\"npm run set NODE_ENV=build&webpack --config webpack.config-${name}.js\\" `
+        let webpackStr = `set NODE_ENV=build&webpack --config webpack.config-${name}.js && `
         allStr += webpackStr
         if (index == packageIdArr.length - 1) {
-            let packageJsonData = fs.readFileSync('./moduleFile/packageModule.json', 'utf-8')
+            allStr = allStr.substr(0, allStr.lastIndexOf('&&'))
+            let packageJsonData = fs.readFileSync('./modules/packageModule.json', 'utf-8')
             packageJsonData = packageJsonData.replace(jsonCopyStr.key, 'all').replace(jsonCopyStr.value, allStr)
             fs.writeFileSync('package.json', packageJsonData, 'utf8')
         }
     });
-
 }
-
-// addWebpackConfig()
 
 // async function test() {
 //     try {
