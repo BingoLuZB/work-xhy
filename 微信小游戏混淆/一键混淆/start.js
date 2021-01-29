@@ -14,9 +14,12 @@ let inputConfig = {}
 async function init() {
     // 打开网页，并拿到用户输入的数据
     let res = await openHtml()
-    console.log(res)
+    if (res) {
+        addWebpackConfig()
+    }
 }
 
+init()
 
 
 // 新增webpackConfig package.json
@@ -44,15 +47,3 @@ function addWebpackConfig() {
         }
     });
 }
-
-// async function test() {
-//     try {
-//         let res = await rf('package.json')
-//         console.log(res)
-//         showAlert()
-//     } catch (error) {
-//         console.error(error)
-//     }
-// }
-
-// test()
