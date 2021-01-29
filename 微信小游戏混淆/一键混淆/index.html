@@ -12,12 +12,78 @@
         BingoL的混淆工具 test
     </div>
     <form id="form1" action="http://localhost:8080/" method="post">
-        要混淆的游戏：<input type='text' name="name" value="三国">
-        游戏ID：<input type="test" name="age" value="666">
-         <input type="submit" value=" 开始混淆" /> 
+        <div id="box">
+            <div class="item">
+                混淆方式:
+                <select name="obfuscatorType">
+                    <option value="1">对象</option>
+                    <option value="2">对象相加</option>
+                    <option value="3">数组</option>
+                    <option value="4">数组相加</option>
+                    <option value="5">杀手锏</option>
+                </select>
+                混淆程度:
+                <input style="width: 80px;" type='text' name="level" placeholder="0~1逐步增大" value="0.5">
+                编码方式：
+                <select name="codingType">
+                    <option value="base64">base64</option>
+                    <option value="rc4">rc4</option>
+                </select>
+                标识符：
+                <select name="strLength">
+                    <option value="mangled">短标识符</option>
+                    <option value="hexadecimal">长标识符</option>
+                </select>
+                游戏壳:
+                <select name="miniGame">
+                    <option value="0">不需要壳</option>
+                    <option value="1">砍树</option>
+                    <option value="2">2048</option>
+                    <option value="3">狗头</option>
+                    <option value="4">跳一跳</option>
+                    <option value="5">拼图</option>
+                    <option value="6">随机</option>
+                    <option value="7">密室逃脱</option>
+                    <option value="8">答题</option>
+                    <option value="9">随机</option>
+                </select>
+                <!-- <input type='text' name="game" placeholder="三国" value=""> -->
+                <label for="game">请选择或输入你要混淆的游戏:</label>
+                <input list="games" name="game" id="game">
+                <datalist id="games">
+                    <option value="三国">
+                    <option value="魔戒传奇">
+                    <option value="魔戒传奇OL">
+                    <option value="梵天仙决">
+                </datalist>
+                游戏ID：
+                <input type="test" name="idArr" placeholder="多个id请用 , 隔开" value="">
+                <button type="button" onclick="deleteItem(this)">删除</button>
+            </div>
+        </div>
+        <button class="addBtn" type="button" onclick="addItem()">+</button>
+         <div class="uploadBtn">
+            <input type="submit" value="开始混淆" /> 
+        </div>
     </form>
-</body>
 
+</body>
+<script>
+    function deleteItem(el) {
+        let praent = el.parentNode
+        let grandpa = praent.parentNode
+        grandpa.removeChild(praent)
+    }
+
+    function addItem() {
+        let item = document.getElementsByClassName('item')[0]
+        if (item) {
+            let cloneItem = item.cloneNode(true)
+            let box = document.getElementById('box')
+            box.appendChild(cloneItem)
+        }
+    }
+</script>
 
 </html>
 <style>
@@ -35,5 +101,35 @@
         font-size: 24px;
         line-height: 24px;
         margin: 10px 0 30px;
+    }
+
+    button {
+        outline: none;
+    }
+
+    #form1 .item {
+        margin-bottom: 20px;
+    }
+
+    #form1 .addBtn {
+        width: 50px;
+        height: 50px;
+        font-size: 50px;
+        background-color: #87CEFA;
+        color: white;
+        line-height: 28px;
+        border-radius: 50%;
+        border: solid;
+        margin: 20px 0;
+        cursor: pointer;
+    }
+
+    #form1 .uploadBtn input {
+        background-color: #87CEFA;
+        color: white;
+        width: 150px;
+        line-height: 34px;
+        border-radius: 20px;
+        border: solid;
     }
 </style>

@@ -17,6 +17,7 @@ async function init() {
     console.log(res)
 }
 
+init()
 
 
 // 新增webpackConfig package.json
