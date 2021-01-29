@@ -7,15 +7,15 @@ const config = require('./obfuscatorDefaultConfig')
 
 const name = '魔戒传奇OL'
 const list = {
-    // '马甲564（魔戒传奇OL）/js': {
-    //     'Buffer.min': `./${name}/js/Buffer.min.js`, //base64
-    // },
+    '马甲564（魔戒传奇OL）/js': {
+        'Buffer.min': `./${name}/js/Buffer.min.js`, //base64
+    },
     '马甲564（魔戒传奇OL）/stage1': {
         'main.min': `./${name}/stage1/main.min.js`, //base64
     },
-    // '马甲564（魔戒传奇OL）/stage2': {
-    //     'default.thm': `./${name}/js/default.thm.js`, //base64
-    // },
+    '马甲564（魔戒传奇OL）/stage2': {
+        'default.thm': `./${name}/js/default.thm.js`, //base64
+    },
 }
 
 const mjConfig = {

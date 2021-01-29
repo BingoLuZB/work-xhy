@@ -1,4 +1,4 @@
-const versions = '1.0.1'
+const versions = '1.0.2'
 const gameId = 564
 const downloadUrl = `https://gministatic.xinghe66.cn/jsonList/mjcqOL/mj${gameId}`
 
@@ -7,9 +7,9 @@ const fs = wx.getFileSystemManager();
 let num = 0
 
 var jsonList = [
-    '20210127_Buffer.zip',
+    '20210129_Buffer.zip',
     '20210129_main.zip',
-    '20210127_default.zip'
+    '20210129_default.zip'
 ]
 
 judgegame()
