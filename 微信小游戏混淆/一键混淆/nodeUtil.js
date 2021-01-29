@@ -1,6 +1,7 @@
 const fs = require('fs');
 const cp = require('child_process');
 const http = require("http");
+const httpUrl = 'localhost'
 module.exports = {
     // 展示打包完成
     showAlert() {
@@ -40,7 +41,7 @@ module.exports = {
                 });
             }).listen(3000, "localhost", () => {
                 console.log("Successfully");
-                cp.exec('start http://localhost:3000');
+                cp.exec(`start http://${httpUrl}:3000`);
             });
             // 接收请求
             http.createServer(function (req, res) {
@@ -55,11 +56,10 @@ module.exports = {
                     });
                 }
                 res.end();
-            }).listen(8080, "localhost", function () {
+            }).listen(8080, httpUrl, function () {
                 console.log("listened");
             });
         })
-
     }
 
 }

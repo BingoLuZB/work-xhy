@@ -8,14 +8,18 @@ $array = 84,83,82,80,78,77,73,72
 foreach ($n in $array){npm run build-$n}
 
 
-indexCode
+obfuscatorCode
     混淆源码文件夹
 config
     各个打包的配置文件
-input
-    各个游戏的源吗/要混淆的游戏的源码
-output
-    打包之后的游戏包
+modules
+    各种模板文件的文件夹（package.json模板 webpack-config.js模板 微信小游戏game.js模板）
+inputGame
+    各个游戏的源吗/要混淆的游戏的源码 的文件夹
+miniGame
+    小游戏壳文件夹
+outputGame
+    提审游戏包文件夹
 
 思路：
     1、用node把config里面的对应的配置文件内容给复制了，然后把内容放到一个新的webpack.config.js里面去

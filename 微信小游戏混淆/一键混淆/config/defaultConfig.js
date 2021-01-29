@@ -1,3 +1,5 @@
+// 默认混淆配置参数
+
 // 获取随机字母字符串 long为字符串长度
 function randomStr(long) {
     let ruleStr = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
