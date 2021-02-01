@@ -11,76 +11,74 @@
     <div class="title">
         BingoL的混淆工具 test
     </div>
-    <form id="form1" action="http://localhost:8080/" method="post">
+    <form id="form1" name="allForm" action="http://localhost:8080/" method="post">
         <div id="box">
-            <div class="item">
-                <ul>
-                    <li>
-                        混淆方式:
-                        <select name="obfuscatorType">
-                            <option value="1">对象</option>
-                            <option value="2">对象相加</option>
-                            <option value="3">数组</option>
-                            <option value="4">数组相加</option>
-                            <option value="5">杀手锏</option>
-                        </select>
-                    </li>
-                    <li>
-                        混淆程度:
-                        <input style="width: 80px;" type='text' name="level" placeholder="0~1逐步增大" value="0.5">
-                    </li>
-                    <li>
-                        编码方式：
-                        <select name="codingType">
-                            <option value="base64">base64</option>
-                            <option value="rc4">rc4</option>
-                        </select>
-                    </li>
-                    <li>
-                        标识符：
-                        <select name="strLength">
-                            <option value="mangled">短标识符</option>
-                            <option value="hexadecimal">长标识符</option>
-                        </select>
-                    </li>
-                    <li>
-                        游戏壳:
-                        <select name="miniGame">
-                            <option value="0">不需要壳</option>
-                            <option value="1">砍树</option>
-                            <option value="2">2048</option>
-                            <option value="3">狗头</option>
-                            <option value="4">跳一跳</option>
-                            <option value="5">拼图</option>
-                            <option value="6">随机</option>
-                            <option value="7">密室逃脱</option>
-                            <option value="8">答题</option>
-                            <option value="9">随机</option>
-                        </select>
-                    </li>
-                    <li>
-                        <label for="game">请选择或输入你要混淆的游戏:</label>
-                        <input list="games" name="game" id="game">
-                        <datalist id="games">
-                            <option value="三国">
-                            <option value="魔戒传奇">
-                            <option value="魔戒传奇OL">
-                            <option value="梵天仙决">
-                        </datalist>
-                    </li>
-                    <li>
-                        <div> 要混淆的文件：</div>
-                        <textarea name="file" placeholder="例：三国/js/customlib.min.js            /代表的就是下一层的意思"></textarea>
-                    </li>
-                    <li>
-                        游戏ID：
-                        <input type="test" name="idArr" placeholder="多个id请用 , 隔开" value="">
-                    </li>
-                    <li style="text-align: center; margin-top: 20px;">
-                        <button type="button" onclick="deleteItem(this)">删除</button>
-                    </li>
-                </ul>
-            </div>
+            <ul class="item">
+                <li>
+                    <label for="game">请选择或输入你要混淆的游戏:</label>
+                    <input list="games" name="game" id="game" required>
+                    <datalist id="games">
+                        <option value="三国">
+                        <option value="魔戒传奇">
+                        <option value="魔戒传奇OL">
+                        <option value="梵天仙决">
+                    </datalist>
+                </li>
+                <li>
+                    <div> 要混淆的文件：</div>
+                    <textarea required name="file" placeholder="例：三国/js/customlib.min.js            /代表的就是下一层的意思"></textarea>
+                </li>
+                <li>
+                    游戏ID：
+                    <input type="test" name="idArr" placeholder="多个id请用 , 隔开" value="" required>
+                </li>
+                <li>
+                    混淆方式:
+                    <select name="obfuscatorType">
+                        <option value="1">对象</option>
+                        <option value="2">对象相加</option>
+                        <option value="3">数组</option>
+                        <option value="4">数组相加</option>
+                        <option value="5">杀手锏</option>
+                    </select>
+                </li>
+                <li>
+                    混淆程度:
+                    <input style="width: 80px;" type='text' name="level" placeholder="0~1逐步增大" value="0.5">
+                </li>
+                <li>
+                    编码方式：
+                    <select name="codingType">
+                        <option value="base64">base64</option>
+                        <option value="rc4">rc4</option>
+                    </select>
+                </li>
+                <li>
+                    标识符：
+                    <select name="strLength">
+                        <option value="mangled">短标识符</option>
+                        <option value="hexadecimal">长标识符</option>
+                    </select>
+                </li>
+                <li>
+                    游戏壳:
+                    <select name="miniGame">
+                        <option value="0">不需要壳</option>
+                        <option value="1">砍树</option>
+                        <option value="2">2048</option>
+                        <option value="3">狗头</option>
+                        <option value="4">跳一跳</option>
+                        <option value="5">拼图</option>
+                        <option value="6">随机</option>
+                        <option value="7">密室逃脱</option>
+                        <option value="8">答题</option>
+                        <option value="9">随机</option>
+                    </select>
+                </li>
+                <li style="text-align: center; margin-top: 20px;">
+                    <button type="button" onclick="deleteItem(this)">删除</button>
+                </li>
+            </ul>
         </div>
         <div class="elseBtn">
             <button class="addBtn" type="button" onclick="addItem()">+</button>
@@ -92,14 +90,15 @@
 
 </body>
 <script>
+    // 删除
     function deleteItem(el) {
-        let item = el.parentNode.parentNode.parentNode
+        let item = el.parentNode.parentNode
         let box = item.parentNode
         if (box.children.length > 1) {
             box.removeChild(item)
         }
     }
-
+    // 增加
     function addItem() {
         let item = document.getElementsByClassName('item')[0]
         if (item) {
@@ -140,13 +139,12 @@
     }
 
     #form1 .item {
-        margin-bottom: 20px;
+        margin: 0 10px 20px 10px;
         text-align: left;
         padding: 20px;
         border: solid 6px #87CEFA;
         flex: 0;
-        margin-right: 20px;
-        
+
     }
 
     #form1 .addBtn {
@@ -170,12 +168,15 @@
         border-radius: 20px;
         border: solid;
     }
+
     ul {
         list-style: none;
     }
+
     li {
         margin-top: 10px;
     }
+
     textarea {
         width: 280px;
         height: 130px;

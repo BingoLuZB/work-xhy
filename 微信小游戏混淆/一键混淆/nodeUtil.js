@@ -3,9 +3,9 @@ const cp = require('child_process');
 const http = require("http");
 const httpUrl = 'localhost'
 module.exports = {
-    // 展示打包完成
-    showAlert() {
-        cp.exec('msg %username% "打包完成"')
+    // windows 警告框
+    showAlert(str) {
+        cp.exec(`msg %username% ${str}`)
     },
 
     // 读取文件

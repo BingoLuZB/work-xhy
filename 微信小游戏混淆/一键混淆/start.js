@@ -3,7 +3,8 @@ const readline = require('readline');
 const http = require("http");
 const cp = require('child_process');
 const {
-    openHtml
+    openHtml,
+    showAlert
 } = require('./nodeUtil')
 // package.json要替换的key 跟 value
 const jsonCopyStr = {
@@ -13,12 +14,46 @@ const jsonCopyStr = {
 // 用户选择的配置
 let inputConfig = {}
 
+// 初始化
 async function init() {
     // 打开网页，并拿到用户输入的数据
     try {
         let res = await openHtml()
-        inputConfig = res
-        addWebpackConfig()
+        // 把字符串切割成多个数组
+        let resArr = res.split('&')
+        let obj = {}
+        let gameName = ''
+        resArr.forEach((item, index) => {
+            let arr = item.split('=')
+            switch (arr[0]) {
+                case 'game':
+                    gameName = arr[1]
+                    break;
+                case 'file':
+
+                    break;
+                case 'idArr':
+
+                    break;
+            }
+            obj[arr[0]] = arr[1]
+            // 一个配置里面有8个项目
+            if (gameName && (index + 1) % 8 === 0) {
+                fs.readdir('inputGame', function (err, files) {
+                    if (err) {
+                        return console.log('目录不存在')
+                    } else {
+                        // 检查inputGame目录下有没有游戏
+                        if (files.includes(gameName)) {
+                            inputConfig[gameName] = obj
+                            obj = {}
+                        } else {
+                            showAlert(`inputGame目录下不存在游戏：${gameName}`)
+                        }
+                    }
+                })
+            }
+        })
     } catch (error) {
         console.error(error)
     }
