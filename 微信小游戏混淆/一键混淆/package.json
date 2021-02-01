@@ -6,7 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "set NODE_ENV=build&webpack --config webpack.config.js",
-    "start": "node start.js && npm run all"
+    "start": "node start.js && npm run all",
+    "all": ""
   },
   "author": "",
   "license": "ISC",
