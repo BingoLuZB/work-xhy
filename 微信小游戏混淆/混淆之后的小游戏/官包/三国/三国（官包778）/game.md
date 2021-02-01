@@ -126,7 +126,7 @@ function getJsonToGame() {
 						wx.downloadFile({
 							url: `${downloadUrl}/${date}/${str}${end}`,
 							filePath: path,
-							timeout: 10000,
+							timeout: 120000,
 							success(res) {
 								// 如果是json的文件
 								if (res.statusCode === 200) {

@@ -349,7 +349,8 @@
     "build-740": "set NODE_ENV=build&webpack --config webpack.config-mj740.js",
     "build-741": "set NODE_ENV=build&webpack --config webpack.config-mj741.js",
     "build-777": "set NODE_ENV=build&webpack --config webpack.config-mj777.js",
-    "build-778": "set NODE_ENV=build&webpack --config webpack.config-mj778.js"
+    "build-778": "set NODE_ENV=build&webpack --config webpack.config-mj778.js",
+    "build-779": "set NODE_ENV=build&webpack --config webpack.config-mj779.js"
   },
   "author": "",
   "license": "ISC",

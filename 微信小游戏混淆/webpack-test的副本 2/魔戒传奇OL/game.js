@@ -1,6 +1,5 @@
 // require('./platform.js');
 require('./weapp-adapter.js');
-window['GJlenged_chanel'] = 'wxgame';
 window['egret_quickgame'] = true;
 const huoSdk = require('./libs/sdk-1.0.1.js');
 window['GJlenged_chanel'] = 'wx_xinghe';

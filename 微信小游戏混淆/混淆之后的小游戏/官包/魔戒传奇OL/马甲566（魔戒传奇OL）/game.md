@@ -1,4 +1,4 @@
-const versions = '1.0.0'
+const versions = '1.0.1'
 const gameId = 566
 const downloadUrl = `https://gministatic.xinghe66.cn/jsonList/mjcqOL/mj${gameId}`
 
@@ -8,20 +8,19 @@ let num = 0
 
 var jsonList = [
     '20210129_Buffer.zip',
-    '20210129_main.zip',
+    '20210201_main.zip',
     '20210129_default.zip',
 ]
 
-// judgegame()
-//     .then(() => {
-//         // 进游戏
-//         getJsonToGame()
-//     })
-//     .catch(() => {
-//         intoMiniGame()
-//     })
+judgegame()
+    .then(() => {
+        // 进游戏
+        getJsonToGame()
+    })
+    .catch(() => {
+        intoMiniGame()
+    })
 
-getJsonToGame()
 
 // 判断进壳还是进游戏
 function judgegame() {
@@ -175,14 +174,12 @@ function getJsonToGame() {
 function intoGame() {
     // require('./platform.js');
 require('./weapp-adapter.js');
-window['GJlenged_chanel'] = 'wxgame';
 window['egret_quickgame'] = true;
 const huoSdk = require('./libs/sdk-1.0.1.js');
 window['GJlenged_chanel'] = 'wx_xinghe';
 require('./manifest.js');
 require('./egret.wxgame.js');
 window.huoSdk = huoSdk;
-console.log("顺序是怎样的 ----------------   ");
 // 启动微信小游戏本地缓存，如果开发者不需要此功能，只需注释即可
 // 只有使用 assetsmanager 的项目可以使用
 if(window.RES && RES.processor) {

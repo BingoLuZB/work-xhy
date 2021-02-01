@@ -2,20 +2,25 @@ const fs = require('fs');
 const readline = require('readline');
 const http = require("http");
 const cp = require('child_process');
-const { openHtml } = require('./nodeUtil')
-let packageIdArr = [666, 55 ,11]
-
+const {
+    openHtml
+} = require('./nodeUtil')
+// package.json要替换的key 跟 value
 const jsonCopyStr = {
     key: 'newBuild-key',
     value: 'newBuild-value'
 }
+// 用户选择的配置
 let inputConfig = {}
 
 async function init() {
     // 打开网页，并拿到用户输入的数据
-    let res = await openHtml()
-    if (res) {
+    try {
+        let res = await openHtml()
+        inputConfig = res
         addWebpackConfig()
+    } catch (error) {
+        console.error(error)
     }
 }
 
