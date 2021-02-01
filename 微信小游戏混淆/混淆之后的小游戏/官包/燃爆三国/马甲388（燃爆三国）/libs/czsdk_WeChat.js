@@ -31,7 +31,7 @@ class czsdk_WeChat {
                 channelType: czGameParam.channelType,
                 gameAbb: czGameParam.gameAbb,
                 app_id:czGameParam.app_id,
-                mp_id:czGameParam.mem_id
+                mp_id:czGameParam.mp_id
             }
 
             //初始化渠道
@@ -520,6 +520,7 @@ class czsdk_WeChat {
                 data:czPayParam,
                 responseType:"json",
                 success: function (result) { 
+                    console.log("TT返回："+result)
                     var resultTT = JSON.parse(result)
                     if (resultTT && resultTT.code && resultTT.code == 1) {
                         console.log("request pay .get orderid info is suc.");
@@ -538,10 +539,9 @@ class czsdk_WeChat {
             console.log("预订单发生错误：" + err);
             callback(0, "toPay" + err);
         }
-
     }
 
-    //发起渠道支付
+    //pay请求发起渠道支付
     channelPay(data, callback) {
         var _this = this;
 
@@ -893,7 +893,7 @@ class czsdk_WeChat {
             })
         } catch (err) {
             console.log("角色信息上报发生错误" + err);
-            callback(0, "角色信息上报发生错误" + err);u
+            callback(0, "角色信息上报发生错误" + err);
         }
         
         console.log("-----------------------------------------------------");
@@ -932,6 +932,21 @@ class czsdk_WeChat {
         }catch(err){
             console.log("上报出错"+err)
         }
+    }
+
+    messageCheck(msgq,callback){
+        console.log('==>>>'+msgq)
+        huoSdk.checkMsg({            
+            data: {
+              content: msgq
+            }
+          }).then(res => {
+            console.log(res)
+            callback(msgq,res)
+          }, err => {
+            console.log(err)
+            callback(msgq,err)
+          })
     }
 
 

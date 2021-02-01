@@ -149,564 +149,155 @@ var Bean=(function(){
 
 
 /**
-*切块图结构（一帧由多个切块图组成）
-*@author Administrator
+*战场基类
 */
-//class engine.base.sheet.MSheetDivideFrame
-var MSheetDivideFrame=(function(){
-	function MSheetDivideFrame(){
-		this._imageIdx=0;
-		this._dx=NaN;
-		this._dy=NaN;
-		this._dw=NaN;
-		this._dh=NaN;
-		this._poiw=NaN;
-		this._poih=NaN;
-	}
-
-	__class(MSheetDivideFrame,'engine.base.sheet.MSheetDivideFrame');
-	var __proto=MSheetDivideFrame.prototype;
-	__getset(0,__proto,'poiw',function(){
-		return this._poiw;
-	});
-
-	__getset(0,__proto,'dw',function(){
-		return this._dw;
-	});
-
-	__getset(0,__proto,'dx',function(){
-		return this._dx;
-	});
-
-	__getset(0,__proto,'poih',function(){
-		return this._poih;
-	});
-
-	__getset(0,__proto,'dh',function(){
-		return this._dh;
-	});
-
-	__getset(0,__proto,'dy',function(){
-		return this._dy;
-	});
-
-	__getset(0,__proto,'imageIdx',function(){
-		return this._imageIdx;
-	});
-
-	MSheetDivideFrame.CreateOne=function(meta,imageIdx){
-		var ret=new MSheetDivideFrame();
-		ret._imageIdx=imageIdx;
-		ret._dx=meta.getInt16();
-		ret._dy=meta.getInt16();
-		ret._dw=meta.getInt16();
-		ret._dh=meta.getInt16();
-		ret._poiw=meta.getInt16();
-		ret._poih=meta.getInt16();
-		return ret;
-	}
-
-	return MSheetDivideFrame;
-})()
-
-
-//class engine.scene.obj.MSceneTypeList
-var MSceneTypeList=(function(){
-	function MSceneTypeList(pooltype,type,refList){
-		this._hashList=null;
-		this._pooltype=0;
-		this._cls=null;
-		this._allObjectRefList=null;
-		this._pooltype=pooltype;
-		this._cls=type;
-		this._allObjectRefList=refList;
-		this._hashList=new HashList();
-	}
-
-	__class(MSceneTypeList,'engine.scene.obj.MSceneTypeList');
-	var __proto=MSceneTypeList.prototype;
-	__proto.RemoveSceneObject=function(key){
-		var o=this._hashList.Remove(key);
-		if (o !=null){
-			var or=this._allObjectRefList.Remove(key);
-			if (or !=o){
-				ToolBase.LogError("MSceneTypeList remove but (or != o)");
-			}
-			o.destroy();
-		}
-	}
-
-	__proto.RemoveAllSceneObject=function(){
-		var so=null;
-		var list=this._hashList.Clear();
-		var len=list.length;
-		for (var i=0;i < len;++i){
-			so=list[i];
-			if (this._allObjectRefList !=null){
-				var rso=this._allObjectRefList.Remove(so.gid);
-				if (rso !=so){
-					ToolBase.LogError("MSceneTypeList removeAll but (rso != o)");
-				}
-			}
-			so.destroy();
-		}
-	}
-
-	__proto.GetCreateSceneObject=function(key){
-		var ret=this._hashList.Get(key);
-		if (ret==null){
-			ret=new this._cls();
-			ret.pooltype=this._pooltype;
-			this._hashList.Add(key,ret);
-			this._allObjectRefList.Add(key,ret);
-		}
-		return ret;
-	}
-
-	__getset(0,__proto,'hashList',function(){
-		return this._hashList;
-	});
-
-	__getset(0,__proto,'pooltype',function(){
-		return this._pooltype;
-	});
-
-	return MSceneTypeList;
-})()
-
-
-//class engine.animation.define.EnumActionName
-var EnumActionName=(function(){
-	function EnumActionName(){}
-	__class(EnumActionName,'engine.animation.define.EnumActionName');
-	EnumActionName.ALL="all";
-	EnumActionName.NONE="none";
-	EnumActionName.STAND="a_stand";
-	EnumActionName.RUN="a_run";
-	EnumActionName.DEAD="a_dead";
-	EnumActionName.HURT="a_hurt";
-	EnumActionName.ATTACK1="a_attack";
-	EnumActionName.RIDESTAND="a_ridestand";
-	EnumActionName.RIDERUN="a_riderun";
-	EnumActionName.RIDEATTACK="a_rideattack";
-	EnumActionName.RIDEHURT="a_ridehurt";
-	EnumActionName.UI_STAND="a_mianbanzhanli";
-	EnumActionName.UI_XIUXIAN="a_mianbanxiuxian";
-	return EnumActionName;
-})()
-
-
-/**
-*路径集合
-*/
-//class engine.scene.astar.AStarPathCollection
-var AStarPathCollection=(function(){
-	function AStarPathCollection(){
-		this._splitPath=[];
-	}
-
-	__class(AStarPathCollection,'engine.scene.astar.AStarPathCollection');
-	var __proto=AStarPathCollection.prototype;
-	__proto.ToArrayPath=function(){
-		var ret=[];
-		for (var i=0;i < this._splitPath.length;++i){
-			if (this._splitPath[i] !=null){
-				ret=ret.concat(this._splitPath[i]);
-			}
-		}
-		return ret;
-	}
-
-	/**
-	*设置并分割寻路Node路径
-	*@param paths
-	*
-	*/
-	__proto.SetPath=function(paths,grid){
-		var i=0;
-		var subPath=[];
-		var last=null;
-		for (i=0;i < paths.length;++i){
-			var dis=0;
-			if (last !=null)
-				dis=(Math.max(Math.abs(last.x-paths[i].x),Math.abs(last.y-paths[i].y))| 0);
-			if (dis > 1){
-				if (subPath.length > 0)
-					this._splitPath.push(subPath);
-				this._splitPath.push(null);
-				this._splitPath.push([paths[i]]);
-				subPath=[];
-			}
-			else if (subPath.length >=15){
-				this._splitPath.push(subPath);
-				subPath=[paths[i]];
-			}
-			else{
-				subPath.push(paths[i]);
-			}
-			last=paths[i];
-		}
-		if (subPath.length > 0){
-			this._splitPath.push(subPath);
-		}
-		for (i=0;i < this._splitPath.length;++i){
-			if (this._splitPath[i] !=null){
-				var fpath=AStarEx.floyd(this._splitPath[i],grid);
-				var path=[];
-				while (fpath.length){
-					var node=fpath.shift();
-					if (node==null)
-						break ;
-					path.push(new Point$1(node.x,node.y));
-				}
-				this._splitPath[i]=path;
-			}
-		}
-	}
-
-	// }
-	__proto.DoPixel=function(){
-		this._splitPath[0].shift();
-		if (this._splitPath[0].length==0)
-			this._splitPath.shift();
-		var i=0;
+//class engine.battle.MBattleScene
+var MBattleScene=(function(){
+	function MBattleScene(){
+		this._container=null;
+		this._top=null;
+		this._middle=null;
+		this._bottom=null;
+		this._backAlpha=null;
+		this._backFaZhen=null;
+		this._gridCon=null;
+		this._shake=new SceneShakeControl();
+		MBattleScene.Ins=this;
+		this._container=new Sprite();
+		this._container.size(Laya.stage.designWidth,Laya.stage.designHeight);
+		this._top=new Sprite();
+		this._middle=new Sprite();
+		this._bottom=new Sprite();
+		this._container.addChild(this._bottom);
+		this._container.addChild(this._middle);
+		this._container.addChild(this._top);
+		this._container.zOrder=3;
 		if (false){
-			ToolBase.Log("[[[[[");
-			for (i=0;i < this._splitPath.length;++i){
-				if (this._splitPath[i] !=null)
-					ToolBase.Log(this._splitPath[i].join("_"));
-				else
-				ToolBase.Log("null");
+			this._gridCon=new Sprite();
+			var gw=36;
+			var gh=36;
+			for (var xx=gw;xx < Laya.stage.designWidth;xx+=gw){
+				this._gridCon.graphics.drawLine(xx,0,xx,Laya.stage.designHeight,"#ff0000");
 			}
-			ToolBase.Log("]]]]]");
-		}
-		for (i=0;i < this._splitPath.length;++i){
-			if (this._splitPath[i] !=null){
-				this._splitPath[i]=ToolMap.ArrayGridPt2PixPt(this._splitPath[i]);
+			for (var yy=gh;yy < Laya.stage.designHeight;yy+=gh){
+				this._gridCon.graphics.drawLine(0,yy,Laya.stage.designWidth,yy,"#ff0000");
 			}
 		}
 	}
 
-	__proto.GetEndPt=function(){
-		if (this._splitPath !=null && this._splitPath.length > 0){
-			var arr=this._splitPath[this._splitPath.length-1];
-			if (arr.length > 0){
-				return arr[arr.length-1];
-			}
-		}
-		return null;
+	__class(MBattleScene,'engine.battle.MBattleScene');
+	var __proto=MBattleScene.prototype;
+	__proto.Init=function(){
+		Laya.timer.loop(1,this,this._OnFrame);
 	}
 
-	__getset(0,__proto,'splitPath',function(){
-		return this._splitPath;
-	});
-
-	return AStarPathCollection;
-})()
-
-
-//class engine.utils.CallbackUtil
-var CallbackUtil=(function(){
-	function CallbackUtil(){}
-	__class(CallbackUtil,'engine.utils.CallbackUtil');
-	CallbackUtil.Reload=function(){
-		if (CallbackUtil.ReloadCallBack){
-			CallbackUtil.ReloadCallBack.apply(null,2);
-		}
-	}
-
-	CallbackUtil.doCloseViewManul=function(url){
-		if(CallbackUtil.closeViewManual !=null)
-			CallbackUtil.closeViewManual.call(null,url);
-	}
-
-	CallbackUtil.doCloseViewCallBack=function(url){
-		if(CallbackUtil.closeViewCallBack !=null)
-			CallbackUtil.closeViewCallBack.call(null,url);
-	}
-
-	CallbackUtil.doOpenViewCallBack=function(url){
-		if(CallbackUtil.openViewCallBack !=null)
-			CallbackUtil.openViewCallBack.call(null,url);
-	}
-
-	CallbackUtil.doCloseTabCallBack=function(id){
-		if(CallbackUtil.closeTabCallBack !=null)
-			CallbackUtil.closeTabCallBack.call(null,id);
-	}
-
-	CallbackUtil.isLowMachine=false;
-	CallbackUtil.ReloadCallBack=null;
-	CallbackUtil.closeViewManual=null;
-	CallbackUtil.closeViewCallBack=null;
-	CallbackUtil.openViewCallBack=null;
-	CallbackUtil.closeTabCallBack=null;
-	CallbackUtil.callbackUseCompressTexture=null;
-	CallbackUtil.callbackOutGC=null;
-	return CallbackUtil;
-})()
-
-
-/**
-*long型（SID）和int（GID）之间的映射
-*通常用作key
-*@author Administrator
-*/
-//class engine.base.data.LongIdMap
-var LongIdMap=(function(){
-	function LongIdMap(){}
-	__class(LongIdMap,'engine.base.data.LongIdMap');
-	__getset(1,LongIdMap,'NEXTGID',function(){
-		++LongIdMap.CUR_GID;
-		++LongIdMap.WARING_COUNT;
-		if (LongIdMap.WARING_COUNT >=20000){
-			LongIdMap.WARING_COUNT=0;
-		}
-		return LongIdMap.CUR_GID;
-	});
-
-	LongIdMap.Init=function(){
-		var ret=new Object();
-		ret["0000000000000000"]=0;
-		return ret;
-	}
-
-	LongIdMap.ToGID=function(sid){
-		var strValue=sid.hexValue;
-		var gid=LongIdMap.map[strValue];
-		if (gid==null){
-			gid=LongIdMap.CUR_GID++;
-			LongIdMap.map[strValue]=gid;
-		}
-		return gid;
-	}
-
-	LongIdMap.ChangeGID=function(oldSid,newSid){
-		if (oldSid.EqualTo(newSid))
-			return LongIdMap.map[oldSid.hexValue];
-		var strValue=oldSid.hexValue;
-		var strVal2=newSid.hexValue;
-		var gid=LongIdMap.map[strValue];
-		if (gid==null){
-			return 0;
-		}
-		LongIdMap.map[strVal2]=gid;
-		LongIdMap.map[strValue]=null;
-		return gid;
-	}
-
-	LongIdMap.ERR_GID=0x7FFFFFF0;
-	LongIdMap.WARNING_NUM=20000;
-	LongIdMap.WARING_COUNT=0;
-	LongIdMap.CUR_GID=10001;
-	__static(LongIdMap,
-	['map',function(){return this.map=LongIdMap.Init();}
-	]);
-	return LongIdMap;
-})()
-
-
-/**
-*场景抖动相关
-*@author Administrator
-*
-*/
-//class engine.scene.layer.SceneShakeControl
-var SceneShakeControl=(function(){
-	function SceneShakeControl(){
-		this._shakeRangeXBegin=0;
-		this._shakeRangeXEnd=0;
-		this._shakeRangeYBegin=0;
-		this._shakeRangeYEnd=0;
-		this._shakeItv=50;
-		this._shakeTime=0;
-		this._shakeEndTime=0;
-		this._shakeNextTime=0;
-		this._shakeDirFlag=0;
-		// 主模式
-		this._shakeMode=0;
-		// 幅度曲线变化模式
-		this._shakeRangeMode=0;
-		this._shakeFlag=false;
-		this._shakeValue=new Point$1();
-	}
-
-	__class(SceneShakeControl,'engine.scene.layer.SceneShakeControl');
-	var __proto=SceneShakeControl.prototype;
-	__proto.GetShakeFlag=function(){
-		if (this._shakeFlag){
-			this._shakeFlag=false;
-			return true;
-		}
-		return false;
+	__proto.ResizeHandler=function(){
+		this._container.pos((Laya.stage.width-this._container.width)/2,(Laya.stage.height-this._container.height)/2);
+		this._backAlpha.graphics.clear();
+		this._backAlpha.size(Laya.stage.width+50,Laya.stage.height+50);
+		this._backAlpha.graphics.drawRect(0,0,this._backAlpha.width,this._backAlpha.height,"#0000005a");
+		this._backAlpha.pos((this._container.width-this._backAlpha.width)/2,(this._container.height-this._backAlpha.height)/2);
 	}
 
 	/**
-	*抖动场景
-	*@param mode 0=-range~range之间随机 1=在0的基础上同向修正 2=(random < 0.5 ?-1 :1)*range *Math.random 3=(Math.random < 0.5 ?-1 :1)*range
-	*@param rangemode 0-根据时间插值 1-固定range
-	*@param ms 毫秒时间 震屏时间
-	*@param xb,xe x偏移 yb,ye y偏移
-	*@param itv 震屏间隔
+	*开启
+	*@param url
 	*/
-	__proto.ShakeScene=function(mode,rangemode,ms,xb,xe,yb,ye,itv){
-		this._shakeMode=mode;
-		this._shakeRangeMode=rangemode;
-		this._shakeTime=ms;
-		this._shakeItv=itv;
-		this._shakeEndTime=Laya.timer.currTimer+ms;
-		this._shakeNextTime=Laya.timer.currTimer;
-		this._shakeRangeXBegin=xb;
-		this._shakeRangeXEnd=xe;
-		this._shakeRangeYBegin=yb;
-		this._shakeRangeYEnd=ye;
-		this._shakeDirFlag=((Math.random()> 0.5)? 1 :-1);
+	__proto.OpenBattle=function(url){
+		if (this._backAlpha==null)
+			this._backAlpha=new Sprite();
+		if (this._backFaZhen==null){
+			this._backFaZhen=new Sprite();
+			this._backFaZhen.size(628,396);
+			this._backFaZhen.loadImage(url);
+		}
+		this._backFaZhen.pos((this._container.width-this._backFaZhen.width)/2,(this._container.height-this._backFaZhen.height)/2);
+		this.AddBottom(this._backAlpha);
+		this.AddBottom(this._backFaZhen);
+		this.ResizeHandler();
+		Scene.root.addChild(this._container);
+		Laya.stage.on("resize",this,this.ResizeHandler);
+		if (this._gridCon){
+			Laya.stage.addChild(this._gridCon);
+		}
 	}
 
-	__proto.Clear=function(){
-		this._shakeEndTime=0;
-		this.SetShakeValue(0,0);
+	/**
+	*关闭战场
+	*@param url
+	*/
+	__proto.CloseBattle=function(){
+		this._top.destroyChildren();
+		this._bottom.destroyChildren();
+		this._middle.destroyChildren();
+		this._backAlpha=null;
+		this._backFaZhen=null;
+		this._container.removeSelf();
+		if (this._gridCon){
+			this._gridCon.removeSelf();
+		}
+		Laya.stage.off("resize",this,this.ResizeHandler);
+	}
+
+	__proto._OnFrame=function(){
+		var curtime=Laya.timer.currTimer;
+		this.OnFrame(curtime);
 	}
 
 	__proto.OnFrame=function(curtime){
-		if (this._shakeEndTime !=0){
-			var leaveTime=this._shakeEndTime-curtime;
-			if (leaveTime <=0){
-				this._shakeEndTime=0;
-				this.SetShakeValue(0,0);
-			}
-			else{
-				if (curtime > this._shakeNextTime){
-					var per=(this._shakeTime-leaveTime)/ (this._shakeTime);
-					if (per < 0)
-						per=0;
-					if (per > 1)
-						per=1;
-					var xrange=0;
-					var yrange=0;
-					if (this._shakeRangeMode==0){
-						xrange=ToolBase.LerpValue(this._shakeRangeXBegin,this._shakeRangeXEnd,per);
-						yrange=ToolBase.LerpValue(this._shakeRangeYBegin,this._shakeRangeYEnd,per);
-					}
-					else if (this._shakeRangeMode==1){
-						xrange=this._shakeRangeXEnd-this._shakeRangeXBegin;
-						yrange=this._shakeRangeYEnd-this._shakeRangeYBegin;
-					}
-					else{
-						var func=null;
-						if (func !=null){
-							xrange=func(per,this._shakeRangeXBegin,(this._shakeRangeXEnd-this._shakeRangeXBegin),1);
-							yrange=func(per,this._shakeRangeYBegin,(this._shakeRangeYEnd-this._shakeRangeYBegin),1);
-						}
-					};
-					var xvalue=0;
-					var yvalue=0;
-					if (this._shakeMode==0){
-						xvalue=-xrange+Math.random()*(xrange *2);
-						yvalue=-yrange+Math.random()*(yrange *2);
-					}
-					else if (this._shakeMode==1){
-						xvalue=-xrange+Math.random()*(xrange *2);
-						yvalue=-yrange+Math.random()*(yrange *2);
-						if (xvalue *yvalue < 0){
-							if (Math.random()> 0.5)
-								xvalue=-xvalue;
-							else
-							yvalue=-yvalue;
-						}
-					}
-					else if (this._shakeMode==2){
-						xvalue=Math.random()*(xrange)*this._shakeDirFlag;
-						yvalue=Math.random()*(yrange)*this._shakeDirFlag;
-					}
-					else if (this._shakeMode==3){
-						xvalue=xrange *this._shakeDirFlag;
-						yvalue=yrange *this._shakeDirFlag;
-					}
-					this.SetShakeValue(xvalue,yvalue);
-					this._shakeDirFlag=this._shakeDirFlag *-1;
-					this._shakeNextTime=curtime+this._shakeItv;
-				}
-			}
+		this._shake.OnFrame(curtime);
+		if (this._shake.GetShakeFlag()){
+			var xx=this._shake.shakeValue.x;
+			var yy=this._shake.shakeValue.y;
+			this._top.pos(xx,yy);
+			this._middle.pos(xx,yy);
+			this._bottom.pos(xx,yy);
 		}
 	}
 
-	__proto.SetShakeValue=function(xx,yy){
-		this._shakeValue.x=xx;
-		this._shakeValue.y=yy;
-		this._shakeFlag=true;
+	__proto.AddTop=function(dis){
+		this._top.addChild(dis);
 	}
 
-	__getset(0,__proto,'shakeValue',function(){
-		return this._shakeValue;
+	__proto.AddMiddle=function(dis){
+		this._middle.addChild(dis);
+	}
+
+	__proto.AddBottom=function(dis){
+		this._bottom.addChild(dis);
+	}
+
+	__getset(0,__proto,'middle',function(){
+		return this._middle;
 	});
 
-	return SceneShakeControl;
+	__getset(0,__proto,'container',function(){
+		return this._container;
+	});
+
+	MBattleScene.Ins=null;
+	return MBattleScene;
 })()
 
 
-/**
-*封装laya的Timeline调用
-*/
-//class engine.greensock.TimelineTool
-var TimelineTool=(function(){
-	function TimelineTool(){}
-	__class(TimelineTool,'engine.greensock.TimelineTool');
-	TimelineTool.repeat=function(yoyo,repeat,target,props,duration,ease,offset,timeline){
-		(offset===void 0)&& (offset=0);
-		var line=timeline;
-		if (line==null)
-			line=new TimeLine();
-		if (yoyo){
-			var copy={};
-			for (var key in props){
-				copy[key]=target[key];
-			}
-			if (repeat==-1){
-				line.to(target,props,duration,ease,0).to(target,copy,duration,ease,offset);
-				line.play(0,true);
-			}
-			else{
-				for (var i=0;i < repeat;++i){
-					if (i==0)
-						line.to(target,props,duration,ease,0).to(target,copy,duration,ease,offset);
-					else
-					line.to(target,props,duration,ease,offset).to(target,copy,duration,ease,offset);
-				}
-				line.play(0);
-			}
-		}
-		else{
-			if (repeat==-1){
-				line.to(target,props,duration,ease,offset);
-				line.play(0,true);
-			}
-			else{
-			}
-		}
-		return line;
-	}
-
-	return TimelineTool;
-})()
-
-
-//class engine.scene.astar.Link
-var Link=(function(){
-	function Link(node,cost){
-		this.node=null;
-		this.cost=0;
-		this.node=node;
-		this.cost=cost;
-	}
-
-	__class(Link,'engine.scene.astar.Link');
-	var __proto=Link.prototype;
-	__proto.dispose=function(){
-		this.node=null;
-	}
-
-	return Link;
+//class engine.animation.define.EnumActionType
+var EnumActionType=(function(){
+	function EnumActionType(){}
+	__class(EnumActionType,'engine.animation.define.EnumActionType');
+	EnumActionType.ALL=-2;
+	EnumActionType.NONE=-1;
+	EnumActionType.STAND=0;
+	EnumActionType.RUN=1;
+	EnumActionType.DEAD=4;
+	EnumActionType.HURT=5;
+	EnumActionType.ATTACK1=10;
+	EnumActionType.RIDESTAND=20;
+	EnumActionType.RIDERUN=21;
+	EnumActionType.RIDEATTACK=22;
+	EnumActionType.RIDEHURT=23;
+	EnumActionType.UI_STAND=100;
+	EnumActionType.UI_XIUXIAN=101;
+	return EnumActionType;
 })()
 
 
@@ -937,6 +528,600 @@ var MSceneMap=(function(){
 
 
 /**
+*对象引用释放统计
+*@author Administrator
+*
+*/
+//class engine.classbase.ObjectRecord
+var ObjectRecord=(function(){
+	function ObjectRecord(){}
+	__class(ObjectRecord,'engine.classbase.ObjectRecord');
+	ObjectRecord.rcd=function(o){
+		if (ObjectRecord.IS_OPEN){
+		}
+	}
+
+	ObjectRecord.getCustomDicList=function(){
+		return ObjectRecord._customDic;
+	}
+
+	ObjectRecord.getStateCopyStr=function(type,idbegin,idend,exKeys){
+		var str="";
+		var subDic=null;
+		if (type==null || type==""){
+			var dic=engine.classbase.ObjectRecord.getCustomDicList();
+			for(var k in dic){
+				subDic=(dic [k]);
+				var count=0;
+				for (var v in subDic){
+					count++;
+				}
+				str+=k.toString()+"	"+count+"\r\n";
+			}
+		}
+		else{
+			if (idbegin < 0)
+				idbegin=0;
+			if (idend < 100)
+				idend=100;
+			if (idbegin >=idend){
+				idbegin=0;
+				idend=100;
+			}
+			subDic=engine.classbase.ObjectRecord.getCustomDicList()[type];
+			if (subDic !=null){
+				var curC=0;
+				for (var ob in subDic){
+					if (curC >=idbegin && curC <=idend){
+						var items="";
+						try{
+							items=ob.toString()+"	";
+						}
+						catch(err){
+							items="typeerror"+"	";
+						}
+						str+=items;
+						try{
+							if ((ob).hasOwnProperty("name"))
+								items=ob.name+"	";
+							else
+							items="-"+"	";
+						}
+						catch(err){
+							items="nameerror"+"	";
+						}
+						str+=items;
+						try{
+							if ((ob).hasOwnProperty("id"))
+								items=ob.id+"	";
+							else
+							items="-"+"	";
+						}
+						catch(err){
+							items="iderror"+"	";
+						}
+						str+=items;
+						if (exKeys !=null && exKeys.length > 0){
+							for (var uu=0;uu < exKeys.length;++uu){
+								try{
+									var kkk=exKeys[uu];
+									if ((ob).hasOwnProperty(kkk))
+										items=ob[kkk]+"	";
+									else
+									items="-"+"	";
+								}
+								catch(err){
+									items="exkeyerror"+"	";
+								}
+								str+=items;
+							}
+						}
+						str+="\r\n";
+					}
+					else if (curC > idend){
+						break ;
+					}
+					curC++;
+				}
+			}
+		}
+	}
+
+	ObjectRecord.IS_OPEN=false;
+	ObjectRecord.gidgetter=1;
+	__static(ObjectRecord,
+	['_customDic',function(){return this._customDic=new Dictionary();}
+	]);
+	return ObjectRecord;
+})()
+
+
+//class engine.animation.define.EnumActionName
+var EnumActionName=(function(){
+	function EnumActionName(){}
+	__class(EnumActionName,'engine.animation.define.EnumActionName');
+	EnumActionName.ALL="all";
+	EnumActionName.NONE="none";
+	EnumActionName.STAND="a_stand";
+	EnumActionName.RUN="a_run";
+	EnumActionName.DEAD="a_dead";
+	EnumActionName.HURT="a_hurt";
+	EnumActionName.ATTACK1="a_attack";
+	EnumActionName.RIDESTAND="a_ridestand";
+	EnumActionName.RIDERUN="a_riderun";
+	EnumActionName.RIDEATTACK="a_rideattack";
+	EnumActionName.RIDEHURT="a_ridehurt";
+	EnumActionName.UI_STAND="a_mianbanzhanli";
+	EnumActionName.UI_XIUXIAN="a_mianbanxiuxian";
+	return EnumActionName;
+})()
+
+
+/**
+*路径集合
+*/
+//class engine.scene.astar.AStarPathCollection
+var AStarPathCollection=(function(){
+	function AStarPathCollection(){
+		this._splitPath=[];
+	}
+
+	__class(AStarPathCollection,'engine.scene.astar.AStarPathCollection');
+	var __proto=AStarPathCollection.prototype;
+	__proto.ToArrayPath=function(){
+		var ret=[];
+		for (var i=0;i < this._splitPath.length;++i){
+			if (this._splitPath[i] !=null){
+				ret=ret.concat(this._splitPath[i]);
+			}
+		}
+		return ret;
+	}
+
+	/**
+	*设置并分割寻路Node路径
+	*@param paths
+	*
+	*/
+	__proto.SetPath=function(paths,grid){
+		var i=0;
+		var subPath=[];
+		var last=null;
+		for (i=0;i < paths.length;++i){
+			var dis=0;
+			if (last !=null)
+				dis=(Math.max(Math.abs(last.x-paths[i].x),Math.abs(last.y-paths[i].y))| 0);
+			if (dis > 1){
+				if (subPath.length > 0)
+					this._splitPath.push(subPath);
+				this._splitPath.push(null);
+				this._splitPath.push([paths[i]]);
+				subPath=[];
+			}
+			else if (subPath.length >=15){
+				this._splitPath.push(subPath);
+				subPath=[paths[i]];
+			}
+			else{
+				subPath.push(paths[i]);
+			}
+			last=paths[i];
+		}
+		if (subPath.length > 0){
+			this._splitPath.push(subPath);
+		}
+		for (i=0;i < this._splitPath.length;++i){
+			if (this._splitPath[i] !=null){
+				var fpath=AStarEx.floyd(this._splitPath[i],grid);
+				var path=[];
+				while (fpath.length){
+					var node=fpath.shift();
+					if (node==null)
+						break ;
+					path.push(new Point$1(node.x,node.y));
+				}
+				this._splitPath[i]=path;
+			}
+		}
+	}
+
+	// }
+	__proto.DoPixel=function(){
+		this._splitPath[0].shift();
+		if (this._splitPath[0].length==0)
+			this._splitPath.shift();
+		var i=0;
+		if (false){
+			ToolBase.Log("[[[[[");
+			for (i=0;i < this._splitPath.length;++i){
+				if (this._splitPath[i] !=null)
+					ToolBase.Log(this._splitPath[i].join("_"));
+				else
+				ToolBase.Log("null");
+			}
+			ToolBase.Log("]]]]]");
+		}
+		for (i=0;i < this._splitPath.length;++i){
+			if (this._splitPath[i] !=null){
+				this._splitPath[i]=ToolMap.ArrayGridPt2PixPt(this._splitPath[i]);
+			}
+		}
+	}
+
+	__proto.GetEndPt=function(){
+		if (this._splitPath !=null && this._splitPath.length > 0){
+			var arr=this._splitPath[this._splitPath.length-1];
+			if (arr.length > 0){
+				return arr[arr.length-1];
+			}
+		}
+		return null;
+	}
+
+	__getset(0,__proto,'splitPath',function(){
+		return this._splitPath;
+	});
+
+	return AStarPathCollection;
+})()
+
+
+/**
+*
+*
+*@author Administrator
+*/
+//class engine.utils.MCUtil
+var MCUtil=(function(){
+	function MCUtil(){}
+	__class(MCUtil,'engine.utils.MCUtil');
+	MCUtil.AddChildOnly=function(con,dis){
+		MCUtil.DisposeAllChild(con);
+		if (dis !=null){
+			con.addChild(dis);
+		}
+	}
+
+	MCUtil.RemoveSelf=function(mc){
+		if (mc==null)
+			return;
+		var parent=mc.parent;
+		if (parent !=null)
+			parent.removeChild(mc);
+	}
+
+	MCUtil.RemoveAllChild=function(mc){
+		if (mc==null)
+			return;
+		mc.removeChildren();
+	}
+
+	MCUtil.DisposeAllChild=function(mc){
+		if (mc==null)
+			return;
+		for (var i=0;i < mc.numChildren;++i){
+			MCUtil.DisposeDisplay(mc.getChildAt(i));
+		}
+	}
+
+	MCUtil.DisposeArray=function(arr){
+		if (arr !=null){
+			for (var i=0;i < arr.length;++i){
+				MCUtil.DisposeDisplay(arr[i]);
+			}
+			arr.length=0;
+		}
+	}
+
+	MCUtil.DisposeDisplay=function(display){
+		if (display==null)
+			return;
+		if (display.hasOwnProperty("Dispose")){
+			display.Dispose();
+		}
+		else if (display.hasOwnProperty("destroy")){
+			display.destroy();
+		}
+		else if (display.hasOwnProperty("dispose")){
+			display.dispose();
+		}
+		else if ((display instanceof laya.display.Node )){
+			display.removeSelf();
+		}
+	}
+
+	MCUtil.ToTop=function(mc){
+		if (mc==null)
+			return;
+		var parent=mc.parent;
+		if (parent==null)
+			return;
+		var maxIdx=parent.numChildren-1;
+		if (parent.getChildIndex(mc)!=maxIdx){
+			parent.setChildIndex(mc,maxIdx);
+		}
+	}
+
+	MCUtil.ToBottom=function(mc){
+		if (mc==null)
+			return;
+		var parent=mc.parent;
+		if (parent==null)
+			return;
+		if (parent.getChildIndex(mc)!=0){
+			parent.setChildIndex(mc,0);
+		}
+	}
+
+	MCUtil.GetRelativePos=function(curObj,parent){
+		var pos=new Point$1();
+		while (curObj !=null && curObj !=parent){
+			pos.x+=curObj.x;
+			pos.y+=curObj.y;
+			curObj=curObj.parent;
+		}
+		return pos;
+	}
+
+	MCUtil.ToCenter=function(curObj,h,v){
+		(h===void 0)&& (h=true);
+		(v===void 0)&& (v=true);
+		if ((curObj.parent instanceof laya.display.Sprite )){
+			if (h)
+				curObj.x=(curObj.parent).width / 2-curObj.width / 2;
+			if (v)
+				curObj.y=(curObj.parent).height / 2-curObj.height / 2;
+		}
+	}
+
+	return MCUtil;
+})()
+
+
+/**
+*场景抖动相关
+*@author Administrator
+*
+*/
+//class engine.scene.layer.SceneShakeControl
+var SceneShakeControl=(function(){
+	function SceneShakeControl(){
+		this._shakeRangeXBegin=0;
+		this._shakeRangeXEnd=0;
+		this._shakeRangeYBegin=0;
+		this._shakeRangeYEnd=0;
+		this._shakeItv=50;
+		this._shakeTime=0;
+		this._shakeEndTime=0;
+		this._shakeNextTime=0;
+		this._shakeDirFlag=0;
+		// 主模式
+		this._shakeMode=0;
+		// 幅度曲线变化模式
+		this._shakeRangeMode=0;
+		this._shakeFlag=false;
+		this._shakeValue=new Point$1();
+	}
+
+	__class(SceneShakeControl,'engine.scene.layer.SceneShakeControl');
+	var __proto=SceneShakeControl.prototype;
+	__proto.GetShakeFlag=function(){
+		if (this._shakeFlag){
+			this._shakeFlag=false;
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	*抖动场景
+	*@param mode 0=-range~range之间随机 1=在0的基础上同向修正 2=(random < 0.5 ?-1 :1)*range *Math.random 3=(Math.random < 0.5 ?-1 :1)*range
+	*@param rangemode 0-根据时间插值 1-固定range
+	*@param ms 毫秒时间 震屏时间
+	*@param xb,xe x偏移 yb,ye y偏移
+	*@param itv 震屏间隔
+	*/
+	__proto.ShakeScene=function(mode,rangemode,ms,xb,xe,yb,ye,itv){
+		this._shakeMode=mode;
+		this._shakeRangeMode=rangemode;
+		this._shakeTime=ms;
+		this._shakeItv=itv;
+		this._shakeEndTime=Laya.timer.currTimer+ms;
+		this._shakeNextTime=Laya.timer.currTimer;
+		this._shakeRangeXBegin=xb;
+		this._shakeRangeXEnd=xe;
+		this._shakeRangeYBegin=yb;
+		this._shakeRangeYEnd=ye;
+		this._shakeDirFlag=((Math.random()> 0.5)? 1 :-1);
+	}
+
+	__proto.Clear=function(){
+		this._shakeEndTime=0;
+		this.SetShakeValue(0,0);
+	}
+
+	__proto.OnFrame=function(curtime){
+		if (this._shakeEndTime !=0){
+			var leaveTime=this._shakeEndTime-curtime;
+			if (leaveTime <=0){
+				this._shakeEndTime=0;
+				this.SetShakeValue(0,0);
+			}
+			else{
+				if (curtime > this._shakeNextTime){
+					var per=(this._shakeTime-leaveTime)/ (this._shakeTime);
+					if (per < 0)
+						per=0;
+					if (per > 1)
+						per=1;
+					var xrange=0;
+					var yrange=0;
+					if (this._shakeRangeMode==0){
+						xrange=ToolBase.LerpValue(this._shakeRangeXBegin,this._shakeRangeXEnd,per);
+						yrange=ToolBase.LerpValue(this._shakeRangeYBegin,this._shakeRangeYEnd,per);
+					}
+					else if (this._shakeRangeMode==1){
+						xrange=this._shakeRangeXEnd-this._shakeRangeXBegin;
+						yrange=this._shakeRangeYEnd-this._shakeRangeYBegin;
+					}
+					else{
+						var func=null;
+						if (func !=null){
+							xrange=func(per,this._shakeRangeXBegin,(this._shakeRangeXEnd-this._shakeRangeXBegin),1);
+							yrange=func(per,this._shakeRangeYBegin,(this._shakeRangeYEnd-this._shakeRangeYBegin),1);
+						}
+					};
+					var xvalue=0;
+					var yvalue=0;
+					if (this._shakeMode==0){
+						xvalue=-xrange+Math.random()*(xrange *2);
+						yvalue=-yrange+Math.random()*(yrange *2);
+					}
+					else if (this._shakeMode==1){
+						xvalue=-xrange+Math.random()*(xrange *2);
+						yvalue=-yrange+Math.random()*(yrange *2);
+						if (xvalue *yvalue < 0){
+							if (Math.random()> 0.5)
+								xvalue=-xvalue;
+							else
+							yvalue=-yvalue;
+						}
+					}
+					else if (this._shakeMode==2){
+						xvalue=Math.random()*(xrange)*this._shakeDirFlag;
+						yvalue=Math.random()*(yrange)*this._shakeDirFlag;
+					}
+					else if (this._shakeMode==3){
+						xvalue=xrange *this._shakeDirFlag;
+						yvalue=yrange *this._shakeDirFlag;
+					}
+					this.SetShakeValue(xvalue,yvalue);
+					this._shakeDirFlag=this._shakeDirFlag *-1;
+					this._shakeNextTime=curtime+this._shakeItv;
+				}
+			}
+		}
+	}
+
+	__proto.SetShakeValue=function(xx,yy){
+		this._shakeValue.x=xx;
+		this._shakeValue.y=yy;
+		this._shakeFlag=true;
+	}
+
+	__getset(0,__proto,'shakeValue',function(){
+		return this._shakeValue;
+	});
+
+	return SceneShakeControl;
+})()
+
+
+//class engine.utils.CallbackUtil
+var CallbackUtil=(function(){
+	function CallbackUtil(){}
+	__class(CallbackUtil,'engine.utils.CallbackUtil');
+	CallbackUtil.Reload=function(){
+		if (CallbackUtil.ReloadCallBack){
+			CallbackUtil.ReloadCallBack.apply(null,2);
+		}
+	}
+
+	CallbackUtil.doCloseViewManul=function(url){
+		if(CallbackUtil.closeViewManual !=null)
+			CallbackUtil.closeViewManual.call(null,url);
+	}
+
+	CallbackUtil.doCloseViewCallBack=function(url){
+		if(CallbackUtil.closeViewCallBack !=null)
+			CallbackUtil.closeViewCallBack.call(null,url);
+	}
+
+	CallbackUtil.doOpenViewCallBack=function(url){
+		if(CallbackUtil.openViewCallBack !=null)
+			CallbackUtil.openViewCallBack.call(null,url);
+	}
+
+	CallbackUtil.doCloseTabCallBack=function(id){
+		if(CallbackUtil.closeTabCallBack !=null)
+			CallbackUtil.closeTabCallBack.call(null,id);
+	}
+
+	CallbackUtil.isLowMachine=false;
+	CallbackUtil.ReloadCallBack=null;
+	CallbackUtil.closeViewManual=null;
+	CallbackUtil.closeViewCallBack=null;
+	CallbackUtil.openViewCallBack=null;
+	CallbackUtil.closeTabCallBack=null;
+	CallbackUtil.callbackUseCompressTexture=null;
+	CallbackUtil.callbackOutGC=null;
+	return CallbackUtil;
+})()
+
+
+/**
+*切块图结构（一帧由多个切块图组成）
+*@author Administrator
+*/
+//class engine.base.sheet.MSheetDivideFrame
+var MSheetDivideFrame=(function(){
+	function MSheetDivideFrame(){
+		this._imageIdx=0;
+		this._dx=NaN;
+		this._dy=NaN;
+		this._dw=NaN;
+		this._dh=NaN;
+		this._poiw=NaN;
+		this._poih=NaN;
+	}
+
+	__class(MSheetDivideFrame,'engine.base.sheet.MSheetDivideFrame');
+	var __proto=MSheetDivideFrame.prototype;
+	__getset(0,__proto,'poiw',function(){
+		return this._poiw;
+	});
+
+	__getset(0,__proto,'dw',function(){
+		return this._dw;
+	});
+
+	__getset(0,__proto,'dx',function(){
+		return this._dx;
+	});
+
+	__getset(0,__proto,'poih',function(){
+		return this._poih;
+	});
+
+	__getset(0,__proto,'dh',function(){
+		return this._dh;
+	});
+
+	__getset(0,__proto,'dy',function(){
+		return this._dy;
+	});
+
+	__getset(0,__proto,'imageIdx',function(){
+		return this._imageIdx;
+	});
+
+	MSheetDivideFrame.CreateOne=function(meta,imageIdx){
+		var ret=new MSheetDivideFrame();
+		ret._imageIdx=imageIdx;
+		ret._dx=meta.getInt16();
+		ret._dy=meta.getInt16();
+		ret._dw=meta.getInt16();
+		ret._dh=meta.getInt16();
+		ret._poiw=meta.getInt16();
+		ret._poih=meta.getInt16();
+		return ret;
+	}
+
+	return MSheetDivideFrame;
+})()
+
+
+/**
 *<code>Dictionary</code> 是一个字典型的数据存取类。
 */
 //class engine.base.container.Dictionary
@@ -1027,6 +1212,358 @@ var Dictionary=(function(){
 })()
 
 
+/**
+*封装laya的Timeline调用
+*/
+//class engine.greensock.TimelineTool
+var TimelineTool=(function(){
+	function TimelineTool(){}
+	__class(TimelineTool,'engine.greensock.TimelineTool');
+	TimelineTool.repeat=function(yoyo,repeat,target,props,duration,ease,offset,timeline){
+		(offset===void 0)&& (offset=0);
+		var line=timeline;
+		if (line==null)
+			line=new TimeLine();
+		if (yoyo){
+			var copy={};
+			for (var key in props){
+				copy[key]=target[key];
+			}
+			if (repeat==-1){
+				line.to(target,props,duration,ease,0).to(target,copy,duration,ease,offset);
+				line.play(0,true);
+			}
+			else{
+				for (var i=0;i < repeat;++i){
+					if (i==0)
+						line.to(target,props,duration,ease,0).to(target,copy,duration,ease,offset);
+					else
+					line.to(target,props,duration,ease,offset).to(target,copy,duration,ease,offset);
+				}
+				line.play(0);
+			}
+		}
+		else{
+			if (repeat==-1){
+				line.to(target,props,duration,ease,offset);
+				line.play(0,true);
+			}
+			else{
+			}
+		}
+		return line;
+	}
+
+	return TimelineTool;
+})()
+
+
+//class engine.scene.astar.AStarEx
+var AStarEx=(function(){
+	function AStarEx(){
+		//private var _open:Array;
+		this._open=null;
+		this._grid=null;
+		this._endNode=null;
+		this._startNode=null;
+		this._path=null;
+		this._floydPath=null;
+		this._modifyNodes=null;
+		this._node=null;
+		this.findPathCallBack=null;
+		this.testCount=0;
+		this.heuristic=null;
+		this._straightCost=1.0;
+		this.nowversion=1;
+		this.haveGuDao=false;
+		this._diagCost=Math.SQRT2;
+		this.heuristic=this.manhattan;
+	}
+
+	__class(AStarEx,'engine.scene.astar.AStarEx');
+	var __proto=AStarEx.prototype;
+	__proto.setGrid=function(grid){
+		this._grid=grid;
+	}
+
+	__proto.createGrid=function(width,hight){
+		this._grid=new Grid(width,hight);
+	}
+
+	__proto.justMin=function(x,y){
+		return x.f < y.f;
+	}
+
+	__proto.findPath=function(maxFindNum){
+		(maxFindNum===void 0)&& (maxFindNum=0);
+		this._endNode=this._grid.endNode;
+		if (this._endNode==null)
+			return false;
+		this.nowversion++;
+		this._startNode=this._grid.startNode;
+		var replace=null;
+		if (this.haveGuDao && (!this._endNode.walkable || (this._endNode.nodeType !=this._startNode.nodeType))){
+			var useBuriedDepth=false;
+			replace=this._grid.findReplacer(this._grid.startNode,this._endNode,useBuriedDepth);
+			if (replace==null)
+				return false;
+		}
+		if (replace !=null)
+			this._endNode=replace;
+		this._open=new BinaryHeap(this.justMin);
+		this._startNode.g=0;
+		this._modifyNodes=[];
+		return this.search(maxFindNum);
+	}
+
+	__proto.GetPathFloyd=function(){
+		if (this._path==null || this._path.length==0)
+			return null;
+		var fpath=AStarEx.floyd(this._path,this._grid);
+		var path=[];
+		while (fpath.length){
+			var node=fpath.shift();
+			if (node==null)
+				break ;
+			path.push(new Point$1(node.x,node.y));
+		}
+		return path;
+	}
+
+	__proto.searchTask=function(){
+		var count=0;
+		var best=null;
+		while (this._node !=this._endNode){
+			var len=this._node.links.length;
+			for (var i=0;i < len;i++){
+				var test=this._node.links[i].node;
+				var cost=this._node.links[i].cost;
+				var g=this._node.g+cost;
+				var h=this.heuristic(test);
+				var f=g+h;
+				if (test.version==this.nowversion){
+					if (test.f > f){
+						test.f=f;
+						test.g=g;
+						test.h=h;
+						test.parent=this._node;
+					}
+				}
+				else{
+					test.f=f;
+					test.g=g;
+					test.h=h;
+					test.parent=this._node;
+					this._open.ins(test);
+					test.version=this.nowversion;
+					this._modifyNodes.push(test);
+				}
+			}
+			if (this._open.a.length==1){
+				best=this.findNearPath(this._endNode);
+				break ;
+			}
+			this._node=this._open.pop();
+			count++;
+		}
+		if (best)
+			this._endNode=best;
+		if (count !=0)
+			this.buildPath();
+		return count !=0;
+	}
+
+	__proto.search=function(maxFindNum){
+		(maxFindNum===void 0)&& (maxFindNum=0);
+		this.testCount=0;
+		this._node=this._startNode;
+		this._node.version=this.nowversion;
+		return this.searchTask();
+	}
+
+	__proto.findNearPath=function(end){
+		if (this._modifyNodes.length==0)
+			return null;
+		var best=this._modifyNodes[0];
+		var next=null;
+		var len=this._modifyNodes.length;
+		var min=Math.abs(end.x-best.x)+Math.abs(end.y-best.y);
+		var val=0;
+		for (var i=1;i < len;i++){
+			next=this._modifyNodes[i];
+			val=Math.abs(end.x-next.x)+Math.abs(end.y-next.y);
+			if ((val > min)|| (val==min && next.g >=best.g))
+				continue ;
+			best=next;
+			min=val;
+		}
+		return best;
+	}
+
+	__proto.buildPath=function(){
+		this._path=[];
+		var node=this._endNode;
+		this._path.push(node);
+		var count=0;
+		while (node !=null && node !=this._startNode){
+			node=node.parent;
+			this._path.unshift(node);
+			count++;
+			if (count > 10000){
+				break ;
+			}
+		}
+		if (count > 10000){
+			this._path.length=0;
+			console.log("错误的寻路，溢出了！！！");
+		}
+		if (this.findPathCallBack !=null)
+			this.findPathCallBack.call();
+	}
+
+	/**
+	*曼哈顿距离
+	*@param node
+	*@return
+	*
+	*/
+	__proto.manhattan=function(node){
+		return (Math.abs(node.x-this._endNode.x)+Math.abs(node.y-this._endNode.y));
+	}
+
+	__getset(0,__proto,'grid',function(){
+		return this._grid;
+		},function(value){
+		this._endNode=null;
+		this._startNode=null;
+		this._path=null;
+		this._floydPath=null;
+		this._modifyNodes=null;
+		this._grid=value;
+	});
+
+	AStarEx.floyd=function(path,grid){
+		var _floydPath=path.concat();
+		var len=_floydPath.length;
+		if (len > 2){
+			var vector=new Node$1(0,0);
+			var tempVector=new Node$1(0,0);
+			AStarEx.floydVector(vector,_floydPath[len-1],_floydPath[len-2]);
+			for (var i=_floydPath.length-3;i >=0;i--){
+				AStarEx.floydVector(tempVector,_floydPath[i+1],_floydPath[i]);
+				if (vector.x==tempVector.x && vector.y==tempVector.y){
+					_floydPath.splice(i+1,1);
+				}
+				else{
+					vector.x=tempVector.x;
+					vector.y=tempVector.y;
+				}
+			}
+		}
+		len=_floydPath.length;
+		for (i=len-1;i >=0;i--){
+			for (var j=0;j <=i-2;j++){
+				if (AStarEx.floydCrossAble(_floydPath[i],_floydPath[j],grid)){
+					for (var k=i-1;k > j;k--){
+						_floydPath.splice(k,1);
+					}
+					i=j;
+					len=_floydPath.length;
+					break ;
+				}
+			}
+		}
+		return _floydPath;
+	}
+
+	AStarEx.floydCrossAble=function(n1,n2,grid){
+		var ps=AStarEx.bresenhamNodes(new Point$1(n1.x,n1.y),new Point$1(n2.x,n2.y));
+		for (var i=ps.length-2;i > 0;i--){
+			if (ps[i].x>=0&&ps[i].y>=0&&ps[i].x<grid.numCols&&ps[i].y<grid.numRows&&
+				(!grid.getNode(ps[i].x,ps[i].y).walkable || !grid.getNode(ps[i].x,ps[i].y).dyWalkable)){
+				return false;
+			}
+		}
+		return true;
+	}
+
+	AStarEx.bresenhamNodes=function(p1,p2){
+		var steep=Math.abs(p2.y-p1.y)> Math.abs(p2.x-p1.x);
+		if (steep){
+			var temp=p1.x;
+			p1.x=p1.y;
+			p1.y=temp;
+			temp=p2.x;
+			p2.x=p2.y;
+			p2.y=temp;
+		};
+		var stepX=p2.x > p1.x?1:(p2.x < p1.x?-1:0);
+		var deltay=(p2.y-p1.y)/Math.abs(p2.x-p1.x);
+		var ret=[];
+		var nowX=p1.x+stepX;
+		var nowY=p1.y+deltay;
+		if (steep){
+			ret.push(new Point$1(p1.y,p1.x));
+			}else {
+			ret.push(new Point$1(p1.x,p1.y));
+		}
+		if (Math.abs(p1.x-p2.x)==Math.abs(p1.y-p2.y)){
+			if(p1.x<p2.x&&p1.y<p2.y){
+				ret.push(new Point$1(p1.x,p1.y+1),new Point$1(p2.x,p2.y-1));
+				}else if(p1.x>p2.x&&p1.y>p2.y){
+				ret.push(new Point$1(p1.x,p1.y-1),new Point$1(p2.x,p2.y+1));
+				}else if(p1.x<p2.x&&p1.y>p2.y){
+				ret.push(new Point$1(p1.x,p1.y-1),new Point$1(p2.x,p2.y+1));
+				}else if(p1.x>p2.x&&p1.y<p2.y){
+				ret.push(new Point$1(p1.x,p1.y+1),new Point$1(p2.x,p2.y-1));
+			}
+		}
+		while (nowX !=p2.x){
+			var fy=Math.floor(nowY);
+			var cy=Math.ceil(nowY);
+			if (steep){
+				ret.push(new Point$1(fy,nowX));
+				}else{
+				ret.push(new Point$1(nowX,fy));
+			}
+			if (fy !=cy){
+				if (steep){
+					ret.push(new Point$1(cy,nowX));
+					}else{
+					ret.push(new Point$1(nowX,cy));
+				}
+				}else if(deltay!=0){
+				if (steep){
+					ret.push(new Point$1(cy+1,nowX));
+					ret.push(new Point$1(cy-1,nowX));
+					}else{
+					ret.push(new Point$1(nowX,cy+1));
+					ret.push(new Point$1(nowX,cy-1));
+				}
+			}
+			nowX+=stepX;
+			nowY+=deltay;
+		}
+		if (steep){
+			ret.push(new Point$1(p2.y,p2.x));
+			}else {
+			ret.push(new Point$1(p2.x,p2.y));
+		}
+		return ret;
+	}
+
+	AStarEx.floydVector=function(target,n1,n2){
+		target.x=n1.x-n2.x;
+		target.y=n1.y-n2.y;
+	}
+
+	__static(AStarEx,
+	['Ins',function(){return this.Ins=new AStarEx();}
+	]);
+	return AStarEx;
+})()
+
+
 //class engine.scene.astar.BinaryHeap
 var BinaryHeap=(function(){
 	function BinaryHeap(justMinFun){
@@ -1083,6 +1620,447 @@ var BinaryHeap=(function(){
 	}
 
 	return BinaryHeap;
+})()
+
+
+/**
+*战场对象管理
+*/
+//class engine.battle.MBattleObject
+var MBattleObject=(function(){
+	function MBattleObject(){
+		this._allObjectHashList=null;
+		this._typeListMap=new Dictionary();
+	}
+
+	__class(MBattleObject,'engine.battle.MBattleObject');
+	var __proto=MBattleObject.prototype;
+	__proto.AddTypeObjList=function(typeName,type){
+		if (this._typeListMap.get(typeName)!=null){
+			throw new Error("AddTypeObjList key Already Exsit!");
+		}
+		this._typeListMap.set(typeName,new MSceneTypeList(typeName,type,this._allObjectHashList));
+	}
+
+	__proto.GetTypeObjectList=function(typename){
+		return this._typeListMap.get(typename).hashList.list;
+	}
+
+	__proto.EachTypeObjectList=function(typename,func){
+		this._typeListMap.get(typename).hashList.Each(func);
+	}
+
+	__proto.DeleteObject=function(gid){
+		var so=this._allObjectHashList.Get(gid);
+		if (so !=null){
+			var typeList=this._typeListMap.get(so.objectType);
+			if (typeList==null){
+				ToolBase.Log("DeleteObject TypeObjectList typeList == null Error");
+				throw new Error("DeleteObject TypeObjectList typeList == null Error");
+			}
+			typeList.RemoveSceneObject(gid);
+		}
+		return so;
+	}
+
+	__proto.AddObject=function(gid,pooltype,bean,group){
+		var typeList=this._typeListMap.get(pooltype);
+		if (typeList==null){
+			ToolBase.LogError("AddObject Unknow pooltype !!! pooltype :"+pooltype);
+		};
+		var addo=typeList.GetCreateSceneObject(gid);
+		addo.SetData(bean,group);
+		return addo;
+	}
+
+	/**
+	*移除全部对象
+	*/
+	__proto.RemoveAll=function(){
+		var hl;
+		for(var $each_hl in this._typeListMap.values){
+			hl=this._typeListMap.values[$each_hl];
+			hl.RemoveAllSceneObject();
+		}
+		if (this._allObjectHashList.GetCount()> 0){
+			ToolBase.LogError("removeAllRoundObject but not Clear!!!!!!! "+this._allObjectHashList.GetCount());
+		}
+		if (this._allObjectHashList.CheckSize()==false){
+			ToolBase.LogError("removeAllRoundObject objHash.CheckSize false!!!!!!");
+		}
+	}
+
+	/**
+	*返回*便于少写as
+	*@param id
+	*@return
+	*/
+	__proto.FindObject=function(id){
+		if (id==0)
+			return null;
+		return this._allObjectHashList.Get(id);
+	}
+
+	return MBattleObject;
+})()
+
+
+/**
+*抽象资源包，动画资源包数据，一个资源只有一份
+*这个提取出来是方便和2d复用
+*@author Administrator
+*
+*/
+//class engine.base.sheet.MSheetResPack
+var MSheetResPack=(function(){
+	function MSheetResPack(){
+		// 图包url
+		this.url=null;
+		// 路径
+		this.path=null;
+		// 是否压缩纹理
+		this.compressTex=false;
+		this.blend=0;
+		this.maxdir=0;
+		this.alltime=0;
+		this.dirs=[];
+	}
+
+	__class(MSheetResPack,'engine.base.sheet.MSheetResPack');
+	var __proto=MSheetResPack.prototype;
+	__proto.Parse=function(content){
+		var bytes=new Byte(content);
+		bytes.getInt32();
+		bytes.getInt32();
+		this.blend=bytes.getByte();
+		this.maxdir=bytes.getByte();
+		var dirtime=0;
+		for (var i=0;i < this.maxdir;++i){
+			var framenum=bytes.getByte();
+			if (framenum==0){
+				continue ;
+				}else{
+				var dir=new MSheetDirection();
+				this.dirs[i]=dir;
+				dir.owner=this;
+				dir.dir=i;
+				dir.framenum=framenum;
+				dir.scale=100 / bytes.getByte();
+				if (isNaN(dir.scale))dir.scale=1;
+				dir.intervals=[];
+				for (var uu=0;uu < framenum;++uu){
+					dir.intervals[uu]=bytes.getInt16();
+					!this.alltime && (dirtime+=dir.intervals[uu]);
+				}
+				!this.alltime && (this.alltime=dirtime);
+				if (bytes.getInt16()==1){
+					dir.fades=[];
+					for (var uu=0;uu < framenum;++uu){
+						dir.intervals.push(bytes.getInt16());
+					}
+				}
+				bytes.getInt16();
+				dir.ParseMod(bytes);
+			}
+		}
+		bytes.clear();
+	}
+
+	// 批量加载方向，只用于预加载
+	__proto.LoadAllTexture=function(complete){
+		var _$this=this;
+		var isLoading=false;
+		this.dirs.forEach(function(sheet){
+			if (sheet){
+				sheet.LoadTexture(Handler.create(this,_$this.OnOneTextureLoaded,[complete]));
+				isLoading=true;
+			}
+		},this);
+		if (!isLoading){
+			complete && complete.runWith(this);
+		}
+	}
+
+	__proto.OnOneTextureLoaded=function(complete,dir){
+		var isEnd=true;
+		this.dirs.forEach(function(sheet){
+			if (sheet && sheet.isLoading){
+				isEnd=false;
+			}
+		},this);
+		if (isEnd)
+			complete && complete.runWith(this);
+	}
+
+	// 根据引用对象来释放内存
+	__proto.releaseMem=function(refDir){
+		var _$this=this;
+		var log="";
+		this.dirs.forEach(function(dir){
+			if (dir && dir.isReady && (refDir==null || refDir.indexOf(dir.dir)==-1)){
+				log+=_$this.path+" dir"+dir.dir+"\r\n";
+				dir.releaseMem();
+			}
+		},this);
+		return log;
+	}
+
+	__getset(0,__proto,'useMemory',function(){
+		var ret=0;
+		this.dirs.forEach(function(dir){
+			ret+=dir.useMemory;
+		});
+		return ret;
+	});
+
+	__getset(0,__proto,'validDir',function(){
+		var ret="";
+		this.dirs.forEach(function(dir){
+			if (dir && dir.isReady){
+				ret+=dir.dir+" ";
+			}
+		});
+		return ret;
+	});
+
+	return MSheetResPack;
+})()
+
+
+/**
+*场景对象移动策略
+*@author Administrator
+*/
+//class engine.scene.move.MoveRule
+var MoveRule=(function(){
+	function MoveRule(){
+		// 控制的主对象
+		this._object=null;
+		this._isDestroyed=false;
+		// 移动的路径列表(数组 ),改数据为简化后数组，只存储关键拐点坐标
+		this._pathList=null;
+		// 上一次执行移动的时间
+		this._lastFrameTime=0;
+		this._runSpeed=0;
+		this._bCache=false;
+		this._curMoveType=0;
+		this._prevMoveType=0;
+		// 移动终点位置
+		this._moveEndPos=null;
+		// 移动初始方向
+		this._moveStartDir=-1;
+		// 移动2点之间的距离
+		this._moveDistance=0;
+		this._movePercent=0;
+		this._curMoveDirection=0;
+		this._directPt=null;
+		this._moveStartPos=new Point$1();
+		ObjectRecord.rcd(this);
+	}
+
+	__class(MoveRule,'engine.scene.move.MoveRule');
+	var __proto=MoveRule.prototype;
+	Laya.imps(__proto,{"engine.scene.move.IMoveRule":true})
+	__proto.SetData=function(obj){
+		this._object=obj;
+	}
+
+	/**
+	*终止回调
+	*
+	*/
+	__proto.CheckMoveAbort=function(){
+		if (this.curMoveType !=0){
+			this._object.OnMoveAbort(this._moveStartDir,this._curMoveType);
+		}
+	}
+
+	__proto.RunDirect=function(pixX,pixY){
+		if (this._bCache)
+			return;
+		this.CheckMoveAbort();
+		!this._directPt && (this._directPt=new Point$1());
+		this._directPt.setTo(pixX,pixY);
+		this.SetCurMoveType(1000);
+		this._InitPath([this._directPt]);
+		this._lastFrameTime=Laya.timer.currTimer;
+		this._object.OnMoveBegin(this._moveStartDir,this._curMoveType);
+	}
+
+	/**
+	*执行移动路径
+	*参数paths :改数据为简化后数组，只存储关键拐点坐标,单个数据结构为{x :0,y :0 }
+	**/
+	__proto.Run=function(paths){
+		if (this._bCache)
+			return;
+		this.CheckMoveAbort();
+		this.SetCurMoveType(1000);
+		this._InitPath(paths);
+		this._lastFrameTime=Laya.timer.currTimer;
+		this._object.OnMoveBegin(this._moveStartDir,this._curMoveType);
+	}
+
+	//
+	__proto._InitPath=function(paths){
+		var o=this._object;
+		if ((o.decimalPixX | 0)==(paths[0].x | 0)&& (o.decimalPixY | 0)==(paths[0].y | 0)){
+			paths.shift();
+		}
+		if (paths.length==0){
+			return;
+		}
+		this._moveEndPos=paths[paths.length-1];
+		this._moveStartPos.setTo(o.decimalPixX,o.decimalPixY);
+		this._movePercent=0;
+		this._moveStartDir=ToolMap.CalcDirectionSlant(this._moveStartPos,paths[0]);
+		this._curMoveDirection=this._moveStartDir;
+		this._moveDistance=ToolMap.CalcDistance(this._moveStartPos,this._moveEndPos);
+		this._pathList=paths;
+	}
+
+	/**
+	*由上层调用每帧执行一次
+	**/
+	__proto.OnFrame=function(curTime){
+		var diffTime=curTime-this._lastFrameTime;
+		this._lastFrameTime=curTime;
+		if (this._pathList !=null && this._pathList.length > 0){
+			var oldPos=Point$1.TEMP.setTo(this._object.decimalPixX,this._object.decimalPixY);
+			var nextPos=this._pathList[0];
+			var disRemain=Math.sqrt(Math.pow((oldPos.x-nextPos.x),2)+Math.pow((oldPos.y-nextPos.y),2));
+			var curSpeed=this._runSpeed;
+			var dis=diffTime / 1000 *curSpeed;
+			if (this._moveDistance==0)
+				dis=0;
+			var newX=0;
+			var newY=0;
+			var isEnd=false;
+			var radius=0;
+			if (dis <=disRemain && this._movePercent < 1){
+				radius=Math.atan2(nextPos.y-oldPos.y,nextPos.x-oldPos.x);
+				newX=oldPos.x+dis *Math.cos(radius);
+				newY=oldPos.y+dis *Math.sin(radius);
+			}
+			else{
+				var oldNext=this._pathList.shift();
+				if (this._pathList.length==0){
+					newX=oldNext.x;
+					newY=oldNext.y;
+					isEnd=true;
+				}
+				else{
+					dis=disRemain;
+					nextPos=this._pathList[0];
+					radius=Math.atan2(nextPos.y-oldNext.y,nextPos.x-oldNext.x);
+					newX=oldNext.x+dis *Math.cos(radius);
+					newY=oldNext.y+dis *Math.sin(radius);
+					this._curMoveDirection=ToolMap.CalcDirSlant(newX,newY,nextPos.x,nextPos.y);
+					this._object.OnMoveBegin(this._curMoveDirection,this._curMoveType);
+				}
+			}
+			this.SetNewObjectPos(newX,newY);
+			var movedleaveDis=ToolMap.CalcDistance(oldPos,this._moveEndPos);
+			if (this._moveDistance !=0){
+				this._movePercent=Math.abs(this._moveDistance-movedleaveDis)/ this._moveDistance;
+			}
+			if (this._movePercent > 1)
+				this._movePercent=1;
+			if (isEnd){
+				this.MoveEnd();
+			}
+		}
+	}
+
+	/**
+	*设置对象像素位置
+	*@param x
+	*@param y
+	*/
+	__proto.SetNewObjectPos=function(x,y){
+		x=Math.round(x);
+		y=Math.round(y);
+		var o=this._object;
+		var ox=o.gridX;
+		var oy=o.gridY;
+		o.SetPixPt(x,y);
+		var nx=o.gridX;
+		var ny=o.gridY;
+		if (ox !=nx || oy !=ny){
+			o.OnMoveEnterGrid(ox,oy);
+		}
+	}
+
+	__proto.IsMoving=function(){
+		return (this._pathList !=null);
+	}
+
+	__proto.Clear=function(){
+		this._moveStartDir=0;
+		this._curMoveDirection=0;
+		this._moveDistance=0;
+		this.SetCurMoveType(0);
+		this._pathList=null;
+		this._lastFrameTime=0;
+		this._moveEndPos=null;
+		this._movePercent=0;
+	}
+
+	__proto.OnRecycle=function(){
+		this.Clear();
+		this._bCache=true;
+	}
+
+	__proto.OnRevert=function(){
+		this._bCache=false;
+	}
+
+	__proto.StopMove=function(){
+		this.MoveEnd();
+	}
+
+	__proto.MoveEnd=function(){
+		var beforeactiontype=this._curMoveType;
+		if (beforeactiontype !=0){
+			this.Clear();
+			if (this._object !=null){
+				this._object.OnMoveEnd(-1,beforeactiontype);
+			}
+		}
+	}
+
+	/**
+	*设置移动策略速度，各种速度的设置
+	*@param speed
+	*/
+	__proto.SetMoveSpeed=function(runspeed){
+		this._runSpeed=runspeed;
+	}
+
+	__proto.SetCurMoveType=function(type){
+		this._prevMoveType=this._curMoveType;
+		this._curMoveType=type;
+	}
+
+	__proto.destroy=function(destroyChild){
+		(destroyChild===void 0)&& (destroyChild=true);
+		this.Clear();
+		this._isDestroyed=true;
+	}
+
+	__getset(0,__proto,'isDestroyed',function(){
+		return this._isDestroyed;
+	});
+
+	__getset(0,__proto,'curMoveType',function(){
+		return this._curMoveType;
+	});
+
+	__getset(0,__proto,'curMoveDirection',function(){
+		return this._curMoveDirection;
+	});
+
+	return MoveRule;
 })()
 
 
@@ -1224,662 +2202,360 @@ var EnumLoadPriroty=(function(){
 })()
 
 
-//class engine.scene.astar.Grid
-var Grid=(function(){
-	function Grid(numCols,numRows){
-		this._startNode=null;
-		this._endNode=null;
-		this._nodes=null;
-		this._numCols=0;
-		this._numRows=0;
-		this.type=0;
-		this._straightCost=1.0;
-		this._firstFind=true;
-		this._diagCost=Math.SQRT2;
-		this._numCols=numCols;
-		this._numRows=numRows;
-		this._nodes=[];
-		for (var i=0;i < this._numCols;i++){
-			this._nodes[i]=[];
-			for (var j=0;j < this._numRows;j++){
-				this._nodes[i][j]=new Node$1(i,j);
+//class engine.pui.PUIMgr
+var PUIMgr=(function(){
+	function PUIMgr(){
+		this.Show_Taost=null;
+		this.Hide_Toast=null;
+		this.maskHit=null;
+		//不加这个，点击背景会穿透
+		this.BG_MASK_URL="res/ui/sg_ui/city/bg2.jpg";
+		this.tex=null;
+		/**是否有图片背景**/
+		this.isImgMask=false;
+		/**是否有半透明背景**/
+		this.isSimpleMask=false;
+		/**半透明背景临时透明度**/
+		this.tempAlpha=1;
+		this._loading=[];
+		this._sceenMask=new UIComponent();
+		this._sceenMask2=new UIComponent();
+		this._sceenMask.on("click",this,this.clickMask);
+		this._sceenMask.name="sceenMask";
+		this._sceenMask2.on("click",this,this.clickMask2);
+		this._sceenMask2.name="sceenMask2";
+		this.maskHit=new HitArea();
+		this._sceenMask.hitArea=this.maskHit;
+	}
+
+	__class(PUIMgr,'engine.pui.PUIMgr');
+	var __proto=PUIMgr.prototype;
+	__proto.Init=function(showt,hidet){
+		this.Show_Taost=showt;
+		this.Hide_Toast=hidet;
+		ClassUtils.regClass("Button",PButton);
+		ClassUtils.regClass("CheckBox",PCheckBox);
+		ClassUtils.regClass("Clip",PClip);
+		ClassUtils.regClass("ComboBox",PComboBox);
+		ClassUtils.regClass("FontClip",PFontClip);
+		ClassUtils.regClass("HScrollBar",PHScrollBar);
+		ClassUtils.regClass("HSlider",PHSlider);
+		ClassUtils.regClass("Image",PImage);
+		ClassUtils.regClass("Label",PLabel);
+		ClassUtils.regClass("List",PList);
+		ClassUtils.regClass("Panel",PPanel);
+		ClassUtils.regClass("ProgressBar",PProgressBar);
+		ClassUtils.regClass("Radio",PRadio);
+		ClassUtils.regClass("RadioGroup",PRadioGroup);
+		ClassUtils.regClass("ScrollBar",PScrollBar);
+		ClassUtils.regClass("Slider",PSlider);
+		ClassUtils.regClass("Tab",PTab);
+		ClassUtils.regClass("TextInput",PTextInput);
+		ClassUtils.regClass("Tree",PTree);
+		ClassUtils.regClass("VScrollBar",PVScrollBar);
+		ClassUtils.regClass("VSlider",PVSlider);
+		ClassUtils.regClass("Box",PBox);
+		ClassUtils.regClass("View",PView);
+		ClassUtils.regClass("Dialog",PDialog);
+		ClassUtils.regClass("PGrid",PGrid);
+		ClassUtils.regClass("PGridGroup",PGridGroup);
+		ClassUtils.regClass("laya.display.Text",PText);
+		ClassUtils.regClass("Text",PText);
+		ClassUtils.regClass("laya.html.dom.HTMLDivElement",PHTMLDivElement);
+		ClassUtils.regShortClassName([PView,PDialog]);
+		Laya.stage.on("resize",this,this._onResize);
+	}
+
+	__proto.open=function(url,param,closeOther,complete,name,showtaost){
+		(closeOther===void 0)&& (closeOther=false);
+		(showtaost===void 0)&& (showtaost=true);
+		url=this.formatUrl(url);
+		if (this._loading.indexOf(url)!=-1)
+			return;
+		var p=this.getShow(url,name);
+		if (p !=null){
+			try{
+				p.onOpened(param);
+				if (complete !=null)
+					complete.runWith(p);
+				}catch(e){
+				console.error(e.stack);
+				Laya.errorCallBack && Laya.errorCallBack(e.stack);
 			}
+			return;
+		}
+		if (this.Show_Taost && showtaost){
+			this.Show_Taost.apply();
+		}
+		this._loading.push(url);
+		Scene.open(url,closeOther,param,Handler.create(this,this.onSceneLoaded,[url,complete,name]));
+	}
+
+	__proto.opencls=function(cls,param,closeOther,complete,name,showtaost){
+		(closeOther===void 0)&& (closeOther=false);
+		(showtaost===void 0)&& (showtaost=true);
+		var scene=new cls();
+		if (scene !=null){
+			try{
+				scene.open(closeOther,param);
+				}catch(e){
+				console.error(e.stack);
+				Laya.errorCallBack ? Laya.errorCallBack(e.stack):null;
+			}
+			if (name !=null)
+				scene.name=name;
+			if (complete !=null)
+				complete.runWith(scene);
+			this.checkMask();
 		}
 	}
 
-	__class(Grid,'engine.scene.astar.Grid');
-	var __proto=Grid.prototype;
-	/**
-	*释放销毁
-	*
-	*/
-	__proto.dispose=function(){
-		this._startNode=null;
-		this._endNode=null;
-		for (var i=0;i < this._numCols;i++){
-			for (var j=0;j < this._numRows;j++){
-				(this._nodes[i] [j]).dispose();
+	__proto.load=function(url,complete,name,showtaost){
+		(showtaost===void 0)&& (showtaost=true);
+		url=this.formatUrl(url);
+		if (this._loading.indexOf(url)!=-1)
+			return;
+		if (this.Show_Taost && showtaost){
+			this.Show_Taost.apply();
+		}
+		this._loading.push(url);
+		Scene.load(url,Handler.create(this,this.onSceneLoaded,[url,complete,name]));
+	}
+
+	__proto.onSceneLoaded=function(url,complete,name,scene){
+		var idx=this._loading.indexOf(url);
+		if (idx !=-1){
+			this._loading.splice(idx,1);
+		}
+		if (this._loading.length==0){
+			if (this.Hide_Toast)
+				this.Hide_Toast.apply();
+		}
+		if (scene !=null){
+			if (name !=null)
+				scene.name=name;
+			try{
+				if (complete !=null)
+					complete.runWith(scene);
+				}catch (e){
+				console.error(e.stack);
+				Laya.errorCallBack && Laya.errorCallBack(e.stack);
+			}
+			this.checkMask();
+		}
+	}
+
+	__proto.close=function(url,name){
+		(name===void 0)&& (name="");
+		url=this.formatUrl(url);
+		Scene.close(url,name);
+	}
+
+	__proto.closecls=function(cls){
+		var list=Scene.unDestroyedScenes;
+		var find=[];
+		for (var i=0,n=list.length;i < n;i++){
+			var scene=list[i];
+			if (scene && scene.parent && Laya.__typeof(scene,cls)){
+				find.push(scene);
 			}
 		}
-		this._nodes=null;
-		this._firstFind=true;
-	}
-
-	/**
-	*
-	*@param type 0八方向 1四方向 2跳棋
-	*/
-	__proto.calculateLinks=function(linklinesHash,type){
-		(type===void 0)&& (type=0);
-		this.type=type;
-		for (var i=0;i < this._numCols;i++){
-			for (var j=0;j < this._numRows;j++){
-				this.initNodeLink(this._nodes[i][j],type,linklinesHash.get(i *10000+j));
-			}
+		for (i=0;i < find.length;++i){
+			find[i].close();
 		}
 	}
 
-	__proto.getType=function(){
-		return this.type;
+	/**
+	*关闭某个层的所有面板
+	*@param layer
+	*/
+	__proto.closeLayer=function(layer,isChangeMap,excides){
+		(isChangeMap===void 0)&& (isChangeMap=false);
+		var num=Scene.root.numChildren;
+		var closes=[];
+		for (var i=0;i < num;++i){
+			var scene=Scene.root.getChildAt(i);
+			if(isChangeMap && !scene.isCloseWhenChangeMap)
+				continue ;
+			if (excides && excides.indexOf(scene.url)!=-1)
+				continue ;
+			if ((scene instanceof laya.display.Scene )&& scene["layer"]==layer){
+				closes.push(scene);
+			}
+		}
+		for (i=0;i < closes.length;++i){
+			if (closes[i].url==null){
+				console.log("closeLayer url=null:"+closes[i].name);
+			}
+			closes[i].close();
+		}
 	}
 
-	/**
-	*
-	*@param node
-	*@param type 0八方向 1四方向 2跳棋
-	*/
-	__proto.initNodeLink=function(node,type,linklines){
-		var startX=Math.max(0,node.x-1);
-		var endX=Math.min(this.numCols-1,node.x+1);
-		var startY=Math.max(0,node.y-1);
-		var endY=Math.min(this.numRows-1,node.y+1);
-		node.links=[];
-		for (var i=startX;i <=endX;i++){
-			for (var j=startY;j <=endY;j++){
-				var test=this.getNode(i,j);
-				if (test==node || !test.walkable){
-					continue ;
-				}
-				if (type !=2 && i !=node.x && j !=node.y){
-					var test2=this.getNode(node.x,j);
-					if (!test2.walkable){
-						continue ;
-					}
-					test2=this.getNode(i,node.y);
-					if (!test2.walkable){
-						continue ;
-					}
-				};
-				var cost=this._straightCost;
-				if (!((node.x==test.x)|| (node.y==test.y))){
-					if (type==1){
-						continue ;
-					}
-					if (type==2 && (node.x-test.x)*(node.y-test.y)==1){
-						continue ;
-					}
-					if (type==2){
-						cost=this._straightCost;
+	__proto.getShow=function(url,name){
+		(name===void 0)&& (name="");
+		if ((typeof url=='string')){
+			return this.getShowByUrl(url,name);
+			}else if (Laya.__isClass(url)){
+			return this.getShowByClass(url,name);
+		}
+		return null;
+	}
+
+	__proto.getShowByUrl=function(url,name){
+		(name===void 0)&& (name="");
+		url=this.formatUrl(url);
+		var root=Scene.root;
+		var num=Scene.root.numChildren;
+		for (var i=0;i < num;++i){
+			if (((root._children[i])instanceof laya.display.Scene )){
+				if (root._children[i].url==url && root._children[i].name==name)
+					return root._children[i];
+			}
+		}
+		return null;
+	}
+
+	__proto.getShowByClass=function(cls,name){
+		(name===void 0)&& (name="");
+		var root=Scene.root;
+		var num=Scene.root.numChildren;
+		for (var i=0;i < num;++i){
+			if (((root._children[i])instanceof laya.display.Scene )){
+				if (Laya.__typeof((root._children[i]),cls)&& root._children[i].name==name)
+					return root._children[i];
+			}
+		}
+		return null;
+	}
+
+	__proto.formatUrl=function(url){
+		if (url.indexOf("res/pages/")!=0)
+			url="res/pages/"+url;
+		if (url.lastIndexOf(".json")==-1)
+			url+=".json";
+		return url;
+	}
+
+	__proto._onResize=function(){
+		if (this._sceenMask.displayedInStage){
+			this.drawMask();
+		}
+		if (this._sceenMask2.displayedInStage){
+			this.drawMask2();
+		}
+	}
+
+	__proto.checkMask=function(){
+		Laya.timer.callLater(this,this._realCheckMask);
+	}
+
+	__proto._realCheckMask=function(){
+		this.isImgMask=false;
+		this.isSimpleMask=false;
+		var num=Scene.root.numChildren;
+		for (var i=num-1;i >-1;i--){
+			var dialog=Scene.root.getChildAt(i);
+			if (dialog){
+				if(false){
+					this.isImgMask=true;
+					if (dialog.parent==this._sceenMask.parent){
+						var idxmask=dialog.parent.getChildIndex(this._sceenMask);
+						if (idxmask < i)
+							dialog.parent.setChildIndex(this._sceenMask,i-1);
+						else
+						dialog.parent.setChildIndex(this._sceenMask,i);
 					}
 					else{
-						cost=this._diagCost;
+						dialog.parent.addChildAt(this._sceenMask,i);
 					}
+					this._sceenMask.tag=dialog;
+					this._sceenMask.zOrder=dialog.zOrder;
+					this.drawMask();
 				}
-				node.links.push(new Link(test,cost));
-			}
-		}
-		if (linklines !=null){
-			for (var m=0;m < linklines.length;++m){
-				var lpt=linklines[m];
-				var testl=this.getNode(lpt.point.x,lpt.point.y);
-				if (testl==node || !testl.walkable){
-					continue ;
-				}
-				node.links.push(new Link(testl,this._diagCost *2));
-			}
-		}
-	}
-
-	__proto.getNode=function(x,y){
-		return this._nodes[x][y];
-	}
-
-	__proto.setEndNode=function(x,y){
-		this._endNode=this._nodes[x][y];
-	}
-
-	__proto.setStartNode=function(x,y){
-		this._startNode=this._nodes[x][y];
-		if (this._firstFind){
-			this.findReachableNode(x,y);
-			this._firstFind=false;
-		}
-	}
-
-	__proto.setWalkable=function(x,y,value){
-		this._nodes[x][y].walkable=value;
-	}
-
-	__proto.setDyWalkable=function(x,y,value){
-		this._nodes[x][y].dyWalkable=value;
-	}
-
-	__proto.setWalkbleFunc=function(x,y,value){
-		this._nodes[x][y].walkbaleFunc=value;
-	}
-
-	__proto.setCheckMonster=function(x,y,value){
-		this._nodes[x][y].isCheckMonster=value;
-	}
-
-	__proto.setCheckPlayer=function(x,y,value){
-		this._nodes[x][y].isCheckPlayer=value;
-	}
-
-	/**
-	*当终点不可移动时寻找一个离原终点最近的可移动点来替代之
-	*@param fromNode
-	*@param toNode
-	*@param useBuriedDepth
-	*@return
-	*
-	*/
-	__proto.findReplacer=function(fromNode,toNode,useBuriedDepth){
-		var result=null;
-		if(toNode.walkable && (toNode.nodeType==fromNode.nodeType)){
-			result=toNode;
-		}
-		else{
-			if(toNode.buriedDepth==-1 && useBuriedDepth){
-				toNode.buriedDepth=this.getNodeBuriedDepth(toNode,Math.max(this._numCols,this._numRows));
-			};
-			var offset=(useBuriedDepth)? toNode.buriedDepth :10;
-			var xFrom=toNode.x-offset < 0 ? 0 :toNode.x-offset;
-			var xTo=toNode.x+offset > this.numCols-1 ? this.numCols-1 :toNode.x+offset;
-			var yFrom=toNode.y-offset < 0 ? 0 :toNode.y-offset;
-			var yTo=toNode.y+offset > this.numRows-1 ? this.numRows-1 :toNode.y+offset;
-			var n;
-			for(var i=xFrom;i<=xTo;i++){
-				for(var j=yFrom;j<=yTo;j++){
-					if((i>xFrom && i<xTo)&& (j>yFrom && j<yTo)&& useBuriedDepth){
-						continue ;
-					}
-					n=this.getNode(i,j);
-					if(n.walkable && (n.nodeType==fromNode.nodeType)){
-						n.distance=n.getDistanceTo(toNode);
-						if(result==null){
-							result=n;
-						}
-						if(n.distance < result.distance){
-							result=n;
-						}
-					}
-				}
-			}
-		}
-		return result;
-	}
-
-	/**计算一个节点的埋葬深度
-	*@param node 欲计算深度的节点
-	*@param loopCount 计算深度时遍历此节点外围圈数。默认值为10
-	*
-	*/
-	__proto.getNodeBuriedDepth=function(node,loopCount){
-		(loopCount===void 0)&& (loopCount=10);
-		var result=node.walkable ? 0 :1;
-		var l=1;
-		while(l <=loopCount){
-			var startX=node.x-l < 0 ? 0 :node.x-l;
-			var endX=node.x+l > this.numCols-1 ? this.numCols-1 :node.x+l;
-			var startY=node.y-l < 0 ? 0 :node.y-l;
-			var endY=node.y+l > this.numRows-1 ? this.numRows-1 :node.y+l;
-			var n;
-			for(var i=startX;i <=endX;i++){
-				for(var j=startY;j <=endY;j++){
-					n=this.getNode(i,j);
-					if(n !=node && n.walkable){
-						return result;
-					}
-				}
-			}
-			result++;
-			l++;
-		}
-		return result;
-	}
-
-	/**
-	*寻找可到达点，必须保证传进来的点是可到达的
-	*@param x
-	*@param y
-	*
-	*/
-	__proto.findReachableNode=function(x,y){
-		if (x < 0 || x > this.numCols || y < 0 || y > this.numRows)
-			return;
-		var node=this.getNode(x,y);
-		if (!node.walkable)
-			return;
-		var dealList=[];
-		dealList.push(node);
-		node.nodeType=1;
-		while (dealList.length > 0){
-			var dealNode=dealList.shift();
-			var startX=Math.max(0,dealNode.x-1);
-			var endX=Math.min(this.numCols-1,dealNode.x+1);
-			var startY=Math.max(0,dealNode.y-1);
-			var endY=Math.min(this.numRows-1,dealNode.y+1);
-			for (var i=startX;i <=endX;i++){
-				for (var j=startY;j <=endY;j++){
-					if (dealNode.x !=i && dealNode.y !=j)
-						continue ;
-					var findNode=this.getNode(i,j);
-					if (findNode.walkable && (findNode.nodeType==2)){
-						findNode.nodeType=1;
-						dealList.push(findNode);
-					}
-				}
-			}
-		}
-	}
-
-	__getset(0,__proto,'numRows',function(){
-		return this._numRows;
-	});
-
-	__getset(0,__proto,'endNode',function(){
-		return this._endNode;
-	});
-
-	__getset(0,__proto,'numCols',function(){
-		return this._numCols;
-	});
-
-	__getset(0,__proto,'startNode',function(){
-		return this._startNode;
-	});
-
-	return Grid;
-})()
-
-
-/**
-*64位数据类型，相当于QWORD，主要用于和服务器对接
-*@author Administrator
-*/
-//class engine.base.data.Int64
-var Int64=(function(){
-	function Int64(value){
-		this._hValue=0;
-		this._lValue=0;
-		this._hexValue="0000000000000000";
-		(value===void 0)&& (value=0);
-		if ((typeof value=='string'))
-			this.hexValue=value;
-		else if (value !=0)
-		this.intValue=value;
-	}
-
-	__class(Int64,'engine.base.data.Int64');
-	var __proto=Int64.prototype;
-	__proto.SetRawData=function(l,h){
-		this._hValue=h>>>0;
-		this._lValue=l>>>0;
-		this._hexValue=("0000000000000000"+this._hValue.toString(16)).substr(-8,8)+("0000000000000000"+this._lValue.toString(16)).substr(-8,8);
-	}
-
-	__proto.SetMax=function(){
-		this._lValue=4294967295;
-		this._hValue=4294967295;
-		this._hexValue="ffffffffffffffff";
-	}
-
-	/**
-	*深拷贝
-	*/
-	__proto.CloneInt64=function(){
-		var ret=new Int64();
-		ret._hValue=this._hValue;
-		ret._lValue=this._lValue;
-		ret._hexValue=this._hexValue;
-		return ret;
-	}
-
-	/**
-	*大小比比看
-	*大于 1
-	*等于 0
-	*小于-1
-	*/
-	__proto.CompareTo=function(value){
-		if (value==null)
-			return 1;
-		if (this._hValue > value._hValue){
-			return 1;
-		}
-		else if (this._hValue < value._hValue){
-			return-1;
-		}
-		if (this._lValue > value._lValue){
-			return 1;
-		}
-		else if (this._lValue < value._lValue){
-			return-1;
-		}
-		return 0;
-	}
-
-	/**
-	*是否相等
-	*@param value
-	*@return
-	*
-	*/
-	__proto.EqualTo=function(value){
-		return (this.CompareTo(value)==0);
-	}
-
-	__proto.equals=function(v){
-		return this._hValue==0 && this._lValue==v;
-	}
-
-	/**
-	*是0
-	*@return
-	*
-	*/
-	__proto.IsZero=function(){
-		return (this._lValue==0 && this._hValue==0);
-	}
-
-	/**
-	*是最大-1
-	*@return
-	*
-	*/
-	__proto.IsMax=function(){
-		return (this._lValue==4294967295 && this._hValue==4294967295);
-	}
-
-	__proto.Clear=function(){
-		this.intValue=0;
-	}
-
-	__proto.ToString=function(){
-		return this._hexValue;
-	}
-
-	__proto.ToGID=function(){
-		return LongIdMap.ToGID(this);
-	}
-
-	__proto.ShowValue=function(){
-		var high=this._hValue;
-		var low=this._lValue;
-		var temp;
-		if (low < 0)
-			temp=Int64.Addition(String(low),"4294967296");
-		else
-		temp=String(low);
-		return Int64.Addition(Int64.Multiplication(String(high),"4294967296"),temp);
-	}
-
-	/**
-	*位掩码检测
-	*@param state
-	*@param isH
-	*@return
-	*
-	*/
-	__proto.BitMaskTest=function(state,isH){
-		(isH===void 0)&& (isH=false);
-		if (isH)
-			return ((this._hValue & state)!=0);
-		return ((this._lValue & state)!=0);
-	}
-
-	__getset(0,__proto,'intValue',null,function(value){
-		if (value < 0){
-			this._hValue=4294967295;
-			this._lValue=value>>>0;
-			this._hexValue=("ffffffffffffffff"+"ffffffffffffffff"+this._lValue.toString(16)).substr(-16,16);
-		}
-		else{
-			this._hValue=0;
-			this._lValue=value;
-			this._hexValue=("0000000000000000"+"0000000000000000"+this._lValue.toString(16)).substr(-16,16);
-		}
-	});
-
-	__getset(0,__proto,'hValue',function(){
-		return this._hValue;
-		},function(value){
-		this._hValue=value>>>0;
-	});
-
-	__getset(0,__proto,'bytes',function(){
-		var ret=new ByteArray();
-		ret.writeUint32(this._hValue);
-		ret.writeUint32(this._lValue);
-		return ret;
-		},function(value){
-		value.pos=0;
-		this._hValue=value.readUnsignedInt();
-		this._lValue=value.readUnsignedInt();
-		this._hexValue=("0000000000000000"+this._hValue.toString(16)).substr(-8,8)+("0000000000000000"+this._lValue.toString(16)).substr(-8,8);
-	});
-
-	__getset(0,__proto,'hexValue',function(){
-		return this._hexValue;
-		},function(str){
-		var _bytes=new ByteArray();
-		_bytes.writeUint32(0);
-		_bytes.writeUint32(0);
-		this._hexValue=("0000000000000000"+"0000000000000000"+str).substr(-16,16);
-		_bytes.pos=0;
-		for(var i=0;i < 8;++i){
-			var char=this._hexValue.substr(i*2,2);
-			var num=parseInt(char,16);
-			_bytes.writeByte(num);
-		}
-		_bytes.pos=0;
-		this._hValue=_bytes.readUnsignedInt();
-		this._lValue=_bytes.readUnsignedInt();
-	});
-
-	/**
-	*得到十进制数字
-	*/
-	__getset(0,__proto,'fValue',function(){
-		return ((this._hValue)*(4294967295+1))+this._lValue;
-		},function(value){
-		this.SetRawData(Math.floor(value % 0x100000000),Math.floor(value / 0x100000000));
-	});
-
-	__getset(0,__proto,'lValue',function(){
-		return this._lValue;
-		},function(value){
-		this._lValue=value>>>0;
-	});
-
-	Int64.Multiplication=function(a,b){
-		var same=true;
-		var a_array=[];
-		var b_array=[];
-		if (a.charAt(0)=="-"){
-			a=a.substring(1);
-			same=!same;
-		}
-		while (a.length > Int64.MULTIPLY.length){
-			a_array.push(a.substring(a.length-Int64.MULTIPLY.length));
-			a=a.substring(0,a.length-Int64.MULTIPLY.length);
-		}
-		a_array.push(a);
-		if (b.charAt(0)=="-"){
-			b=b.substring(1);
-			same=!same;
-		}
-		while(b.length > Int64.MULTIPLY.length){
-			b_array.push(b.substring(b.length-Int64.MULTIPLY.length));
-			b=b.substring(0,b.length-Int64.MULTIPLY.length);
-		}
-		b_array.push(b);
-		var result="0";
-		var x=0;
-		var y=0;
-		var temp;
-		for (var i=0;i < a_array.length;i++){
-			for (var j=0;j < b_array.length;j++){
-				x=Math.floor(a_array[i]);
-				y=Math.floor(b_array[j]);
-				temp=String(x *y);
-				for (var k=0;k < i+j;k++){
-					temp+=Int64.MULTIPLY;
-				}
-				result=Int64.Addition(temp,result);
-			}
-		}
-		if (!same)
-			result="-"+result;
-		return result;
-	}
-
-	Int64.Addition=function(a,b){
-		var same=true;
-		var negative=false;
-		var a_array=[];
-		var b_array=[];
-		if (a.charAt(0)=="-"){
-			a=a.substring(1);
-			same=!same;
-			negative=true;
-		}
-		while (a.length > Int64.ADDITION.length){
-			a_array.unshift(a.substring(a.length-Int64.ADDITION.length));
-			a=a.substring(0,a.length-Int64.ADDITION.length);
-		}
-		a_array.unshift(a);
-		if (b.charAt(0)=="-"){
-			b=b.substring(1);
-			same=!same;
-		}
-		while (b.length > Int64.ADDITION.length){
-			b_array.unshift(b.substring(b.length-Int64.ADDITION.length));
-			b=b.substring(0,b.length-Int64.ADDITION.length);
-		}
-		b_array.unshift(b);
-		var result="";
-		var x=0;
-		var y=0;
-		var z=0;
-		var temp=0;
-		var addition_const=parseInt("1"+Int64.ADDITION);
-		if (same){
-			z=0;
-			while (a_array.length > 0 || b_array.length > 0){
-				x=0;
-				y=0;
-				if (a_array.length > 0)
-					x=Math.floor(a_array.pop());
-				if (b_array.length > 0)
-					y=Math.floor(b_array.pop());
-				temp=x+y+z;
-				if (temp >=addition_const){
-					z=1;
-					temp=temp % addition_const;
-				}
-				else
-				z=0;
-				result=Int64.Format(temp)+result;
-			}
-			if (z==1)
-				result="1"+result;
-		}
-		else{
-			var results=[];
-			while (a_array.length > 0 || b_array.length > 0){
-				x=0;
-				y=0;
-				if (a_array.length > 0)
-					x=Math.floor(a_array.pop());
-				if (b_array.length > 0)
-					y=Math.floor(b_array.pop());
-				temp=x-y;
-				results.push(temp);
-			}
-			if (results.length > 0){
-				x=results.pop();
-				while (x==0 && results.length > 0)
-				x=results.pop();
-			}
-			if (x==0)
-				return "0";
-			results.push(x);
-			z=0;
-			if (x > 0){
-				while (results.length > 0){
-					y=results.shift();
-					y=y-z;
-					if (y < 0){
-						z=1;
-						y=addition_const+y;
-					}
-					else
-					z=0;
-					result=Int64.Format(y)+result;
-				}
-			}
-			else{
-				negative=!negative;
-				while (results.length > 0){
-					y=results.shift();
-					y=y+z;
-					if (y > 0){
-						z=1;
-						y=addition_const-y;
+				if(!this.isSimpleMask && (dialog["isModal"]==true || dialog["isSimpleModal"]==true)){
+					this.isSimpleMask=true;
+					if (dialog.parent==this._sceenMask2.parent){
+						var idxmask2=dialog.parent.getChildIndex(this._sceenMask2);
+						if (idxmask2 < i)
+							dialog.parent.setChildIndex(this._sceenMask2,i-1);
+						else
+						dialog.parent.setChildIndex(this._sceenMask2,i);
 					}
 					else{
-						z=0;
-						y=-y;
+						dialog.parent.addChildAt(this._sceenMask2,i);
 					}
-					result=Int64.Format(y)+result;
+					this._sceenMask2.tag=dialog;
+					this._sceenMask2.zOrder=dialog.zOrder;
+					this.drawMask2();
 				}
 			}
 		}
-		while (result.length > 1){
-			if (result.charAt(0)=="0")
-				result=result.substring(1);
-			else
-			break ;
+		if(!this.isImgMask){
+			this._sceenMask.tag=null;
+			this._sceenMask.graphics.clear();
+			this._sceenMask.removeSelf();
+			this.maskHit.hit.clear();
 		}
-		if (negative)
-			result="-"+result;
-		return result;
-	}
-
-	Int64.Format=function(num){
-		var result=String(num);
-		var size=Int64.ADDITION.length-result.length;
-		if (size < 0)
-			return result.substring(-size);
-		else{
-			for (var i=0;i < size;i++)
-			result="0"+result;
-			return result;
+		if(!this.isSimpleMask){
+			this._sceenMask2.tag=null;
+			this._sceenMask2.graphics.clear();
+			this._sceenMask2.removeSelf();
 		}
 	}
 
-	Int64.UINT_MAX_VALUE=4294967295;
-	Int64.TWO_POW_32=0x100000000;
-	Int64.ZERO="0000000000000000";
-	Int64.MAX="ffffffffffffffff";
-	Int64.hexTable="0123456789abcdef";
-	Int64.BYTESIZE=8;
-	Int64.HEX_STR_LEN=16;
-	Int64.ADDITION="00000000";
-	Int64.MULTIPLY="0000";
-	return Int64;
+	__proto.drawMask=function(){
+		if(this.tex==null){
+			Laya.loader.load(this.BG_MASK_URL,Handler.create(this,this.texComplete),null,"image");
+			return;
+		}
+		this._sceenMask.graphics.clear(true);
+		this._sceenMask.graphics.drawTexture(this.tex,(Laya.stage.width-this.tex.width)/2,(Laya.stage.height-this.tex.height)/2,this.tex.width,this.tex.height);
+		this.maskHit.hit.clear();
+		this.maskHit.hit.drawRect(0,0,Laya.stage.width,Laya.stage.height,"#cccccc");
+	}
+
+	__proto.drawMask2=function(){
+		var width=this._sceenMask2.width=Laya.stage.width;
+		var height=this._sceenMask2.height=Laya.stage.height;
+		this._sceenMask2.graphics.clear(true);
+		this._sceenMask2.graphics.drawRect(0,0,width,height,UIConfig.popupBgColor);
+		this._sceenMask2.alpha=Math.min(UIConfig.popupBgAlpha,this.tempAlpha);
+	}
+
+	__proto.texComplete=function(){
+		if(this.tex==null){
+			this.tex=Laya.loader.getRes(this.BG_MASK_URL);
+			this.checkMask();
+		}
+	}
+
+	__proto.clickMask=function(){
+		var s=this._sceenMask.tag;
+		var h=s["modelMethod"];
+		if (h !=null)
+			h.call(s["modelCaller"]);
+		else if (s["modalUnclose"] !=true)
+		s.close();
+	}
+
+	__proto.clickMask2=function(){
+		var s=this._sceenMask2.tag;
+		var h=s["modelMethod"];
+		if (h !=null)
+			h.call(s["modelCaller"]);
+		else if (s["modalUnclose"] !=true)
+		s.close();
+	}
+
+	/**是否用宽屏布局**/
+	__getset(0,__proto,'isWideScreen',function(){
+		return false;
+	});
+
+	__static(PUIMgr,
+	['Ins',function(){return this.Ins=new PUIMgr();}
+	]);
+	return PUIMgr;
 })()
 
 
@@ -1951,88 +2627,6 @@ var NotchFixBase=(function(){
 
 	NotchFixBase.Ins=null;
 	return NotchFixBase;
-})()
-
-
-/**
-*战场对象管理
-*/
-//class engine.battle.MBattleObject
-var MBattleObject=(function(){
-	function MBattleObject(){
-		this._allObjectHashList=null;
-		this._typeListMap=new Dictionary();
-	}
-
-	__class(MBattleObject,'engine.battle.MBattleObject');
-	var __proto=MBattleObject.prototype;
-	__proto.AddTypeObjList=function(typeName,type){
-		if (this._typeListMap.get(typeName)!=null){
-			throw new Error("AddTypeObjList key Already Exsit!");
-		}
-		this._typeListMap.set(typeName,new MSceneTypeList(typeName,type,this._allObjectHashList));
-	}
-
-	__proto.GetTypeObjectList=function(typename){
-		return this._typeListMap.get(typename).hashList.list;
-	}
-
-	__proto.EachTypeObjectList=function(typename,func){
-		this._typeListMap.get(typename).hashList.Each(func);
-	}
-
-	__proto.DeleteObject=function(gid){
-		var so=this._allObjectHashList.Get(gid);
-		if (so !=null){
-			var typeList=this._typeListMap.get(so.objectType);
-			if (typeList==null){
-				ToolBase.Log("DeleteObject TypeObjectList typeList == null Error");
-				throw new Error("DeleteObject TypeObjectList typeList == null Error");
-			}
-			typeList.RemoveSceneObject(gid);
-		}
-		return so;
-	}
-
-	__proto.AddObject=function(gid,pooltype,bean,group){
-		var typeList=this._typeListMap.get(pooltype);
-		if (typeList==null){
-			ToolBase.LogError("AddObject Unknow pooltype !!! pooltype :"+pooltype);
-		};
-		var addo=typeList.GetCreateSceneObject(gid);
-		addo.SetData(bean,group);
-		return addo;
-	}
-
-	/**
-	*移除全部对象
-	*/
-	__proto.RemoveAll=function(){
-		var hl;
-		for(var $each_hl in this._typeListMap.values){
-			hl=this._typeListMap.values[$each_hl];
-			hl.RemoveAllSceneObject();
-		}
-		if (this._allObjectHashList.GetCount()> 0){
-			ToolBase.LogError("removeAllRoundObject but not Clear!!!!!!! "+this._allObjectHashList.GetCount());
-		}
-		if (this._allObjectHashList.CheckSize()==false){
-			ToolBase.LogError("removeAllRoundObject objHash.CheckSize false!!!!!!");
-		}
-	}
-
-	/**
-	*返回*便于少写as
-	*@param id
-	*@return
-	*/
-	__proto.FindObject=function(id){
-		if (id==0)
-			return null;
-		return this._allObjectHashList.Get(id);
-	}
-
-	return MBattleObject;
 })()
 
 
@@ -2163,366 +2757,6 @@ var TabControl=(function(){
 })()
 
 
-//class engine.base.define.MTweenFunc
-var MTweenFunc=(function(){
-	function MTweenFunc(){}
-	__class(MTweenFunc,'engine.base.define.MTweenFunc');
-	MTweenFunc.GetEaseFuncByID=function(id){
-		var identifier=MTweenFunc.ID_TO_TYPE[parseInt((id / 1000)+"")]+MTweenFunc.ID_TO_IDT[(id % 1000)];
-		return MTweenFunc.TWEEN_EASE[identifier];
-	}
-
-	MTweenFunc.GetEaseFunc=function(ease,formala){
-		var identifier=ease+formala;
-		return MTweenFunc.TWEEN_EASE[identifier];
-	}
-
-	MTweenFunc.LINEAR="Linear";
-	MTweenFunc.SINE="Sine";
-	MTweenFunc.CUBIC="Cubic";
-	MTweenFunc.CIRC="Circ";
-	MTweenFunc.EXPO="Expo";
-	MTweenFunc.BOUNCE="Bounce";
-	MTweenFunc.BACK="Back";
-	MTweenFunc.ELASTIC="Elastic";
-	MTweenFunc.QUAD="Quad";
-	MTweenFunc.QUART="Quart";
-	MTweenFunc.QUINT="Quint";
-	MTweenFunc.STRONG="Strong";
-	MTweenFunc.EASEIN="easeIn";
-	MTweenFunc.EASEOUT="easeOut";
-	MTweenFunc.EASEINOUT="easeInOut";
-	MTweenFunc.EASENONE="easeNone";
-	__static(MTweenFunc,
-	['TWEEN_EASE',function(){return this.TWEEN_EASE=new Object();},'ID_TO_TYPE',function(){return this.ID_TO_TYPE=new Object();},'ID_TO_IDT',function(){return this.ID_TO_IDT=new Object();}
-	]);
-	MTweenFunc.__init$=function(){{
-			MTweenFunc.ID_TO_TYPE[1]="Linear";
-			MTweenFunc.ID_TO_TYPE[2]="Sine";
-			MTweenFunc.ID_TO_TYPE[3]="Cubic";
-			MTweenFunc.ID_TO_TYPE[4]="Quint";
-			MTweenFunc.ID_TO_TYPE[5]="Circ";
-			MTweenFunc.ID_TO_TYPE[6]="Elastic";
-			MTweenFunc.ID_TO_TYPE[7]="Quad";
-			MTweenFunc.ID_TO_TYPE[8]="Quart";
-			MTweenFunc.ID_TO_TYPE[9]="Expo";
-			MTweenFunc.ID_TO_TYPE[10]="Back";
-			MTweenFunc.ID_TO_TYPE[11]="Bounce";
-			MTweenFunc.ID_TO_TYPE[12]="Strong";
-			MTweenFunc.ID_TO_IDT[0]="easeNone";
-			MTweenFunc.ID_TO_IDT[1]="easeIn";
-			MTweenFunc.ID_TO_IDT[2]="easeOut";
-			MTweenFunc.ID_TO_IDT[3]="easeInOut";
-			MTweenFunc.TWEEN_EASE["Linear"+"easeNone"]=Ease.linearNone;
-			MTweenFunc.TWEEN_EASE["Linear"+"easeIn"]=Ease.linearIn;
-			MTweenFunc.TWEEN_EASE["Linear"+"easeOut"]=Ease.linearOut;
-			MTweenFunc.TWEEN_EASE["Linear"+"easeInOut"]=Ease.linearInOut;
-			MTweenFunc.TWEEN_EASE["Sine"+"easeIn"]=Ease.sineIn;
-			MTweenFunc.TWEEN_EASE["Sine"+"easeOut"]=Ease.sineOut;
-			MTweenFunc.TWEEN_EASE["Sine"+"easeInOut"]=Ease.sineInOut;
-			MTweenFunc.TWEEN_EASE["Cubic"+"easeIn"]=Ease.cubicIn;
-			MTweenFunc.TWEEN_EASE["Cubic"+"easeOut"]=Ease.cubicOut;
-			MTweenFunc.TWEEN_EASE["Cubic"+"easeInOut"]=Ease.cubicInOut;
-			MTweenFunc.TWEEN_EASE["Circ"+"easeIn"]=Ease.circIn;
-			MTweenFunc.TWEEN_EASE["Circ"+"easeOut"]=Ease.circOut;
-			MTweenFunc.TWEEN_EASE["Circ"+"easeInOut"]=Ease.circInOut;
-			MTweenFunc.TWEEN_EASE["Expo"+"easeIn"]=Ease.expoIn;
-			MTweenFunc.TWEEN_EASE["Expo"+"easeOut"]=Ease.expoOut;
-			MTweenFunc.TWEEN_EASE["Expo"+"easeInOut"]=Ease.expoInOut;
-			MTweenFunc.TWEEN_EASE["Bounce"+"easeIn"]=Ease.bounceIn;
-			MTweenFunc.TWEEN_EASE["Bounce"+"easeOut"]=Ease.bounceOut;
-			MTweenFunc.TWEEN_EASE["Bounce"+"easeInOut"]=Ease.bounceInOut;
-			MTweenFunc.TWEEN_EASE["Back"+"easeIn"]=Ease.backIn;
-			MTweenFunc.TWEEN_EASE["Back"+"easeOut"]=Ease.backOut;
-			MTweenFunc.TWEEN_EASE["Back"+"easeInOut"]=Ease.backInOut;
-			MTweenFunc.TWEEN_EASE["Elastic"+"easeIn"]=Ease.elasticIn;
-			MTweenFunc.TWEEN_EASE["Elastic"+"easeOut"]=Ease.elasticOut;
-			MTweenFunc.TWEEN_EASE["Elastic"+"easeInOut"]=Ease.elasticInOut;
-			MTweenFunc.TWEEN_EASE["Quad"+"easeIn"]=Ease.quadIn;
-			MTweenFunc.TWEEN_EASE["Quad"+"easeOut"]=Ease.quadOut;
-			MTweenFunc.TWEEN_EASE["Quad"+"easeInOut"]=Ease.quadInOut;
-			MTweenFunc.TWEEN_EASE["Quart"+"easeIn"]=Ease.quartIn;
-			MTweenFunc.TWEEN_EASE["Quart"+"easeOut"]=Ease.quartOut;
-			MTweenFunc.TWEEN_EASE["Quart"+"easeInOut"]=Ease.quartInOut;
-			MTweenFunc.TWEEN_EASE["Quint"+"easeIn"]=Ease.quintIn;
-			MTweenFunc.TWEEN_EASE["Quint"+"easeOut"]=Ease.quintOut;
-			MTweenFunc.TWEEN_EASE["Quint"+"easeInOut"]=Ease.quintInOut;
-			MTweenFunc.TWEEN_EASE["Strong"+"easeIn"]=Ease.strongIn;
-			MTweenFunc.TWEEN_EASE["Strong"+"easeOut"]=Ease.strongOut;
-			MTweenFunc.TWEEN_EASE["Strong"+"easeInOut"]=Ease.strongInOut;
-		}
-	}
-
-	return MTweenFunc;
-})()
-
-
-/**
-*一般对象池
-*
-*@author Administrator
-*/
-//class engine.base.pool.ObjectPool
-var ObjectPool=(function(){
-	function ObjectPool(maxCount,nodeClass){
-		/**节点类*/
-		this._nodeClass=null;
-		/**对象池最大资源数*/
-		this._maxCount=0;
-		/**对象池列表*/
-		this._list=null;
-		this._maxCount=maxCount;
-		this._nodeClass=nodeClass;
-		this._list=[];
-		ObjectRecord.rcd(this);
-	}
-
-	__class(ObjectPool,'engine.base.pool.ObjectPool');
-	var __proto=ObjectPool.prototype;
-	/**压入对象*/
-	__proto.Push=function(node){
-		if (node==null){
-			ToolBase.LogError("[ObjectPool push] node is null");
-			return;
-		}
-		if (!(Laya.__typeof(node,this._nodeClass))){
-			ToolBase.LogError("[ObjectPool push] node isn't thie specify Class");
-			return;
-		}
-		if (node.inPool){
-			ToolBase.LogError("[ObjectPool push] node in pool");
-			return;
-		}
-		if (this._list.length < this._maxCount){
-			node.Clean();
-			this._list[this._list.length]=node;
-			node.inPool=true;
-		}
-		else
-		node.destroy();
-	}
-
-	/**弹出对象*/
-	__proto.Pop=function(){
-		if (this._list.length > 0){
-			var node=this._list.pop();
-			node.inPool=false;
-			return node;
-		}
-		else{
-			return new this._nodeClass();
-		}
-	}
-
-	/**清理对象池数据*/
-	__proto.Clean=function(){
-		var node;
-		for(var $each_node in this._list){
-			node=this._list[$each_node];
-			node.destroy();
-		}
-		this._list.length=0;
-	}
-
-	/**设置对象池最大存储数*/
-	__getset(0,__proto,'maxCount',null,function(value){
-		this._maxCount=value;
-	});
-
-	/**获取对象池当前存储数*/
-	__getset(0,__proto,'count',function(){
-		return this._list.length;
-	});
-
-	return ObjectPool;
-})()
-
-
-/**
-*@author Administrator
-*/
-//class engine.ui.tips.TipsHandler
-var TipsHandler=(function(){
-	function TipsHandler(compUI,tipsPanel){
-		// tips的主组件
-		this._compUI=null;
-		// 显示面板
-		this._tipsPanel=null;
-		// tips数据
-		this._tipsData=null;
-		this._compUI=compUI;
-		this._tipsPanel=tipsPanel;
-		this._compUI.on("click",this,this.OnShowTips);
-	}
-
-	__class(TipsHandler,'engine.ui.tips.TipsHandler');
-	var __proto=TipsHandler.prototype;
-	__proto.SetTipsData=function(tipsData){
-		this._tipsData=tipsData;
-	}
-
-	__proto.OnShowTips=function(e){
-		if (this._tipsPanel==null)
-			return;
-		PUIMgr.Ins.close(this._tipsPanel);
-		PUIMgr.Ins.open(this._tipsPanel,this._tipsData);
-	}
-
-	__proto.destroy=function(){
-		if (this._compUI==null)
-			return;
-		this._compUI.off("click",this,this.OnShowTips);
-		this._compUI=null;
-		if(this._tipsPanel !=null){
-			this._tipsPanel=null;
-		}
-		this._tipsData=null;
-	}
-
-	return TipsHandler;
-})()
-
-
-//class engine.battle.move.EnumBattleMoveType
-var EnumBattleMoveType=(function(){
-	function EnumBattleMoveType(){}
-	__class(EnumBattleMoveType,'engine.battle.move.EnumBattleMoveType');
-	EnumBattleMoveType.NONE=0;
-	EnumBattleMoveType.RUN=1;
-	EnumBattleMoveType.JUMP=2;
-	EnumBattleMoveType.JUMP_DIE=3;
-	return EnumBattleMoveType;
-})()
-
-
-/**
-*
-*
-*@author Administrator
-*/
-//class engine.utils.MCUtil
-var MCUtil=(function(){
-	function MCUtil(){}
-	__class(MCUtil,'engine.utils.MCUtil');
-	MCUtil.AddChildOnly=function(con,dis){
-		MCUtil.DisposeAllChild(con);
-		if (dis !=null){
-			con.addChild(dis);
-		}
-	}
-
-	MCUtil.RemoveSelf=function(mc){
-		if (mc==null)
-			return;
-		var parent=mc.parent;
-		if (parent !=null)
-			parent.removeChild(mc);
-	}
-
-	MCUtil.RemoveAllChild=function(mc){
-		if (mc==null)
-			return;
-		mc.removeChildren();
-	}
-
-	MCUtil.DisposeAllChild=function(mc){
-		if (mc==null)
-			return;
-		for (var i=0;i < mc.numChildren;++i){
-			MCUtil.DisposeDisplay(mc.getChildAt(i));
-		}
-	}
-
-	MCUtil.DisposeArray=function(arr){
-		if (arr !=null){
-			for (var i=0;i < arr.length;++i){
-				MCUtil.DisposeDisplay(arr[i]);
-			}
-			arr.length=0;
-		}
-	}
-
-	MCUtil.DisposeDisplay=function(display){
-		if (display==null)
-			return;
-		if (display.hasOwnProperty("Dispose")){
-			display.Dispose();
-		}
-		else if (display.hasOwnProperty("destroy")){
-			display.destroy();
-		}
-		else if (display.hasOwnProperty("dispose")){
-			display.dispose();
-		}
-		else if ((display instanceof laya.display.Node )){
-			display.removeSelf();
-		}
-	}
-
-	MCUtil.ToTop=function(mc){
-		if (mc==null)
-			return;
-		var parent=mc.parent;
-		if (parent==null)
-			return;
-		var maxIdx=parent.numChildren-1;
-		if (parent.getChildIndex(mc)!=maxIdx){
-			parent.setChildIndex(mc,maxIdx);
-		}
-	}
-
-	MCUtil.ToBottom=function(mc){
-		if (mc==null)
-			return;
-		var parent=mc.parent;
-		if (parent==null)
-			return;
-		if (parent.getChildIndex(mc)!=0){
-			parent.setChildIndex(mc,0);
-		}
-	}
-
-	MCUtil.GetRelativePos=function(curObj,parent){
-		var pos=new Point$1();
-		while (curObj !=null && curObj !=parent){
-			pos.x+=curObj.x;
-			pos.y+=curObj.y;
-			curObj=curObj.parent;
-		}
-		return pos;
-	}
-
-	MCUtil.ToCenter=function(curObj,h,v){
-		(h===void 0)&& (h=true);
-		(v===void 0)&& (v=true);
-		if ((curObj.parent instanceof laya.display.Sprite )){
-			if (h)
-				curObj.x=(curObj.parent).width / 2-curObj.width / 2;
-			if (v)
-				curObj.y=(curObj.parent).height / 2-curObj.height / 2;
-		}
-	}
-
-	return MCUtil;
-})()
-
-
-/**
-*游戏常量定义，运行后不可修改
-*@author Administrator
-*/
-//class engine.base.define.MGameDefine
-var MGameDefine=(function(){
-	function MGameDefine(){}
-	__class(MGameDefine,'engine.base.define.MGameDefine');
-	MGameDefine.GRID_WIDTH=72;
-	MGameDefine.GRID_HEIGHT=48;
-	MGameDefine.SCENEDIS_FAR=-10000000;
-	MGameDefine.SCENE_OBJECT_GID_BEGIN=10001;
-	return MGameDefine;
-})()
-
-
 /**
 *特殊连接
 */
@@ -2547,1143 +2781,6 @@ var AStarLinkLine=(function(){
 	});
 
 	return AStarLinkLine;
-})()
-
-
-/**
-*层级
-*
-*@author Administrator
-*/
-//class engine.ui.enum.EnumLayer
-var EnumLayer=(function(){
-	function EnumLayer(){}
-	__class(EnumLayer,'engine.ui.enum.EnumLayer');
-	EnumLayer.SCENE=1;
-	EnumLayer.SCENE_BATTLE=3;
-	EnumLayer.BOTTOM=10;
-	EnumLayer.MIDDLE=11;
-	EnumLayer.FIX_1=12;
-	EnumLayer.FIX=13;
-	EnumLayer.FIX1=14;
-	EnumLayer.FIX2=15;
-	EnumLayer.POP=17;
-	EnumLayer.TOP_1=18;
-	EnumLayer.TOP=19;
-	EnumLayer.TOP1=21;
-	EnumLayer.TOP2=22;
-	EnumLayer.TOP3=23;
-	EnumLayer.TIP=24;
-	EnumLayer.PROMPT=25;
-	EnumLayer.LOADING=27;
-	EnumLayer.LOGIN=29;
-	EnumLayer.CREATE=30;
-	EnumLayer.TOTAST=31;
-	return EnumLayer;
-})()
-
-
-//class engine.supports.utils.LanUtil
-var LanUtil=(function(){
-	function LanUtil(){}
-	__class(LanUtil,'engine.supports.utils.LanUtil');
-	LanUtil.GetLanStr=function(str){
-		if (LanUtil.lanDic !=null){
-			var realStr=LanUtil.lanDic[str];
-			if (realStr)
-				return realStr;
-		}
-		return str;
-	}
-
-	LanUtil.lanDic=null;
-	return LanUtil;
-})()
-
-
-//class engine.pui.PDialogManager
-var PDialogManager=(function(){
-	function PDialogManager(){
-		/**@private 全局默认弹出对话框效果，可以设置一个效果代替默认的弹出效果，如果不想有任何效果，可以赋值为null*/
-		this.popupEffect=function(dialog){
-			dialog.scale(1,1);
-			dialog._effectTween=Tween.from(dialog,{x:Laya.stage.width / 2,y:Laya.stage.height / 2,scaleX:0,scaleY:0},300,Ease.backOut);
-		}
-		/**@private 全局默认关闭对话框效果，可以设置一个效果代替默认的关闭效果，如果不想有任何效果，可以赋值为null*/
-		this.closeEffect=function(dialog){
-			dialog._effectTween=Tween.to(dialog,{x:Laya.stage.width / 2,y:Laya.stage.height / 2,scaleX:0,scaleY:0},300,Ease.strongOut,Handler.create(this,this.doClose,[dialog]),0,false,false);
-		}
-		this.popupEffectHandler=new Handler(this,this.popupEffect);
-		this.closeEffectHandler=new Handler(this,this.closeEffect);
-	}
-
-	__class(PDialogManager,'engine.pui.PDialogManager');
-	var __proto=PDialogManager.prototype;
-	__proto._centerDialog=function(dialog){
-		dialog.x=Math.round(((Laya.stage.width-dialog.width)>> 1)+dialog.pivotX);
-		dialog.y=Math.round(((Laya.stage.height-dialog.height)>> 1)+dialog.pivotY);
-	}
-
-	/**
-	*显示对话框
-	*@param dialog 需要显示的对象框 <code>Dialog</code> 实例。
-	*@param closeOther 是否关闭其它对话框，若值为ture，则关闭其它的对话框。
-	*@param showEffect 是否显示弹出效果
-	*/
-	__proto.open=function(dialog,closeOther,showEffect){
-		(closeOther===void 0)&& (closeOther=false);
-		(showEffect===void 0)&& (showEffect=false);
-		if (closeOther)Scene.closeAll();
-		this._clearDialogEffect(dialog);
-		if (dialog.isPopupCenter)this._centerDialog(dialog);
-		Scene.root.addChild(dialog);
-		this.doOpen(dialog);
-		if (showEffect && dialog.popupEffect !=null)dialog.popupEffect.runWith(dialog);
-	}
-
-	/**@private */
-	__proto._clearDialogEffect=function(dialog){
-		if (dialog._effectTween){
-			Tween.clear(dialog._effectTween);
-			dialog._effectTween=null;
-		}
-	}
-
-	/**
-	*执行打开对话框。
-	*@param dialog 需要关闭的对象框 <code>Dialog</code> 实例。
-	*/
-	__proto.doOpen=function(dialog){
-		dialog.onOpened(dialog._param);
-	}
-
-	/**
-	*关闭对话框。
-	*@param dialog 需要关闭的对象框 <code>Dialog</code> 实例。
-	*/
-	__proto.close=function(dialog){
-		this._clearDialogEffect(dialog);
-		if (dialog.isShowEffect && dialog.closeEffect !=null)dialog.closeEffect.runWith([dialog]);
-		else this.doClose(dialog);
-	}
-
-	/**
-	*执行关闭对话框。
-	*@param dialog 需要关闭的对象框 <code>Dialog</code> 实例。
-	*/
-	__proto.doClose=function(dialog){
-		dialog.closeHandler && dialog.closeHandler.runWith(dialog.closeType);
-		if (dialog.autoDestroyAtClosed)dialog.destroy();
-		else{
-			dialog.onClosed(dialog.closeType);
-			dialog.removeSelf();
-		}
-	}
-
-	/**
-	*有个卵用
-	*/
-	__proto.lock=function(value){}
-	__proto._checkMask=function(){}
-	__static(PDialogManager,
-	['instance',function(){return this.instance=new PDialogManager();}
-	]);
-	return PDialogManager;
-})()
-
-
-/**
-*动画帧
-*@author Administrator
-*
-*/
-//class engine.base.sheet.MSheetFrame
-var MSheetFrame=(function(){
-	function MSheetFrame(mods,orgtex){
-		this.texs=null;
-		this.offxs=null;
-		this.offys=null;
-		this.texs=[];
-		this.offxs=[];
-		this.offys=[];
-		for (var i=0;i < mods.length;++i){
-			var divide=mods[i];
-			var sub=Texture.create(orgtex,divide.dx,divide.dy,divide.dw,divide.dh);
-			sub.alphaMask=orgtex.alphaMask;
-			this.texs.push(sub);
-			this.offxs.push(-divide.poiw);
-			this.offys.push(-(divide.dh-divide.poih));
-		}
-	}
-
-	__class(MSheetFrame,'engine.base.sheet.MSheetFrame');
-	var __proto=MSheetFrame.prototype;
-	__proto.destroy=function(){
-		for (var i=0;i < this.texs.length;++i){
-			this.texs[i].destroy();
-		}
-		this.texs=null;
-		this.offxs=null;
-		this.offys=null;
-	}
-
-	return MSheetFrame;
-})()
-
-
-/**
-*移动策略移动类型，需要和动作类型定义一致
-*@author Administrator
-*/
-//class engine.scene.move.EnumMoveType
-var EnumMoveType=(function(){
-	function EnumMoveType(){}
-	__class(EnumMoveType,'engine.scene.move.EnumMoveType');
-	EnumMoveType.MOVE_NONE=0;
-	EnumMoveType.MOVE_RUN=1000;
-	return EnumMoveType;
-})()
-
-
-/**
-*动画基本定义
-*@author Administrator
-*/
-//class engine.animation.define.MAnimationDefine
-var MAnimationDefine=(function(){
-	function MAnimationDefine(){}
-	__class(MAnimationDefine,'engine.animation.define.MAnimationDefine');
-	MAnimationDefine.RESPACK_TYPE_2D=1;
-	MAnimationDefine.RESPACK_TYPE_3D=2;
-	return MAnimationDefine;
-})()
-
-
-/**
-*单个方向
-*/
-//class engine.base.sheet.MSheetDirection
-var MSheetDirection=(function(){
-	function MSheetDirection(){
-		this.owner=null;
-		// 方向
-		this.dir=0;
-		// 帧间隔
-		this.intervals=null;
-		// 渐隐间隔
-		this.fades=null;
-		// 缩放
-		this.scale=0;
-		// 帧数
-		this.framenum=0;
-		// 使用的内存
-		this.useMemory=0;
-		// 原始纹理
-		this._orgtex=null;
-		// 直接渲染用的数据
-		this._sheets=null;
-		// 模块数据(每帧对应的模块数据)
-		this._frameModes=null;
-		this._loadFailTimes=0;
-		this._isLoading=false;
-		this._waitAni=[];
-	}
-
-	__class(MSheetDirection,'engine.base.sheet.MSheetDirection');
-	var __proto=MSheetDirection.prototype;
-	__proto.ParseMod=function(meta){
-		var adfHash=new Dictionary();
-		var moduleNum=meta.getInt16();
-		for (i=0;i < moduleNum;++i){
-			var modid=meta.getInt32();
-			var imageIdx=meta.getInt16();
-			adfHash.set(modid,MSheetDivideFrame.CreateOne(meta,imageIdx));
-		};
-		var maxframeNum=meta.getInt16();
-		if (maxframeNum !=this.framenum)
-			ToolBase.LogError("不是单方向的数据？？");
-		var framemodes=[];
-		for (var i=0;i < maxframeNum;++i){
-			var modnum=meta.getInt16();
-			if (modnum < 0 || modnum > 1024){
-				ToolBase.LogError("MSheetResPack (modnum < 0 || modnum > 1024) "+meta.length);
-				return;
-			};
-			var mods=__newvec(modnum);
-			for (var j=0;j < modnum;++j){
-				var modidx=meta.getInt32();
-				mods[j]=adfHash.get(modidx);
-			}
-			framemodes[i]=mods;
-		}
-		this._frameModes=framemodes;
-	}
-
-	__proto.GetFrames=function(ani){
-		if (this._sheets==null){
-			if (this._loadFailTimes >=3){
-				ani && ani.OnTextureFailed(this);
-				}else{
-				if (ani && this._waitAni.indexOf(ani)==-1){
-					this._waitAni.push(ani);
-				}
-				this.LoadTexture();
-			}
-			return null;
-			}else{
-			return this._sheets;
-		}
-	}
-
-	__proto.LoadTexture=function(complete){
-		if (!this._isLoading){
-			MAnimationLoader.Ins.LoadTexture(this.owner.compressTex,this.owner.path,this.dir,Handler.create(this,this.OnLoadDirectionComp,[complete]));
-			this._isLoading=true;
-		}
-	}
-
-	__proto.OnLoadDirectionComp=function(complete,tex){
-		this.__reeee(complete,tex);
-	}
-
-	__proto.__reeee=function(complete,tex){
-		this._isLoading=false;
-		this.SetTexture(tex);
-		var waits=this._waitAni;
-		if (!tex){
-			this._loadFailTimes++;
-			for (var i=0;i < waits.length;++i){
-				(waits [i]).OnTextureFailed(this);
-			}
-			}else{
-			for (var i=0;i < waits.length;++i){
-				if (!waits[i].isDestroyed)
-					(waits [i]).OnTextureLoaded(this);
-			}
-		}
-		this._waitAni.length=0;
-		complete && complete.runWith(this);
-	}
-
-	__proto.SetTexture=function(tex){
-		if (!tex)
-			return;
-		this.releaseMem();
-		this.useMemory=tex.bitmap.gpuMemory;
-		if (tex.alphaMask){
-			this.useMemory+=tex.alphaMask.bitmap.gpuMemory;
-		}
-		this._orgtex=tex;
-		this._sheets=[];
-		var frameMods=this._frameModes;
-		var len=frameMods.length;
-		var sheets=this._sheets=[];
-		for (var i=0;i < len;++i){
-			var modes=frameMods[i];
-			var frame=new MSheetFrame(modes,tex);
-			sheets.push(frame);
-		}
-	}
-
-	__proto.releaseMem=function(){
-		if (this._sheets){
-			var sheets=this._sheets;
-			for (var i=0;i < sheets.length;++i){
-				sheets[i].destroy();
-			}
-			this._sheets=null;
-		}
-		this._orgtex && this._orgtex.destroy(true);
-		this._orgtex=null;
-		this.useMemory=0;
-	}
-
-	__getset(0,__proto,'isLoading',function(){
-		return this._isLoading;
-	});
-
-	__getset(0,__proto,'isReady',function(){
-		return this._sheets !=null;
-	});
-
-	return MSheetDirection;
-})()
-
-
-/**
-*哈希列表队列组合
-*插入比较慢，但是遍历和查找都很快
-*@author Administrator
-*
-*/
-//class engine.base.container.HashList
-var HashList=(function(){
-	function HashList(){
-		this._hash=null;
-		this._list=null;
-		this._hash=new Object();
-		this._list=[];
-		ObjectRecord.rcd(this);
-	}
-
-	__class(HashList,'engine.base.container.HashList');
-	var __proto=HashList.prototype;
-	__proto.Get=function(k){
-		var ret=this._hash[k];
-		return ret;
-	}
-
-	__proto.Each=function(f){
-		var arr=this._list;
-		var len=arr.length;
-		for (var i=0;i < len;++i)
-		f(arr[i]);
-	}
-
-	__proto.GetCount=function(){
-		return this._list.length;
-	}
-
-	__proto.Add=function(k,o){
-		if (this._hash[k]==null){
-			this._hash[k]=o;
-			this._list.push(o);
-		}
-	}
-
-	__proto.Remove=function(k){
-		var ret=null;
-		if (this._hash[k] !=null){
-			ret=this._hash[k];
-			delete this._hash[k];
-			this._list.splice(this._list.indexOf(ret),1);
-		}
-		return ret;
-	}
-
-	__proto.Clear=function(){
-		var ret=this._list;
-		this._hash=new Object();
-		this._list=[];
-		return ret;
-	}
-
-	__proto.CheckSize=function(){
-		var hashsize=0;
-		for (var k in this._hash){
-			hashsize++;
-		}
-		return (hashsize==this._list.length);
-	}
-
-	/**
-	*方便外部遍历
-	*@return
-	*
-	*/
-	__getset(0,__proto,'list',function(){
-		return this._list;
-	});
-
-	return HashList;
-})()
-
-
-/**
-*抽象类
-*场景地对象和实体管理
-*
-*@author Administrator
-*/
-//class engine.scene.MSceneObject
-var MSceneObject=(function(){
-	function MSceneObject(){
-		this._allObjectHashList=null;
-		this._typeListMap=new Dictionary();
-		this._allObjectHashList=new HashList();
-		Laya.timer.loop(1,this,this.OnFrame);
-	}
-
-	__class(MSceneObject,'engine.scene.MSceneObject');
-	var __proto=MSceneObject.prototype;
-	__proto.AddTypeObjList=function(typeName,type){
-		if (this._typeListMap.get(typeName)!=null){
-			throw new Error("AddTypeObjList key Already Exsit!");
-		}
-		this._typeListMap.set(typeName,new MSceneTypeList(typeName,type,this._allObjectHashList));
-	}
-
-	__proto.GetTypeObjectList=function(typename){
-		return this._typeListMap.get(typename).hashList.list;
-	}
-
-	__proto.EachTypeObjectList=function(typename,func){
-		this._typeListMap.get(typename).hashList.Each(func);
-	}
-
-	__proto.OnFrame=function(){
-		var curt=Laya.timer.currTimer;
-		var list;
-		for(var $each_list in this._typeListMap.values){
-			list=this._typeListMap.values[$each_list];
-			var arr=list.hashList.list;
-			var obj;
-			for(var $each_obj in arr){
-				obj=arr[$each_obj];
-				if (obj.destroyed)
-					continue ;
-				obj.OnFrame(curt);
-			}
-		}
-	}
-
-	__proto.DeleteObject=function(gid){
-		var so=this._allObjectHashList.Get(gid);
-		if (so !=null){
-			var typeList=this._typeListMap.get(so.objectType);
-			if (typeList==null){
-				ToolBase.Log("DeleteObject TypeObjectList typeList == null Error");
-				throw new Error("DeleteObject TypeObjectList typeList == null Error");
-			}
-			typeList.RemoveSceneObject(gid);
-		}
-		return so;
-	}
-
-	__proto.AddObject=function(sceneobjgid,pooltype,bean,layertype){
-		var addo=null;
-		var typeList=this._typeListMap.get(pooltype);
-		if (typeList==null){
-			ToolBase.LogError("AddObject Unknow pooltype !!! pooltype :"+pooltype);
-		}
-		addo=typeList.GetCreateSceneObject(sceneobjgid);
-		addo.map=MSceneMap.Ins;
-		if (layertype==0)
-			addo.map.mapLayer.AddMiddle(addo);
-		else if (layertype==MapSceneLayer.LAYER_TYPE_BOTTOM)
-		addo.map.mapLayer.AddBottom(addo);
-		else if (layertype==1)
-		addo.map.mapLayer.AddTop(addo);
-		else
-		ToolBase.LogError("AddObject Unknow layertype !!! layertype :"+layertype);
-		addo.SetRawData(bean);
-		return addo;
-	}
-
-	/**
-	*移除周围对象，除了主玩家自己
-	*/
-	__proto.RemoveAllRoundObject=function(){
-		var hl;
-		for(var $each_hl in this._typeListMap.values){
-			hl=this._typeListMap.values[$each_hl];
-			if (hl.pooltype !=0)
-				hl.RemoveAllSceneObject();
-		}
-		if (this._allObjectHashList.GetCount()> 1){
-			ToolBase.LogError("removeAllRoundObject but not Clear!!!!!!! "+this._allObjectHashList.GetCount());
-		}
-		if (this._allObjectHashList.CheckSize()==false){
-			ToolBase.LogError("removeAllRoundObject objHash.CheckSize false!!!!!!");
-		}
-	}
-
-	/**
-	*返回*便于少写as
-	*@param id
-	*@return
-	*/
-	__proto.FindObject=function(id){
-		if (id==0)
-			return null;
-		return this._allObjectHashList.Get(id);
-	}
-
-	/**
-	*寻找当前鼠标位置的对象
-	*这种是可以进行空间四叉树优化的，闲的时候弄吧
-	*@param wx
-	*@param wy
-	*@return
-	*/
-	__proto.FindMouseObj=function(wx,wy){
-		var l=this._allObjectHashList.list;
-		var len=l.length;
-		var bo=null;
-		var now;
-		for (var i=0;i < len;++i){
-			now=l[i];
-			if (now.isNonMouseHit==false && now.CheckLocalBounding(wx,wy)){
-				if (bo==null || now.gridY >=bo.gridY){
-					bo=now;
-				}
-			}
-		}
-		return bo;
-	}
-
-	return MSceneObject;
-})()
-
-
-/**
-*战场基类
-*/
-//class engine.battle.MBattleScene
-var MBattleScene=(function(){
-	function MBattleScene(){
-		this._container=null;
-		this._top=null;
-		this._middle=null;
-		this._bottom=null;
-		this._backAlpha=null;
-		this._backFaZhen=null;
-		this._gridCon=null;
-		this._shake=new SceneShakeControl();
-		MBattleScene.Ins=this;
-		this._container=new Sprite();
-		this._container.size(Laya.stage.designWidth,Laya.stage.designHeight);
-		this._top=new Sprite();
-		this._middle=new Sprite();
-		this._bottom=new Sprite();
-		this._container.addChild(this._bottom);
-		this._container.addChild(this._middle);
-		this._container.addChild(this._top);
-		this._container.zOrder=3;
-		if (false){
-			this._gridCon=new Sprite();
-			var gw=36;
-			var gh=36;
-			for (var xx=gw;xx < Laya.stage.designWidth;xx+=gw){
-				this._gridCon.graphics.drawLine(xx,0,xx,Laya.stage.designHeight,"#ff0000");
-			}
-			for (var yy=gh;yy < Laya.stage.designHeight;yy+=gh){
-				this._gridCon.graphics.drawLine(0,yy,Laya.stage.designWidth,yy,"#ff0000");
-			}
-		}
-	}
-
-	__class(MBattleScene,'engine.battle.MBattleScene');
-	var __proto=MBattleScene.prototype;
-	__proto.Init=function(){
-		Laya.timer.loop(1,this,this._OnFrame);
-	}
-
-	__proto.ResizeHandler=function(){
-		this._container.pos((Laya.stage.width-this._container.width)/2,(Laya.stage.height-this._container.height)/2);
-		this._backAlpha.graphics.clear();
-		this._backAlpha.size(Laya.stage.width+50,Laya.stage.height+50);
-		this._backAlpha.graphics.drawRect(0,0,this._backAlpha.width,this._backAlpha.height,"#0000005a");
-		this._backAlpha.pos((this._container.width-this._backAlpha.width)/2,(this._container.height-this._backAlpha.height)/2);
-	}
-
-	/**
-	*开启
-	*@param url
-	*/
-	__proto.OpenBattle=function(url){
-		if (this._backAlpha==null)
-			this._backAlpha=new Sprite();
-		if (this._backFaZhen==null){
-			this._backFaZhen=new Sprite();
-			this._backFaZhen.size(628,396);
-			this._backFaZhen.loadImage(url);
-		}
-		this._backFaZhen.pos((this._container.width-this._backFaZhen.width)/2,(this._container.height-this._backFaZhen.height)/2);
-		this.AddBottom(this._backAlpha);
-		this.AddBottom(this._backFaZhen);
-		this.ResizeHandler();
-		Scene.root.addChild(this._container);
-		Laya.stage.on("resize",this,this.ResizeHandler);
-		if (this._gridCon){
-			Laya.stage.addChild(this._gridCon);
-		}
-	}
-
-	/**
-	*关闭战场
-	*@param url
-	*/
-	__proto.CloseBattle=function(){
-		this._top.destroyChildren();
-		this._bottom.destroyChildren();
-		this._middle.destroyChildren();
-		this._backAlpha=null;
-		this._backFaZhen=null;
-		this._container.removeSelf();
-		if (this._gridCon){
-			this._gridCon.removeSelf();
-		}
-		Laya.stage.off("resize",this,this.ResizeHandler);
-	}
-
-	__proto._OnFrame=function(){
-		var curtime=Laya.timer.currTimer;
-		this.OnFrame(curtime);
-	}
-
-	__proto.OnFrame=function(curtime){
-		this._shake.OnFrame(curtime);
-		if (this._shake.GetShakeFlag()){
-			var xx=this._shake.shakeValue.x;
-			var yy=this._shake.shakeValue.y;
-			this._top.pos(xx,yy);
-			this._middle.pos(xx,yy);
-			this._bottom.pos(xx,yy);
-		}
-	}
-
-	__proto.AddTop=function(dis){
-		this._top.addChild(dis);
-	}
-
-	__proto.AddMiddle=function(dis){
-		this._middle.addChild(dis);
-	}
-
-	__proto.AddBottom=function(dis){
-		this._bottom.addChild(dis);
-	}
-
-	__getset(0,__proto,'middle',function(){
-		return this._middle;
-	});
-
-	__getset(0,__proto,'container',function(){
-		return this._container;
-	});
-
-	MBattleScene.Ins=null;
-	return MBattleScene;
-})()
-
-
-/**
-*timeline扩展，主要是方便处理完成事件
-*/
-//class engine.greensock.TimelineExt
-var TimelineExt=(function(){
-	function TimelineExt(){
-		this._labelc=0;
-		this._timeline=null;
-		this._compFunc=null;
-		this._compParam=null;
-	}
-
-	__class(TimelineExt,'engine.greensock.TimelineExt');
-	var __proto=TimelineExt.prototype;
-	__proto.to=function(target,props,duration,ease,offset){
-		(offset===void 0)&& (offset=0);
-		this._timeline.to(target,props,duration,ease,offset);
-		return this;
-	}
-
-	__proto.play=function(timeOrLabel,loop){
-		(timeOrLabel===void 0)&& (timeOrLabel=0);
-		(loop===void 0)&& (loop=false);
-		this._timeline.play(timeOrLabel,loop);
-	}
-
-	__proto.OnComplete=function(){
-		if (this._compFunc !=null){
-			this._compFunc.apply(null,this._compParam);
-		}
-		this.destroy();
-	}
-
-	__proto.destroy=function(){
-		if (this._timeline !=null){
-			this._timeline.destroy();
-			this._timeline=null;
-			this._compFunc=null;
-			this._compParam=null;
-			Pool.recover("TimelineExt",this);
-		}
-	}
-
-	TimelineExt.create=function(comp,compparams){
-		var ret=Pool.getItemByClass("TimelineExt",TimelineExt);
-		ret._compFunc=comp;
-		ret._compParam=compparams;
-		if (ret._compParam !=null)
-			ret._compParam.push(ret);
-		ret._timeline=new TimeLine();
-		ret._timeline.on("complete",ret,ret.OnComplete);
-		return ret;
-	}
-
-	return TimelineExt;
-})()
-
-
-/**
-*抽象资源包，动画资源包数据，一个资源只有一份
-*这个提取出来是方便和2d复用
-*@author Administrator
-*
-*/
-//class engine.base.sheet.MSheetResPack
-var MSheetResPack=(function(){
-	function MSheetResPack(){
-		// 图包url
-		this.url=null;
-		// 路径
-		this.path=null;
-		// 是否压缩纹理
-		this.compressTex=false;
-		this.blend=0;
-		this.maxdir=0;
-		this.alltime=0;
-		this.dirs=[];
-	}
-
-	__class(MSheetResPack,'engine.base.sheet.MSheetResPack');
-	var __proto=MSheetResPack.prototype;
-	__proto.Parse=function(content){
-		var bytes=new Byte(content);
-		bytes.getInt32();
-		bytes.getInt32();
-		this.blend=bytes.getByte();
-		this.maxdir=bytes.getByte();
-		var dirtime=0;
-		for (var i=0;i < this.maxdir;++i){
-			var framenum=bytes.getByte();
-			if (framenum==0){
-				continue ;
-				}else{
-				var dir=new MSheetDirection();
-				this.dirs[i]=dir;
-				dir.owner=this;
-				dir.dir=i;
-				dir.framenum=framenum;
-				dir.scale=100 / bytes.getByte();
-				if (isNaN(dir.scale))dir.scale=1;
-				dir.intervals=[];
-				for (var uu=0;uu < framenum;++uu){
-					dir.intervals[uu]=bytes.getInt16();
-					!this.alltime && (dirtime+=dir.intervals[uu]);
-				}
-				!this.alltime && (this.alltime=dirtime);
-				if (bytes.getInt16()==1){
-					dir.fades=[];
-					for (var uu=0;uu < framenum;++uu){
-						dir.intervals.push(bytes.getInt16());
-					}
-				}
-				bytes.getInt16();
-				dir.ParseMod(bytes);
-			}
-		}
-		bytes.clear();
-	}
-
-	// 批量加载方向，只用于预加载
-	__proto.LoadAllTexture=function(complete){
-		var _$this=this;
-		var isLoading=false;
-		this.dirs.forEach(function(sheet){
-			if (sheet){
-				sheet.LoadTexture(Handler.create(this,_$this.OnOneTextureLoaded,[complete]));
-				isLoading=true;
-			}
-		},this);
-		if (!isLoading){
-			complete && complete.runWith(this);
-		}
-	}
-
-	__proto.OnOneTextureLoaded=function(complete,dir){
-		var isEnd=true;
-		this.dirs.forEach(function(sheet){
-			if (sheet && sheet.isLoading){
-				isEnd=false;
-			}
-		},this);
-		if (isEnd)
-			complete && complete.runWith(this);
-	}
-
-	// 根据引用对象来释放内存
-	__proto.releaseMem=function(refDir){
-		var _$this=this;
-		var log="";
-		this.dirs.forEach(function(dir){
-			if (dir && dir.isReady && (refDir==null || refDir.indexOf(dir.dir)==-1)){
-				log+=_$this.path+" dir"+dir.dir+"\r\n";
-				dir.releaseMem();
-			}
-		},this);
-		return log;
-	}
-
-	__getset(0,__proto,'useMemory',function(){
-		var ret=0;
-		this.dirs.forEach(function(dir){
-			ret+=dir.useMemory;
-		});
-		return ret;
-	});
-
-	__getset(0,__proto,'validDir',function(){
-		var ret="";
-		this.dirs.forEach(function(dir){
-			if (dir && dir.isReady){
-				ret+=dir.dir+" ";
-			}
-		});
-		return ret;
-	});
-
-	return MSheetResPack;
-})()
-
-
-/**
-*动画工具类
-*/
-//class engine.res.MAnimationUtil
-var MAnimationUtil=(function(){
-	function MAnimationUtil(){}
-	__class(MAnimationUtil,'engine.res.MAnimationUtil');
-	MAnimationUtil.RegType=function(type,name){
-		MAnimationUtil.RES_TYPE_MAP[type]=name;
-	}
-
-	MAnimationUtil.RegActType=function(type,name){
-		MAnimationUtil.ACTION_TYPE_MAP[type]=name;
-	}
-
-	MAnimationUtil.RegActLoop=function(type){
-		MAnimationUtil.ACTION_LOOP_MAP[type]=true;
-	}
-
-	MAnimationUtil.IsLoop=function(action){
-		return MAnimationUtil.ACTION_LOOP_MAP[action]==true;
-	}
-
-	MAnimationUtil.RegUnLoad=function(resType,resId,actType){
-		(actType===void 0)&& (actType=-1);
-		MAnimationUtil.UNLOAD_URLS.push([resType,resId,actType]);
-	}
-
-	MAnimationUtil.IsUnload=function(resType,resId,actType){
-		var arr=MAnimationUtil.UNLOAD_URLS;
-		for(var i=0;i < arr.length;++i){
-			if (arr[i][0]==resType){
-				var id=arr[i][1];
-				var act=arr[i][2];
-				if (id==-1 || id==resId){
-					return act==-1 || act==actType;
-				}
-			}
-		}
-		return false;
-	}
-
-	MAnimationUtil.ToKeyName=function(type,resId,actType,extra){
-		if ((typeof type=='string')|| (typeof resId=='string')|| (typeof actType=='string')){
-			ToolBase.LogError("ToKeyName参数类型错误:  npctype="+type+" id="+resId+" act="+actType);
-		};
-		var typeKey=MAnimationUtil.RES_TYPE_MAP[type];
-		var actionKey=MAnimationUtil.ACTION_TYPE_MAP[actType];
-		if (typeKey==null){
-			ToolBase.LogError("没有注册的动画类型:"+type);
-		}
-		if (actionKey==null){
-			ToolBase.LogError("没有注册的动作类型:"+actType);
-		}
-		if (extra==null)
-			return typeKey+"/"+resId+"/"+actionKey;
-		else
-		return typeKey+"/"+resId+"/"+extra+"/"+actionKey;
-	}
-
-	MAnimationUtil.ToShortKey=function(type,resId,extra){
-		if ((typeof type=='string')|| (typeof resId=='string')){
-			ToolBase.LogError("ToKeyName参数类型错误:  type="+type+" id="+resId);
-		};
-		var typeKey=MAnimationUtil.RES_TYPE_MAP[type];
-		if (typeKey==null){
-			ToolBase.LogError("没有注册的动画类型:"+type);
-		}
-		if (extra==null)
-			return typeKey+"/"+resId;
-		else
-		return typeKey+"/"+resId+"/"+extra;
-	}
-
-	MAnimationUtil.GetActionName=function(actionId){
-		return MAnimationUtil.ACTION_TYPE_MAP[actionId];
-	}
-
-	MAnimationUtil.ROOT_URL="res/animation/";
-	MAnimationUtil.UNLOAD_URLS=[];
-	__static(MAnimationUtil,
-	['RES_TYPE_MAP',function(){return this.RES_TYPE_MAP=new Object();},'ACTION_TYPE_MAP',function(){return this.ACTION_TYPE_MAP=new Object();},'ACTION_LOOP_MAP',function(){return this.ACTION_LOOP_MAP=new Object();},'ACTION_MAP_MAP',function(){return this.ACTION_MAP_MAP=new Object();}
-	]);
-	return MAnimationUtil;
-})()
-
-
-/**
-*json 数据处理
-*@author Administrator
-*
-*/
-//class engine.supports.utils.JSONUtil
-var JSONUtil=(function(){
-	function JSONUtil(){}
-	__class(JSONUtil,'engine.supports.utils.JSONUtil');
-	JSONUtil.encode=function(o){
-		return JSON.stringify(o);
-	}
-
-	JSONUtil.decode2=function(s){
-		if(s==null)return null;
-		s=s.split("|").join(",");
-		return JSONUtil.decode(s);
-	}
-
-	JSONUtil.decode=function(s){
-		var ret=null;
-		try{
-			if (s==null || s=="")
-				return null;
-			ret=JSON.parse(s);
-		}
-		catch (err){
-			if (JSONUtil.DEBUG_MODE){
-				console.log("decode json error:"+err.message);
-			}
-			ret=null;
-		}
-		return ret;
-	}
-
-	JSONUtil.isJson=function(s){
-		try{
-			JSONUtil.decode(s);
-		}
-		catch (err){
-			return false;
-		}
-		return true;
-	}
-
-	JSONUtil.DEBUG_MODE=false;
-	return JSONUtil;
-})()
-
-
-/**
-*地图坠崖方向信息
-*@author Administrator
-*
-*/
-//class engine.scene.data.MapDownHillData
-var MapDownHillData=(function(){
-	function MapDownHillData(bytes){
-		this._x=0;
-		this._y=0;
-		this._dirvalue=0;
-		this._disvalue=0;
-		this._x=bytes.readShort();
-		this._y=bytes.readShort();
-		this._dirvalue=bytes.readByte();
-		this._disvalue=bytes.readByte();
-		ObjectRecord.rcd(this);
-	}
-
-	__class(MapDownHillData,'engine.scene.data.MapDownHillData');
-	var __proto=MapDownHillData.prototype;
-	__getset(0,__proto,'x',function(){
-		return this._x;
-	});
-
-	/**
-	*距离信息
-	*/
-	__getset(0,__proto,'disvalue',function(){
-		return this._disvalue;
-	});
-
-	__getset(0,__proto,'y',function(){
-		return this._y;
-	});
-
-	/**
-	*方向信息，每位表示一个方向
-	*/
-	__getset(0,__proto,'dirvalue',function(){
-		return this._dirvalue;
-	});
-
-	return MapDownHillData;
-})()
-
-
-//class engine.utils.UITool
-var UITool=(function(){
-	function UITool(){}
-	__class(UITool,'engine.utils.UITool');
-	UITool.MakeUrl=function(url){
-		if (url.indexOf("res/ui/")==0)
-			return url;
-		return "res/ui/"+url;
-	}
-
-	UITool.GetSprite=function(url,isMakeUrl,w,h,complete,cacheAs){
-		(isMakeUrl===void 0)&& (isMakeUrl=true);
-		(w===void 0)&& (w=0);
-		(h===void 0)&& (h=0);
-		(cacheAs===void 0)&& (cacheAs="none");
-		if (isMakeUrl)
-			url=UITool.MakeUrl(url);
-		var ret=new Sprite();
-		ret.width=w;
-		ret.height=h;
-		ret.loadImage(url,complete);
-		ret.cacheAs=cacheAs;
-		return ret;
-	}
-
-	UITool.SetUIImage=function(comUI,url,isMakeUrl){
-		(isMakeUrl===void 0)&& (isMakeUrl=true);
-		if (comUI==null)
-			return;
-		if (isMakeUrl)
-			url=UITool.MakeUrl(url);
-		if ((comUI instanceof laya.ui.UIComponent )){
-			comUI.skin=url;
-		}
-		else if ((comUI instanceof laya.display.Sprite )){
-			comUI.loadImage(url,0,0,comUI.width,comUI.height);
-		}
-		else{
-			comUI.graphics.loadImage(url,0,0,comUI.width,comUI.height);
-		}
-	}
-
-	UITool.AddFilter=function(target,filter){
-		if (filter==null)
-			return;
-		var fs=target.filters;
-		if (fs !=null && fs.indexOf(filter)!=-1)
-			return;
-		UIUtils.addFilter(target,filter);
-	}
-
-	UITool.RemoveFilter=function(target,filter){
-		if (filter==null)
-			return;
-		var fs=target.filters;
-		if (fs !=null && fs.indexOf(filter)!=-1){
-			fs.splice(fs.indexOf(filter),1);
-			target.filters=fs;
-		}
-	}
-
-	return UITool;
 })()
 
 
@@ -3878,287 +2975,1033 @@ var ByteBufferUtil=(function(){
 
 
 /**
+*游戏常量定义，运行后不可修改
 *@author Administrator
 */
-//class engine.ui.events.CoolDownEvent
-var CoolDownEvent=(function(){
-	function CoolDownEvent(){}
-	__class(CoolDownEvent,'engine.ui.events.CoolDownEvent');
-	CoolDownEvent.COOLDOWN_FINISHED="grid_cooldown_finished";
-	CoolDownEvent.COOLDOWN_WARNING="cooldown_warning";
-	return CoolDownEvent;
+//class engine.base.define.MGameDefine
+var MGameDefine=(function(){
+	function MGameDefine(){}
+	__class(MGameDefine,'engine.base.define.MGameDefine');
+	MGameDefine.GRID_WIDTH=72;
+	MGameDefine.GRID_HEIGHT=48;
+	MGameDefine.SCENEDIS_FAR=-10000000;
+	MGameDefine.SCENE_OBJECT_GID_BEGIN=10001;
+	return MGameDefine;
 })()
 
 
-//class engine.base.define.MDirection
-var MDirection=(function(){
-	function MDirection(){}
-	__class(MDirection,'engine.base.define.MDirection');
-	MDirection.IsValid=function(dir){
-		return (dir >=0 && dir <=7);
+//class engine.utils.UITool
+var UITool=(function(){
+	function UITool(){}
+	__class(UITool,'engine.utils.UITool');
+	UITool.MakeUrl=function(url){
+		if (url.indexOf("res/ui/")==0)
+			return url;
+		return "res/ui/"+url;
 	}
 
-	MDirection.ValidDir=function(dir,fixdir){
-		(fixdir===void 0)&& (fixdir=0);
-		if (dir >=0 && dir <=7)
-			return dir;
-		return fixdir;
+	UITool.GetSprite=function(url,isMakeUrl,w,h,complete,cacheAs){
+		(isMakeUrl===void 0)&& (isMakeUrl=true);
+		(w===void 0)&& (w=0);
+		(h===void 0)&& (h=0);
+		(cacheAs===void 0)&& (cacheAs="none");
+		if (isMakeUrl)
+			url=UITool.MakeUrl(url);
+		var ret=new Sprite();
+		ret.width=w;
+		ret.height=h;
+		ret.loadImage(url,complete);
+		ret.cacheAs=cacheAs;
+		return ret;
 	}
 
-	MDirection.GetObDir=function(dir){
-		return (dir+4)% 8;
-	}
-
-	MDirection.RandomDir=function(){
-		return Math.random()*8;
-	}
-
-	MDirection.GetDirOff=function(dir1,dir2){
-		var off=dir2-dir1;
-		if (off > 4){
-			off-=8;
+	UITool.SetUIImage=function(comUI,url,isMakeUrl){
+		(isMakeUrl===void 0)&& (isMakeUrl=true);
+		if (comUI==null)
+			return;
+		if (isMakeUrl)
+			url=UITool.MakeUrl(url);
+		if ((comUI instanceof laya.ui.UIComponent )){
+			comUI.skin=url;
 		}
-		if (off <-4){
-			off+=8;
+		else if ((comUI instanceof laya.display.Sprite )){
+			comUI.loadImage(url,0,0,comUI.width,comUI.height);
 		}
-		return off;
-	}
-
-	MDirection.GetOffDir=function(dir,off){
-		if (MDirection.IsValid(dir)==false)
-			return MDirection.NONE;
-		off %=8;
-		return (dir+off+8)% 8;
-	}
-
-	MDirection.ToAngle=function(dir){
-		if (dir==0)
-			return 0;
-		else if (dir==1)
-		return 45;
-		else if (dir==2)
-		return 90;
-		else if (dir==3)
-		return 135;
-		else if (dir==4)
-		return 180;
-		else if (dir==5)
-		return 225;
-		else if (dir==6)
-		return 270;
-		else if (dir==7)
-		return 315;
-		return 0;
-	}
-
-	MDirection.GetDir=function(sx,sy,ex,ey){
-		var xoff=sx-ex;
-		var yoff=sy-ey;
-		if (xoff==0 && yoff==0)
-			return MDirection.NONE;
-		if (xoff==0){
-			if (yoff > 0)
-				return 0;
-			else
-			return 4;
+		else{
+			comUI.graphics.loadImage(url,0,0,comUI.width,comUI.height);
 		}
-		else if (xoff < 0){
-			if (yoff > 0)
-				return 1;
-			else if (yoff < 0)
-			return 3;
-			else
-			return 2;
-		}
-		else if (xoff > 0){
-			if (yoff > 0)
-				return 7;
-			else if (yoff < 0)
-			return 5;
-			else
-			return 6;
-		}
-		return MDirection.NONE;
 	}
 
-	MDirection.DirToNormalVector=function(dir){
-		switch (dir){
-			case 0:return new Point$1(0,1);
-			case 1:return new Point$1(1,1);
-			case 2:return new Point$1(1,0);
-			case 3:return new Point$1(1,-1);
-			case 4:return new Point$1(0,-1);
-			case 5:return new Point$1(-1,-1);
-			case 6:return new Point$1(-1,0);
-			case 7:return new Point$1(-1,1);
-			default :return new Point$1(0,0);
-			}
+	UITool.AddFilter=function(target,filter){
+		if (filter==null)
+			return;
+		var fs=target.filters;
+		if (fs !=null && fs.indexOf(filter)!=-1)
+			return;
+		UIUtils.addFilter(target,filter);
 	}
 
-	MDirection.NUM=8;
-	MDirection.NONE=-1;
-	MDirection.UP=0;
-	MDirection.RIGHT_UP=1;
-	MDirection.RIGHT=2;
-	MDirection.RIGHT_DOWN=3;
-	MDirection.DOWN=4;
-	MDirection.LEFT_DOWN=5;
-	MDirection.LEFT=6;
-	MDirection.LEFT_UP=7;
-	__static(MDirection,
-	['VIRDIR_5',function(){return this.VIRDIR_5=[ 0,1,2,3,4,3,2,1];},'VIRDIR_2',function(){return this.VIRDIR_2=[0,0,0,0,0,1,1,1];},'VIRDIR_1',function(){return this.VIRDIR_1=[0,0,0,0,0,0,0,0];}
+	UITool.RemoveFilter=function(target,filter){
+		if (filter==null)
+			return;
+		var fs=target.filters;
+		if (fs !=null && fs.indexOf(filter)!=-1){
+			fs.splice(fs.indexOf(filter),1);
+			target.filters=fs;
+		}
+	}
+
+	return UITool;
+})()
+
+
+//class engine.base.define.MTweenFunc
+var MTweenFunc=(function(){
+	function MTweenFunc(){}
+	__class(MTweenFunc,'engine.base.define.MTweenFunc');
+	MTweenFunc.GetEaseFuncByID=function(id){
+		var identifier=MTweenFunc.ID_TO_TYPE[parseInt((id / 1000)+"")]+MTweenFunc.ID_TO_IDT[(id % 1000)];
+		return MTweenFunc.TWEEN_EASE[identifier];
+	}
+
+	MTweenFunc.GetEaseFunc=function(ease,formala){
+		var identifier=ease+formala;
+		return MTweenFunc.TWEEN_EASE[identifier];
+	}
+
+	MTweenFunc.LINEAR="Linear";
+	MTweenFunc.SINE="Sine";
+	MTweenFunc.CUBIC="Cubic";
+	MTweenFunc.CIRC="Circ";
+	MTweenFunc.EXPO="Expo";
+	MTweenFunc.BOUNCE="Bounce";
+	MTweenFunc.BACK="Back";
+	MTweenFunc.ELASTIC="Elastic";
+	MTweenFunc.QUAD="Quad";
+	MTweenFunc.QUART="Quart";
+	MTweenFunc.QUINT="Quint";
+	MTweenFunc.STRONG="Strong";
+	MTweenFunc.EASEIN="easeIn";
+	MTweenFunc.EASEOUT="easeOut";
+	MTweenFunc.EASEINOUT="easeInOut";
+	MTweenFunc.EASENONE="easeNone";
+	__static(MTweenFunc,
+	['TWEEN_EASE',function(){return this.TWEEN_EASE=new Object();},'ID_TO_TYPE',function(){return this.ID_TO_TYPE=new Object();},'ID_TO_IDT',function(){return this.ID_TO_IDT=new Object();}
 	]);
-	return MDirection;
+	MTweenFunc.__init$=function(){{
+			MTweenFunc.ID_TO_TYPE[1]="Linear";
+			MTweenFunc.ID_TO_TYPE[2]="Sine";
+			MTweenFunc.ID_TO_TYPE[3]="Cubic";
+			MTweenFunc.ID_TO_TYPE[4]="Quint";
+			MTweenFunc.ID_TO_TYPE[5]="Circ";
+			MTweenFunc.ID_TO_TYPE[6]="Elastic";
+			MTweenFunc.ID_TO_TYPE[7]="Quad";
+			MTweenFunc.ID_TO_TYPE[8]="Quart";
+			MTweenFunc.ID_TO_TYPE[9]="Expo";
+			MTweenFunc.ID_TO_TYPE[10]="Back";
+			MTweenFunc.ID_TO_TYPE[11]="Bounce";
+			MTweenFunc.ID_TO_TYPE[12]="Strong";
+			MTweenFunc.ID_TO_IDT[0]="easeNone";
+			MTweenFunc.ID_TO_IDT[1]="easeIn";
+			MTweenFunc.ID_TO_IDT[2]="easeOut";
+			MTweenFunc.ID_TO_IDT[3]="easeInOut";
+			MTweenFunc.TWEEN_EASE["Linear"+"easeNone"]=Ease.linearNone;
+			MTweenFunc.TWEEN_EASE["Linear"+"easeIn"]=Ease.linearIn;
+			MTweenFunc.TWEEN_EASE["Linear"+"easeOut"]=Ease.linearOut;
+			MTweenFunc.TWEEN_EASE["Linear"+"easeInOut"]=Ease.linearInOut;
+			MTweenFunc.TWEEN_EASE["Sine"+"easeIn"]=Ease.sineIn;
+			MTweenFunc.TWEEN_EASE["Sine"+"easeOut"]=Ease.sineOut;
+			MTweenFunc.TWEEN_EASE["Sine"+"easeInOut"]=Ease.sineInOut;
+			MTweenFunc.TWEEN_EASE["Cubic"+"easeIn"]=Ease.cubicIn;
+			MTweenFunc.TWEEN_EASE["Cubic"+"easeOut"]=Ease.cubicOut;
+			MTweenFunc.TWEEN_EASE["Cubic"+"easeInOut"]=Ease.cubicInOut;
+			MTweenFunc.TWEEN_EASE["Circ"+"easeIn"]=Ease.circIn;
+			MTweenFunc.TWEEN_EASE["Circ"+"easeOut"]=Ease.circOut;
+			MTweenFunc.TWEEN_EASE["Circ"+"easeInOut"]=Ease.circInOut;
+			MTweenFunc.TWEEN_EASE["Expo"+"easeIn"]=Ease.expoIn;
+			MTweenFunc.TWEEN_EASE["Expo"+"easeOut"]=Ease.expoOut;
+			MTweenFunc.TWEEN_EASE["Expo"+"easeInOut"]=Ease.expoInOut;
+			MTweenFunc.TWEEN_EASE["Bounce"+"easeIn"]=Ease.bounceIn;
+			MTweenFunc.TWEEN_EASE["Bounce"+"easeOut"]=Ease.bounceOut;
+			MTweenFunc.TWEEN_EASE["Bounce"+"easeInOut"]=Ease.bounceInOut;
+			MTweenFunc.TWEEN_EASE["Back"+"easeIn"]=Ease.backIn;
+			MTweenFunc.TWEEN_EASE["Back"+"easeOut"]=Ease.backOut;
+			MTweenFunc.TWEEN_EASE["Back"+"easeInOut"]=Ease.backInOut;
+			MTweenFunc.TWEEN_EASE["Elastic"+"easeIn"]=Ease.elasticIn;
+			MTweenFunc.TWEEN_EASE["Elastic"+"easeOut"]=Ease.elasticOut;
+			MTweenFunc.TWEEN_EASE["Elastic"+"easeInOut"]=Ease.elasticInOut;
+			MTweenFunc.TWEEN_EASE["Quad"+"easeIn"]=Ease.quadIn;
+			MTweenFunc.TWEEN_EASE["Quad"+"easeOut"]=Ease.quadOut;
+			MTweenFunc.TWEEN_EASE["Quad"+"easeInOut"]=Ease.quadInOut;
+			MTweenFunc.TWEEN_EASE["Quart"+"easeIn"]=Ease.quartIn;
+			MTweenFunc.TWEEN_EASE["Quart"+"easeOut"]=Ease.quartOut;
+			MTweenFunc.TWEEN_EASE["Quart"+"easeInOut"]=Ease.quartInOut;
+			MTweenFunc.TWEEN_EASE["Quint"+"easeIn"]=Ease.quintIn;
+			MTweenFunc.TWEEN_EASE["Quint"+"easeOut"]=Ease.quintOut;
+			MTweenFunc.TWEEN_EASE["Quint"+"easeInOut"]=Ease.quintInOut;
+			MTweenFunc.TWEEN_EASE["Strong"+"easeIn"]=Ease.strongIn;
+			MTweenFunc.TWEEN_EASE["Strong"+"easeOut"]=Ease.strongOut;
+			MTweenFunc.TWEEN_EASE["Strong"+"easeInOut"]=Ease.strongInOut;
+		}
+	}
+
+	return MTweenFunc;
+})()
+
+
+//class engine.scene.astar.Node
+var Node$1=(function(){
+	function Node(x,y){
+		this.x=0;
+		this.y=0;
+		this.f=0;
+		this.g=0;
+		this.h=0;
+		/**地图静态阻挡**/
+		this._walkable=true;
+		/**动态阻挡能否走**/
+		this._dyWalkable=true;
+		/**能否走的外部检查函数**/
+		this._walkbaleFunc=null;
+		this.parent=null;
+		//public var costMultiplier:Number=1.0;
+		this.version=1;
+		this.links=null;
+		/**
+		*节点类型，0 阻挡 1 可到达 2 孤岛
+		*/
+		this.nodeType=2;
+		/**埋葬深度 */
+		this.buriedDepth=-1;
+		/**距离 */
+		this.distance=0;
+		this.x=x;
+		this.y=y;
+	}
+
+	__class(Node,'engine.scene.astar.Node',null,'Node$1');
+	var __proto=Node.prototype;
+	__proto.dispose=function(){
+		if (this.links){
+			var data;
+			for(var $each_data in this.links){
+				data=this.links[$each_data];
+				data.dispose();
+			}
+		}
+		this.parent=null;
+		this.links=null;
+		this._walkbaleFunc=null;
+	}
+
+	__proto.toString=function(){
+		return "x:"+this.x+" y:"+this.y;
+	}
+
+	/**得到此节点到另一节点的网格距离 */
+	__proto.getDistanceTo=function(targetNode){
+		var disX=targetNode.x-this.x;
+		var disY=targetNode.y-this.y;
+		return Math.sqrt(disX *disX+disY *disY);
+	}
+
+	__getset(0,__proto,'walkable',function(){
+		return this._walkable;
+		},function(value){
+		this._walkable=value;
+		if (!value)
+			this.nodeType=0;
+	});
+
+	__getset(0,__proto,'dyWalkable',function(){
+		if (this._walkbaleFunc !=null && !this._walkbaleFunc.call(null,this.x,this.y))
+			return false;
+		return this._dyWalkable;
+		},function(value){
+		this._dyWalkable=value;
+	});
+
+	__getset(0,__proto,'walkbaleFunc',null,function(value){
+		this._walkbaleFunc=value;
+	});
+
+	return Node;
+})()
+
+
+//class engine.battle.move.MBattleMoveRule
+var MBattleMoveRule=(function(){
+	function MBattleMoveRule(){
+		this._obj=null;
+		this._moveType=0;
+		this._curJumpHeight=0;
+		this._movePercent=0;
+		this._moveDistance=0;
+		this._moveStartTime=0;
+		this._moveTime=0;
+		this._sPt=new Point$1();
+		this._ePt=new Point$1();
+		this._jumpDebugDisList=[];
+	}
+
+	__class(MBattleMoveRule,'engine.battle.move.MBattleMoveRule');
+	var __proto=MBattleMoveRule.prototype;
+	__proto.SetData=function(obj){
+		this._obj=obj;
+	}
+
+	__proto.destroy=function(){
+		this.ClearDebug();
+		this._obj=null;
+	}
+
+	__proto.ClearDebug=function(){
+		for (var i=0;i < this._jumpDebugDisList.length;++i){
+			this._jumpDebugDisList[i].destroy();
+		}
+		this._jumpDebugDisList.length=0;
+	}
+
+	__proto.Move=function(type,gx,gy,time){
+		this.ClearDebug();
+		this._moveType=type;
+		this._obj.GetPixPt(this._sPt);
+		this._ePt.setTo(MBattleUtil.GridXToPixX(gx),MBattleUtil.GridYToPixY(gy));
+		this._moveDistance=this._ePt.distance(this._sPt.x,this._sPt.y);
+		this._movePercent=0;
+		this._moveStartTime=Laya.timer.currTimer;
+		this._moveTime=time;
+		var old=this._obj.GetGridPt();
+		var dir=ToolMap.CalcDirSlant(old.x,old.y,gx,gy);
+		this._obj.OnMoveStart(this._moveType,dir);
+	}
+
+	__proto.OnFrame=function(curtime){
+		if (!this._moveType)return;
+		this._movePercent=Math.min(1,(Laya.timer.currTimer-this._moveStartTime)/ this._moveTime);
+		var old=this._obj.GetGridPt(Point$1.TEMP);
+		var oldx=old.x;
+		var oldy=old.y;
+		var curx=(this._sPt.x+(this._ePt.x-this._sPt.x)*this._movePercent)| 0;
+		var cury=(this._sPt.y+(this._ePt.y-this._sPt.y)*this._movePercent)| 0;
+		if (this._movePercent >=1){
+			this._curJumpHeight=0;
+			}else if (this._moveType==2 || this._moveType==3){
+			this.CalcJumpHeight();
+			this._obj.SetJumpHeight(this._curJumpHeight);
+		}
+		this._obj.SetPixPt(Point$1.TEMP.setTo(curx,cury));
+		old=this._obj.GetGridPt(Point$1.TEMP);
+		if (oldx !=old.x || oldy !=old.y){
+			this._obj.OnMoveEnterGrid(oldx,oldy);
+		}
+		if (this._movePercent >=1){
+			this.Stop();
+		}
+	}
+
+	__proto.Stop=function(){
+		this._curJumpHeight=0;
+		if (this._moveType !=0){
+			var type=this._moveType;
+			this._moveType=0;
+			this._obj.OnMoveEnd(type);
+		}
+	}
+
+	__proto.CalcJumpHeight=function(){
+		var per=(1-this._movePercent);
+		var calcdis=this._moveDistance;
+		if (calcdis==0)
+			calcdis=450;
+		var addHeight=0;
+		if (1==0){
+			this._curJumpHeight=Math.sin(Math.PI *per)*calcdis *0.3;
+		}
+		else if (1==1){
+			var maxhthrow=(calcdis *0.3)*4;
+			this._curJumpHeight=-maxhthrow *per *per+maxhthrow *per;
+			this._curJumpHeight+=addHeight;
+		}
+		else if (1==2){
+			var maxhpow=calcdis *0.1;
+			this._curJumpHeight=-maxhpow *per *per+maxhpow *per;
+			this._curJumpHeight=this._curJumpHeight *this._curJumpHeight;
+			this._curJumpHeight+=addHeight;
+		}
+		else if (1==3){
+			var maxhsqrt=(calcdis)*4 *32;
+			this._curJumpHeight=-maxhsqrt *per *per+maxhsqrt *per;
+			this._curJumpHeight=Math.sqrt(this._curJumpHeight);
+			this._curJumpHeight+=addHeight;
+		}
+		else if (1==4){
+			var maxhround=(calcdis *0.5);
+			var valround=maxhround *maxhround-Math.pow(calcdis *per-maxhround,2);
+			if (valround < 0)
+				valround=0;
+			this._curJumpHeight=Math.sqrt(valround);
+			this._curJumpHeight+=addHeight;
+		}
+		else if (1==5){
+			var maxhroundsqrt=(calcdis *0.5);
+			var valrs=maxhroundsqrt *maxhroundsqrt-Math.pow(calcdis *per-maxhroundsqrt,2);
+			if (valrs < 0)
+				valrs=0;
+			this._curJumpHeight=Math.sqrt(valrs);
+			this._curJumpHeight=Math.sqrt(this._curJumpHeight *40);
+			this._curJumpHeight+=addHeight;
+		}
+		else if (1==6){
+			var ellipsea=(calcdis *0.5);
+			var ellipseb=(calcdis *0.3);
+			var ellipseval=1-Math.pow((calcdis *per-ellipsea)/ ellipsea ,2);
+			if (ellipseval < 0)
+				ellipseval=0;
+			this._curJumpHeight=ellipseb *Math.sqrt(ellipseval);
+			this._curJumpHeight+=addHeight;
+		}
+		this._curJumpHeight |=0;
+		if (false){
+			var dis=new Sprite();
+			dis.graphics.drawCircle(0,0,5,"#ff0000");
+			var spt=this._obj.GetPixPt();
+			dis.pos(spt.x,spt.y-this._curJumpHeight);
+			(this._obj).view.parent.addChild(dis);
+			this._jumpDebugDisList.push(dis);
+		}
+	}
+
+	__proto.isJumpType=function(type){
+		return type==2 || type==3;
+	}
+
+	__getset(0,__proto,'isMoving',function(){
+		return this._moveType !=0;
+	});
+
+	__getset(0,__proto,'isJump',function(){
+		return this.isJumpType(this._moveType);
+	});
+
+	__getset(0,__proto,'curJumpHeight',function(){
+		return this._curJumpHeight;
+	});
+
+	MBattleMoveRule.JUMP_HEIGHT_CALC_TYPE=1;
+	return MBattleMoveRule;
 })()
 
 
 /**
-*动画资源释放逻辑
-*序列帧
+*层级
+*
+*@author Administrator
 */
-//class engine.res.MSheetAnimationGC
-var MSheetAnimationGC=(function(){
-	function MSheetAnimationGC(){
-		// 重置游戏时间，（这个机制用于清楚各种为释放的内存和内存泄露问题。。。。）
-		this.resetGameTime=30 *60 *1000;
-		this._checkRestTime=0;
-		this._refAniMap=new Dictionary();
-		this._refKeyTimeMap=new Object();
-		this._gcProxy=new MAnimationGCProxy();
-	}
+//class engine.ui.enum.EnumLayer
+var EnumLayer=(function(){
+	function EnumLayer(){}
+	__class(EnumLayer,'engine.ui.enum.EnumLayer');
+	EnumLayer.SCENE=1;
+	EnumLayer.SCENE_BATTLE=3;
+	EnumLayer.BOTTOM=10;
+	EnumLayer.MIDDLE=11;
+	EnumLayer.FIX_1=12;
+	EnumLayer.FIX=13;
+	EnumLayer.FIX1=14;
+	EnumLayer.FIX2=15;
+	EnumLayer.POP=17;
+	EnumLayer.TOP_1=18;
+	EnumLayer.TOP=19;
+	EnumLayer.TOP1=21;
+	EnumLayer.TOP2=22;
+	EnumLayer.TOP3=23;
+	EnumLayer.TIP=24;
+	EnumLayer.PROMPT=25;
+	EnumLayer.LOADING=27;
+	EnumLayer.LOGIN=29;
+	EnumLayer.CREATE=30;
+	EnumLayer.TOTAST=31;
+	return EnumLayer;
+})()
 
-	__class(MSheetAnimationGC,'engine.res.MSheetAnimationGC');
-	var __proto=MSheetAnimationGC.prototype;
-	__proto.StartCheckGC=function(){
-		Laya.timer.loop(MSheetAnimationGC.GC_CHECK_TIME,this,this.OnFrame);
-		this._checkRestTime=ToolBase.GetTimer();
-	}
 
-	__proto.DelForeverRes=function(url){
-		this._gcProxy.DelForever(url);
-	}
-
-	__proto.RegisterForeverRes=function(url){
-		this._gcProxy.RegisterForever(url);
-	}
-
-	__proto.RegisterTypeId=function(oldtype,oldid,oldExtra,type,id,extra){
-		this._gcProxy.RegisterTypeId(oldtype,oldid,oldExtra,type,id,extra);
-	}
-
+/**
+*工具，基础对象的生成，判断
+*@author Administrator
+*/
+//class engine.tool.ToolBase
+var ToolBase=(function(){
+	function ToolBase(){}
+	__class(ToolBase,'engine.tool.ToolBase');
 	/**
-	*引用一个IAnimationRes
+	*获取服务器ms
 	*/
-	__proto.RefAni=function(anim){
-		this._refAniMap.set(anim,ToolBase.GetTimer());
+	__getset(1,ToolBase,'serverMTime',function(){
+		if (ToolBase.SERVER_MTIME !=null)
+			return ToolBase.SERVER_MTIME.call();
+		return ToolBase.GetTimer();
+	});
+
+	ToolBase.INT=function(val){
+		return val | 0;
 	}
 
-	/**
-	*释放一个IAnimationRes的引用
-	*/
-	__proto.FreeAni=function(anim){
-		this._refAniMap.remove(anim);
+	ToolBase.GetTimer=function(){
+		var ret=0;
+		ret=new Date().getTime();;
+		return ret;
 	}
 
-	/**
-	*刷新一个动画资源的引用时间
-	*/
-	__proto.RefKey=function(key){
-		this._refKeyTimeMap[key]=ToolBase.GetTimer();
-	}
-
-	__proto.OnFrame=function(){
-		var value=Resource.gpuMemory;
-		if (Math.floor(value / (1024 *1024)*100)/ 100 > MSheetAnimationGC.MEMORY_THRESHOLD){
-			this.DoGC();
-			MTempletManager.Ins.DoGC(this._gcProxy);
-			CallbackUtil.callbackOutGC && CallbackUtil.callbackOutGC();
+	ToolBase.RLog=function(s,t){
+		(t===void 0)&& (t=false);
+		try{
+			ToolBase.Log(s);
+		}
+		catch(e){
 		}
 	}
 
-	__proto.checkResetTime=function(){
-		if (Browser.window["conchConfig"] !=null){
-			var config=Browser.window["conchConfig"];
-			var totalMem=config.getTotalMem();
-			if (totalMem < 1048576){
-				console.log("===cgc level 0.");
+	ToolBase.Log=function(s){
+		s="["+ToolBase.GetTimer()+"][INFO] "+s;
+		console.log(s);
+	}
+
+	ToolBase.LogError=function(s){
+		if (s==null)
+			return;
+		try{
+			s="["+ToolBase.GetTimer()+"][ERROR] "+s;
+			console.log(s);
+		}
+		catch(e){
+		}
+	}
+
+	ToolBase.LogErrorAndDebug=function(s){
+		if (s==null)
+			return;
+		try{
+			if (ToolBase.isDebug){
+				ToolBase.MessageBox(s);
 			}
-			else if (totalMem > 1048576 && totalMem <=2097152){
-				this.resetGameTime=35 *60 *1000;
-				console.log("===cgc level 1.");
-			}
-			else if (totalMem > 2097152 && totalMem <=3145728){
-				this.resetGameTime=45 *60 *1000;
-				console.log("===cgc level 2.");
-			}
-			else{
-				this.resetGameTime=60 *60 *1000;
-				console.log("===cgc level 3.");
+			s=("["+ToolBase.GetTimer()+"][ERROR] "+s);
+			console.log(s);
+		}
+		catch(e){
+		}
+	}
+
+	ToolBase.LogAndDeubgThrow=function(s){
+		if (ToolBase.isDebug)
+			ToolBase.LogThrow(s);
+		else
+		ToolBase.LogError(s);
+	}
+
+	ToolBase.LogThrow=function(s){
+		var str=ToolBase.GetStackTrace(s);
+		ToolBase.LogError(str);
+		throw new Error(s);
+	}
+
+	ToolBase.GetStackTrace=function(pre){
+		var str="";
+		str+="// ==========================================================================\n";
+		str+=pre+"\n"
+		str+=console.trace()+"\n";
+		var caller=arguments.callee.caller;
+		var i=0;
+		str+=("***----------------------------------------  ** "+(i+1))+"\n";
+		while (caller && i < 10){
+			str+=(caller.toString())+"\n";
+			caller=caller.caller;
+			i++;
+			str+=("***---------------------------------------- ** "+(i+1))+"\n";
+		}
+		str+="// ==========================================================================\n";
+		return str;
+	}
+
+	ToolBase.MessageBox=function(s){
+		if (s==null)
+			return;
+		TinyMessageBox.Show(s);
+	}
+
+	ToolBase.Assert=function(v,s){
+		if (v==false)
+			throw new Error(s);
+	}
+
+	ToolBase.GetTimerS=function(){
+		return ToolBase.GetTimer()/ 1000;
+	}
+
+	ToolBase.GetFrameTimerS=function(){
+		return ToolBase.GetTimerS();
+	}
+
+	ToolBase.GetWinWidth=function(){
+		return Laya.stage.width;
+	}
+
+	ToolBase.GetWinHeight=function(){
+		return Laya.stage.height;
+	}
+
+	ToolBase.RandomInt=function(v1,v2){
+		return v1+(Math.random()*(v2-v1)| 0);
+	}
+
+	ToolBase.RandomArray=function(arr){
+		var id=ToolBase.RandomInt(0,arr.length);
+		return arr[id];
+	}
+
+	ToolBase.RandomFloat=function(v1,v2){
+		return v1+Math.random()*(v2-v1);
+	}
+
+	ToolBase.RandomFloat2=function(v1,v2){
+		return v1+Math.random()*(v2+1-v1);
+	}
+
+	ToolBase.RandomBoolean=function(){
+		return Math.random()> 0.5;
+	}
+
+	ToolBase.GetPowOf2Value=function(value){
+		var v=1;
+		while (v < value){
+			v *=2;
+		}
+		return v;
+	}
+
+	ToolBase.ClampFloat=function(value,min,max){
+		value=Math.min(Math.max(value,min),max);
+		if (isNaN(value))
+			value=min;
+		return value;
+	}
+
+	ToolBase.ClampInt=function(value,min,max){
+		return Math.min(Math.max(value,min),max);
+	}
+
+	ToolBase.LerpPoint=function(start,end,per){
+		return new Point$1(start.x+(end.x-start.x)*per,start.y+(end.y-start.y)*per);
+	}
+
+	ToolBase.LerpValue=function(start,end,per){
+		return start+(end-start)*per;
+	}
+
+	ToolBase.DivFloorInt=function(value,mod){
+		var ret=(value / mod);
+		if (value % mod !=0)
+			ret++;
+		return ret;
+	}
+
+	ToolBase.CheckBitMask=function(value,mask){
+		return ((value & mask)!=0);
+	}
+
+	ToolBase.ClearBitMask=function(value,mask){
+		return value &=~mask;
+	}
+
+	ToolBase.AddBitMask=function(value,mask){
+		return value |=mask;
+	}
+
+	ToolBase.SetResRoot=function(animation,ui,sound,effect){
+		ToolBase.ResRootAnimation=animation;
+		ToolBase.ResRootUI=ui;
+		ToolBase.ResRootSound=sound;
+		ToolBase.ResRootEffect=effect;
+		ToolBase.ResPathAnimation=ToolBase.GetResURL(animation);
+		ToolBase.ResPathUI=ToolBase.GetResURL(ui);
+		ToolBase.ResPathSound=ToolBase.GetResURL(sound);
+		ToolBase.ResPathEffect=ToolBase.GetResURL(effect);
+	}
+
+	ToolBase.GetResAnimationURL=function(path){
+		if (path.charAt(0)=="/")
+			return ToolBase.ResPathAnimation+path;
+		return ToolBase.ResPathAnimation+"/"+path;
+	}
+
+	ToolBase.GetResUIURL=function(path){
+		if(path==null || path=="")
+			return ToolBase.ResPathUI;
+		else if (path.charAt(0)=="/")
+		return ToolBase.ResPathUI+path;
+		return ToolBase.ResPathUI+"/"+path;
+	}
+
+	ToolBase.GetResSoundURL=function(path){
+		if (path.charAt(0)=="/")
+			return ToolBase.ResPathSound+path;
+		return ToolBase.ResPathSound+"/"+path;
+	}
+
+	ToolBase.GetResEffectURL=function(path){
+		if (path.charAt(0)=="/")
+			return ToolBase.ResPathEffect+path;
+		return ToolBase.ResPathEffect+"/"+path;
+	}
+
+	ToolBase.GetResURL=function(path){
+		if (path.charAt(0)=="/")
+			return ToolBase.GetResURLRoot()+path;
+		return ToolBase.GetResURLRoot()+"/"+path;
+	}
+
+	ToolBase.GetResURLRoot=function(){
+		if (ToolBase.ResPathRoot==null){
+			ToolBase.ResPathRoot="res";
+		}
+		return ToolBase.ResPathRoot;
+	}
+
+	ToolBase.IsEqualPoint=function(pt1,pt2){
+		return pt1.x==pt2.x && pt1.y==pt2.y;
+	}
+
+	ToolBase.IsEqualPoint2=function(x1,y1,x2,y2){
+		return x1==x2 && y1==y2;
+	}
+
+	ToolBase.IsContainsPoint=function(rect,pt){
+		return rect.contains(pt.x,pt.y);
+	}
+
+	ToolBase.isPowerOfTwo=function(value){
+		return value? ((value &-value)==value):false;
+	}
+
+	ToolBase.interpolate=function(pt1,pt2,f){
+		return new Point$1(pt2.x+f *(pt1.x-pt2.x),pt2.y+f *(pt1.y-pt2.y));
+	}
+
+	ToolBase.polar=function(len,angle){
+		return new Point$1(len *Math.cos(angle),len *Math.sin(angle));
+	}
+
+	ToolBase.CreatePowOf2Bitmapdata=function(old){
+		var ret=old;
+		var w=old.width;
+		var h=old.height;
+		if (ToolBase.isPowerOfTwo(w)==false){
+			w=ToolBase.GetPowOf2Value(w);
+		}
+		if (ToolBase.isPowerOfTwo(h)==false){
+			h=ToolBase.GetPowOf2Value(h);
+		}
+		if (old.width !=w || old.height !=h){
+			throw new Error("这里还没有实现！！！。")
+		}
+		return ret;
+	}
+
+	ToolBase.ParseFlagHead=function(value){
+		var ret="";
+		ret=String.fromCharCode((value >> 24)& 0x0ff)+ret;
+		ret=String.fromCharCode((value >> 16)& 0x0ff)+ret;
+		ret=String.fromCharCode((value >> 8)& 0x0ff)+ret;
+		ret=String.fromCharCode((value >> 0)& 0x0ff)+ret;
+		return ret;
+	}
+
+	ToolBase.SortBubble=function(arr){
+		var temp=null;
+		for(var i=0;i < arr.length-1;i++){
+			for (var j=arr.length-1;j > i;j--){
+				if (arr[j].sortValue < arr[j-1].sortValue){
+					temp=arr[j-1];
+					arr[j-1]=arr[j];
+					arr[j]=temp;
+				}
 			}
 		}
 	}
 
-	// 是否可以重置释放了
-	__proto.isResetGame=function(){
-		if ((ToolBase.GetTimer()-this._checkRestTime)> this.resetGameTime && Browser.onAndroid){
-			return true;
+	ToolBase.SortQuick=function(arr,prop,type,start,end){
+		(type===void 0)&& (type=1);
+		(start===void 0)&& (start=0);
+		(end===void 0)&& (end=2147483647);
+		if (prop==null)
+			prop="sortValue";
+		if (end==2147483647)
+			end=arr.length-1;
+		if (start < 0 || end > arr.length){
+			return;
 		}
-		return false;
+		if (start < end){
+			var i=start;
+			var j=end;
+			var base=arr[start];
+			while(i < j){
+				if (type==1){
+					while(i < j && arr[j][prop] >=base[prop])
+					j--;
+				}
+				else{
+					while(i < j && arr[j][prop] <=base[prop])
+					j--;
+				}
+				if (i < j){
+					arr[i]=arr[j];
+					i++;
+				}
+				if (type==1){
+					while(i < j && arr[i][prop] <=base[prop])
+					i++;
+				}
+				else{
+					while(i < j && arr[i][prop] >=base[prop])
+					i++;
+				}
+				if (i < j){
+					arr[j]=arr[i];
+					j--;
+				}
+			}
+			arr[i]=base;
+			ToolBase.SortQuick(arr,prop,type,start,i-1);
+			ToolBase.SortQuick(arr,prop,type,i+1,end);
+		}
 	}
 
-	__proto.DoGC=function(){
-		var refKey={};
-		var key;
-		var keys=this._refAniMap.keys;
-		for (var i=0;i < keys.length;++i){
-			var anim=keys[i];
-			key=anim.loadingkey;
-			if (key==null)continue ;
-			var refDir=refKey[key];
-			if (refDir==null)
-				refKey[key]=[anim.renderDir];
-			else{
-				if (refDir.indexOf(anim.renderDir)==-1)
-					refDir.push(anim.renderDir);
-			}
-		};
-		var animMgr=MSheetAnimationMgr.Ins;
-		var packs=animMgr.sheetPackMap;
-		var gcProx=this._gcProxy;
-		var log="MSheetAnimationGC  do gc:\r\n";
-		for (var key in packs){
-			if (gcProx.IsCanRelease(key,true)){
-				var refDir=refKey[key];
-				var pack=packs[key];
-				log+=pack.releaseMem(refDir);
-			}
-		}
-		console.log(log);
-	}
-
-	/**
-	*动画数量
-	*2d_3d
-	*/
-	__proto.GetMAnimationCount=function(){
-		var arr=this._refAniMap.keys;
-		var d2=0;
-		var d3=0;
-		for (var i=0;i < arr.length;++i){
-			if ((arr [i]).resPackType==1)
-				d2++;
+	ToolBase.RemoveAllChildren=function(con,isdestroy){
+		(isdestroy===void 0)&& (isdestroy=true);
+		while (con.numChildren > 0){
+			if (isdestroy)
+				con.getChildAt(0).destroyChildren();
 			else
-			d3++;
+			con.removeChildAt(0);
 		}
-		return d2+"_"+d3;
 	}
 
-	MSheetAnimationGC.GC_CHECK_TIME=5 *60 *1000;
-	MSheetAnimationGC.MEMORY_THRESHOLD=350;
-	__static(MSheetAnimationGC,
-	['Ins',function(){return this.Ins=new MSheetAnimationGC();}
+	ToolBase.Create3DRect=function(w,h,color,alpha){
+		(alpha===void 0)&& (alpha=1);
+		var ret=new Sprite;
+		ret.graphics.drawRect(0,0,w,h,color);
+		return ret;
+	}
+
+	ToolBase.Create2DRect=function(w,h,color,alpha){
+		(alpha===void 0)&& (alpha=1);
+		return null;
+	}
+
+	ToolBase.Create2DRectSprite=function(w,h,color,alpha){
+		(alpha===void 0)&& (alpha=1);
+		return null;
+	}
+
+	ToolBase.CloneDictionary=function(src,dst){
+		if (dst==null){
+			dst=new Dictionary();
+		}
+		if (src !=null){
+			for (var k in src){
+				dst[k]=src[k];
+			}
+		}
+		return dst;
+	}
+
+	ToolBase.DegreeGetAngleByPoint=function(startx,starty,endx,endy){
+		var fAngle=0;
+		var add=0;
+		if (endx==startx && endy==starty)
+			return 0;
+		if (endx > startx){
+			if (endy > starty){
+				fAngle=Math.atan((endy-starty)/ (endx-startx));
+				add=90;
+			}
+			else{
+				fAngle=Math.atan((endx-startx)/ (starty-endy));
+				add=0;
+			}
+		}
+		else{
+			if (endy > starty){
+				fAngle=Math.atan((startx-endx)/ (endy-starty));
+				add=180;
+			}
+			else{
+				fAngle=Math.atan((starty-endy)/ (startx-endx));
+				add=270;
+			}
+		}
+		return (((fAngle *180)/ Math.PI))+add;
+	}
+
+	ToolBase.DegreeAngleToRadian=function(angle){
+		return angle *(Math.PI / 180);
+	}
+
+	ToolBase.DegreeRadianToAngle=function(radian){
+		return radian *(180 / Math.PI);
+	}
+
+	ToolBase.DegreeDirToRadian=function(dir){
+		return ToolBase.DegreeAngleToRadian(ToolBase.DegreeDirToAngle(dir));
+	}
+
+	ToolBase.DegreeDirToAngle=function(dir){
+		return-90+(dir *45);
+	}
+
+	ToolBase.getAngle=function(point,centerPt){
+		var angle=Math.atan2(point.y-centerPt.y,point.x-centerPt.x)*(180/Math.PI);
+		return angle;
+	}
+
+	ToolBase.getRadian=function(point,centerPt){
+		var radian=Math.PI / 180 *ToolBase.getAngle(point,centerPt);
+		return radian;
+	}
+
+	ToolBase.PointEquals=function(a,b){
+		return a.x==b.x && a.y==b.y;
+	}
+
+	ToolBase.INT_MAX=2147483647;
+	ToolBase.INT_MIN=-2147483648;
+	ToolBase.stg=null;
+	ToolBase.isDebug=true;
+	ToolBase.ERROR_THROW=true;
+	ToolBase.SERVER_MTIME=null;
+	ToolBase.ResPathRoot=null;
+	ToolBase.ResRootAnimation=null;
+	ToolBase.ResRootUI=null;
+	ToolBase.ResRootSound=null;
+	ToolBase.ResRootEffect=null;
+	ToolBase.ResPathAnimation=null;
+	ToolBase.ResPathUI=null;
+	ToolBase.ResPathSound=null;
+	ToolBase.ResPathEffect=null;
+	ToolBase.ResPathMap=null;
+	__static(ToolBase,
+	['startTime',function(){return this.startTime=Laya.timer.currTimer;},'ColorMaterialCache',function(){return this.ColorMaterialCache=new HashMap();}
 	]);
-	return MSheetAnimationGC;
+	return ToolBase;
+})()
+
+
+//class engine.supports.utils.LanUtil
+var LanUtil=(function(){
+	function LanUtil(){}
+	__class(LanUtil,'engine.supports.utils.LanUtil');
+	LanUtil.GetLanStr=function(str){
+		if (LanUtil.lanDic !=null){
+			var realStr=LanUtil.lanDic[str];
+			if (realStr)
+				return realStr;
+		}
+		return str;
+	}
+
+	LanUtil.lanDic=null;
+	return LanUtil;
+})()
+
+
+//class engine.pui.PDialogManager
+var PDialogManager=(function(){
+	function PDialogManager(){
+		/**@private 全局默认弹出对话框效果，可以设置一个效果代替默认的弹出效果，如果不想有任何效果，可以赋值为null*/
+		this.popupEffect=function(dialog){
+			dialog.scale(1,1);
+			dialog._effectTween=Tween.from(dialog,{x:Laya.stage.width / 2,y:Laya.stage.height / 2,scaleX:0,scaleY:0},300,Ease.backOut);
+		}
+		/**@private 全局默认关闭对话框效果，可以设置一个效果代替默认的关闭效果，如果不想有任何效果，可以赋值为null*/
+		this.closeEffect=function(dialog){
+			dialog._effectTween=Tween.to(dialog,{x:Laya.stage.width / 2,y:Laya.stage.height / 2,scaleX:0,scaleY:0},300,Ease.strongOut,Handler.create(this,this.doClose,[dialog]),0,false,false);
+		}
+		this.popupEffectHandler=new Handler(this,this.popupEffect);
+		this.closeEffectHandler=new Handler(this,this.closeEffect);
+	}
+
+	__class(PDialogManager,'engine.pui.PDialogManager');
+	var __proto=PDialogManager.prototype;
+	__proto._centerDialog=function(dialog){
+		dialog.x=Math.round(((Laya.stage.width-dialog.width)>> 1)+dialog.pivotX);
+		dialog.y=Math.round(((Laya.stage.height-dialog.height)>> 1)+dialog.pivotY);
+	}
+
+	/**
+	*显示对话框
+	*@param dialog 需要显示的对象框 <code>Dialog</code> 实例。
+	*@param closeOther 是否关闭其它对话框，若值为ture，则关闭其它的对话框。
+	*@param showEffect 是否显示弹出效果
+	*/
+	__proto.open=function(dialog,closeOther,showEffect){
+		(closeOther===void 0)&& (closeOther=false);
+		(showEffect===void 0)&& (showEffect=false);
+		if (closeOther)Scene.closeAll();
+		this._clearDialogEffect(dialog);
+		if (dialog.isPopupCenter)this._centerDialog(dialog);
+		Scene.root.addChild(dialog);
+		this.doOpen(dialog);
+		if (showEffect && dialog.popupEffect !=null)dialog.popupEffect.runWith(dialog);
+	}
+
+	/**@private */
+	__proto._clearDialogEffect=function(dialog){
+		if (dialog._effectTween){
+			Tween.clear(dialog._effectTween);
+			dialog._effectTween=null;
+		}
+	}
+
+	/**
+	*执行打开对话框。
+	*@param dialog 需要关闭的对象框 <code>Dialog</code> 实例。
+	*/
+	__proto.doOpen=function(dialog){
+		dialog.onOpened(dialog._param);
+	}
+
+	/**
+	*关闭对话框。
+	*@param dialog 需要关闭的对象框 <code>Dialog</code> 实例。
+	*/
+	__proto.close=function(dialog){
+		this._clearDialogEffect(dialog);
+		if (dialog.isShowEffect && dialog.closeEffect !=null)dialog.closeEffect.runWith([dialog]);
+		else this.doClose(dialog);
+	}
+
+	/**
+	*执行关闭对话框。
+	*@param dialog 需要关闭的对象框 <code>Dialog</code> 实例。
+	*/
+	__proto.doClose=function(dialog){
+		dialog.closeHandler && dialog.closeHandler.runWith(dialog.closeType);
+		if (dialog.autoDestroyAtClosed)dialog.destroy();
+		else{
+			dialog.onClosed(dialog.closeType);
+			dialog.removeSelf();
+		}
+	}
+
+	/**
+	*有个卵用
+	*/
+	__proto.lock=function(value){}
+	__proto._checkMask=function(){}
+	__static(PDialogManager,
+	['instance',function(){return this.instance=new PDialogManager();}
+	]);
+	return PDialogManager;
 })()
 
 
@@ -4886,309 +4729,2323 @@ var ToolMap=(function(){
 })()
 
 
-//class engine.scene.astar.AStarEx
-var AStarEx=(function(){
-	function AStarEx(){
-		//private var _open:Array;
-		this._open=null;
-		this._grid=null;
-		this._endNode=null;
-		this._startNode=null;
-		this._path=null;
-		this._floydPath=null;
-		this._modifyNodes=null;
-		this._node=null;
-		this.findPathCallBack=null;
-		this.testCount=0;
-		this.heuristic=null;
-		this._straightCost=1.0;
-		this.nowversion=1;
-		this.haveGuDao=false;
-		this._diagCost=Math.SQRT2;
-		this.heuristic=this.manhattan;
+/**
+*64位数据类型，相当于QWORD，主要用于和服务器对接
+*@author Administrator
+*/
+//class engine.base.data.Int64
+var Int64=(function(){
+	function Int64(value){
+		this._hValue=0;
+		this._lValue=0;
+		this._hexValue="0000000000000000";
+		(value===void 0)&& (value=0);
+		if ((typeof value=='string'))
+			this.hexValue=value;
+		else if (value !=0)
+		this.intValue=value;
 	}
 
-	__class(AStarEx,'engine.scene.astar.AStarEx');
-	var __proto=AStarEx.prototype;
-	__proto.setGrid=function(grid){
-		this._grid=grid;
+	__class(Int64,'engine.base.data.Int64');
+	var __proto=Int64.prototype;
+	__proto.SetRawData=function(l,h){
+		this._hValue=h>>>0;
+		this._lValue=l>>>0;
+		this._hexValue=("0000000000000000"+this._hValue.toString(16)).substr(-8,8)+("0000000000000000"+this._lValue.toString(16)).substr(-8,8);
 	}
 
-	__proto.createGrid=function(width,hight){
-		this._grid=new Grid(width,hight);
-	}
-
-	__proto.justMin=function(x,y){
-		return x.f < y.f;
-	}
-
-	__proto.findPath=function(maxFindNum){
-		(maxFindNum===void 0)&& (maxFindNum=0);
-		this._endNode=this._grid.endNode;
-		if (this._endNode==null)
-			return false;
-		this.nowversion++;
-		this._startNode=this._grid.startNode;
-		var replace=null;
-		if (this.haveGuDao && (!this._endNode.walkable || (this._endNode.nodeType !=this._startNode.nodeType))){
-			var useBuriedDepth=false;
-			replace=this._grid.findReplacer(this._grid.startNode,this._endNode,useBuriedDepth);
-			if (replace==null)
-				return false;
-		}
-		if (replace !=null)
-			this._endNode=replace;
-		this._open=new BinaryHeap(this.justMin);
-		this._startNode.g=0;
-		this._modifyNodes=[];
-		return this.search(maxFindNum);
-	}
-
-	__proto.GetPathFloyd=function(){
-		if (this._path==null || this._path.length==0)
-			return null;
-		var fpath=AStarEx.floyd(this._path,this._grid);
-		var path=[];
-		while (fpath.length){
-			var node=fpath.shift();
-			if (node==null)
-				break ;
-			path.push(new Point$1(node.x,node.y));
-		}
-		return path;
-	}
-
-	__proto.searchTask=function(){
-		var count=0;
-		var best=null;
-		while (this._node !=this._endNode){
-			var len=this._node.links.length;
-			for (var i=0;i < len;i++){
-				var test=this._node.links[i].node;
-				var cost=this._node.links[i].cost;
-				var g=this._node.g+cost;
-				var h=this.heuristic(test);
-				var f=g+h;
-				if (test.version==this.nowversion){
-					if (test.f > f){
-						test.f=f;
-						test.g=g;
-						test.h=h;
-						test.parent=this._node;
-					}
-				}
-				else{
-					test.f=f;
-					test.g=g;
-					test.h=h;
-					test.parent=this._node;
-					this._open.ins(test);
-					test.version=this.nowversion;
-					this._modifyNodes.push(test);
-				}
-			}
-			if (this._open.a.length==1){
-				best=this.findNearPath(this._endNode);
-				break ;
-			}
-			this._node=this._open.pop();
-			count++;
-		}
-		if (best)
-			this._endNode=best;
-		if (count !=0)
-			this.buildPath();
-		return count !=0;
-	}
-
-	__proto.search=function(maxFindNum){
-		(maxFindNum===void 0)&& (maxFindNum=0);
-		this.testCount=0;
-		this._node=this._startNode;
-		this._node.version=this.nowversion;
-		return this.searchTask();
-	}
-
-	__proto.findNearPath=function(end){
-		if (this._modifyNodes.length==0)
-			return null;
-		var best=this._modifyNodes[0];
-		var next=null;
-		var len=this._modifyNodes.length;
-		var min=Math.abs(end.x-best.x)+Math.abs(end.y-best.y);
-		var val=0;
-		for (var i=1;i < len;i++){
-			next=this._modifyNodes[i];
-			val=Math.abs(end.x-next.x)+Math.abs(end.y-next.y);
-			if ((val > min)|| (val==min && next.g >=best.g))
-				continue ;
-			best=next;
-			min=val;
-		}
-		return best;
-	}
-
-	__proto.buildPath=function(){
-		this._path=[];
-		var node=this._endNode;
-		this._path.push(node);
-		var count=0;
-		while (node !=null && node !=this._startNode){
-			node=node.parent;
-			this._path.unshift(node);
-			count++;
-			if (count > 10000){
-				break ;
-			}
-		}
-		if (count > 10000){
-			this._path.length=0;
-			console.log("错误的寻路，溢出了！！！");
-		}
-		if (this.findPathCallBack !=null)
-			this.findPathCallBack.call();
+	__proto.SetMax=function(){
+		this._lValue=4294967295;
+		this._hValue=4294967295;
+		this._hexValue="ffffffffffffffff";
 	}
 
 	/**
-	*曼哈顿距离
-	*@param node
+	*深拷贝
+	*/
+	__proto.CloneInt64=function(){
+		var ret=new Int64();
+		ret._hValue=this._hValue;
+		ret._lValue=this._lValue;
+		ret._hexValue=this._hexValue;
+		return ret;
+	}
+
+	/**
+	*大小比比看
+	*大于 1
+	*等于 0
+	*小于-1
+	*/
+	__proto.CompareTo=function(value){
+		if (value==null)
+			return 1;
+		if (this._hValue > value._hValue){
+			return 1;
+		}
+		else if (this._hValue < value._hValue){
+			return-1;
+		}
+		if (this._lValue > value._lValue){
+			return 1;
+		}
+		else if (this._lValue < value._lValue){
+			return-1;
+		}
+		return 0;
+	}
+
+	/**
+	*是否相等
+	*@param value
 	*@return
 	*
 	*/
-	__proto.manhattan=function(node){
-		return (Math.abs(node.x-this._endNode.x)+Math.abs(node.y-this._endNode.y));
+	__proto.EqualTo=function(value){
+		return (this.CompareTo(value)==0);
 	}
 
-	__getset(0,__proto,'grid',function(){
-		return this._grid;
-		},function(value){
-		this._endNode=null;
-		this._startNode=null;
-		this._path=null;
-		this._floydPath=null;
-		this._modifyNodes=null;
-		this._grid=value;
+	__proto.equals=function(v){
+		return this._hValue==0 && this._lValue==v;
+	}
+
+	/**
+	*是0
+	*@return
+	*
+	*/
+	__proto.IsZero=function(){
+		return (this._lValue==0 && this._hValue==0);
+	}
+
+	/**
+	*是最大-1
+	*@return
+	*
+	*/
+	__proto.IsMax=function(){
+		return (this._lValue==4294967295 && this._hValue==4294967295);
+	}
+
+	__proto.Clear=function(){
+		this.intValue=0;
+	}
+
+	__proto.ToString=function(){
+		return this._hexValue;
+	}
+
+	__proto.ToGID=function(){
+		return LongIdMap.ToGID(this);
+	}
+
+	__proto.ShowValue=function(){
+		var high=this._hValue;
+		var low=this._lValue;
+		var temp;
+		if (low < 0)
+			temp=Int64.Addition(String(low),"4294967296");
+		else
+		temp=String(low);
+		return Int64.Addition(Int64.Multiplication(String(high),"4294967296"),temp);
+	}
+
+	/**
+	*位掩码检测
+	*@param state
+	*@param isH
+	*@return
+	*
+	*/
+	__proto.BitMaskTest=function(state,isH){
+		(isH===void 0)&& (isH=false);
+		if (isH)
+			return ((this._hValue & state)!=0);
+		return ((this._lValue & state)!=0);
+	}
+
+	__getset(0,__proto,'intValue',null,function(value){
+		if (value < 0){
+			this._hValue=4294967295;
+			this._lValue=value>>>0;
+			this._hexValue=("ffffffffffffffff"+"ffffffffffffffff"+this._lValue.toString(16)).substr(-16,16);
+		}
+		else{
+			this._hValue=0;
+			this._lValue=value;
+			this._hexValue=("0000000000000000"+"0000000000000000"+this._lValue.toString(16)).substr(-16,16);
+		}
 	});
 
-	AStarEx.floyd=function(path,grid){
-		var _floydPath=path.concat();
-		var len=_floydPath.length;
-		if (len > 2){
-			var vector=new Node$1(0,0);
-			var tempVector=new Node$1(0,0);
-			AStarEx.floydVector(vector,_floydPath[len-1],_floydPath[len-2]);
-			for (var i=_floydPath.length-3;i >=0;i--){
-				AStarEx.floydVector(tempVector,_floydPath[i+1],_floydPath[i]);
-				if (vector.x==tempVector.x && vector.y==tempVector.y){
-					_floydPath.splice(i+1,1);
+	__getset(0,__proto,'hValue',function(){
+		return this._hValue;
+		},function(value){
+		this._hValue=value>>>0;
+	});
+
+	__getset(0,__proto,'bytes',function(){
+		var ret=new ByteArray();
+		ret.writeUint32(this._hValue);
+		ret.writeUint32(this._lValue);
+		return ret;
+		},function(value){
+		value.pos=0;
+		this._hValue=value.readUnsignedInt();
+		this._lValue=value.readUnsignedInt();
+		this._hexValue=("0000000000000000"+this._hValue.toString(16)).substr(-8,8)+("0000000000000000"+this._lValue.toString(16)).substr(-8,8);
+	});
+
+	__getset(0,__proto,'hexValue',function(){
+		return this._hexValue;
+		},function(str){
+		var _bytes=new ByteArray();
+		_bytes.writeUint32(0);
+		_bytes.writeUint32(0);
+		this._hexValue=("0000000000000000"+"0000000000000000"+str).substr(-16,16);
+		_bytes.pos=0;
+		for(var i=0;i < 8;++i){
+			var char=this._hexValue.substr(i*2,2);
+			var num=parseInt(char,16);
+			_bytes.writeByte(num);
+		}
+		_bytes.pos=0;
+		this._hValue=_bytes.readUnsignedInt();
+		this._lValue=_bytes.readUnsignedInt();
+	});
+
+	/**
+	*得到十进制数字
+	*/
+	__getset(0,__proto,'fValue',function(){
+		return ((this._hValue)*(4294967295+1))+this._lValue;
+		},function(value){
+		this.SetRawData(Math.floor(value % 0x100000000),Math.floor(value / 0x100000000));
+	});
+
+	__getset(0,__proto,'lValue',function(){
+		return this._lValue;
+		},function(value){
+		this._lValue=value>>>0;
+	});
+
+	Int64.Multiplication=function(a,b){
+		var same=true;
+		var a_array=[];
+		var b_array=[];
+		if (a.charAt(0)=="-"){
+			a=a.substring(1);
+			same=!same;
+		}
+		while (a.length > Int64.MULTIPLY.length){
+			a_array.push(a.substring(a.length-Int64.MULTIPLY.length));
+			a=a.substring(0,a.length-Int64.MULTIPLY.length);
+		}
+		a_array.push(a);
+		if (b.charAt(0)=="-"){
+			b=b.substring(1);
+			same=!same;
+		}
+		while(b.length > Int64.MULTIPLY.length){
+			b_array.push(b.substring(b.length-Int64.MULTIPLY.length));
+			b=b.substring(0,b.length-Int64.MULTIPLY.length);
+		}
+		b_array.push(b);
+		var result="0";
+		var x=0;
+		var y=0;
+		var temp;
+		for (var i=0;i < a_array.length;i++){
+			for (var j=0;j < b_array.length;j++){
+				x=Math.floor(a_array[i]);
+				y=Math.floor(b_array[j]);
+				temp=String(x *y);
+				for (var k=0;k < i+j;k++){
+					temp+=Int64.MULTIPLY;
 				}
-				else{
-					vector.x=tempVector.x;
-					vector.y=tempVector.y;
-				}
+				result=Int64.Addition(temp,result);
 			}
 		}
-		len=_floydPath.length;
-		for (i=len-1;i >=0;i--){
-			for (var j=0;j <=i-2;j++){
-				if (AStarEx.floydCrossAble(_floydPath[i],_floydPath[j],grid)){
-					for (var k=i-1;k > j;k--){
-						_floydPath.splice(k,1);
+		if (!same)
+			result="-"+result;
+		return result;
+	}
+
+	Int64.Addition=function(a,b){
+		var same=true;
+		var negative=false;
+		var a_array=[];
+		var b_array=[];
+		if (a.charAt(0)=="-"){
+			a=a.substring(1);
+			same=!same;
+			negative=true;
+		}
+		while (a.length > Int64.ADDITION.length){
+			a_array.unshift(a.substring(a.length-Int64.ADDITION.length));
+			a=a.substring(0,a.length-Int64.ADDITION.length);
+		}
+		a_array.unshift(a);
+		if (b.charAt(0)=="-"){
+			b=b.substring(1);
+			same=!same;
+		}
+		while (b.length > Int64.ADDITION.length){
+			b_array.unshift(b.substring(b.length-Int64.ADDITION.length));
+			b=b.substring(0,b.length-Int64.ADDITION.length);
+		}
+		b_array.unshift(b);
+		var result="";
+		var x=0;
+		var y=0;
+		var z=0;
+		var temp=0;
+		var addition_const=parseInt("1"+Int64.ADDITION);
+		if (same){
+			z=0;
+			while (a_array.length > 0 || b_array.length > 0){
+				x=0;
+				y=0;
+				if (a_array.length > 0)
+					x=Math.floor(a_array.pop());
+				if (b_array.length > 0)
+					y=Math.floor(b_array.pop());
+				temp=x+y+z;
+				if (temp >=addition_const){
+					z=1;
+					temp=temp % addition_const;
+				}
+				else
+				z=0;
+				result=Int64.Format(temp)+result;
+			}
+			if (z==1)
+				result="1"+result;
+		}
+		else{
+			var results=[];
+			while (a_array.length > 0 || b_array.length > 0){
+				x=0;
+				y=0;
+				if (a_array.length > 0)
+					x=Math.floor(a_array.pop());
+				if (b_array.length > 0)
+					y=Math.floor(b_array.pop());
+				temp=x-y;
+				results.push(temp);
+			}
+			if (results.length > 0){
+				x=results.pop();
+				while (x==0 && results.length > 0)
+				x=results.pop();
+			}
+			if (x==0)
+				return "0";
+			results.push(x);
+			z=0;
+			if (x > 0){
+				while (results.length > 0){
+					y=results.shift();
+					y=y-z;
+					if (y < 0){
+						z=1;
+						y=addition_const+y;
 					}
-					i=j;
-					len=_floydPath.length;
-					break ;
+					else
+					z=0;
+					result=Int64.Format(y)+result;
+				}
+			}
+			else{
+				negative=!negative;
+				while (results.length > 0){
+					y=results.shift();
+					y=y+z;
+					if (y > 0){
+						z=1;
+						y=addition_const-y;
+					}
+					else{
+						z=0;
+						y=-y;
+					}
+					result=Int64.Format(y)+result;
 				}
 			}
 		}
-		return _floydPath;
+		while (result.length > 1){
+			if (result.charAt(0)=="0")
+				result=result.substring(1);
+			else
+			break ;
+		}
+		if (negative)
+			result="-"+result;
+		return result;
 	}
 
-	AStarEx.floydCrossAble=function(n1,n2,grid){
-		var ps=AStarEx.bresenhamNodes(new Point$1(n1.x,n1.y),new Point$1(n2.x,n2.y));
-		for (var i=ps.length-2;i > 0;i--){
-			if (ps[i].x>=0&&ps[i].y>=0&&ps[i].x<grid.numCols&&ps[i].y<grid.numRows&&
-				(!grid.getNode(ps[i].x,ps[i].y).walkable || !grid.getNode(ps[i].x,ps[i].y).dyWalkable)){
-				return false;
-			}
+	Int64.Format=function(num){
+		var result=String(num);
+		var size=Int64.ADDITION.length-result.length;
+		if (size < 0)
+			return result.substring(-size);
+		else{
+			for (var i=0;i < size;i++)
+			result="0"+result;
+			return result;
 		}
-		return true;
 	}
 
-	AStarEx.bresenhamNodes=function(p1,p2){
-		var steep=Math.abs(p2.y-p1.y)> Math.abs(p2.x-p1.x);
-		if (steep){
-			var temp=p1.x;
-			p1.x=p1.y;
-			p1.y=temp;
-			temp=p2.x;
-			p2.x=p2.y;
-			p2.y=temp;
-		};
-		var stepX=p2.x > p1.x?1:(p2.x < p1.x?-1:0);
-		var deltay=(p2.y-p1.y)/Math.abs(p2.x-p1.x);
-		var ret=[];
-		var nowX=p1.x+stepX;
-		var nowY=p1.y+deltay;
-		if (steep){
-			ret.push(new Point$1(p1.y,p1.x));
-			}else {
-			ret.push(new Point$1(p1.x,p1.y));
+	Int64.UINT_MAX_VALUE=4294967295;
+	Int64.TWO_POW_32=0x100000000;
+	Int64.ZERO="0000000000000000";
+	Int64.MAX="ffffffffffffffff";
+	Int64.hexTable="0123456789abcdef";
+	Int64.BYTESIZE=8;
+	Int64.HEX_STR_LEN=16;
+	Int64.ADDITION="00000000";
+	Int64.MULTIPLY="0000";
+	return Int64;
+})()
+
+
+/**
+*动画帧
+*@author Administrator
+*
+*/
+//class engine.base.sheet.MSheetFrame
+var MSheetFrame=(function(){
+	function MSheetFrame(mods,orgtex){
+		this.texs=null;
+		this.offxs=null;
+		this.offys=null;
+		this.texs=[];
+		this.offxs=[];
+		this.offys=[];
+		for (var i=0;i < mods.length;++i){
+			var divide=mods[i];
+			var sub=Texture.create(orgtex,divide.dx,divide.dy,divide.dw,divide.dh);
+			sub.alphaMask=orgtex.alphaMask;
+			this.texs.push(sub);
+			this.offxs.push(-divide.poiw);
+			this.offys.push(-(divide.dh-divide.poih));
 		}
-		if (Math.abs(p1.x-p2.x)==Math.abs(p1.y-p2.y)){
-			if(p1.x<p2.x&&p1.y<p2.y){
-				ret.push(new Point$1(p1.x,p1.y+1),new Point$1(p2.x,p2.y-1));
-				}else if(p1.x>p2.x&&p1.y>p2.y){
-				ret.push(new Point$1(p1.x,p1.y-1),new Point$1(p2.x,p2.y+1));
-				}else if(p1.x<p2.x&&p1.y>p2.y){
-				ret.push(new Point$1(p1.x,p1.y-1),new Point$1(p2.x,p2.y+1));
-				}else if(p1.x>p2.x&&p1.y<p2.y){
-				ret.push(new Point$1(p1.x,p1.y+1),new Point$1(p2.x,p2.y-1));
+	}
+
+	__class(MSheetFrame,'engine.base.sheet.MSheetFrame');
+	var __proto=MSheetFrame.prototype;
+	__proto.destroy=function(){
+		for (var i=0;i < this.texs.length;++i){
+			this.texs[i].destroy();
+		}
+		this.texs=null;
+		this.offxs=null;
+		this.offys=null;
+	}
+
+	return MSheetFrame;
+})()
+
+
+/**
+*天气系统区域信息
+*@author Administrator
+*
+*/
+//class engine.scene.data.MWeatherAreaData
+var MWeatherAreaData=(function(){
+	function MWeatherAreaData(){
+		this._sizew=0;
+		this._sizeh=0;
+		this._numw=0;
+		this._numh=0;
+		this._hollowflag=[];
+		ObjectRecord.rcd(this);
+	}
+
+	__class(MWeatherAreaData,'engine.scene.data.MWeatherAreaData');
+	var __proto=MWeatherAreaData.prototype;
+	__proto.ReadData=function(bytes){
+		this._sizew=bytes.readShort();
+		this._sizeh=bytes.readShort();
+		this._numw=bytes.readShort();
+		this._numh=bytes.readShort();
+		this._hollowflag=new Array(this._numw *this._numh);
+		for (var m=0;m < this._numh;++m){
+			for (var n=0;n < this._numw;++n){
+				this._hollowflag[m *this._numw+n]=((bytes.readByte()& 0x2)==0);
 			}
 		}
-		while (nowX !=p2.x){
-			var fy=Math.floor(nowY);
-			var cy=Math.ceil(nowY);
-			if (steep){
-				ret.push(new Point$1(fy,nowX));
-				}else{
-				ret.push(new Point$1(nowX,fy));
-			}
-			if (fy !=cy){
-				if (steep){
-					ret.push(new Point$1(cy,nowX));
-					}else{
-					ret.push(new Point$1(nowX,cy));
-				}
-				}else if(deltay!=0){
-				if (steep){
-					ret.push(new Point$1(cy+1,nowX));
-					ret.push(new Point$1(cy-1,nowX));
-					}else{
-					ret.push(new Point$1(nowX,cy+1));
-					ret.push(new Point$1(nowX,cy-1));
-				}
-			}
-			nowX+=stepX;
-			nowY+=deltay;
+	}
+
+	__getset(0,__proto,'numh',function(){
+		return this._numh;
+	});
+
+	__getset(0,__proto,'sizew',function(){
+		return this._sizew;
+	});
+
+	__getset(0,__proto,'numw',function(){
+		return this._numw;
+	});
+
+	__getset(0,__proto,'sizeh',function(){
+		return this._sizeh;
+	});
+
+	__getset(0,__proto,'hollowflag',function(){
+		return this._hollowflag;
+	});
+
+	return MWeatherAreaData;
+})()
+
+
+/**
+*移动策略移动类型，需要和动作类型定义一致
+*@author Administrator
+*/
+//class engine.scene.move.EnumMoveType
+var EnumMoveType=(function(){
+	function EnumMoveType(){}
+	__class(EnumMoveType,'engine.scene.move.EnumMoveType');
+	EnumMoveType.MOVE_NONE=0;
+	EnumMoveType.MOVE_RUN=1000;
+	return EnumMoveType;
+})()
+
+
+/**
+*动画包加载
+*/
+//class engine.loaders.MAnimationLoader
+var MAnimationLoader=(function(){
+	function MAnimationLoader(){
+		MAnimationLoader.Ins=this;
+	}
+
+	__class(MAnimationLoader,'engine.loaders.MAnimationLoader');
+	var __proto=MAnimationLoader.prototype;
+	__proto.GetDataName=function(compress){
+		var bin="data.bin";
+		if (compress){
+			bin=Browser.onAndroid ? "etc.bin" :"pvr.bin";
 		}
-		if (steep){
-			ret.push(new Point$1(p2.y,p2.x));
-			}else {
-			ret.push(new Point$1(p2.x,p2.y));
+		return bin;
+	}
+
+	__proto.GetDirName=function(compress,dir){
+		var ret;
+		if (compress){
+			ret=Browser.onAndroid ? "etcdir"+dir :"pvrdir"+dir;
+			ret+=".bin";
+			}else{
+			ret="dir"+dir+".png";
 		}
 		return ret;
 	}
 
-	AStarEx.floydVector=function(target,n1,n2){
-		target.x=n1.x-n2.x;
-		target.y=n1.y-n2.y;
+	// 加载图包描述文件
+	__proto.LoadBin=function(path,complete,loadalldir){
+		(loadalldir===void 0)&& (loadalldir=false);
+		var compress=CallbackUtil.callbackUseCompressTexture==null || CallbackUtil.callbackUseCompressTexture(path);
+		compress=compress && (!Browser.onWeiXin && (WebGLContext._compressedTextureEtc1 !=null || WebGLContext._compressedTexturePvrtc !=null));
+		var bin=this.GetDataName(compress);
+		var url=MAnimationUtil.ROOT_URL+path+"/"+bin;
+		Laya.loader.load(url,Handler.create(this,this.OnBinLoaded,[compress,url,path,complete,loadalldir]),null,"arraybuffer",1,false);
 	}
 
-	__static(AStarEx,
-	['Ins',function(){return this.Ins=new AStarEx();}
+	__proto.OnBinLoaded=function(compress,url,path,complete,loadalldir,content){
+		var pack=new MSheetResPack();
+		if (content==null){
+			complete && complete.runWith(null);
+			return;
+		}
+		pack.compressTex=compress;
+		pack.url=url;
+		pack.path=path;
+		pack.Parse(content);
+		if (loadalldir){
+			pack.LoadAllTexture(complete);
+			}else{
+			complete && complete.runWith(pack);
+		}
+	}
+
+	// 加载图集资源
+	__proto.LoadTexture=function(compress,path,dir,complete){
+		var bin=this.GetDirName(compress,dir);
+		var url=MAnimationUtil.ROOT_URL+path+"/"+bin;
+		Laya.loader.load(url,Handler.create(this,this.OnTextureLoaded,[compress,url,path,dir,complete]),null,compress ? "arraybuffer" :null,1,!compress);
+	}
+
+	// trace(Browser.now()+",检查加载资源问题，MAnimationLoader==>LoadTexture,加载资源结束路劲URl："+url);
+	__proto.OnTextureLoaded=function(compress,url,path,dir,complete,content){
+		if (content){
+			if (compress){
+				var tex=this.ParseCompressTex(url,content);
+				complete && complete.runWith(tex);
+			}
+			else{
+				complete && complete.runWith(content);
+			}
+		}
+		else{
+			complete && complete.runWith(null);
+		}
+	}
+
+	// trace(Browser.now()+",检查加载资源问题，MAnimationLoader==>OnTextureLoaded,加载资源完成路劲URl："+url);
+	__proto.ParseCompressTex=function(url,content){
+		var startTime=Browser.now();
+		var bytes=new Byte(content);
+		var len=bytes.getInt32();
+		var color=bytes.getUint8Array(bytes.pos,len);
+		len=bytes.getInt32();
+		var alpha=bytes.getUint8Array(bytes.pos,len);
+		var format=Browser.onAndroid ? 5 :11;
+		var image=HTMLImage.create(0,0,format);
+		image.setCompressData(color.buffer);
+		image._setCreateURL(url);
+		var texColor=new Texture(image);
+		var image=HTMLImage.create(0,0,format);
+		image.setCompressData(alpha.buffer);
+		image._setCreateURL(url);
+		var texAlpha=new Texture(image);
+		texColor.alphaMask=texAlpha;
+		bytes.clear();
+		var endTime=Browser.now();
+		var csTime=(startTime-endTime);
+		if(csTime > 5){}
+			return texColor;
+	}
+
+	__static(MAnimationLoader,
+	['Ins',function(){return this.Ins=new MAnimationLoader();}
 	]);
-	return AStarEx;
+	return MAnimationLoader;
+})()
+
+
+/**
+*单个方向
+*/
+//class engine.base.sheet.MSheetDirection
+var MSheetDirection=(function(){
+	function MSheetDirection(){
+		this.owner=null;
+		// 方向
+		this.dir=0;
+		// 帧间隔
+		this.intervals=null;
+		// 渐隐间隔
+		this.fades=null;
+		// 缩放
+		this.scale=0;
+		// 帧数
+		this.framenum=0;
+		// 使用的内存
+		this.useMemory=0;
+		// 原始纹理
+		this._orgtex=null;
+		// 直接渲染用的数据
+		this._sheets=null;
+		// 模块数据(每帧对应的模块数据)
+		this._frameModes=null;
+		this._loadFailTimes=0;
+		this._isLoading=false;
+		this._waitAni=[];
+	}
+
+	__class(MSheetDirection,'engine.base.sheet.MSheetDirection');
+	var __proto=MSheetDirection.prototype;
+	__proto.ParseMod=function(meta){
+		var adfHash=new Dictionary();
+		var moduleNum=meta.getInt16();
+		for (i=0;i < moduleNum;++i){
+			var modid=meta.getInt32();
+			var imageIdx=meta.getInt16();
+			adfHash.set(modid,MSheetDivideFrame.CreateOne(meta,imageIdx));
+		};
+		var maxframeNum=meta.getInt16();
+		if (maxframeNum !=this.framenum)
+			ToolBase.LogError("不是单方向的数据？？");
+		var framemodes=[];
+		for (var i=0;i < maxframeNum;++i){
+			var modnum=meta.getInt16();
+			if (modnum < 0 || modnum > 1024){
+				ToolBase.LogError("MSheetResPack (modnum < 0 || modnum > 1024) "+meta.length);
+				return;
+			};
+			var mods=__newvec(modnum);
+			for (var j=0;j < modnum;++j){
+				var modidx=meta.getInt32();
+				mods[j]=adfHash.get(modidx);
+			}
+			framemodes[i]=mods;
+		}
+		this._frameModes=framemodes;
+	}
+
+	__proto.GetFrames=function(ani){
+		if (this._sheets==null){
+			if (this._loadFailTimes >=3){
+				ani && ani.OnTextureFailed(this);
+				}else{
+				if (ani && this._waitAni.indexOf(ani)==-1){
+					this._waitAni.push(ani);
+				}
+				this.LoadTexture();
+			}
+			return null;
+			}else{
+			return this._sheets;
+		}
+	}
+
+	__proto.LoadTexture=function(complete){
+		if (!this._isLoading){
+			MAnimationLoader.Ins.LoadTexture(this.owner.compressTex,this.owner.path,this.dir,Handler.create(this,this.OnLoadDirectionComp,[complete]));
+			this._isLoading=true;
+		}
+	}
+
+	__proto.OnLoadDirectionComp=function(complete,tex){
+		this.__reeee(complete,tex);
+	}
+
+	__proto.__reeee=function(complete,tex){
+		this._isLoading=false;
+		this.SetTexture(tex);
+		var waits=this._waitAni;
+		if (!tex){
+			this._loadFailTimes++;
+			for (var i=0;i < waits.length;++i){
+				(waits [i]).OnTextureFailed(this);
+			}
+			}else{
+			for (var i=0;i < waits.length;++i){
+				if (!waits[i].isDestroyed)
+					(waits [i]).OnTextureLoaded(this);
+			}
+		}
+		this._waitAni.length=0;
+		complete && complete.runWith(this);
+	}
+
+	__proto.SetTexture=function(tex){
+		if (!tex)
+			return;
+		this.releaseMem();
+		this.useMemory=tex.bitmap.gpuMemory;
+		if (tex.alphaMask){
+			this.useMemory+=tex.alphaMask.bitmap.gpuMemory;
+		}
+		this._orgtex=tex;
+		this._sheets=[];
+		var frameMods=this._frameModes;
+		var len=frameMods.length;
+		var sheets=this._sheets=[];
+		for (var i=0;i < len;++i){
+			var modes=frameMods[i];
+			var frame=new MSheetFrame(modes,tex);
+			sheets.push(frame);
+		}
+	}
+
+	__proto.releaseMem=function(){
+		if (this._sheets){
+			var sheets=this._sheets;
+			for (var i=0;i < sheets.length;++i){
+				sheets[i].destroy();
+			}
+			this._sheets=null;
+		}
+		this._orgtex && this._orgtex.destroy(true);
+		this._orgtex=null;
+		this.useMemory=0;
+	}
+
+	__getset(0,__proto,'isLoading',function(){
+		return this._isLoading;
+	});
+
+	__getset(0,__proto,'isReady',function(){
+		return this._sheets !=null;
+	});
+
+	return MSheetDirection;
+})()
+
+
+/**
+*哈希列表队列组合
+*插入比较慢，但是遍历和查找都很快
+*@author Administrator
+*
+*/
+//class engine.base.container.HashList
+var HashList=(function(){
+	function HashList(){
+		this._hash=null;
+		this._list=null;
+		this._hash=new Object();
+		this._list=[];
+		ObjectRecord.rcd(this);
+	}
+
+	__class(HashList,'engine.base.container.HashList');
+	var __proto=HashList.prototype;
+	__proto.Get=function(k){
+		var ret=this._hash[k];
+		return ret;
+	}
+
+	__proto.Each=function(f){
+		var arr=this._list;
+		var len=arr.length;
+		for (var i=0;i < len;++i)
+		f(arr[i]);
+	}
+
+	__proto.GetCount=function(){
+		return this._list.length;
+	}
+
+	__proto.Add=function(k,o){
+		if (this._hash[k]==null){
+			this._hash[k]=o;
+			this._list.push(o);
+		}
+	}
+
+	__proto.Remove=function(k){
+		var ret=null;
+		if (this._hash[k] !=null){
+			ret=this._hash[k];
+			delete this._hash[k];
+			this._list.splice(this._list.indexOf(ret),1);
+		}
+		return ret;
+	}
+
+	__proto.Clear=function(){
+		var ret=this._list;
+		this._hash=new Object();
+		this._list=[];
+		return ret;
+	}
+
+	__proto.CheckSize=function(){
+		var hashsize=0;
+		for (var k in this._hash){
+			hashsize++;
+		}
+		return (hashsize==this._list.length);
+	}
+
+	/**
+	*方便外部遍历
+	*@return
+	*
+	*/
+	__getset(0,__proto,'list',function(){
+		return this._list;
+	});
+
+	return HashList;
+})()
+
+
+/**
+*抽象类
+*场景地对象和实体管理
+*
+*@author Administrator
+*/
+//class engine.scene.MSceneObject
+var MSceneObject=(function(){
+	function MSceneObject(){
+		this._allObjectHashList=null;
+		this._typeListMap=new Dictionary();
+		this._allObjectHashList=new HashList();
+		Laya.timer.loop(1,this,this.OnFrame);
+	}
+
+	__class(MSceneObject,'engine.scene.MSceneObject');
+	var __proto=MSceneObject.prototype;
+	__proto.AddTypeObjList=function(typeName,type){
+		if (this._typeListMap.get(typeName)!=null){
+			throw new Error("AddTypeObjList key Already Exsit!");
+		}
+		this._typeListMap.set(typeName,new MSceneTypeList(typeName,type,this._allObjectHashList));
+	}
+
+	__proto.GetTypeObjectList=function(typename){
+		return this._typeListMap.get(typename).hashList.list;
+	}
+
+	__proto.EachTypeObjectList=function(typename,func){
+		this._typeListMap.get(typename).hashList.Each(func);
+	}
+
+	__proto.OnFrame=function(){
+		var curt=Laya.timer.currTimer;
+		var list;
+		for(var $each_list in this._typeListMap.values){
+			list=this._typeListMap.values[$each_list];
+			var arr=list.hashList.list;
+			var obj;
+			for(var $each_obj in arr){
+				obj=arr[$each_obj];
+				if (obj.destroyed)
+					continue ;
+				obj.OnFrame(curt);
+			}
+		}
+	}
+
+	__proto.DeleteObject=function(gid){
+		var so=this._allObjectHashList.Get(gid);
+		if (so !=null){
+			var typeList=this._typeListMap.get(so.objectType);
+			if (typeList==null){
+				ToolBase.Log("DeleteObject TypeObjectList typeList == null Error");
+				throw new Error("DeleteObject TypeObjectList typeList == null Error");
+			}
+			typeList.RemoveSceneObject(gid);
+		}
+		return so;
+	}
+
+	__proto.AddObject=function(sceneobjgid,pooltype,bean,layertype){
+		var addo=null;
+		var typeList=this._typeListMap.get(pooltype);
+		if (typeList==null){
+			ToolBase.LogError("AddObject Unknow pooltype !!! pooltype :"+pooltype);
+		}
+		addo=typeList.GetCreateSceneObject(sceneobjgid);
+		addo.map=MSceneMap.Ins;
+		if (layertype==0)
+			addo.map.mapLayer.AddMiddle(addo);
+		else if (layertype==MapSceneLayer.LAYER_TYPE_BOTTOM)
+		addo.map.mapLayer.AddBottom(addo);
+		else if (layertype==1)
+		addo.map.mapLayer.AddTop(addo);
+		else
+		ToolBase.LogError("AddObject Unknow layertype !!! layertype :"+layertype);
+		addo.SetRawData(bean);
+		return addo;
+	}
+
+	/**
+	*移除周围对象，除了主玩家自己
+	*/
+	__proto.RemoveAllRoundObject=function(){
+		var hl;
+		for(var $each_hl in this._typeListMap.values){
+			hl=this._typeListMap.values[$each_hl];
+			if (hl.pooltype !=0)
+				hl.RemoveAllSceneObject();
+		}
+		if (this._allObjectHashList.GetCount()> 1){
+			ToolBase.LogError("removeAllRoundObject but not Clear!!!!!!! "+this._allObjectHashList.GetCount());
+		}
+		if (this._allObjectHashList.CheckSize()==false){
+			ToolBase.LogError("removeAllRoundObject objHash.CheckSize false!!!!!!");
+		}
+	}
+
+	/**
+	*返回*便于少写as
+	*@param id
+	*@return
+	*/
+	__proto.FindObject=function(id){
+		if (id==0)
+			return null;
+		return this._allObjectHashList.Get(id);
+	}
+
+	/**
+	*寻找当前鼠标位置的对象
+	*这种是可以进行空间四叉树优化的，闲的时候弄吧
+	*@param wx
+	*@param wy
+	*@return
+	*/
+	__proto.FindMouseObj=function(wx,wy){
+		var l=this._allObjectHashList.list;
+		var len=l.length;
+		var bo=null;
+		var now;
+		for (var i=0;i < len;++i){
+			now=l[i];
+			if (now.isNonMouseHit==false && now.CheckLocalBounding(wx,wy)){
+				if (bo==null || now.gridY >=bo.gridY){
+					bo=now;
+				}
+			}
+		}
+		return bo;
+	}
+
+	return MSceneObject;
+})()
+
+
+/**
+*
+*
+*@author Administrator
+*/
+//class engine.ui.utils.LayoutUtil
+var LayoutUtil=(function(){
+	function LayoutUtil(){}
+	__class(LayoutUtil,'engine.ui.utils.LayoutUtil');
+	LayoutUtil.GetLayoutPos=function(obj,layout,offx,offy){
+		var stage=Laya.stage;
+		var sw=stage.width;
+		var sh=stage.height+stage._canvasTransform.ty;
+		var ow=obj.width;
+		var oh=obj.height;
+		if (layout==9){
+			offx+=(sw-ow)*0.5;
+			offy+=(sh-oh)*0.5;
+		}
+		else if (layout==1){
+			offx+=(sw-ow)*0.5;
+			offy+=(stage.height-sh);
+		}
+		else if (layout==2){
+			offx+=sw-ow;
+			offy+=(stage.height-sh);
+		}
+		else if (layout==3){
+			offx+=sw-ow;
+			offy+=(sh-oh)*0.5;
+		}
+		else if (layout==4){
+			offx+=sw-ow;
+			offy+=sh-oh;
+		}
+		else if (layout==5){
+			offx+=(sw-ow)*0.5;
+			offy+=sh-oh;
+		}
+		else if (layout==6){
+			offx+=0;
+			offy+=sh-oh;
+		}
+		else if (layout==7){
+			offx+=0;
+			offy+=(sh-oh)*0.5;
+		}
+		else if (layout==8){
+			offx+=0;
+			offy+=(stage.height-sh);
+		}
+		return new Point$1(offx,offy);
+	}
+
+	LayoutUtil.LayoutTipPanel=function(target,comp){
+		if (target==null)
+			return;
+		var stageW=Laya.stage.width;
+		var stageH=Laya.stage.height;
+		var o=target;
+		var offx=0;
+		var offy=0;
+		var inv=20;
+		if (comp !=null){
+			var tw=o.width;
+			var th=o.height;
+			var cw=comp.width;
+			var ch=comp.height;
+			var pt=comp.localToGlobal(Point$1.TEMP.setTo(0,0));
+			if (target.tiplayout==0){
+				offx=pt.x+cw;
+				offy=pt.y;
+				if (offx > (stageW-tw)){
+					offx=stageW-tw-inv;
+				}
+				if (offx < 0){
+					offx=0;
+				}
+				if (offy > (stageH-th)){
+					offy=stageH-th-inv;
+				}
+				if (offy < 0){
+					offy=0;
+				}
+			}
+			else if (target.tiplayout==2){
+				if (pt.x+cw+tw+inv <=stageW)
+					offx=pt.x+cw;
+				else if (pt.x-tw-inv >=0)
+				offx=pt.x-tw;
+				else
+				offx=(stageW-tw)/ 2;
+				if (pt.y+ch+inv <=stageH)
+					offy=pt.y;
+				else if (pt.y-ch-inv >=0)
+				offy=pt.y-ch;
+				else
+				offy=(stageH-th)/ 2;
+			}
+			else{
+				offx=(stageW-o.width)/ 2;
+				offy=(stageH-o.height)/ 2;
+			}
+		}
+		else{
+			offx=(stageW-o.width)/ 2;
+			offy=(stageH-o.height)/ 2;
+		}
+		o.pos(offx,offy);
+	}
+
+	LayoutUtil.LAYOUT_NON=0;
+	LayoutUtil.LAYOUT_U=1;
+	LayoutUtil.LAYOUT_RU=2;
+	LayoutUtil.LAYOUT_R=3;
+	LayoutUtil.LAYOUT_RB=4;
+	LayoutUtil.LAYOUT_B=5;
+	LayoutUtil.LAYOUT_LB=6;
+	LayoutUtil.LAYOUT_L=7;
+	LayoutUtil.LAYOUT_LU=8;
+	LayoutUtil.LAYOUT_C=9;
+	return LayoutUtil;
+})()
+
+
+/**
+*timeline扩展，主要是方便处理完成事件
+*/
+//class engine.greensock.TimelineExt
+var TimelineExt=(function(){
+	function TimelineExt(){
+		this._labelc=0;
+		this._timeline=null;
+		this._compFunc=null;
+		this._compParam=null;
+	}
+
+	__class(TimelineExt,'engine.greensock.TimelineExt');
+	var __proto=TimelineExt.prototype;
+	__proto.to=function(target,props,duration,ease,offset){
+		(offset===void 0)&& (offset=0);
+		this._timeline.to(target,props,duration,ease,offset);
+		return this;
+	}
+
+	__proto.play=function(timeOrLabel,loop){
+		(timeOrLabel===void 0)&& (timeOrLabel=0);
+		(loop===void 0)&& (loop=false);
+		this._timeline.play(timeOrLabel,loop);
+	}
+
+	__proto.OnComplete=function(){
+		if (this._compFunc !=null){
+			this._compFunc.apply(null,this._compParam);
+		}
+		this.destroy();
+	}
+
+	__proto.destroy=function(){
+		if (this._timeline !=null){
+			this._timeline.destroy();
+			this._timeline=null;
+			this._compFunc=null;
+			this._compParam=null;
+			Pool.recover("TimelineExt",this);
+		}
+	}
+
+	TimelineExt.create=function(comp,compparams){
+		var ret=Pool.getItemByClass("TimelineExt",TimelineExt);
+		ret._compFunc=comp;
+		ret._compParam=compparams;
+		if (ret._compParam !=null)
+			ret._compParam.push(ret);
+		ret._timeline=new TimeLine();
+		ret._timeline.on("complete",ret,ret.OnComplete);
+		return ret;
+	}
+
+	return TimelineExt;
+})()
+
+
+/**
+*json 数据处理
+*@author Administrator
+*
+*/
+//class engine.supports.utils.JSONUtil
+var JSONUtil=(function(){
+	function JSONUtil(){}
+	__class(JSONUtil,'engine.supports.utils.JSONUtil');
+	JSONUtil.encode=function(o){
+		return JSON.stringify(o);
+	}
+
+	JSONUtil.decode2=function(s){
+		if(s==null)return null;
+		s=s.split("|").join(",");
+		return JSONUtil.decode(s);
+	}
+
+	JSONUtil.decode=function(s){
+		var ret=null;
+		try{
+			if (s==null || s=="")
+				return null;
+			ret=JSON.parse(s);
+		}
+		catch (err){
+			if (JSONUtil.DEBUG_MODE){
+				console.log("decode json error:"+err.message);
+			}
+			ret=null;
+		}
+		return ret;
+	}
+
+	JSONUtil.isJson=function(s){
+		try{
+			JSONUtil.decode(s);
+		}
+		catch (err){
+			return false;
+		}
+		return true;
+	}
+
+	JSONUtil.DEBUG_MODE=false;
+	return JSONUtil;
+})()
+
+
+/**
+*地图坠崖方向信息
+*@author Administrator
+*
+*/
+//class engine.scene.data.MapDownHillData
+var MapDownHillData=(function(){
+	function MapDownHillData(bytes){
+		this._x=0;
+		this._y=0;
+		this._dirvalue=0;
+		this._disvalue=0;
+		this._x=bytes.readShort();
+		this._y=bytes.readShort();
+		this._dirvalue=bytes.readByte();
+		this._disvalue=bytes.readByte();
+		ObjectRecord.rcd(this);
+	}
+
+	__class(MapDownHillData,'engine.scene.data.MapDownHillData');
+	var __proto=MapDownHillData.prototype;
+	__getset(0,__proto,'x',function(){
+		return this._x;
+	});
+
+	/**
+	*距离信息
+	*/
+	__getset(0,__proto,'disvalue',function(){
+		return this._disvalue;
+	});
+
+	__getset(0,__proto,'y',function(){
+		return this._y;
+	});
+
+	/**
+	*方向信息，每位表示一个方向
+	*/
+	__getset(0,__proto,'dirvalue',function(){
+		return this._dirvalue;
+	});
+
+	return MapDownHillData;
+})()
+
+
+/**
+*动画工具类
+*/
+//class engine.res.MAnimationUtil
+var MAnimationUtil=(function(){
+	function MAnimationUtil(){}
+	__class(MAnimationUtil,'engine.res.MAnimationUtil');
+	MAnimationUtil.RegType=function(type,name){
+		MAnimationUtil.RES_TYPE_MAP[type]=name;
+	}
+
+	MAnimationUtil.RegActType=function(type,name){
+		MAnimationUtil.ACTION_TYPE_MAP[type]=name;
+	}
+
+	MAnimationUtil.RegActLoop=function(type){
+		MAnimationUtil.ACTION_LOOP_MAP[type]=true;
+	}
+
+	MAnimationUtil.IsLoop=function(action){
+		return MAnimationUtil.ACTION_LOOP_MAP[action]==true;
+	}
+
+	MAnimationUtil.RegUnLoad=function(resType,resId,actType){
+		(actType===void 0)&& (actType=-1);
+		MAnimationUtil.UNLOAD_URLS.push([resType,resId,actType]);
+	}
+
+	MAnimationUtil.IsUnload=function(resType,resId,actType){
+		var arr=MAnimationUtil.UNLOAD_URLS;
+		for(var i=0;i < arr.length;++i){
+			if (arr[i][0]==resType){
+				var id=arr[i][1];
+				var act=arr[i][2];
+				if (id==-1 || id==resId){
+					return act==-1 || act==actType;
+				}
+			}
+		}
+		return false;
+	}
+
+	MAnimationUtil.ToKeyName=function(type,resId,actType,extra){
+		if ((typeof type=='string')|| (typeof resId=='string')|| (typeof actType=='string')){
+			ToolBase.LogError("ToKeyName参数类型错误:  npctype="+type+" id="+resId+" act="+actType);
+		};
+		var typeKey=MAnimationUtil.RES_TYPE_MAP[type];
+		var actionKey=MAnimationUtil.ACTION_TYPE_MAP[actType];
+		if (typeKey==null){
+			ToolBase.LogError("没有注册的动画类型:"+type);
+		}
+		if (actionKey==null){
+			ToolBase.LogError("没有注册的动作类型:"+actType);
+		}
+		if (extra==null)
+			return typeKey+"/"+resId+"/"+actionKey;
+		else
+		return typeKey+"/"+resId+"/"+extra+"/"+actionKey;
+	}
+
+	MAnimationUtil.ToShortKey=function(type,resId,extra){
+		if ((typeof type=='string')|| (typeof resId=='string')){
+			ToolBase.LogError("ToKeyName参数类型错误:  type="+type+" id="+resId);
+		};
+		var typeKey=MAnimationUtil.RES_TYPE_MAP[type];
+		if (typeKey==null){
+			ToolBase.LogError("没有注册的动画类型:"+type);
+		}
+		if (extra==null)
+			return typeKey+"/"+resId;
+		else
+		return typeKey+"/"+resId+"/"+extra;
+	}
+
+	MAnimationUtil.GetActionName=function(actionId){
+		return MAnimationUtil.ACTION_TYPE_MAP[actionId];
+	}
+
+	MAnimationUtil.ROOT_URL="res/animation/";
+	MAnimationUtil.UNLOAD_URLS=[];
+	__static(MAnimationUtil,
+	['RES_TYPE_MAP',function(){return this.RES_TYPE_MAP=new Object();},'ACTION_TYPE_MAP',function(){return this.ACTION_TYPE_MAP=new Object();},'ACTION_LOOP_MAP',function(){return this.ACTION_LOOP_MAP=new Object();},'ACTION_MAP_MAP',function(){return this.ACTION_MAP_MAP=new Object();}
+	]);
+	return MAnimationUtil;
+})()
+
+
+/**
+*动画基本定义
+*@author Administrator
+*/
+//class engine.animation.define.MAnimationDefine
+var MAnimationDefine=(function(){
+	function MAnimationDefine(){}
+	__class(MAnimationDefine,'engine.animation.define.MAnimationDefine');
+	MAnimationDefine.RESPACK_TYPE_2D=1;
+	MAnimationDefine.RESPACK_TYPE_3D=2;
+	return MAnimationDefine;
+})()
+
+
+//class engine.scene.astar.Link
+var Link=(function(){
+	function Link(node,cost){
+		this.node=null;
+		this.cost=0;
+		this.node=node;
+		this.cost=cost;
+	}
+
+	__class(Link,'engine.scene.astar.Link');
+	var __proto=Link.prototype;
+	__proto.dispose=function(){
+		this.node=null;
+	}
+
+	return Link;
+})()
+
+
+/**
+*@author Administrator
+*/
+//class engine.ui.events.CoolDownEvent
+var CoolDownEvent=(function(){
+	function CoolDownEvent(){}
+	__class(CoolDownEvent,'engine.ui.events.CoolDownEvent');
+	CoolDownEvent.COOLDOWN_FINISHED="grid_cooldown_finished";
+	CoolDownEvent.COOLDOWN_WARNING="cooldown_warning";
+	return CoolDownEvent;
+})()
+
+
+/**
+*long型（SID）和int（GID）之间的映射
+*通常用作key
+*@author Administrator
+*/
+//class engine.base.data.LongIdMap
+var LongIdMap=(function(){
+	function LongIdMap(){}
+	__class(LongIdMap,'engine.base.data.LongIdMap');
+	__getset(1,LongIdMap,'NEXTGID',function(){
+		++LongIdMap.CUR_GID;
+		++LongIdMap.WARING_COUNT;
+		if (LongIdMap.WARING_COUNT >=20000){
+			LongIdMap.WARING_COUNT=0;
+		}
+		return LongIdMap.CUR_GID;
+	});
+
+	LongIdMap.Init=function(){
+		var ret=new Object();
+		ret["0000000000000000"]=0;
+		return ret;
+	}
+
+	LongIdMap.ToGID=function(sid){
+		var strValue=sid.hexValue;
+		var gid=LongIdMap.map[strValue];
+		if (gid==null){
+			gid=LongIdMap.CUR_GID++;
+			LongIdMap.map[strValue]=gid;
+		}
+		return gid;
+	}
+
+	LongIdMap.ChangeGID=function(oldSid,newSid){
+		if (oldSid.EqualTo(newSid))
+			return LongIdMap.map[oldSid.hexValue];
+		var strValue=oldSid.hexValue;
+		var strVal2=newSid.hexValue;
+		var gid=LongIdMap.map[strValue];
+		if (gid==null){
+			return 0;
+		}
+		LongIdMap.map[strVal2]=gid;
+		LongIdMap.map[strValue]=null;
+		return gid;
+	}
+
+	LongIdMap.ERR_GID=0x7FFFFFF0;
+	LongIdMap.WARNING_NUM=20000;
+	LongIdMap.WARING_COUNT=0;
+	LongIdMap.CUR_GID=10001;
+	__static(LongIdMap,
+	['map',function(){return this.map=LongIdMap.Init();}
+	]);
+	return LongIdMap;
+})()
+
+
+//class engine.scene.astar.Grid
+var Grid=(function(){
+	function Grid(numCols,numRows){
+		this._startNode=null;
+		this._endNode=null;
+		this._nodes=null;
+		this._numCols=0;
+		this._numRows=0;
+		this.type=0;
+		this._straightCost=1.0;
+		this._firstFind=true;
+		this._diagCost=Math.SQRT2;
+		this._numCols=numCols;
+		this._numRows=numRows;
+		this._nodes=[];
+		for (var i=0;i < this._numCols;i++){
+			this._nodes[i]=[];
+			for (var j=0;j < this._numRows;j++){
+				this._nodes[i][j]=new Node$1(i,j);
+			}
+		}
+	}
+
+	__class(Grid,'engine.scene.astar.Grid');
+	var __proto=Grid.prototype;
+	/**
+	*释放销毁
+	*
+	*/
+	__proto.dispose=function(){
+		this._startNode=null;
+		this._endNode=null;
+		for (var i=0;i < this._numCols;i++){
+			for (var j=0;j < this._numRows;j++){
+				(this._nodes[i] [j]).dispose();
+			}
+		}
+		this._nodes=null;
+		this._firstFind=true;
+	}
+
+	/**
+	*
+	*@param type 0八方向 1四方向 2跳棋
+	*/
+	__proto.calculateLinks=function(linklinesHash,type){
+		(type===void 0)&& (type=0);
+		this.type=type;
+		for (var i=0;i < this._numCols;i++){
+			for (var j=0;j < this._numRows;j++){
+				this.initNodeLink(this._nodes[i][j],type,linklinesHash.get(i *10000+j));
+			}
+		}
+	}
+
+	__proto.getType=function(){
+		return this.type;
+	}
+
+	/**
+	*
+	*@param node
+	*@param type 0八方向 1四方向 2跳棋
+	*/
+	__proto.initNodeLink=function(node,type,linklines){
+		var startX=Math.max(0,node.x-1);
+		var endX=Math.min(this.numCols-1,node.x+1);
+		var startY=Math.max(0,node.y-1);
+		var endY=Math.min(this.numRows-1,node.y+1);
+		node.links=[];
+		for (var i=startX;i <=endX;i++){
+			for (var j=startY;j <=endY;j++){
+				var test=this.getNode(i,j);
+				if (test==node || !test.walkable){
+					continue ;
+				}
+				if (type !=2 && i !=node.x && j !=node.y){
+					var test2=this.getNode(node.x,j);
+					if (!test2.walkable){
+						continue ;
+					}
+					test2=this.getNode(i,node.y);
+					if (!test2.walkable){
+						continue ;
+					}
+				};
+				var cost=this._straightCost;
+				if (!((node.x==test.x)|| (node.y==test.y))){
+					if (type==1){
+						continue ;
+					}
+					if (type==2 && (node.x-test.x)*(node.y-test.y)==1){
+						continue ;
+					}
+					if (type==2){
+						cost=this._straightCost;
+					}
+					else{
+						cost=this._diagCost;
+					}
+				}
+				node.links.push(new Link(test,cost));
+			}
+		}
+		if (linklines !=null){
+			for (var m=0;m < linklines.length;++m){
+				var lpt=linklines[m];
+				var testl=this.getNode(lpt.point.x,lpt.point.y);
+				if (testl==node || !testl.walkable){
+					continue ;
+				}
+				node.links.push(new Link(testl,this._diagCost *2));
+			}
+		}
+	}
+
+	__proto.getNode=function(x,y){
+		return this._nodes[x][y];
+	}
+
+	__proto.setEndNode=function(x,y){
+		this._endNode=this._nodes[x][y];
+	}
+
+	__proto.setStartNode=function(x,y){
+		this._startNode=this._nodes[x][y];
+		if (this._firstFind){
+			this.findReachableNode(x,y);
+			this._firstFind=false;
+		}
+	}
+
+	__proto.setWalkable=function(x,y,value){
+		this._nodes[x][y].walkable=value;
+	}
+
+	__proto.setDyWalkable=function(x,y,value){
+		this._nodes[x][y].dyWalkable=value;
+	}
+
+	__proto.setWalkbleFunc=function(x,y,value){
+		this._nodes[x][y].walkbaleFunc=value;
+	}
+
+	__proto.setCheckMonster=function(x,y,value){
+		this._nodes[x][y].isCheckMonster=value;
+	}
+
+	__proto.setCheckPlayer=function(x,y,value){
+		this._nodes[x][y].isCheckPlayer=value;
+	}
+
+	/**
+	*当终点不可移动时寻找一个离原终点最近的可移动点来替代之
+	*@param fromNode
+	*@param toNode
+	*@param useBuriedDepth
+	*@return
+	*
+	*/
+	__proto.findReplacer=function(fromNode,toNode,useBuriedDepth){
+		var result=null;
+		if(toNode.walkable && (toNode.nodeType==fromNode.nodeType)){
+			result=toNode;
+		}
+		else{
+			if(toNode.buriedDepth==-1 && useBuriedDepth){
+				toNode.buriedDepth=this.getNodeBuriedDepth(toNode,Math.max(this._numCols,this._numRows));
+			};
+			var offset=(useBuriedDepth)? toNode.buriedDepth :10;
+			var xFrom=toNode.x-offset < 0 ? 0 :toNode.x-offset;
+			var xTo=toNode.x+offset > this.numCols-1 ? this.numCols-1 :toNode.x+offset;
+			var yFrom=toNode.y-offset < 0 ? 0 :toNode.y-offset;
+			var yTo=toNode.y+offset > this.numRows-1 ? this.numRows-1 :toNode.y+offset;
+			var n;
+			for(var i=xFrom;i<=xTo;i++){
+				for(var j=yFrom;j<=yTo;j++){
+					if((i>xFrom && i<xTo)&& (j>yFrom && j<yTo)&& useBuriedDepth){
+						continue ;
+					}
+					n=this.getNode(i,j);
+					if(n.walkable && (n.nodeType==fromNode.nodeType)){
+						n.distance=n.getDistanceTo(toNode);
+						if(result==null){
+							result=n;
+						}
+						if(n.distance < result.distance){
+							result=n;
+						}
+					}
+				}
+			}
+		}
+		return result;
+	}
+
+	/**计算一个节点的埋葬深度
+	*@param node 欲计算深度的节点
+	*@param loopCount 计算深度时遍历此节点外围圈数。默认值为10
+	*
+	*/
+	__proto.getNodeBuriedDepth=function(node,loopCount){
+		(loopCount===void 0)&& (loopCount=10);
+		var result=node.walkable ? 0 :1;
+		var l=1;
+		while(l <=loopCount){
+			var startX=node.x-l < 0 ? 0 :node.x-l;
+			var endX=node.x+l > this.numCols-1 ? this.numCols-1 :node.x+l;
+			var startY=node.y-l < 0 ? 0 :node.y-l;
+			var endY=node.y+l > this.numRows-1 ? this.numRows-1 :node.y+l;
+			var n;
+			for(var i=startX;i <=endX;i++){
+				for(var j=startY;j <=endY;j++){
+					n=this.getNode(i,j);
+					if(n !=node && n.walkable){
+						return result;
+					}
+				}
+			}
+			result++;
+			l++;
+		}
+		return result;
+	}
+
+	/**
+	*寻找可到达点，必须保证传进来的点是可到达的
+	*@param x
+	*@param y
+	*
+	*/
+	__proto.findReachableNode=function(x,y){
+		if (x < 0 || x > this.numCols || y < 0 || y > this.numRows)
+			return;
+		var node=this.getNode(x,y);
+		if (!node.walkable)
+			return;
+		var dealList=[];
+		dealList.push(node);
+		node.nodeType=1;
+		while (dealList.length > 0){
+			var dealNode=dealList.shift();
+			var startX=Math.max(0,dealNode.x-1);
+			var endX=Math.min(this.numCols-1,dealNode.x+1);
+			var startY=Math.max(0,dealNode.y-1);
+			var endY=Math.min(this.numRows-1,dealNode.y+1);
+			for (var i=startX;i <=endX;i++){
+				for (var j=startY;j <=endY;j++){
+					if (dealNode.x !=i && dealNode.y !=j)
+						continue ;
+					var findNode=this.getNode(i,j);
+					if (findNode.walkable && (findNode.nodeType==2)){
+						findNode.nodeType=1;
+						dealList.push(findNode);
+					}
+				}
+			}
+		}
+	}
+
+	__getset(0,__proto,'numRows',function(){
+		return this._numRows;
+	});
+
+	__getset(0,__proto,'endNode',function(){
+		return this._endNode;
+	});
+
+	__getset(0,__proto,'numCols',function(){
+		return this._numCols;
+	});
+
+	__getset(0,__proto,'startNode',function(){
+		return this._startNode;
+	});
+
+	return Grid;
+})()
+
+
+//class engine.base.define.MDirection
+var MDirection=(function(){
+	function MDirection(){}
+	__class(MDirection,'engine.base.define.MDirection');
+	MDirection.IsValid=function(dir){
+		return (dir >=0 && dir <=7);
+	}
+
+	MDirection.ValidDir=function(dir,fixdir){
+		(fixdir===void 0)&& (fixdir=0);
+		if (dir >=0 && dir <=7)
+			return dir;
+		return fixdir;
+	}
+
+	MDirection.GetObDir=function(dir){
+		return (dir+4)% 8;
+	}
+
+	MDirection.RandomDir=function(){
+		return Math.random()*8;
+	}
+
+	MDirection.GetDirOff=function(dir1,dir2){
+		var off=dir2-dir1;
+		if (off > 4){
+			off-=8;
+		}
+		if (off <-4){
+			off+=8;
+		}
+		return off;
+	}
+
+	MDirection.GetOffDir=function(dir,off){
+		if (MDirection.IsValid(dir)==false)
+			return MDirection.NONE;
+		off %=8;
+		return (dir+off+8)% 8;
+	}
+
+	MDirection.ToAngle=function(dir){
+		if (dir==0)
+			return 0;
+		else if (dir==1)
+		return 45;
+		else if (dir==2)
+		return 90;
+		else if (dir==3)
+		return 135;
+		else if (dir==4)
+		return 180;
+		else if (dir==5)
+		return 225;
+		else if (dir==6)
+		return 270;
+		else if (dir==7)
+		return 315;
+		return 0;
+	}
+
+	MDirection.GetDir=function(sx,sy,ex,ey){
+		var xoff=sx-ex;
+		var yoff=sy-ey;
+		if (xoff==0 && yoff==0)
+			return MDirection.NONE;
+		if (xoff==0){
+			if (yoff > 0)
+				return 0;
+			else
+			return 4;
+		}
+		else if (xoff < 0){
+			if (yoff > 0)
+				return 1;
+			else if (yoff < 0)
+			return 3;
+			else
+			return 2;
+		}
+		else if (xoff > 0){
+			if (yoff > 0)
+				return 7;
+			else if (yoff < 0)
+			return 5;
+			else
+			return 6;
+		}
+		return MDirection.NONE;
+	}
+
+	MDirection.DirToNormalVector=function(dir){
+		switch (dir){
+			case 0:return new Point$1(0,1);
+			case 1:return new Point$1(1,1);
+			case 2:return new Point$1(1,0);
+			case 3:return new Point$1(1,-1);
+			case 4:return new Point$1(0,-1);
+			case 5:return new Point$1(-1,-1);
+			case 6:return new Point$1(-1,0);
+			case 7:return new Point$1(-1,1);
+			default :return new Point$1(0,0);
+			}
+	}
+
+	MDirection.NUM=8;
+	MDirection.NONE=-1;
+	MDirection.UP=0;
+	MDirection.RIGHT_UP=1;
+	MDirection.RIGHT=2;
+	MDirection.RIGHT_DOWN=3;
+	MDirection.DOWN=4;
+	MDirection.LEFT_DOWN=5;
+	MDirection.LEFT=6;
+	MDirection.LEFT_UP=7;
+	__static(MDirection,
+	['VIRDIR_5',function(){return this.VIRDIR_5=[ 0,1,2,3,4,3,2,1];},'VIRDIR_2',function(){return this.VIRDIR_2=[0,0,0,0,0,1,1,1];},'VIRDIR_1',function(){return this.VIRDIR_1=[0,0,0,0,0,0,0,0];}
+	]);
+	return MDirection;
+})()
+
+
+/**
+*动画资源释放逻辑
+*序列帧
+*/
+//class engine.res.MSheetAnimationGC
+var MSheetAnimationGC=(function(){
+	function MSheetAnimationGC(){
+		// 重置游戏时间，（这个机制用于清楚各种为释放的内存和内存泄露问题。。。。）
+		this.resetGameTime=30 *60 *1000;
+		this._checkRestTime=0;
+		this._refAniMap=new Dictionary();
+		this._refKeyTimeMap=new Object();
+		this._gcProxy=new MAnimationGCProxy();
+	}
+
+	__class(MSheetAnimationGC,'engine.res.MSheetAnimationGC');
+	var __proto=MSheetAnimationGC.prototype;
+	__proto.StartCheckGC=function(){
+		Laya.timer.loop(MSheetAnimationGC.GC_CHECK_TIME,this,this.OnFrame);
+		this._checkRestTime=ToolBase.GetTimer();
+	}
+
+	__proto.DelForeverRes=function(url){
+		this._gcProxy.DelForever(url);
+	}
+
+	__proto.RegisterForeverRes=function(url){
+		this._gcProxy.RegisterForever(url);
+	}
+
+	__proto.RegisterTypeId=function(oldtype,oldid,oldExtra,type,id,extra){
+		this._gcProxy.RegisterTypeId(oldtype,oldid,oldExtra,type,id,extra);
+	}
+
+	/**
+	*引用一个IAnimationRes
+	*/
+	__proto.RefAni=function(anim){
+		this._refAniMap.set(anim,ToolBase.GetTimer());
+	}
+
+	/**
+	*释放一个IAnimationRes的引用
+	*/
+	__proto.FreeAni=function(anim){
+		this._refAniMap.remove(anim);
+	}
+
+	/**
+	*刷新一个动画资源的引用时间
+	*/
+	__proto.RefKey=function(key){
+		this._refKeyTimeMap[key]=ToolBase.GetTimer();
+	}
+
+	__proto.OnFrame=function(){
+		var value=Resource.gpuMemory;
+		if (Math.floor(value / (1024 *1024)*100)/ 100 > MSheetAnimationGC.MEMORY_THRESHOLD){
+			this.DoGC();
+			MTempletManager.Ins.DoGC(this._gcProxy);
+			CallbackUtil.callbackOutGC && CallbackUtil.callbackOutGC();
+		}
+	}
+
+	__proto.checkResetTime=function(){
+		if (Browser.window["conchConfig"] !=null){
+			var config=Browser.window["conchConfig"];
+			var totalMem=config.getTotalMem();
+			if (totalMem < 1048576){
+				console.log("===cgc level 0.");
+			}
+			else if (totalMem > 1048576 && totalMem <=2097152){
+				this.resetGameTime=35 *60 *1000;
+				console.log("===cgc level 1.");
+			}
+			else if (totalMem > 2097152 && totalMem <=3145728){
+				this.resetGameTime=45 *60 *1000;
+				console.log("===cgc level 2.");
+			}
+			else{
+				this.resetGameTime=60 *60 *1000;
+				console.log("===cgc level 3.");
+			}
+		}
+	}
+
+	// 是否可以重置释放了
+	__proto.isResetGame=function(){
+		if ((ToolBase.GetTimer()-this._checkRestTime)> this.resetGameTime && Browser.onAndroid){
+			return true;
+		}
+		return false;
+	}
+
+	__proto.DoGC=function(){
+		var refKey={};
+		var key;
+		var keys=this._refAniMap.keys;
+		for (var i=0;i < keys.length;++i){
+			var anim=keys[i];
+			key=anim.loadingkey;
+			if (key==null)continue ;
+			var refDir=refKey[key];
+			if (refDir==null)
+				refKey[key]=[anim.renderDir];
+			else{
+				if (refDir.indexOf(anim.renderDir)==-1)
+					refDir.push(anim.renderDir);
+			}
+		};
+		var animMgr=MSheetAnimationMgr.Ins;
+		var packs=animMgr.sheetPackMap;
+		var gcProx=this._gcProxy;
+		var log="MSheetAnimationGC  do gc:\r\n";
+		for (var key in packs){
+			if (gcProx.IsCanRelease(key,true)){
+				var refDir=refKey[key];
+				var pack=packs[key];
+				log+=pack.releaseMem(refDir);
+			}
+		}
+		console.log(log);
+	}
+
+	/**
+	*动画数量
+	*2d_3d
+	*/
+	__proto.GetMAnimationCount=function(){
+		var arr=this._refAniMap.keys;
+		var d2=0;
+		var d3=0;
+		for (var i=0;i < arr.length;++i){
+			if ((arr [i]).resPackType==1)
+				d2++;
+			else
+			d3++;
+		}
+		return d2+"_"+d3;
+	}
+
+	MSheetAnimationGC.GC_CHECK_TIME=5 *60 *1000;
+	MSheetAnimationGC.MEMORY_THRESHOLD=350;
+	__static(MSheetAnimationGC,
+	['Ins',function(){return this.Ins=new MSheetAnimationGC();}
+	]);
+	return MSheetAnimationGC;
+})()
+
+
+/**
+*地图图片层信息
+*@author Administrator
+*
+*/
+//class engine.scene.data.ChunkLayerData
+var ChunkLayerData=(function(){
+	function ChunkLayerData(){
+		this.layerType=0;
+		this.pixw=0;
+		this.pixh=0;
+		this.sizew=0;
+		this.sizeh=0;
+		this.numw=0;
+		this.numh=0;
+		this.tileFlags=null;
+		ObjectRecord.rcd(this);
+	}
+
+	__class(ChunkLayerData,'engine.scene.data.ChunkLayerData');
+	var __proto=ChunkLayerData.prototype;
+	__proto.ReadData=function(bytes){
+		var m=0;
+		var n=0;
+		this.layerType=bytes.readByte();
+		this.pixw=bytes.readInt();
+		this.pixh=bytes.readInt();
+		this.sizew=bytes.readShort();
+		this.sizeh=bytes.readShort();
+		this.numw=bytes.readShort();
+		this.numh=bytes.readShort();
+		this.tileFlags=new Array(this.numw *this.numh);
+		for (m=0;m < this.numh;++m){
+			for (n=0;n < this.numw;++n){
+				this.tileFlags[m *this.numw+n]=bytes.readInt();
+			}
+		}
+	}
+
+	return ChunkLayerData;
+})()
+
+
+//class engine.battle.move.EnumBattleMoveType
+var EnumBattleMoveType=(function(){
+	function EnumBattleMoveType(){}
+	__class(EnumBattleMoveType,'engine.battle.move.EnumBattleMoveType');
+	EnumBattleMoveType.NONE=0;
+	EnumBattleMoveType.RUN=1;
+	EnumBattleMoveType.JUMP=2;
+	EnumBattleMoveType.JUMP_DIE=3;
+	return EnumBattleMoveType;
+})()
+
+
+//class engine.base.pool.spool.SimplePool
+var SimplePool=(function(){
+	function SimplePool(){}
+	__class(SimplePool,'engine.base.pool.spool.SimplePool');
+	SimplePool.recover=function(obj){
+		Pool.recover((obj).__className,obj);
+		obj.clear();
+	}
+
+	SimplePool.getItem=function(cls){
+		return Pool.getItemByClass(cls.__className,cls);
+	}
+
+	SimplePool.inPool=function(obj){
+		return obj["__InPool"]==true;
+	}
+
+	return SimplePool;
+})()
+
+
+/**
+*地图数据元信息
+*地图数据包含各种各样的东西，统一这里解析出元数据，便于不同模块间使用
+*@author Administrator
+*
+*/
+//class engine.scene.data.MMapMetaData
+var MMapMetaData=(function(){
+	function MMapMetaData(){
+		// 坠崖方向配置
+		this.mapresid=0;
+		this.sceneWidth=0;
+		this.sceneHeight=0;
+		this.blockDatas=null;
+		this.alphaDatas=null;
+		this.jumpDatas=null;
+		this.safeDatas=null;
+		this.effDatas=null;
+		this.disData=null;
+		this.mapTopCoverData=null;
+		this.gridsExtra=null;
+		this.effectData=null;
+		this.soundData=null;
+		this.mapChunkData=null;
+		this.mapDownhillData=null;
+		this.layerDataGround=null;
+		this.layerDataFar=null;
+		this.downhillDataList=null;
+		this.weatherData=null;
+		this.weatherCreateItv=200;
+		// 远景层移动速度比率
+		this.farLayerMoveSpeedRatio=0;
+		this.topCoverCalcZOffset=new HashMap();
+		this.linkLines=new HashMap();
+	}
+
+	__class(MMapMetaData,'engine.scene.data.MMapMetaData');
+	var __proto=MMapMetaData.prototype;
+	__proto.ParseMapMeta=function(id,bytes){
+		this.mapTopCoverData=null;
+		this.gridsExtra=null;
+		this.effectData=null;
+		this.soundData=null;
+		this.mapChunkData=null;
+		this.mapDownhillData=null;
+		this.blockDatas=null;
+		this.alphaDatas=null;
+		this.jumpDatas=null;
+		this.safeDatas=null;
+		this.effDatas=null;
+		this.disData=null;
+		this.mapresid=id;
+		this.sceneWidth=0;
+		this.sceneHeight=0;
+		bytes.uncompress();
+		bytes.pos=0;
+		var version=bytes.readInt();
+		var mapId=bytes.readInt();
+		var blockLen=bytes.readInt();
+		this.blockDatas=new ByteArray();
+		bytes.readBytes(this.blockDatas,0,blockLen);
+		var alphaLen=bytes.readInt();
+		this.alphaDatas=new ByteArray();
+		bytes.readBytes(this.alphaDatas,0,alphaLen);
+		var safeLen=bytes.readInt();
+		this.safeDatas=new ByteArray();
+		bytes.readBytes(this.safeDatas,0,safeLen);
+		var jumpLen=bytes.readInt();
+		this.jumpDatas=new ByteArray();
+		bytes.readBytes(this.jumpDatas,0,jumpLen);
+		var effLen=bytes.readInt();
+		this.effDatas=new ByteArray();
+		bytes.readBytes(this.effDatas,0,effLen);
+		this.disData=null;
+		this.mapTopCoverData=null;
+		var i=0;
+		var dataLen=0;
+		if (version==20141228){
+			while (bytes.bytesAvailable){
+				dataLen=bytes.readInt();
+				var flag=dataLen >> 24;
+				dataLen=dataLen & 0xffffff;
+				if (flag==1){
+					this.gridsExtra=new ByteArray();
+					bytes.readBytes(this.gridsExtra,0,dataLen);
+				}
+				else if (flag==2){
+					this.effectData=new ByteArray();
+					bytes.readBytes(this.effectData,0,dataLen);
+				}
+				else if (flag==3){
+					ToolBase.Log("此地图有音效："+mapId);
+					this.soundData=new ByteArray();
+					bytes.readBytes(this.soundData,0,dataLen);
+				}
+				else if (flag==4){
+					this.disData=new ByteArray();
+					bytes.readBytes(this.disData,0,dataLen);
+				}
+				else if (flag==5){
+					this.mapTopCoverData=new ByteArray();
+					bytes.readBytes(this.mapTopCoverData,0,dataLen);
+				}
+				else if (flag==6){
+					this.mapChunkData=new ByteArray();
+					bytes.readBytes(this.mapChunkData,0,dataLen);
+				}
+				else if (flag==7){
+					this.mapDownhillData=new ByteArray();
+					bytes.readBytes(this.mapDownhillData,0,dataLen);
+				}
+			}
+		}
+		else{
+			if (bytes.bytesAvailable){
+				dataLen=bytes.readInt();
+				if (dataLen !=Number.MAX_VALUE){
+					this.gridsExtra=new ByteArray();
+					bytes.readBytes(this.gridsExtra,0,dataLen *4);
+				}
+				if (bytes.bytesAvailable){
+					dataLen=bytes.readInt();
+					this.effectData=new ByteArray();
+					bytes.readBytes(this.effectData,0,bytes.length-bytes.pos);
+				}
+			}
+		}
+		this.ParseChunkLayerData();
+		this.ParseDownHillData();
+		ToolBase.Log("LoadMap ok id:"+mapId);
+	}
+
+	/**
+	*设置图块描述信息
+	*@param by
+	*
+	// 保存文件（保存到res里面 第一个字节是标志：高8位是flag，低24位是长度）
+	// num(8)层数
+	//------------
+	// npctype(8)0地表 1景深
+	// width(16)图块宽
+	// height(16)图块高
+	// wnum(16)图块水平数量
+	// hnum(16)图块垂直数量
+	//====
+	// chunkflag(8)0x1 是否全透明 0x2 是否全黑
+	//====x width*height
+	//------------x num
+	*
+	*
+	*
+	*/
+	__proto.ParseChunkLayerData=function(){
+		var bytes=this.mapChunkData;
+		bytes.endian="littleEndian";
+		bytes.pos=0;
+		this.layerDataGround=null;
+		this.layerDataFar=null;
+		this.weatherData=null;
+		var tileLayerNum=bytes.readByte();
+		this.sceneWidth=bytes.readInt();
+		this.sceneHeight=bytes.readInt();
+		for (var i=0;i < tileLayerNum;++i){
+			var d=new ChunkLayerData();
+			d.ReadData(bytes);
+			var weather=new MWeatherAreaData();
+			weather.ReadData(bytes);
+			if (d.layerType==0){
+				this.layerDataGround=d;
+				this.weatherData=weather;
+			}
+			else if (d.layerType==1){
+				this.layerDataFar=d;
+			}
+		}
+	}
+
+	__proto.ParseDownHillData=function(){
+		if (this.mapDownhillData !=null){
+			var bytes=this.mapDownhillData;
+			bytes.endian="littleEndian";
+			bytes.pos=0;
+			this.downhillDataList=[];
+			var len=bytes.readInt();
+			for (var i=0;i < len;++i){
+				this.downhillDataList.push(new MapDownHillData(bytes));
+			}
+		}
+		else{
+			this.downhillDataList=null;
+		}
+	}
+
+	__proto.SetTopCoverCalcZOffset=function(s){
+		this.topCoverCalcZOffset.clear();
+		if (s !=null && s !=""){
+			var arr1=s.split("|");
+			for (var i=0;i < arr1.length;++i){
+				var arr2=arr1[i].split(":");
+				if (arr2.length==2){
+					var arr3=arr2[1].split(",");
+					this.topCoverCalcZOffset.put(arr2[0],new Point$1(parseInt(arr3[0]),parseInt(arr3[1])));
+				}
+			}
+		}
+	}
+
+	__proto.SetLinkLines=function(s){
+		this.linkLines.clear();
+		if (s !=null && s !=""){
+			var arr1=s.split("|");
+			for (var i=0;i < arr1.length;++i){
+				var arr2=arr1[i].split(":");
+				if (arr2.length==2){
+					var arr3=arr2[0].split(",");
+					var pt1=new Point$1(parseInt(arr3[0]),parseInt(arr3[1]));
+					arr3=arr2[1].split(",");
+					var pt2=new Point$1(parseInt(arr3[0]),parseInt(arr3[1]));
+					var k1=pt1.x *10000+pt1.y;
+					var k2=pt2.x *10000+pt2.y;
+					var arr=this.linkLines.get(k1);
+					var lk=null;
+					if (arr==null){
+						arr=[];
+						this.linkLines.put(k1,arr);
+					}
+					arr.push(new AStarLinkLine(pt2,1));
+					arr=this.linkLines.get(k2);
+					if (arr==null){
+						arr=[];
+						this.linkLines.put(k2,arr);
+					}
+					arr.push(new AStarLinkLine(pt1,1));
+				}
+			}
+		}
+	}
+
+	MMapMetaData.CHUNK_TYPE_GROUND=0;
+	MMapMetaData.CHUNK_TYPE_FAR=1;
+	MMapMetaData.CHUNK_FLAG_ALL_ALPHA=0x1;
+	MMapMetaData.CHUNK_FLAG_ALL_NO_ALPHA=0x2;
+	MMapMetaData.CHUNK_FLAG_ALL_BLACK=0x4;
+	MMapMetaData.FLAG_SPECIAL=1;
+	MMapMetaData.FLAG_SCENEEFFECT=2;
+	MMapMetaData.FLAG_SCENESOUND=3;
+	MMapMetaData.FLAG_SCENEVIEW=4;
+	MMapMetaData.FLAG_TOPCOVER=5;
+	MMapMetaData.FLAG_CHUNK=6;
+	MMapMetaData.FLAG_DOWNHILL=7;
+	return MMapMetaData;
 })()
 
 
@@ -5523,49 +7380,6 @@ var MapGridData=(function(){
 
 
 /**
-*地图图片层信息
-*@author Administrator
-*
-*/
-//class engine.scene.data.ChunkLayerData
-var ChunkLayerData=(function(){
-	function ChunkLayerData(){
-		this.layerType=0;
-		this.pixw=0;
-		this.pixh=0;
-		this.sizew=0;
-		this.sizeh=0;
-		this.numw=0;
-		this.numh=0;
-		this.tileFlags=null;
-		ObjectRecord.rcd(this);
-	}
-
-	__class(ChunkLayerData,'engine.scene.data.ChunkLayerData');
-	var __proto=ChunkLayerData.prototype;
-	__proto.ReadData=function(bytes){
-		var m=0;
-		var n=0;
-		this.layerType=bytes.readByte();
-		this.pixw=bytes.readInt();
-		this.pixh=bytes.readInt();
-		this.sizew=bytes.readShort();
-		this.sizeh=bytes.readShort();
-		this.numw=bytes.readShort();
-		this.numh=bytes.readShort();
-		this.tileFlags=new Array(this.numw *this.numh);
-		for (m=0;m < this.numh;++m){
-			for (n=0;n < this.numw;++n){
-				this.tileFlags[m *this.numw+n]=bytes.readInt();
-			}
-		}
-	}
-
-	return ChunkLayerData;
-})()
-
-
-/**
 *序列帧动画资源管理
 *最小单位是一个方向的一个动作组
 *@author yq
@@ -5719,1097 +7533,68 @@ var MSheetAnimationMgr=(function(){
 })()
 
 
-/**
-*场景对象移动策略
-*@author Administrator
-*/
-//class engine.scene.move.MoveRule
-var MoveRule=(function(){
-	function MoveRule(){
-		// 控制的主对象
-		this._object=null;
-		this._isDestroyed=false;
-		// 移动的路径列表(数组 ),改数据为简化后数组，只存储关键拐点坐标
-		this._pathList=null;
-		// 上一次执行移动的时间
-		this._lastFrameTime=0;
-		this._runSpeed=0;
-		this._bCache=false;
-		this._curMoveType=0;
-		this._prevMoveType=0;
-		// 移动终点位置
-		this._moveEndPos=null;
-		// 移动初始方向
-		this._moveStartDir=-1;
-		// 移动2点之间的距离
-		this._moveDistance=0;
-		this._movePercent=0;
-		this._curMoveDirection=0;
-		this._directPt=null;
-		this._moveStartPos=new Point$1();
-		ObjectRecord.rcd(this);
+//class engine.scene.obj.MSceneTypeList
+var MSceneTypeList=(function(){
+	function MSceneTypeList(pooltype,type,refList){
+		this._hashList=null;
+		this._pooltype=0;
+		this._cls=null;
+		this._allObjectRefList=null;
+		this._pooltype=pooltype;
+		this._cls=type;
+		this._allObjectRefList=refList;
+		this._hashList=new HashList();
 	}
 
-	__class(MoveRule,'engine.scene.move.MoveRule');
-	var __proto=MoveRule.prototype;
-	Laya.imps(__proto,{"engine.scene.move.IMoveRule":true})
-	__proto.SetData=function(obj){
-		this._object=obj;
-	}
-
-	/**
-	*终止回调
-	*
-	*/
-	__proto.CheckMoveAbort=function(){
-		if (this.curMoveType !=0){
-			this._object.OnMoveAbort(this._moveStartDir,this._curMoveType);
-		}
-	}
-
-	__proto.RunDirect=function(pixX,pixY){
-		if (this._bCache)
-			return;
-		this.CheckMoveAbort();
-		!this._directPt && (this._directPt=new Point$1());
-		this._directPt.setTo(pixX,pixY);
-		this.SetCurMoveType(1000);
-		this._InitPath([this._directPt]);
-		this._lastFrameTime=Laya.timer.currTimer;
-		this._object.OnMoveBegin(this._moveStartDir,this._curMoveType);
-	}
-
-	/**
-	*执行移动路径
-	*参数paths :改数据为简化后数组，只存储关键拐点坐标,单个数据结构为{x :0,y :0 }
-	**/
-	__proto.Run=function(paths){
-		if (this._bCache)
-			return;
-		this.CheckMoveAbort();
-		this.SetCurMoveType(1000);
-		this._InitPath(paths);
-		this._lastFrameTime=Laya.timer.currTimer;
-		this._object.OnMoveBegin(this._moveStartDir,this._curMoveType);
-	}
-
-	//
-	__proto._InitPath=function(paths){
-		var o=this._object;
-		if ((o.decimalPixX | 0)==(paths[0].x | 0)&& (o.decimalPixY | 0)==(paths[0].y | 0)){
-			paths.shift();
-		}
-		if (paths.length==0){
-			return;
-		}
-		this._moveEndPos=paths[paths.length-1];
-		this._moveStartPos.setTo(o.decimalPixX,o.decimalPixY);
-		this._movePercent=0;
-		this._moveStartDir=ToolMap.CalcDirectionSlant(this._moveStartPos,paths[0]);
-		this._curMoveDirection=this._moveStartDir;
-		this._moveDistance=ToolMap.CalcDistance(this._moveStartPos,this._moveEndPos);
-		this._pathList=paths;
-	}
-
-	/**
-	*由上层调用每帧执行一次
-	**/
-	__proto.OnFrame=function(curTime){
-		var diffTime=curTime-this._lastFrameTime;
-		this._lastFrameTime=curTime;
-		if (this._pathList !=null && this._pathList.length > 0){
-			var oldPos=Point$1.TEMP.setTo(this._object.decimalPixX,this._object.decimalPixY);
-			var nextPos=this._pathList[0];
-			var disRemain=Math.sqrt(Math.pow((oldPos.x-nextPos.x),2)+Math.pow((oldPos.y-nextPos.y),2));
-			var curSpeed=this._runSpeed;
-			var dis=diffTime / 1000 *curSpeed;
-			if (this._moveDistance==0)
-				dis=0;
-			var newX=0;
-			var newY=0;
-			var isEnd=false;
-			var radius=0;
-			if (dis <=disRemain && this._movePercent < 1){
-				radius=Math.atan2(nextPos.y-oldPos.y,nextPos.x-oldPos.x);
-				newX=oldPos.x+dis *Math.cos(radius);
-				newY=oldPos.y+dis *Math.sin(radius);
+	__class(MSceneTypeList,'engine.scene.obj.MSceneTypeList');
+	var __proto=MSceneTypeList.prototype;
+	__proto.RemoveSceneObject=function(key){
+		var o=this._hashList.Remove(key);
+		if (o !=null){
+			var or=this._allObjectRefList.Remove(key);
+			if (or !=o){
+				ToolBase.LogError("MSceneTypeList remove but (or != o)");
 			}
-			else{
-				var oldNext=this._pathList.shift();
-				if (this._pathList.length==0){
-					newX=oldNext.x;
-					newY=oldNext.y;
-					isEnd=true;
-				}
-				else{
-					dis=disRemain;
-					nextPos=this._pathList[0];
-					radius=Math.atan2(nextPos.y-oldNext.y,nextPos.x-oldNext.x);
-					newX=oldNext.x+dis *Math.cos(radius);
-					newY=oldNext.y+dis *Math.sin(radius);
-					this._curMoveDirection=ToolMap.CalcDirSlant(newX,newY,nextPos.x,nextPos.y);
-					this._object.OnMoveBegin(this._curMoveDirection,this._curMoveType);
+			o.destroy();
+		}
+	}
+
+	__proto.RemoveAllSceneObject=function(){
+		var so=null;
+		var list=this._hashList.Clear();
+		var len=list.length;
+		for (var i=0;i < len;++i){
+			so=list[i];
+			if (this._allObjectRefList !=null){
+				var rso=this._allObjectRefList.Remove(so.gid);
+				if (rso !=so){
+					ToolBase.LogError("MSceneTypeList removeAll but (rso != o)");
 				}
 			}
-			this.SetNewObjectPos(newX,newY);
-			var movedleaveDis=ToolMap.CalcDistance(oldPos,this._moveEndPos);
-			if (this._moveDistance !=0){
-				this._movePercent=Math.abs(this._moveDistance-movedleaveDis)/ this._moveDistance;
-			}
-			if (this._movePercent > 1)
-				this._movePercent=1;
-			if (isEnd){
-				this.MoveEnd();
-			}
+			so.destroy();
 		}
 	}
 
-	/**
-	*设置对象像素位置
-	*@param x
-	*@param y
-	*/
-	__proto.SetNewObjectPos=function(x,y){
-		x=Math.round(x);
-		y=Math.round(y);
-		var o=this._object;
-		var ox=o.gridX;
-		var oy=o.gridY;
-		o.SetPixPt(x,y);
-		var nx=o.gridX;
-		var ny=o.gridY;
-		if (ox !=nx || oy !=ny){
-			o.OnMoveEnterGrid(ox,oy);
+	__proto.GetCreateSceneObject=function(key){
+		var ret=this._hashList.Get(key);
+		if (ret==null){
+			ret=new this._cls();
+			ret.pooltype=this._pooltype;
+			this._hashList.Add(key,ret);
+			this._allObjectRefList.Add(key,ret);
 		}
+		return ret;
 	}
 
-	__proto.IsMoving=function(){
-		return (this._pathList !=null);
-	}
-
-	__proto.Clear=function(){
-		this._moveStartDir=0;
-		this._curMoveDirection=0;
-		this._moveDistance=0;
-		this.SetCurMoveType(0);
-		this._pathList=null;
-		this._lastFrameTime=0;
-		this._moveEndPos=null;
-		this._movePercent=0;
-	}
-
-	__proto.OnRecycle=function(){
-		this.Clear();
-		this._bCache=true;
-	}
-
-	__proto.OnRevert=function(){
-		this._bCache=false;
-	}
-
-	__proto.StopMove=function(){
-		this.MoveEnd();
-	}
-
-	__proto.MoveEnd=function(){
-		var beforeactiontype=this._curMoveType;
-		if (beforeactiontype !=0){
-			this.Clear();
-			if (this._object !=null){
-				this._object.OnMoveEnd(-1,beforeactiontype);
-			}
-		}
-	}
-
-	/**
-	*设置移动策略速度，各种速度的设置
-	*@param speed
-	*/
-	__proto.SetMoveSpeed=function(runspeed){
-		this._runSpeed=runspeed;
-	}
-
-	__proto.SetCurMoveType=function(type){
-		this._prevMoveType=this._curMoveType;
-		this._curMoveType=type;
-	}
-
-	__proto.destroy=function(destroyChild){
-		(destroyChild===void 0)&& (destroyChild=true);
-		this.Clear();
-		this._isDestroyed=true;
-	}
-
-	__getset(0,__proto,'isDestroyed',function(){
-		return this._isDestroyed;
+	__getset(0,__proto,'hashList',function(){
+		return this._hashList;
 	});
 
-	__getset(0,__proto,'curMoveType',function(){
-		return this._curMoveType;
+	__getset(0,__proto,'pooltype',function(){
+		return this._pooltype;
 	});
 
-	__getset(0,__proto,'curMoveDirection',function(){
-		return this._curMoveDirection;
-	});
-
-	return MoveRule;
-})()
-
-
-//class engine.base.pool.spool.SimplePool
-var SimplePool=(function(){
-	function SimplePool(){}
-	__class(SimplePool,'engine.base.pool.spool.SimplePool');
-	SimplePool.recover=function(obj){
-		Pool.recover((obj).__className,obj);
-		obj.clear();
-	}
-
-	SimplePool.getItem=function(cls){
-		return Pool.getItemByClass(cls.__className,cls);
-	}
-
-	SimplePool.inPool=function(obj){
-		return obj["__InPool"]==true;
-	}
-
-	return SimplePool;
-})()
-
-
-/**
-*动画包加载
-*/
-//class engine.loaders.MAnimationLoader
-var MAnimationLoader=(function(){
-	function MAnimationLoader(){
-		MAnimationLoader.Ins=this;
-	}
-
-	__class(MAnimationLoader,'engine.loaders.MAnimationLoader');
-	var __proto=MAnimationLoader.prototype;
-	__proto.GetDataName=function(compress){
-		var bin="data.bin";
-		if (compress){
-			bin=Browser.onAndroid ? "etc.bin" :"pvr.bin";
-		}
-		return bin;
-	}
-
-	__proto.GetDirName=function(compress,dir){
-		var ret;
-		if (compress){
-			ret=Browser.onAndroid ? "etcdir"+dir :"pvrdir"+dir;
-			ret+=".bin";
-			}else{
-			ret="dir"+dir+".png";
-		}
-		return ret;
-	}
-
-	// 加载图包描述文件
-	__proto.LoadBin=function(path,complete,loadalldir){
-		(loadalldir===void 0)&& (loadalldir=false);
-		var compress=CallbackUtil.callbackUseCompressTexture==null || CallbackUtil.callbackUseCompressTexture(path);
-		compress=compress && (!Browser.onWeiXin && (WebGLContext._compressedTextureEtc1 !=null || WebGLContext._compressedTexturePvrtc !=null));
-		var bin=this.GetDataName(compress);
-		var url=MAnimationUtil.ROOT_URL+path+"/"+bin;
-		Laya.loader.load(url,Handler.create(this,this.OnBinLoaded,[compress,url,path,complete,loadalldir]),null,"arraybuffer",1,false);
-	}
-
-	__proto.OnBinLoaded=function(compress,url,path,complete,loadalldir,content){
-		var pack=new MSheetResPack();
-		if (content==null){
-			complete && complete.runWith(null);
-			return;
-		}
-		pack.compressTex=compress;
-		pack.url=url;
-		pack.path=path;
-		pack.Parse(content);
-		if (loadalldir){
-			pack.LoadAllTexture(complete);
-			}else{
-			complete && complete.runWith(pack);
-		}
-	}
-
-	// 加载图集资源
-	__proto.LoadTexture=function(compress,path,dir,complete){
-		var bin=this.GetDirName(compress,dir);
-		var url=MAnimationUtil.ROOT_URL+path+"/"+bin;
-		Laya.loader.load(url,Handler.create(this,this.OnTextureLoaded,[compress,url,path,dir,complete]),null,compress ? "arraybuffer" :null,1,!compress);
-	}
-
-	// trace(Browser.now()+",检查加载资源问题，MAnimationLoader==>LoadTexture,加载资源结束路劲URl："+url);
-	__proto.OnTextureLoaded=function(compress,url,path,dir,complete,content){
-		if (content){
-			if (compress){
-				var tex=this.ParseCompressTex(url,content);
-				complete && complete.runWith(tex);
-			}
-			else{
-				complete && complete.runWith(content);
-			}
-		}
-		else{
-			complete && complete.runWith(null);
-		}
-	}
-
-	// trace(Browser.now()+",检查加载资源问题，MAnimationLoader==>OnTextureLoaded,加载资源完成路劲URl："+url);
-	__proto.ParseCompressTex=function(url,content){
-		var startTime=Browser.now();
-		var bytes=new Byte(content);
-		var len=bytes.getInt32();
-		var color=bytes.getUint8Array(bytes.pos,len);
-		len=bytes.getInt32();
-		var alpha=bytes.getUint8Array(bytes.pos,len);
-		var format=Browser.onAndroid ? 5 :11;
-		var image=HTMLImage.create(0,0,format);
-		image.setCompressData(color.buffer);
-		image._setCreateURL(url);
-		var texColor=new Texture(image);
-		var image=HTMLImage.create(0,0,format);
-		image.setCompressData(alpha.buffer);
-		image._setCreateURL(url);
-		var texAlpha=new Texture(image);
-		texColor.alphaMask=texAlpha;
-		bytes.clear();
-		var endTime=Browser.now();
-		var csTime=(startTime-endTime);
-		if(csTime > 5){}
-			return texColor;
-	}
-
-	__static(MAnimationLoader,
-	['Ins',function(){return this.Ins=new MAnimationLoader();}
-	]);
-	return MAnimationLoader;
-})()
-
-
-/**
-*地图数据元信息
-*地图数据包含各种各样的东西，统一这里解析出元数据，便于不同模块间使用
-*@author Administrator
-*
-*/
-//class engine.scene.data.MMapMetaData
-var MMapMetaData=(function(){
-	function MMapMetaData(){
-		// 坠崖方向配置
-		this.mapresid=0;
-		this.sceneWidth=0;
-		this.sceneHeight=0;
-		this.blockDatas=null;
-		this.alphaDatas=null;
-		this.jumpDatas=null;
-		this.safeDatas=null;
-		this.effDatas=null;
-		this.disData=null;
-		this.mapTopCoverData=null;
-		this.gridsExtra=null;
-		this.effectData=null;
-		this.soundData=null;
-		this.mapChunkData=null;
-		this.mapDownhillData=null;
-		this.layerDataGround=null;
-		this.layerDataFar=null;
-		this.downhillDataList=null;
-		this.weatherData=null;
-		this.weatherCreateItv=200;
-		// 远景层移动速度比率
-		this.farLayerMoveSpeedRatio=0;
-		this.topCoverCalcZOffset=new HashMap();
-		this.linkLines=new HashMap();
-	}
-
-	__class(MMapMetaData,'engine.scene.data.MMapMetaData');
-	var __proto=MMapMetaData.prototype;
-	__proto.ParseMapMeta=function(id,bytes){
-		this.mapTopCoverData=null;
-		this.gridsExtra=null;
-		this.effectData=null;
-		this.soundData=null;
-		this.mapChunkData=null;
-		this.mapDownhillData=null;
-		this.blockDatas=null;
-		this.alphaDatas=null;
-		this.jumpDatas=null;
-		this.safeDatas=null;
-		this.effDatas=null;
-		this.disData=null;
-		this.mapresid=id;
-		this.sceneWidth=0;
-		this.sceneHeight=0;
-		bytes.uncompress();
-		bytes.pos=0;
-		var version=bytes.readInt();
-		var mapId=bytes.readInt();
-		var blockLen=bytes.readInt();
-		this.blockDatas=new ByteArray();
-		bytes.readBytes(this.blockDatas,0,blockLen);
-		var alphaLen=bytes.readInt();
-		this.alphaDatas=new ByteArray();
-		bytes.readBytes(this.alphaDatas,0,alphaLen);
-		var safeLen=bytes.readInt();
-		this.safeDatas=new ByteArray();
-		bytes.readBytes(this.safeDatas,0,safeLen);
-		var jumpLen=bytes.readInt();
-		this.jumpDatas=new ByteArray();
-		bytes.readBytes(this.jumpDatas,0,jumpLen);
-		var effLen=bytes.readInt();
-		this.effDatas=new ByteArray();
-		bytes.readBytes(this.effDatas,0,effLen);
-		this.disData=null;
-		this.mapTopCoverData=null;
-		var i=0;
-		var dataLen=0;
-		if (version==20141228){
-			while (bytes.bytesAvailable){
-				dataLen=bytes.readInt();
-				var flag=dataLen >> 24;
-				dataLen=dataLen & 0xffffff;
-				if (flag==1){
-					this.gridsExtra=new ByteArray();
-					bytes.readBytes(this.gridsExtra,0,dataLen);
-				}
-				else if (flag==2){
-					this.effectData=new ByteArray();
-					bytes.readBytes(this.effectData,0,dataLen);
-				}
-				else if (flag==3){
-					ToolBase.Log("此地图有音效："+mapId);
-					this.soundData=new ByteArray();
-					bytes.readBytes(this.soundData,0,dataLen);
-				}
-				else if (flag==4){
-					this.disData=new ByteArray();
-					bytes.readBytes(this.disData,0,dataLen);
-				}
-				else if (flag==5){
-					this.mapTopCoverData=new ByteArray();
-					bytes.readBytes(this.mapTopCoverData,0,dataLen);
-				}
-				else if (flag==6){
-					this.mapChunkData=new ByteArray();
-					bytes.readBytes(this.mapChunkData,0,dataLen);
-				}
-				else if (flag==7){
-					this.mapDownhillData=new ByteArray();
-					bytes.readBytes(this.mapDownhillData,0,dataLen);
-				}
-			}
-		}
-		else{
-			if (bytes.bytesAvailable){
-				dataLen=bytes.readInt();
-				if (dataLen !=Number.MAX_VALUE){
-					this.gridsExtra=new ByteArray();
-					bytes.readBytes(this.gridsExtra,0,dataLen *4);
-				}
-				if (bytes.bytesAvailable){
-					dataLen=bytes.readInt();
-					this.effectData=new ByteArray();
-					bytes.readBytes(this.effectData,0,bytes.length-bytes.pos);
-				}
-			}
-		}
-		this.ParseChunkLayerData();
-		this.ParseDownHillData();
-		ToolBase.Log("LoadMap ok id:"+mapId);
-	}
-
-	/**
-	*设置图块描述信息
-	*@param by
-	*
-	// 保存文件（保存到res里面 第一个字节是标志：高8位是flag，低24位是长度）
-	// num(8)层数
-	//------------
-	// npctype(8)0地表 1景深
-	// width(16)图块宽
-	// height(16)图块高
-	// wnum(16)图块水平数量
-	// hnum(16)图块垂直数量
-	//====
-	// chunkflag(8)0x1 是否全透明 0x2 是否全黑
-	//====x width*height
-	//------------x num
-	*
-	*
-	*
-	*/
-	__proto.ParseChunkLayerData=function(){
-		var bytes=this.mapChunkData;
-		bytes.endian="littleEndian";
-		bytes.pos=0;
-		this.layerDataGround=null;
-		this.layerDataFar=null;
-		this.weatherData=null;
-		var tileLayerNum=bytes.readByte();
-		this.sceneWidth=bytes.readInt();
-		this.sceneHeight=bytes.readInt();
-		for (var i=0;i < tileLayerNum;++i){
-			var d=new ChunkLayerData();
-			d.ReadData(bytes);
-			var weather=new MWeatherAreaData();
-			weather.ReadData(bytes);
-			if (d.layerType==0){
-				this.layerDataGround=d;
-				this.weatherData=weather;
-			}
-			else if (d.layerType==1){
-				this.layerDataFar=d;
-			}
-		}
-	}
-
-	__proto.ParseDownHillData=function(){
-		if (this.mapDownhillData !=null){
-			var bytes=this.mapDownhillData;
-			bytes.endian="littleEndian";
-			bytes.pos=0;
-			this.downhillDataList=[];
-			var len=bytes.readInt();
-			for (var i=0;i < len;++i){
-				this.downhillDataList.push(new MapDownHillData(bytes));
-			}
-		}
-		else{
-			this.downhillDataList=null;
-		}
-	}
-
-	__proto.SetTopCoverCalcZOffset=function(s){
-		this.topCoverCalcZOffset.clear();
-		if (s !=null && s !=""){
-			var arr1=s.split("|");
-			for (var i=0;i < arr1.length;++i){
-				var arr2=arr1[i].split(":");
-				if (arr2.length==2){
-					var arr3=arr2[1].split(",");
-					this.topCoverCalcZOffset.put(arr2[0],new Point$1(parseInt(arr3[0]),parseInt(arr3[1])));
-				}
-			}
-		}
-	}
-
-	__proto.SetLinkLines=function(s){
-		this.linkLines.clear();
-		if (s !=null && s !=""){
-			var arr1=s.split("|");
-			for (var i=0;i < arr1.length;++i){
-				var arr2=arr1[i].split(":");
-				if (arr2.length==2){
-					var arr3=arr2[0].split(",");
-					var pt1=new Point$1(parseInt(arr3[0]),parseInt(arr3[1]));
-					arr3=arr2[1].split(",");
-					var pt2=new Point$1(parseInt(arr3[0]),parseInt(arr3[1]));
-					var k1=pt1.x *10000+pt1.y;
-					var k2=pt2.x *10000+pt2.y;
-					var arr=this.linkLines.get(k1);
-					var lk=null;
-					if (arr==null){
-						arr=[];
-						this.linkLines.put(k1,arr);
-					}
-					arr.push(new AStarLinkLine(pt2,1));
-					arr=this.linkLines.get(k2);
-					if (arr==null){
-						arr=[];
-						this.linkLines.put(k2,arr);
-					}
-					arr.push(new AStarLinkLine(pt1,1));
-				}
-			}
-		}
-	}
-
-	MMapMetaData.CHUNK_TYPE_GROUND=0;
-	MMapMetaData.CHUNK_TYPE_FAR=1;
-	MMapMetaData.CHUNK_FLAG_ALL_ALPHA=0x1;
-	MMapMetaData.CHUNK_FLAG_ALL_NO_ALPHA=0x2;
-	MMapMetaData.CHUNK_FLAG_ALL_BLACK=0x4;
-	MMapMetaData.FLAG_SPECIAL=1;
-	MMapMetaData.FLAG_SCENEEFFECT=2;
-	MMapMetaData.FLAG_SCENESOUND=3;
-	MMapMetaData.FLAG_SCENEVIEW=4;
-	MMapMetaData.FLAG_TOPCOVER=5;
-	MMapMetaData.FLAG_CHUNK=6;
-	MMapMetaData.FLAG_DOWNHILL=7;
-	return MMapMetaData;
-})()
-
-
-/**
-*工具，基础对象的生成，判断
-*@author Administrator
-*/
-//class engine.tool.ToolBase
-var ToolBase=(function(){
-	function ToolBase(){}
-	__class(ToolBase,'engine.tool.ToolBase');
-	/**
-	*获取服务器ms
-	*/
-	__getset(1,ToolBase,'serverMTime',function(){
-		if (ToolBase.SERVER_MTIME !=null)
-			return ToolBase.SERVER_MTIME.call();
-		return ToolBase.GetTimer();
-	});
-
-	ToolBase.INT=function(val){
-		return val | 0;
-	}
-
-	ToolBase.GetTimer=function(){
-		var ret=0;
-		ret=new Date().getTime();;
-		return ret;
-	}
-
-	ToolBase.RLog=function(s,t){
-		(t===void 0)&& (t=false);
-		try{
-			ToolBase.Log(s);
-		}
-		catch(e){
-		}
-	}
-
-	ToolBase.Log=function(s){
-		s="["+ToolBase.GetTimer()+"][INFO] "+s;
-		console.log(s);
-	}
-
-	ToolBase.LogError=function(s){
-		if (s==null)
-			return;
-		try{
-			s="["+ToolBase.GetTimer()+"][ERROR] "+s;
-			console.log(s);
-		}
-		catch(e){
-		}
-	}
-
-	ToolBase.LogErrorAndDebug=function(s){
-		if (s==null)
-			return;
-		try{
-			if (ToolBase.isDebug){
-				ToolBase.MessageBox(s);
-			}
-			s=("["+ToolBase.GetTimer()+"][ERROR] "+s);
-			console.log(s);
-		}
-		catch(e){
-		}
-	}
-
-	ToolBase.LogAndDeubgThrow=function(s){
-		if (ToolBase.isDebug)
-			ToolBase.LogThrow(s);
-		else
-		ToolBase.LogError(s);
-	}
-
-	ToolBase.LogThrow=function(s){
-		var str=ToolBase.GetStackTrace(s);
-		ToolBase.LogError(str);
-		throw new Error(s);
-	}
-
-	ToolBase.GetStackTrace=function(pre){
-		var str="";
-		str+="// ==========================================================================\n";
-		str+=pre+"\n"
-		str+=console.trace()+"\n";
-		var caller=arguments.callee.caller;
-		var i=0;
-		str+=("***----------------------------------------  ** "+(i+1))+"\n";
-		while (caller && i < 10){
-			str+=(caller.toString())+"\n";
-			caller=caller.caller;
-			i++;
-			str+=("***---------------------------------------- ** "+(i+1))+"\n";
-		}
-		str+="// ==========================================================================\n";
-		return str;
-	}
-
-	ToolBase.MessageBox=function(s){
-		if (s==null)
-			return;
-		TinyMessageBox.Show(s);
-	}
-
-	ToolBase.Assert=function(v,s){
-		if (v==false)
-			throw new Error(s);
-	}
-
-	ToolBase.GetTimerS=function(){
-		return ToolBase.GetTimer()/ 1000;
-	}
-
-	ToolBase.GetFrameTimerS=function(){
-		return ToolBase.GetTimerS();
-	}
-
-	ToolBase.GetWinWidth=function(){
-		return Laya.stage.width;
-	}
-
-	ToolBase.GetWinHeight=function(){
-		return Laya.stage.height;
-	}
-
-	ToolBase.RandomInt=function(v1,v2){
-		return v1+(Math.random()*(v2-v1)| 0);
-	}
-
-	ToolBase.RandomArray=function(arr){
-		var id=ToolBase.RandomInt(0,arr.length);
-		return arr[id];
-	}
-
-	ToolBase.RandomFloat=function(v1,v2){
-		return v1+Math.random()*(v2-v1);
-	}
-
-	ToolBase.RandomFloat2=function(v1,v2){
-		return v1+Math.random()*(v2+1-v1);
-	}
-
-	ToolBase.RandomBoolean=function(){
-		return Math.random()> 0.5;
-	}
-
-	ToolBase.GetPowOf2Value=function(value){
-		var v=1;
-		while (v < value){
-			v *=2;
-		}
-		return v;
-	}
-
-	ToolBase.ClampFloat=function(value,min,max){
-		value=Math.min(Math.max(value,min),max);
-		if (isNaN(value))
-			value=min;
-		return value;
-	}
-
-	ToolBase.ClampInt=function(value,min,max){
-		return Math.min(Math.max(value,min),max);
-	}
-
-	ToolBase.LerpPoint=function(start,end,per){
-		return new Point$1(start.x+(end.x-start.x)*per,start.y+(end.y-start.y)*per);
-	}
-
-	ToolBase.LerpValue=function(start,end,per){
-		return start+(end-start)*per;
-	}
-
-	ToolBase.DivFloorInt=function(value,mod){
-		var ret=(value / mod);
-		if (value % mod !=0)
-			ret++;
-		return ret;
-	}
-
-	ToolBase.CheckBitMask=function(value,mask){
-		return ((value & mask)!=0);
-	}
-
-	ToolBase.ClearBitMask=function(value,mask){
-		return value &=~mask;
-	}
-
-	ToolBase.AddBitMask=function(value,mask){
-		return value |=mask;
-	}
-
-	ToolBase.SetResRoot=function(animation,ui,sound,effect){
-		ToolBase.ResRootAnimation=animation;
-		ToolBase.ResRootUI=ui;
-		ToolBase.ResRootSound=sound;
-		ToolBase.ResRootEffect=effect;
-		ToolBase.ResPathAnimation=ToolBase.GetResURL(animation);
-		ToolBase.ResPathUI=ToolBase.GetResURL(ui);
-		ToolBase.ResPathSound=ToolBase.GetResURL(sound);
-		ToolBase.ResPathEffect=ToolBase.GetResURL(effect);
-	}
-
-	ToolBase.GetResAnimationURL=function(path){
-		if (path.charAt(0)=="/")
-			return ToolBase.ResPathAnimation+path;
-		return ToolBase.ResPathAnimation+"/"+path;
-	}
-
-	ToolBase.GetResUIURL=function(path){
-		if(path==null || path=="")
-			return ToolBase.ResPathUI;
-		else if (path.charAt(0)=="/")
-		return ToolBase.ResPathUI+path;
-		return ToolBase.ResPathUI+"/"+path;
-	}
-
-	ToolBase.GetResSoundURL=function(path){
-		if (path.charAt(0)=="/")
-			return ToolBase.ResPathSound+path;
-		return ToolBase.ResPathSound+"/"+path;
-	}
-
-	ToolBase.GetResEffectURL=function(path){
-		if (path.charAt(0)=="/")
-			return ToolBase.ResPathEffect+path;
-		return ToolBase.ResPathEffect+"/"+path;
-	}
-
-	ToolBase.GetResURL=function(path){
-		if (path.charAt(0)=="/")
-			return ToolBase.GetResURLRoot()+path;
-		return ToolBase.GetResURLRoot()+"/"+path;
-	}
-
-	ToolBase.GetResURLRoot=function(){
-		if (ToolBase.ResPathRoot==null){
-			ToolBase.ResPathRoot="res";
-		}
-		return ToolBase.ResPathRoot;
-	}
-
-	ToolBase.IsEqualPoint=function(pt1,pt2){
-		return pt1.x==pt2.x && pt1.y==pt2.y;
-	}
-
-	ToolBase.IsEqualPoint2=function(x1,y1,x2,y2){
-		return x1==x2 && y1==y2;
-	}
-
-	ToolBase.IsContainsPoint=function(rect,pt){
-		return rect.contains(pt.x,pt.y);
-	}
-
-	ToolBase.isPowerOfTwo=function(value){
-		return value? ((value &-value)==value):false;
-	}
-
-	ToolBase.interpolate=function(pt1,pt2,f){
-		return new Point$1(pt2.x+f *(pt1.x-pt2.x),pt2.y+f *(pt1.y-pt2.y));
-	}
-
-	ToolBase.polar=function(len,angle){
-		return new Point$1(len *Math.cos(angle),len *Math.sin(angle));
-	}
-
-	ToolBase.CreatePowOf2Bitmapdata=function(old){
-		var ret=old;
-		var w=old.width;
-		var h=old.height;
-		if (ToolBase.isPowerOfTwo(w)==false){
-			w=ToolBase.GetPowOf2Value(w);
-		}
-		if (ToolBase.isPowerOfTwo(h)==false){
-			h=ToolBase.GetPowOf2Value(h);
-		}
-		if (old.width !=w || old.height !=h){
-			throw new Error("这里还没有实现！！！。")
-		}
-		return ret;
-	}
-
-	ToolBase.ParseFlagHead=function(value){
-		var ret="";
-		ret=String.fromCharCode((value >> 24)& 0x0ff)+ret;
-		ret=String.fromCharCode((value >> 16)& 0x0ff)+ret;
-		ret=String.fromCharCode((value >> 8)& 0x0ff)+ret;
-		ret=String.fromCharCode((value >> 0)& 0x0ff)+ret;
-		return ret;
-	}
-
-	ToolBase.SortBubble=function(arr){
-		var temp=null;
-		for(var i=0;i < arr.length-1;i++){
-			for (var j=arr.length-1;j > i;j--){
-				if (arr[j].sortValue < arr[j-1].sortValue){
-					temp=arr[j-1];
-					arr[j-1]=arr[j];
-					arr[j]=temp;
-				}
-			}
-		}
-	}
-
-	ToolBase.SortQuick=function(arr,prop,type,start,end){
-		(type===void 0)&& (type=1);
-		(start===void 0)&& (start=0);
-		(end===void 0)&& (end=2147483647);
-		if (prop==null)
-			prop="sortValue";
-		if (end==2147483647)
-			end=arr.length-1;
-		if (start < 0 || end > arr.length){
-			return;
-		}
-		if (start < end){
-			var i=start;
-			var j=end;
-			var base=arr[start];
-			while(i < j){
-				if (type==1){
-					while(i < j && arr[j][prop] >=base[prop])
-					j--;
-				}
-				else{
-					while(i < j && arr[j][prop] <=base[prop])
-					j--;
-				}
-				if (i < j){
-					arr[i]=arr[j];
-					i++;
-				}
-				if (type==1){
-					while(i < j && arr[i][prop] <=base[prop])
-					i++;
-				}
-				else{
-					while(i < j && arr[i][prop] >=base[prop])
-					i++;
-				}
-				if (i < j){
-					arr[j]=arr[i];
-					j--;
-				}
-			}
-			arr[i]=base;
-			ToolBase.SortQuick(arr,prop,type,start,i-1);
-			ToolBase.SortQuick(arr,prop,type,i+1,end);
-		}
-	}
-
-	ToolBase.RemoveAllChildren=function(con,isdestroy){
-		(isdestroy===void 0)&& (isdestroy=true);
-		while (con.numChildren > 0){
-			if (isdestroy)
-				con.getChildAt(0).destroyChildren();
-			else
-			con.removeChildAt(0);
-		}
-	}
-
-	ToolBase.Create3DRect=function(w,h,color,alpha){
-		(alpha===void 0)&& (alpha=1);
-		var ret=new Sprite;
-		ret.graphics.drawRect(0,0,w,h,color);
-		return ret;
-	}
-
-	ToolBase.Create2DRect=function(w,h,color,alpha){
-		(alpha===void 0)&& (alpha=1);
-		return null;
-	}
-
-	ToolBase.Create2DRectSprite=function(w,h,color,alpha){
-		(alpha===void 0)&& (alpha=1);
-		return null;
-	}
-
-	ToolBase.CloneDictionary=function(src,dst){
-		if (dst==null){
-			dst=new Dictionary();
-		}
-		if (src !=null){
-			for (var k in src){
-				dst[k]=src[k];
-			}
-		}
-		return dst;
-	}
-
-	ToolBase.DegreeGetAngleByPoint=function(startx,starty,endx,endy){
-		var fAngle=0;
-		var add=0;
-		if (endx==startx && endy==starty)
-			return 0;
-		if (endx > startx){
-			if (endy > starty){
-				fAngle=Math.atan((endy-starty)/ (endx-startx));
-				add=90;
-			}
-			else{
-				fAngle=Math.atan((endx-startx)/ (starty-endy));
-				add=0;
-			}
-		}
-		else{
-			if (endy > starty){
-				fAngle=Math.atan((startx-endx)/ (endy-starty));
-				add=180;
-			}
-			else{
-				fAngle=Math.atan((starty-endy)/ (startx-endx));
-				add=270;
-			}
-		}
-		return (((fAngle *180)/ Math.PI))+add;
-	}
-
-	ToolBase.DegreeAngleToRadian=function(angle){
-		return angle *(Math.PI / 180);
-	}
-
-	ToolBase.DegreeRadianToAngle=function(radian){
-		return radian *(180 / Math.PI);
-	}
-
-	ToolBase.DegreeDirToRadian=function(dir){
-		return ToolBase.DegreeAngleToRadian(ToolBase.DegreeDirToAngle(dir));
-	}
-
-	ToolBase.DegreeDirToAngle=function(dir){
-		return-90+(dir *45);
-	}
-
-	ToolBase.getAngle=function(point,centerPt){
-		var angle=Math.atan2(point.y-centerPt.y,point.x-centerPt.x)*(180/Math.PI);
-		return angle;
-	}
-
-	ToolBase.getRadian=function(point,centerPt){
-		var radian=Math.PI / 180 *ToolBase.getAngle(point,centerPt);
-		return radian;
-	}
-
-	ToolBase.PointEquals=function(a,b){
-		return a.x==b.x && a.y==b.y;
-	}
-
-	ToolBase.INT_MAX=2147483647;
-	ToolBase.INT_MIN=-2147483648;
-	ToolBase.stg=null;
-	ToolBase.isDebug=true;
-	ToolBase.ERROR_THROW=true;
-	ToolBase.SERVER_MTIME=null;
-	ToolBase.ResPathRoot=null;
-	ToolBase.ResRootAnimation=null;
-	ToolBase.ResRootUI=null;
-	ToolBase.ResRootSound=null;
-	ToolBase.ResRootEffect=null;
-	ToolBase.ResPathAnimation=null;
-	ToolBase.ResPathUI=null;
-	ToolBase.ResPathSound=null;
-	ToolBase.ResPathEffect=null;
-	ToolBase.ResPathMap=null;
-	__static(ToolBase,
-	['startTime',function(){return this.startTime=Laya.timer.currTimer;},'ColorMaterialCache',function(){return this.ColorMaterialCache=new HashMap();}
-	]);
-	return ToolBase;
+	return MSceneTypeList;
 })()
 
 
@@ -6890,77 +7675,48 @@ var MTempletManager=(function(){
 })()
 
 
-//class engine.scene.grid.EnumSceneGridType
-var EnumSceneGridType=(function(){
-	function EnumSceneGridType(){}
-	__class(EnumSceneGridType,'engine.scene.grid.EnumSceneGridType');
-	EnumSceneGridType.BARRIER=0x00000000;
-	EnumSceneGridType.W_UF=0x00000001;
-	EnumSceneGridType.UW_F=0x00000002;
-	EnumSceneGridType.EMPTY=0x00000003;
-	EnumSceneGridType.COVERING=0x00000004;
-	EnumSceneGridType.SAFE=0x00000008;
-	EnumSceneGridType.USTOP=0x00000010;
-	EnumSceneGridType.WATER=0x00000020;
-	EnumSceneGridType.WATERLESS=0x00000040;
-	EnumSceneGridType.TRANS=0x00000080;
-	EnumSceneGridType.MaxType=0x0000ffff;
-	EnumSceneGridType.WORK=0x1;
-	EnumSceneGridType.FLY=0x2;
-	EnumSceneGridType.COV=0x4;
-	return EnumSceneGridType;
-})()
-
-
-//class engine.res.MAnimationGCProxy
-var MAnimationGCProxy=(function(){
-	function MAnimationGCProxy(){
-		this._foreverMap=[];
-		this._resTypeId=[];
+/**
+*@author Administrator
+*/
+//class engine.ui.tips.TipsHandler
+var TipsHandler=(function(){
+	function TipsHandler(compUI,tipsPanel){
+		// tips的主组件
+		this._compUI=null;
+		// 显示面板
+		this._tipsPanel=null;
+		// tips数据
+		this._tipsData=null;
+		this._compUI=compUI;
+		this._tipsPanel=tipsPanel;
+		this._compUI.on("click",this,this.OnShowTips);
 	}
 
-	__class(MAnimationGCProxy,'engine.res.MAnimationGCProxy');
-	var __proto=MAnimationGCProxy.prototype;
-	__proto.RegisterForever=function(key){
-		if (this._foreverMap.indexOf(key)==-1)
-			this._foreverMap.push(key);
+	__class(TipsHandler,'engine.ui.tips.TipsHandler');
+	var __proto=TipsHandler.prototype;
+	__proto.SetTipsData=function(tipsData){
+		this._tipsData=tipsData;
 	}
 
-	__proto.DelForever=function(key){
-		var index=this._foreverMap.indexOf(key);
-		if(index>=0)
-			this._foreverMap.splice(index,1);
+	__proto.OnShowTips=function(e){
+		if (this._tipsPanel==null)
+			return;
+		PUIMgr.Ins.close(this._tipsPanel);
+		PUIMgr.Ins.open(this._tipsPanel,this._tipsData);
 	}
 
-	// 某个类型的资源，注册一个id不释放
-	__proto.RegisterTypeId=function(oldtype,oldid,oldExtra,type,resid,extra){
-		if (oldid > 0){
-			var oldkey=MAnimationUtil.ToShortKey(oldtype,oldid,oldExtra);
-			var index=this._resTypeId.indexOf(oldkey);
-			if (index !=-1){
-				this._resTypeId.splice(index,1);
-			}
+	__proto.destroy=function(){
+		if (this._compUI==null)
+			return;
+		this._compUI.off("click",this,this.OnShowTips);
+		this._compUI=null;
+		if(this._tipsPanel !=null){
+			this._tipsPanel=null;
 		}
-		if (resid > 0){
-			var key=MAnimationUtil.ToShortKey(type,resid,extra);
-			if (this._resTypeId.indexOf(key)==-1)
-				this._resTypeId.push(key);
-		}
+		this._tipsData=null;
 	}
 
-	__proto.IsCanRelease=function(key,all){
-		if (this._foreverMap.indexOf(key)!=-1)return false;
-		if (!all){
-			var values=this._resTypeId;
-			var len=values.length;
-			for (var i=0;i < len;++i){
-				if (key.indexOf(values[i])==0)return false;
-			}
-		}
-		return true;
-	}
-
-	return MAnimationGCProxy;
+	return TipsHandler;
 })()
 
 
@@ -7193,219 +7949,55 @@ var PTileImageControl=(function(){
 })()
 
 
-//class engine.battle.move.MBattleMoveRule
-var MBattleMoveRule=(function(){
-	function MBattleMoveRule(){
-		this._obj=null;
-		this._moveType=0;
-		this._curJumpHeight=0;
-		this._movePercent=0;
-		this._moveDistance=0;
-		this._moveStartTime=0;
-		this._moveTime=0;
-		this._sPt=new Point$1();
-		this._ePt=new Point$1();
-		this._jumpDebugDisList=[];
+//class engine.res.MAnimationGCProxy
+var MAnimationGCProxy=(function(){
+	function MAnimationGCProxy(){
+		this._foreverMap=[];
+		this._resTypeId=[];
 	}
 
-	__class(MBattleMoveRule,'engine.battle.move.MBattleMoveRule');
-	var __proto=MBattleMoveRule.prototype;
-	__proto.SetData=function(obj){
-		this._obj=obj;
+	__class(MAnimationGCProxy,'engine.res.MAnimationGCProxy');
+	var __proto=MAnimationGCProxy.prototype;
+	__proto.RegisterForever=function(key){
+		if (this._foreverMap.indexOf(key)==-1)
+			this._foreverMap.push(key);
 	}
 
-	__proto.destroy=function(){
-		this.ClearDebug();
-		this._obj=null;
+	__proto.DelForever=function(key){
+		var index=this._foreverMap.indexOf(key);
+		if(index>=0)
+			this._foreverMap.splice(index,1);
 	}
 
-	__proto.ClearDebug=function(){
-		for (var i=0;i < this._jumpDebugDisList.length;++i){
-			this._jumpDebugDisList[i].destroy();
+	// 某个类型的资源，注册一个id不释放
+	__proto.RegisterTypeId=function(oldtype,oldid,oldExtra,type,resid,extra){
+		if (oldid > 0){
+			var oldkey=MAnimationUtil.ToShortKey(oldtype,oldid,oldExtra);
+			var index=this._resTypeId.indexOf(oldkey);
+			if (index !=-1){
+				this._resTypeId.splice(index,1);
+			}
 		}
-		this._jumpDebugDisList.length=0;
-	}
-
-	__proto.Move=function(type,gx,gy,time){
-		this.ClearDebug();
-		this._moveType=type;
-		this._obj.GetPixPt(this._sPt);
-		this._ePt.setTo(MBattleUtil.GridXToPixX(gx),MBattleUtil.GridYToPixY(gy));
-		this._moveDistance=this._ePt.distance(this._sPt.x,this._sPt.y);
-		this._movePercent=0;
-		this._moveStartTime=Laya.timer.currTimer;
-		this._moveTime=time;
-		var old=this._obj.GetGridPt();
-		var dir=ToolMap.CalcDirSlant(old.x,old.y,gx,gy);
-		this._obj.OnMoveStart(this._moveType,dir);
-	}
-
-	__proto.OnFrame=function(curtime){
-		if (!this._moveType)return;
-		this._movePercent=Math.min(1,(Laya.timer.currTimer-this._moveStartTime)/ this._moveTime);
-		var old=this._obj.GetGridPt(Point$1.TEMP);
-		var oldx=old.x;
-		var oldy=old.y;
-		var curx=(this._sPt.x+(this._ePt.x-this._sPt.x)*this._movePercent)| 0;
-		var cury=(this._sPt.y+(this._ePt.y-this._sPt.y)*this._movePercent)| 0;
-		if (this._movePercent >=1){
-			this._curJumpHeight=0;
-			}else if (this._moveType==2 || this._moveType==3){
-			this.CalcJumpHeight();
-			this._obj.SetJumpHeight(this._curJumpHeight);
-		}
-		this._obj.SetPixPt(Point$1.TEMP.setTo(curx,cury));
-		old=this._obj.GetGridPt(Point$1.TEMP);
-		if (oldx !=old.x || oldy !=old.y){
-			this._obj.OnMoveEnterGrid(oldx,oldy);
-		}
-		if (this._movePercent >=1){
-			this.Stop();
+		if (resid > 0){
+			var key=MAnimationUtil.ToShortKey(type,resid,extra);
+			if (this._resTypeId.indexOf(key)==-1)
+				this._resTypeId.push(key);
 		}
 	}
 
-	__proto.Stop=function(){
-		this._curJumpHeight=0;
-		if (this._moveType !=0){
-			var type=this._moveType;
-			this._moveType=0;
-			this._obj.OnMoveEnd(type);
+	__proto.IsCanRelease=function(key,all){
+		if (this._foreverMap.indexOf(key)!=-1)return false;
+		if (!all){
+			var values=this._resTypeId;
+			var len=values.length;
+			for (var i=0;i < len;++i){
+				if (key.indexOf(values[i])==0)return false;
+			}
 		}
+		return true;
 	}
 
-	__proto.CalcJumpHeight=function(){
-		var per=(1-this._movePercent);
-		var calcdis=this._moveDistance;
-		if (calcdis==0)
-			calcdis=450;
-		var addHeight=0;
-		if (1==0){
-			this._curJumpHeight=Math.sin(Math.PI *per)*calcdis *0.3;
-		}
-		else if (1==1){
-			var maxhthrow=(calcdis *0.3)*4;
-			this._curJumpHeight=-maxhthrow *per *per+maxhthrow *per;
-			this._curJumpHeight+=addHeight;
-		}
-		else if (1==2){
-			var maxhpow=calcdis *0.1;
-			this._curJumpHeight=-maxhpow *per *per+maxhpow *per;
-			this._curJumpHeight=this._curJumpHeight *this._curJumpHeight;
-			this._curJumpHeight+=addHeight;
-		}
-		else if (1==3){
-			var maxhsqrt=(calcdis)*4 *32;
-			this._curJumpHeight=-maxhsqrt *per *per+maxhsqrt *per;
-			this._curJumpHeight=Math.sqrt(this._curJumpHeight);
-			this._curJumpHeight+=addHeight;
-		}
-		else if (1==4){
-			var maxhround=(calcdis *0.5);
-			var valround=maxhround *maxhround-Math.pow(calcdis *per-maxhround,2);
-			if (valround < 0)
-				valround=0;
-			this._curJumpHeight=Math.sqrt(valround);
-			this._curJumpHeight+=addHeight;
-		}
-		else if (1==5){
-			var maxhroundsqrt=(calcdis *0.5);
-			var valrs=maxhroundsqrt *maxhroundsqrt-Math.pow(calcdis *per-maxhroundsqrt,2);
-			if (valrs < 0)
-				valrs=0;
-			this._curJumpHeight=Math.sqrt(valrs);
-			this._curJumpHeight=Math.sqrt(this._curJumpHeight *40);
-			this._curJumpHeight+=addHeight;
-		}
-		else if (1==6){
-			var ellipsea=(calcdis *0.5);
-			var ellipseb=(calcdis *0.3);
-			var ellipseval=1-Math.pow((calcdis *per-ellipsea)/ ellipsea ,2);
-			if (ellipseval < 0)
-				ellipseval=0;
-			this._curJumpHeight=ellipseb *Math.sqrt(ellipseval);
-			this._curJumpHeight+=addHeight;
-		}
-		this._curJumpHeight |=0;
-		if (false){
-			var dis=new Sprite();
-			dis.graphics.drawCircle(0,0,5,"#ff0000");
-			var spt=this._obj.GetPixPt();
-			dis.pos(spt.x,spt.y-this._curJumpHeight);
-			(this._obj).view.parent.addChild(dis);
-			this._jumpDebugDisList.push(dis);
-		}
-	}
-
-	__proto.isJumpType=function(type){
-		return type==2 || type==3;
-	}
-
-	__getset(0,__proto,'isMoving',function(){
-		return this._moveType !=0;
-	});
-
-	__getset(0,__proto,'isJump',function(){
-		return this.isJumpType(this._moveType);
-	});
-
-	__getset(0,__proto,'curJumpHeight',function(){
-		return this._curJumpHeight;
-	});
-
-	MBattleMoveRule.JUMP_HEIGHT_CALC_TYPE=1;
-	return MBattleMoveRule;
-})()
-
-
-//class engine.battle.MBattleUtil
-var MBattleUtil=(function(){
-	function MBattleUtil(){}
-	__class(MBattleUtil,'engine.battle.MBattleUtil');
-	MBattleUtil.GetFrontPt=function(gx,gy,dir,ret){
-		if (ret==null)
-			ret=Point$1.TEMP.setTo(0,0);
-		ret.x=gx+ToolMap.DirectionOffsetX8[dir];
-		ret.y=gy+ToolMap.DirectionOffsetY8[dir];
-		return ret;
-	}
-
-	MBattleUtil.GetBackPt=function(gx,gy,dir,ret){
-		if (ret==null)
-			ret=Point$1.TEMP.setTo(0,0);
-		ret.x=gx-ToolMap.DirectionOffsetX8[dir];
-		ret.y=gy-ToolMap.DirectionOffsetY8[dir];
-		return ret;
-	}
-
-	MBattleUtil.GetBackPix=function(gx,gy,dir,ret){
-		if (ret==null)
-			ret=Point$1.TEMP.setTo(0,0);
-		ret.x=MBattleUtil.GridXToPixX(gx);
-		ret.y=MBattleUtil.GridYToPixY(gy);
-		ret.x=ret.x-ToolMap.DirectionOffsetX8[dir] *48;
-		ret.y=ret.y-ToolMap.DirectionOffsetY8[dir] *36;
-		return ret;
-	}
-
-	MBattleUtil.GridXToPixX=function(x){
-		return x *48+48 / 2;
-	}
-
-	MBattleUtil.GridYToPixY=function(y){
-		return y *36+36 / 2;
-	}
-
-	MBattleUtil.PixXToGridX=function(x){
-		return (x / 48 | 0);
-	}
-
-	MBattleUtil.PixYToGridY=function(y){
-		return (y / 36 | 0);
-	}
-
-	MBattleUtil.GRIDW=48;
-	MBattleUtil.GRIDH=36;
-	return MBattleUtil;
+	return MAnimationGCProxy;
 })()
 
 
@@ -7702,877 +8294,159 @@ var MapSceneLayer=(function(){
 })()
 
 
-//class engine.pui.PUIMgr
-var PUIMgr=(function(){
-	function PUIMgr(){
-		this.Show_Taost=null;
-		this.Hide_Toast=null;
-		this.maskHit=null;
-		//不加这个，点击背景会穿透
-		this.BG_MASK_URL="res/ui/sg_ui/city/bg2.jpg";
-		this.tex=null;
-		/**是否有图片背景**/
-		this.isImgMask=false;
-		/**是否有半透明背景**/
-		this.isSimpleMask=false;
-		/**半透明背景临时透明度**/
-		this.tempAlpha=1;
-		this._loading=[];
-		this._sceenMask=new UIComponent();
-		this._sceenMask2=new UIComponent();
-		this._sceenMask.on("click",this,this.clickMask);
-		this._sceenMask.name="sceenMask";
-		this._sceenMask2.on("click",this,this.clickMask2);
-		this._sceenMask2.name="sceenMask2";
-		this.maskHit=new HitArea();
-		this._sceenMask.hitArea=this.maskHit;
-	}
-
-	__class(PUIMgr,'engine.pui.PUIMgr');
-	var __proto=PUIMgr.prototype;
-	__proto.Init=function(showt,hidet){
-		this.Show_Taost=showt;
-		this.Hide_Toast=hidet;
-		ClassUtils.regClass("Button",PButton);
-		ClassUtils.regClass("CheckBox",PCheckBox);
-		ClassUtils.regClass("Clip",PClip);
-		ClassUtils.regClass("ComboBox",PComboBox);
-		ClassUtils.regClass("FontClip",PFontClip);
-		ClassUtils.regClass("HScrollBar",PHScrollBar);
-		ClassUtils.regClass("HSlider",PHSlider);
-		ClassUtils.regClass("Image",PImage);
-		ClassUtils.regClass("Label",PLabel);
-		ClassUtils.regClass("List",PList);
-		ClassUtils.regClass("Panel",PPanel);
-		ClassUtils.regClass("ProgressBar",PProgressBar);
-		ClassUtils.regClass("Radio",PRadio);
-		ClassUtils.regClass("RadioGroup",PRadioGroup);
-		ClassUtils.regClass("ScrollBar",PScrollBar);
-		ClassUtils.regClass("Slider",PSlider);
-		ClassUtils.regClass("Tab",PTab);
-		ClassUtils.regClass("TextInput",PTextInput);
-		ClassUtils.regClass("Tree",PTree);
-		ClassUtils.regClass("VScrollBar",PVScrollBar);
-		ClassUtils.regClass("VSlider",PVSlider);
-		ClassUtils.regClass("Box",PBox);
-		ClassUtils.regClass("View",PView);
-		ClassUtils.regClass("Dialog",PDialog);
-		ClassUtils.regClass("PGrid",PGrid);
-		ClassUtils.regClass("PGridGroup",PGridGroup);
-		ClassUtils.regClass("laya.display.Text",PText);
-		ClassUtils.regClass("Text",PText);
-		ClassUtils.regClass("laya.html.dom.HTMLDivElement",PHTMLDivElement);
-		ClassUtils.regShortClassName([PView,PDialog]);
-		Laya.stage.on("resize",this,this._onResize);
-	}
-
-	__proto.open=function(url,param,closeOther,complete,name,showtaost){
-		(closeOther===void 0)&& (closeOther=false);
-		(showtaost===void 0)&& (showtaost=true);
-		url=this.formatUrl(url);
-		if (this._loading.indexOf(url)!=-1)
-			return;
-		var p=this.getShow(url,name);
-		if (p !=null){
-			try{
-				p.onOpened(param);
-				if (complete !=null)
-					complete.runWith(p);
-				}catch(e){
-				console.error(e.stack);
-				Laya.errorCallBack && Laya.errorCallBack(e.stack);
-			}
-			return;
-		}
-		if (this.Show_Taost && showtaost){
-			this.Show_Taost.apply();
-		}
-		this._loading.push(url);
-		Scene.open(url,closeOther,param,Handler.create(this,this.onSceneLoaded,[url,complete,name]));
-	}
-
-	__proto.opencls=function(cls,param,closeOther,complete,name,showtaost){
-		(closeOther===void 0)&& (closeOther=false);
-		(showtaost===void 0)&& (showtaost=true);
-		var scene=new cls();
-		if (scene !=null){
-			try{
-				scene.open(closeOther,param);
-				}catch(e){
-				console.error(e.stack);
-				Laya.errorCallBack ? Laya.errorCallBack(e.stack):null;
-			}
-			if (name !=null)
-				scene.name=name;
-			if (complete !=null)
-				complete.runWith(scene);
-			this.checkMask();
-		}
-	}
-
-	__proto.load=function(url,complete,name,showtaost){
-		(showtaost===void 0)&& (showtaost=true);
-		url=this.formatUrl(url);
-		if (this._loading.indexOf(url)!=-1)
-			return;
-		if (this.Show_Taost && showtaost){
-			this.Show_Taost.apply();
-		}
-		this._loading.push(url);
-		Scene.load(url,Handler.create(this,this.onSceneLoaded,[url,complete,name]));
-	}
-
-	__proto.onSceneLoaded=function(url,complete,name,scene){
-		var idx=this._loading.indexOf(url);
-		if (idx !=-1){
-			this._loading.splice(idx,1);
-		}
-		if (this._loading.length==0){
-			if (this.Hide_Toast)
-				this.Hide_Toast.apply();
-		}
-		if (scene !=null){
-			if (name !=null)
-				scene.name=name;
-			try{
-				if (complete !=null)
-					complete.runWith(scene);
-				}catch (e){
-				console.error(e.stack);
-				Laya.errorCallBack && Laya.errorCallBack(e.stack);
-			}
-			this.checkMask();
-		}
-	}
-
-	__proto.close=function(url,name){
-		(name===void 0)&& (name="");
-		url=this.formatUrl(url);
-		Scene.close(url,name);
-	}
-
-	__proto.closecls=function(cls){
-		var list=Scene.unDestroyedScenes;
-		var find=[];
-		for (var i=0,n=list.length;i < n;i++){
-			var scene=list[i];
-			if (scene && scene.parent && Laya.__typeof(scene,cls)){
-				find.push(scene);
-			}
-		}
-		for (i=0;i < find.length;++i){
-			find[i].close();
-		}
-	}
-
-	/**
-	*关闭某个层的所有面板
-	*@param layer
-	*/
-	__proto.closeLayer=function(layer,isChangeMap,excides){
-		(isChangeMap===void 0)&& (isChangeMap=false);
-		var num=Scene.root.numChildren;
-		var closes=[];
-		for (var i=0;i < num;++i){
-			var scene=Scene.root.getChildAt(i);
-			if(isChangeMap && !scene.isCloseWhenChangeMap)
-				continue ;
-			if (excides && excides.indexOf(scene.url)!=-1)
-				continue ;
-			if ((scene instanceof laya.display.Scene )&& scene["layer"]==layer){
-				closes.push(scene);
-			}
-		}
-		for (i=0;i < closes.length;++i){
-			if (closes[i].url==null){
-				console.log("closeLayer url=null:"+closes[i].name);
-			}
-			closes[i].close();
-		}
-	}
-
-	__proto.getShow=function(url,name){
-		(name===void 0)&& (name="");
-		if ((typeof url=='string')){
-			return this.getShowByUrl(url,name);
-			}else if (Laya.__isClass(url)){
-			return this.getShowByClass(url,name);
-		}
-		return null;
-	}
-
-	__proto.getShowByUrl=function(url,name){
-		(name===void 0)&& (name="");
-		url=this.formatUrl(url);
-		var root=Scene.root;
-		var num=Scene.root.numChildren;
-		for (var i=0;i < num;++i){
-			if (((root._children[i])instanceof laya.display.Scene )){
-				if (root._children[i].url==url && root._children[i].name==name)
-					return root._children[i];
-			}
-		}
-		return null;
-	}
-
-	__proto.getShowByClass=function(cls,name){
-		(name===void 0)&& (name="");
-		var root=Scene.root;
-		var num=Scene.root.numChildren;
-		for (var i=0;i < num;++i){
-			if (((root._children[i])instanceof laya.display.Scene )){
-				if (Laya.__typeof((root._children[i]),cls)&& root._children[i].name==name)
-					return root._children[i];
-			}
-		}
-		return null;
-	}
-
-	__proto.formatUrl=function(url){
-		if (url.indexOf("res/pages/")!=0)
-			url="res/pages/"+url;
-		if (url.lastIndexOf(".json")==-1)
-			url+=".json";
-		return url;
-	}
-
-	__proto._onResize=function(){
-		if (this._sceenMask.displayedInStage){
-			this.drawMask();
-		}
-		if (this._sceenMask2.displayedInStage){
-			this.drawMask2();
-		}
-	}
-
-	__proto.checkMask=function(){
-		Laya.timer.callLater(this,this._realCheckMask);
-	}
-
-	__proto._realCheckMask=function(){
-		this.isImgMask=false;
-		this.isSimpleMask=false;
-		var num=Scene.root.numChildren;
-		for (var i=num-1;i >-1;i--){
-			var dialog=Scene.root.getChildAt(i);
-			if (dialog){
-				if(false){
-					this.isImgMask=true;
-					if (dialog.parent==this._sceenMask.parent){
-						var idxmask=dialog.parent.getChildIndex(this._sceenMask);
-						if (idxmask < i)
-							dialog.parent.setChildIndex(this._sceenMask,i-1);
-						else
-						dialog.parent.setChildIndex(this._sceenMask,i);
-					}
-					else{
-						dialog.parent.addChildAt(this._sceenMask,i);
-					}
-					this._sceenMask.tag=dialog;
-					this._sceenMask.zOrder=dialog.zOrder;
-					this.drawMask();
-				}
-				if(!this.isSimpleMask && (dialog["isModal"]==true || dialog["isSimpleModal"]==true)){
-					this.isSimpleMask=true;
-					if (dialog.parent==this._sceenMask2.parent){
-						var idxmask2=dialog.parent.getChildIndex(this._sceenMask2);
-						if (idxmask2 < i)
-							dialog.parent.setChildIndex(this._sceenMask2,i-1);
-						else
-						dialog.parent.setChildIndex(this._sceenMask2,i);
-					}
-					else{
-						dialog.parent.addChildAt(this._sceenMask2,i);
-					}
-					this._sceenMask2.tag=dialog;
-					this._sceenMask2.zOrder=dialog.zOrder;
-					this.drawMask2();
-				}
-			}
-		}
-		if(!this.isImgMask){
-			this._sceenMask.tag=null;
-			this._sceenMask.graphics.clear();
-			this._sceenMask.removeSelf();
-			this.maskHit.hit.clear();
-		}
-		if(!this.isSimpleMask){
-			this._sceenMask2.tag=null;
-			this._sceenMask2.graphics.clear();
-			this._sceenMask2.removeSelf();
-		}
-	}
-
-	__proto.drawMask=function(){
-		if(this.tex==null){
-			Laya.loader.load(this.BG_MASK_URL,Handler.create(this,this.texComplete),null,"image");
-			return;
-		}
-		this._sceenMask.graphics.clear(true);
-		this._sceenMask.graphics.drawTexture(this.tex,(Laya.stage.width-this.tex.width)/2,(Laya.stage.height-this.tex.height)/2,this.tex.width,this.tex.height);
-		this.maskHit.hit.clear();
-		this.maskHit.hit.drawRect(0,0,Laya.stage.width,Laya.stage.height,"#cccccc");
-	}
-
-	__proto.drawMask2=function(){
-		var width=this._sceenMask2.width=Laya.stage.width;
-		var height=this._sceenMask2.height=Laya.stage.height;
-		this._sceenMask2.graphics.clear(true);
-		this._sceenMask2.graphics.drawRect(0,0,width,height,UIConfig.popupBgColor);
-		this._sceenMask2.alpha=Math.min(UIConfig.popupBgAlpha,this.tempAlpha);
-	}
-
-	__proto.texComplete=function(){
-		if(this.tex==null){
-			this.tex=Laya.loader.getRes(this.BG_MASK_URL);
-			this.checkMask();
-		}
-	}
-
-	__proto.clickMask=function(){
-		var s=this._sceenMask.tag;
-		var h=s["modelMethod"];
-		if (h !=null)
-			h.call(s["modelCaller"]);
-		else if (s["modalUnclose"] !=true)
-		s.close();
-	}
-
-	__proto.clickMask2=function(){
-		var s=this._sceenMask2.tag;
-		var h=s["modelMethod"];
-		if (h !=null)
-			h.call(s["modelCaller"]);
-		else if (s["modalUnclose"] !=true)
-		s.close();
-	}
-
-	/**是否用宽屏布局**/
-	__getset(0,__proto,'isWideScreen',function(){
-		return false;
-	});
-
-	__static(PUIMgr,
-	['Ins',function(){return this.Ins=new PUIMgr();}
-	]);
-	return PUIMgr;
-})()
-
-
-//class engine.scene.astar.Node
-var Node$1=(function(){
-	function Node(x,y){
-		this.x=0;
-		this.y=0;
-		this.f=0;
-		this.g=0;
-		this.h=0;
-		/**地图静态阻挡**/
-		this._walkable=true;
-		/**动态阻挡能否走**/
-		this._dyWalkable=true;
-		/**能否走的外部检查函数**/
-		this._walkbaleFunc=null;
-		this.parent=null;
-		//public var costMultiplier:Number=1.0;
-		this.version=1;
-		this.links=null;
-		/**
-		*节点类型，0 阻挡 1 可到达 2 孤岛
-		*/
-		this.nodeType=2;
-		/**埋葬深度 */
-		this.buriedDepth=-1;
-		/**距离 */
-		this.distance=0;
-		this.x=x;
-		this.y=y;
-	}
-
-	__class(Node,'engine.scene.astar.Node',null,'Node$1');
-	var __proto=Node.prototype;
-	__proto.dispose=function(){
-		if (this.links){
-			var data;
-			for(var $each_data in this.links){
-				data=this.links[$each_data];
-				data.dispose();
-			}
-		}
-		this.parent=null;
-		this.links=null;
-		this._walkbaleFunc=null;
-	}
-
-	__proto.toString=function(){
-		return "x:"+this.x+" y:"+this.y;
-	}
-
-	/**得到此节点到另一节点的网格距离 */
-	__proto.getDistanceTo=function(targetNode){
-		var disX=targetNode.x-this.x;
-		var disY=targetNode.y-this.y;
-		return Math.sqrt(disX *disX+disY *disY);
-	}
-
-	__getset(0,__proto,'walkable',function(){
-		return this._walkable;
-		},function(value){
-		this._walkable=value;
-		if (!value)
-			this.nodeType=0;
-	});
-
-	__getset(0,__proto,'dyWalkable',function(){
-		if (this._walkbaleFunc !=null && !this._walkbaleFunc.call(null,this.x,this.y))
-			return false;
-		return this._dyWalkable;
-		},function(value){
-		this._dyWalkable=value;
-	});
-
-	__getset(0,__proto,'walkbaleFunc',null,function(value){
-		this._walkbaleFunc=value;
-	});
-
-	return Node;
-})()
-
-
-/**
-*天气系统区域信息
-*@author Administrator
-*
-*/
-//class engine.scene.data.MWeatherAreaData
-var MWeatherAreaData=(function(){
-	function MWeatherAreaData(){
-		this._sizew=0;
-		this._sizeh=0;
-		this._numw=0;
-		this._numh=0;
-		this._hollowflag=[];
-		ObjectRecord.rcd(this);
-	}
-
-	__class(MWeatherAreaData,'engine.scene.data.MWeatherAreaData');
-	var __proto=MWeatherAreaData.prototype;
-	__proto.ReadData=function(bytes){
-		this._sizew=bytes.readShort();
-		this._sizeh=bytes.readShort();
-		this._numw=bytes.readShort();
-		this._numh=bytes.readShort();
-		this._hollowflag=new Array(this._numw *this._numh);
-		for (var m=0;m < this._numh;++m){
-			for (var n=0;n < this._numw;++n){
-				this._hollowflag[m *this._numw+n]=((bytes.readByte()& 0x2)==0);
-			}
-		}
-	}
-
-	__getset(0,__proto,'numh',function(){
-		return this._numh;
-	});
-
-	__getset(0,__proto,'sizew',function(){
-		return this._sizew;
-	});
-
-	__getset(0,__proto,'numw',function(){
-		return this._numw;
-	});
-
-	__getset(0,__proto,'sizeh',function(){
-		return this._sizeh;
-	});
-
-	__getset(0,__proto,'hollowflag',function(){
-		return this._hollowflag;
-	});
-
-	return MWeatherAreaData;
-})()
-
-
-/**
-*对象引用释放统计
-*@author Administrator
-*
-*/
-//class engine.classbase.ObjectRecord
-var ObjectRecord=(function(){
-	function ObjectRecord(){}
-	__class(ObjectRecord,'engine.classbase.ObjectRecord');
-	ObjectRecord.rcd=function(o){
-		if (ObjectRecord.IS_OPEN){
-		}
-	}
-
-	ObjectRecord.getCustomDicList=function(){
-		return ObjectRecord._customDic;
-	}
-
-	ObjectRecord.getStateCopyStr=function(type,idbegin,idend,exKeys){
-		var str="";
-		var subDic=null;
-		if (type==null || type==""){
-			var dic=engine.classbase.ObjectRecord.getCustomDicList();
-			for(var k in dic){
-				subDic=(dic [k]);
-				var count=0;
-				for (var v in subDic){
-					count++;
-				}
-				str+=k.toString()+"	"+count+"\r\n";
-			}
-		}
-		else{
-			if (idbegin < 0)
-				idbegin=0;
-			if (idend < 100)
-				idend=100;
-			if (idbegin >=idend){
-				idbegin=0;
-				idend=100;
-			}
-			subDic=engine.classbase.ObjectRecord.getCustomDicList()[type];
-			if (subDic !=null){
-				var curC=0;
-				for (var ob in subDic){
-					if (curC >=idbegin && curC <=idend){
-						var items="";
-						try{
-							items=ob.toString()+"	";
-						}
-						catch(err){
-							items="typeerror"+"	";
-						}
-						str+=items;
-						try{
-							if ((ob).hasOwnProperty("name"))
-								items=ob.name+"	";
-							else
-							items="-"+"	";
-						}
-						catch(err){
-							items="nameerror"+"	";
-						}
-						str+=items;
-						try{
-							if ((ob).hasOwnProperty("id"))
-								items=ob.id+"	";
-							else
-							items="-"+"	";
-						}
-						catch(err){
-							items="iderror"+"	";
-						}
-						str+=items;
-						if (exKeys !=null && exKeys.length > 0){
-							for (var uu=0;uu < exKeys.length;++uu){
-								try{
-									var kkk=exKeys[uu];
-									if ((ob).hasOwnProperty(kkk))
-										items=ob[kkk]+"	";
-									else
-									items="-"+"	";
-								}
-								catch(err){
-									items="exkeyerror"+"	";
-								}
-								str+=items;
-							}
-						}
-						str+="\r\n";
-					}
-					else if (curC > idend){
-						break ;
-					}
-					curC++;
-				}
-			}
-		}
-	}
-
-	ObjectRecord.IS_OPEN=false;
-	ObjectRecord.gidgetter=1;
-	__static(ObjectRecord,
-	['_customDic',function(){return this._customDic=new Dictionary();}
-	]);
-	return ObjectRecord;
-})()
-
-
-/**
-*
-*
-*@author Administrator
-*/
-//class engine.ui.utils.LayoutUtil
-var LayoutUtil=(function(){
-	function LayoutUtil(){}
-	__class(LayoutUtil,'engine.ui.utils.LayoutUtil');
-	LayoutUtil.GetLayoutPos=function(obj,layout,offx,offy){
-		var stage=Laya.stage;
-		var sw=stage.width;
-		var sh=stage.height+stage._canvasTransform.ty;
-		var ow=obj.width;
-		var oh=obj.height;
-		if (layout==9){
-			offx+=(sw-ow)*0.5;
-			offy+=(sh-oh)*0.5;
-		}
-		else if (layout==1){
-			offx+=(sw-ow)*0.5;
-			offy+=(stage.height-sh);
-		}
-		else if (layout==2){
-			offx+=sw-ow;
-			offy+=(stage.height-sh);
-		}
-		else if (layout==3){
-			offx+=sw-ow;
-			offy+=(sh-oh)*0.5;
-		}
-		else if (layout==4){
-			offx+=sw-ow;
-			offy+=sh-oh;
-		}
-		else if (layout==5){
-			offx+=(sw-ow)*0.5;
-			offy+=sh-oh;
-		}
-		else if (layout==6){
-			offx+=0;
-			offy+=sh-oh;
-		}
-		else if (layout==7){
-			offx+=0;
-			offy+=(sh-oh)*0.5;
-		}
-		else if (layout==8){
-			offx+=0;
-			offy+=(stage.height-sh);
-		}
-		return new Point$1(offx,offy);
-	}
-
-	LayoutUtil.LayoutTipPanel=function(target,comp){
-		if (target==null)
-			return;
-		var stageW=Laya.stage.width;
-		var stageH=Laya.stage.height;
-		var o=target;
-		var offx=0;
-		var offy=0;
-		var inv=20;
-		if (comp !=null){
-			var tw=o.width;
-			var th=o.height;
-			var cw=comp.width;
-			var ch=comp.height;
-			var pt=comp.localToGlobal(Point$1.TEMP.setTo(0,0));
-			if (target.tiplayout==0){
-				offx=pt.x+cw;
-				offy=pt.y;
-				if (offx > (stageW-tw)){
-					offx=stageW-tw-inv;
-				}
-				if (offx < 0){
-					offx=0;
-				}
-				if (offy > (stageH-th)){
-					offy=stageH-th-inv;
-				}
-				if (offy < 0){
-					offy=0;
-				}
-			}
-			else if (target.tiplayout==2){
-				if (pt.x+cw+tw+inv <=stageW)
-					offx=pt.x+cw;
-				else if (pt.x-tw-inv >=0)
-				offx=pt.x-tw;
-				else
-				offx=(stageW-tw)/ 2;
-				if (pt.y+ch+inv <=stageH)
-					offy=pt.y;
-				else if (pt.y-ch-inv >=0)
-				offy=pt.y-ch;
-				else
-				offy=(stageH-th)/ 2;
-			}
-			else{
-				offx=(stageW-o.width)/ 2;
-				offy=(stageH-o.height)/ 2;
-			}
-		}
-		else{
-			offx=(stageW-o.width)/ 2;
-			offy=(stageH-o.height)/ 2;
-		}
-		o.pos(offx,offy);
-	}
-
-	LayoutUtil.LAYOUT_NON=0;
-	LayoutUtil.LAYOUT_U=1;
-	LayoutUtil.LAYOUT_RU=2;
-	LayoutUtil.LAYOUT_R=3;
-	LayoutUtil.LAYOUT_RB=4;
-	LayoutUtil.LAYOUT_B=5;
-	LayoutUtil.LAYOUT_LB=6;
-	LayoutUtil.LAYOUT_L=7;
-	LayoutUtil.LAYOUT_LU=8;
-	LayoutUtil.LAYOUT_C=9;
-	return LayoutUtil;
-})()
-
-
-//class engine.animation.define.EnumActionType
-var EnumActionType=(function(){
-	function EnumActionType(){}
-	__class(EnumActionType,'engine.animation.define.EnumActionType');
-	EnumActionType.ALL=-2;
-	EnumActionType.NONE=-1;
-	EnumActionType.STAND=0;
-	EnumActionType.RUN=1;
-	EnumActionType.DEAD=4;
-	EnumActionType.HURT=5;
-	EnumActionType.ATTACK1=10;
-	EnumActionType.RIDESTAND=20;
-	EnumActionType.RIDERUN=21;
-	EnumActionType.RIDEATTACK=22;
-	EnumActionType.RIDEHURT=23;
-	EnumActionType.UI_STAND=100;
-	EnumActionType.UI_XIUXIAN=101;
-	return EnumActionType;
-})()
-
-
-/**
-*64位数据类型，相当于QWORD，主要用于和服务器对接
-*@author ty
-*/
-//class engine.base.data.long extends engine.base.data.Int64
-var long=(function(_super){
-	function long(value){
-		(value===void 0)&& (value=0);
-		long.__super.call(this,value);
-	}
-
-	__class(long,'engine.base.data.long',_super);
-	var __proto=long.prototype;
-	__proto.Clone=function(){
-		var ret=new long();
-		ret._lValue=this._lValue;
-		ret._hValue=this._hValue;
-		ret._hexValue=this._hexValue;
+//class engine.battle.MBattleUtil
+var MBattleUtil=(function(){
+	function MBattleUtil(){}
+	__class(MBattleUtil,'engine.battle.MBattleUtil');
+	MBattleUtil.GetFrontPt=function(gx,gy,dir,ret){
+		if (ret==null)
+			ret=Point$1.TEMP.setTo(0,0);
+		ret.x=gx+ToolMap.DirectionOffsetX8[dir];
+		ret.y=gy+ToolMap.DirectionOffsetY8[dir];
 		return ret;
 	}
 
-	// 下面都是消息解析用的，统一只处理高低位，hex先不处理
-	__proto.setValue=function(l,h){
-		this._hValue=h>>>0;
-		this._lValue=l>>>0;
+	MBattleUtil.GetBackPt=function(gx,gy,dir,ret){
+		if (ret==null)
+			ret=Point$1.TEMP.setTo(0,0);
+		ret.x=gx-ToolMap.DirectionOffsetX8[dir];
+		ret.y=gy-ToolMap.DirectionOffsetY8[dir];
+		return ret;
 	}
 
-	__proto.rightShiftFill0=function(v){
-		if (v > 64){
-			throw new Error("what the fuck:"+v);
-		}
-		if (v==64){
-			this.setValue(0,0);
-			return this;
-		}
-		if (v > 31){
-			this.setValue(this._hValue,0)
-			if (v==32){
-				return this;
-			}
-			this._lValue=this._lValue >>> (v-32);
-			return this;
-		}
-		if (v==0){
-			return this;
-		};
-		var tmp=this._hValue << (32-v);
-		this._hValue >>>=v;
-		this._lValue >>>=v;
-		this._lValue |=tmp;
-		return this;
+	MBattleUtil.GetBackPix=function(gx,gy,dir,ret){
+		if (ret==null)
+			ret=Point$1.TEMP.setTo(0,0);
+		ret.x=MBattleUtil.GridXToPixX(gx);
+		ret.y=MBattleUtil.GridYToPixY(gy);
+		ret.x=ret.x-ToolMap.DirectionOffsetX8[dir] *48;
+		ret.y=ret.y-ToolMap.DirectionOffsetY8[dir] *36;
+		return ret;
 	}
 
-	__proto.leftShift=function(shift){
-		if (shift > 64){
-			throw new Error("what the fuck:"+shift);
-		}
-		if (shift==64){
-			this.setValue(0,0);
+	MBattleUtil.GridXToPixX=function(x){
+		return x *48+48 / 2;
+	}
+
+	MBattleUtil.GridYToPixY=function(y){
+		return y *36+36 / 2;
+	}
+
+	MBattleUtil.PixXToGridX=function(x){
+		return (x / 48 | 0);
+	}
+
+	MBattleUtil.PixYToGridY=function(y){
+		return (y / 36 | 0);
+	}
+
+	MBattleUtil.GRIDW=48;
+	MBattleUtil.GRIDH=36;
+	return MBattleUtil;
+})()
+
+
+//class engine.scene.grid.EnumSceneGridType
+var EnumSceneGridType=(function(){
+	function EnumSceneGridType(){}
+	__class(EnumSceneGridType,'engine.scene.grid.EnumSceneGridType');
+	EnumSceneGridType.BARRIER=0x00000000;
+	EnumSceneGridType.W_UF=0x00000001;
+	EnumSceneGridType.UW_F=0x00000002;
+	EnumSceneGridType.EMPTY=0x00000003;
+	EnumSceneGridType.COVERING=0x00000004;
+	EnumSceneGridType.SAFE=0x00000008;
+	EnumSceneGridType.USTOP=0x00000010;
+	EnumSceneGridType.WATER=0x00000020;
+	EnumSceneGridType.WATERLESS=0x00000040;
+	EnumSceneGridType.TRANS=0x00000080;
+	EnumSceneGridType.MaxType=0x0000ffff;
+	EnumSceneGridType.WORK=0x1;
+	EnumSceneGridType.FLY=0x2;
+	EnumSceneGridType.COV=0x4;
+	return EnumSceneGridType;
+})()
+
+
+/**
+*一般对象池
+*
+*@author Administrator
+*/
+//class engine.base.pool.ObjectPool
+var ObjectPool=(function(){
+	function ObjectPool(maxCount,nodeClass){
+		/**节点类*/
+		this._nodeClass=null;
+		/**对象池最大资源数*/
+		this._maxCount=0;
+		/**对象池列表*/
+		this._list=null;
+		this._maxCount=maxCount;
+		this._nodeClass=nodeClass;
+		this._list=[];
+		ObjectRecord.rcd(this);
+	}
+
+	__class(ObjectPool,'engine.base.pool.ObjectPool');
+	var __proto=ObjectPool.prototype;
+	/**压入对象*/
+	__proto.Push=function(node){
+		if (node==null){
+			ToolBase.LogError("[ObjectPool push] node is null");
 			return;
 		}
-		if (shift > 31){
-			this.setValue(0,this._lValue);
-			if (shift==32){
-				return;
-			}
-			this._hValue=(this._hValue << (shift-32))& 4294967295;
+		if (!(Laya.__typeof(node,this._nodeClass))){
+			ToolBase.LogError("[ObjectPool push] node isn't thie specify Class");
 			return;
 		}
-		if (shift==0){
+		if (node.inPool){
+			ToolBase.LogError("[ObjectPool push] node in pool");
 			return;
-		};
-		var tmp=this._lValue >>> (32-shift);
-		this._hValue=(this._hValue << shift)& 4294967295;
-		this._lValue=(this._lValue << shift)& 4294967295;
-		this._hValue |=tmp;
+		}
+		if (this._list.length < this._maxCount){
+			node.Clean();
+			this._list[this._list.length]=node;
+			node.inPool=true;
+		}
+		else
+		node.destroy();
 	}
 
-	__proto.andInt=function(v){
-		return this._lValue & v;
+	/**弹出对象*/
+	__proto.Pop=function(){
+		if (this._list.length > 0){
+			var node=this._list.pop();
+			node.inPool=false;
+			return node;
+		}
+		else{
+			return new this._nodeClass();
+		}
 	}
 
-	__proto.and=function(v){
-		this._hValue &=v._hValue;
-		this._lValue &=v._lValue;
-		this._hValue >>>=0;
-		this._lValue >>>=0;
-		return this;
+	/**清理对象池数据*/
+	__proto.Clean=function(){
+		var node;
+		for(var $each_node in this._list){
+			node=this._list[$each_node];
+			node.destroy();
+		}
+		this._list.length=0;
 	}
 
-	__proto.or=function(v){
-		this._hValue |=v._hValue;
-		this._lValue |=v._lValue;
-		this._hValue >>>=0;
-		this._lValue >>>=0;
-	}
+	/**设置对象池最大存储数*/
+	__getset(0,__proto,'maxCount',null,function(value){
+		this._maxCount=value;
+	});
 
-	// _hexValue=(ZERO+_hValue.toString(16)).substr(-8,8)+(ZERO+_lValue.toString(16)).substr(-8,8);
-	__proto.makeHex=function(){
-		this._hexValue=("0000000000000000"+this._hValue.toString(16)).substr(-8,8)+("0000000000000000"+this._lValue.toString(16)).substr(-8,8);
-	}
+	/**获取对象池当前存储数*/
+	__getset(0,__proto,'count',function(){
+		return this._list.length;
+	});
 
-	long.create=function(low){
-		return long.create0(0,low);
-	}
-
-	long.create0=function(high,low){
-		var v=new long();
-		v._hValue=high >>> 0;
-		v._lValue=low >>> 0;
-		v._hexValue=("0000000000000000"+high.toString(16)).substr(-8,8)+("0000000000000000"+low.toString(16)).substr(-8,8);
-		return v;
-	}
-
-	long.create1=function(l){
-		return long.create0(l.hValue,l.lValue);
-	}
-
-	long.valueOf=function(num){
-		return long.create0(Math.floor(num / 0x100000000),Math.floor(num % 0x100000000));
-	}
-
-	return long;
-})(Int64)
+	return ObjectPool;
+})()
 
 
 /**
@@ -8662,6 +8536,43 @@ var PUIBitmapFont=(function(_super){
 	]);
 	return PUIBitmapFont;
 })(EventDispatcher)
+
+
+/**
+*苹果手机异形屏
+*/
+//class engine.notch.NotchIPhoneFix extends engine.notch.NotchFixBase
+var NotchIPhoneFix=(function(_super){
+	function NotchIPhoneFix(){
+		NotchIPhoneFix.__super.call(this);
+	}
+
+	__class(NotchIPhoneFix,'engine.notch.NotchIPhoneFix',_super);
+	var __proto=NotchIPhoneFix.prototype;
+	__proto.Init=function(obj){
+		_super.prototype.Init.call(this,obj);
+		if(Browser.window.conch !=null){
+			var devInfo=JSON.parse(Browser.window.conch.config.getDeviceInfo());
+			if (devInfo !=null){
+				var nameArr=[
+				"iPhone10,3","iPhone10,6",
+				"iPhone11,2",
+				"iPhone11,4","iPhone11,6",
+				"iPhone11,8",
+				"iPhone12,1",
+				"iPhone12,3",
+				"iPhone12,5",];
+				if(nameArr.indexOf(devInfo.devicename)!=-1){
+					this._isNotch=true;
+					this._notchWidth=50;
+					this._notchHeight=60;
+				}
+			}
+		}
+	}
+
+	return NotchIPhoneFix;
+})(NotchFixBase)
 
 
 /**
@@ -8831,40 +8742,140 @@ var ByteArray=(function(_super){
 
 
 /**
-*苹果手机异形屏
+*64位数据类型，相当于QWORD，主要用于和服务器对接
+*@author ty
 */
-//class engine.notch.NotchIPhoneFix extends engine.notch.NotchFixBase
-var NotchIPhoneFix=(function(_super){
-	function NotchIPhoneFix(){
-		NotchIPhoneFix.__super.call(this);
+//class engine.base.data.long extends engine.base.data.Int64
+var long=(function(_super){
+	function long(value){
+		(value===void 0)&& (value=0);
+		long.__super.call(this,value);
 	}
 
-	__class(NotchIPhoneFix,'engine.notch.NotchIPhoneFix',_super);
-	var __proto=NotchIPhoneFix.prototype;
-	__proto.Init=function(obj){
-		_super.prototype.Init.call(this,obj);
-		if(Browser.window.conch !=null){
-			var devInfo=JSON.parse(Browser.window.conch.config.getDeviceInfo());
-			if (devInfo !=null){
-				var nameArr=[
-				"iPhone10,3","iPhone10,6",
-				"iPhone11,2",
-				"iPhone11,4","iPhone11,6",
-				"iPhone11,8",
-				"iPhone12,1",
-				"iPhone12,3",
-				"iPhone12,5",];
-				if(nameArr.indexOf(devInfo.devicename)!=-1){
-					this._isNotch=true;
-					this._notchWidth=50;
-					this._notchHeight=60;
-				}
-			}
+	__class(long,'engine.base.data.long',_super);
+	var __proto=long.prototype;
+	__proto.Clone=function(){
+		var ret=new long();
+		ret._lValue=this._lValue;
+		ret._hValue=this._hValue;
+		ret._hexValue=this._hexValue;
+		return ret;
+	}
+
+	// 下面都是消息解析用的，统一只处理高低位，hex先不处理
+	__proto.setValue=function(l,h){
+		this._hValue=h>>>0;
+		this._lValue=l>>>0;
+	}
+
+	__proto.rightShiftFill0=function(v){
+		if (v > 64){
+			throw new Error("what the fuck:"+v);
 		}
+		if (v==64){
+			this.setValue(0,0);
+			return this;
+		}
+		if (v > 31){
+			this.setValue(this._hValue,0)
+			if (v==32){
+				return this;
+			}
+			this._lValue=this._lValue >>> (v-32);
+			return this;
+		}
+		if (v==0){
+			return this;
+		};
+		var tmp=this._hValue << (32-v);
+		this._hValue >>>=v;
+		this._lValue >>>=v;
+		this._lValue |=tmp;
+		return this;
 	}
 
-	return NotchIPhoneFix;
-})(NotchFixBase)
+	__proto.leftShift=function(shift){
+		if (shift > 64){
+			throw new Error("what the fuck:"+shift);
+		}
+		if (shift==64){
+			this.setValue(0,0);
+			return;
+		}
+		if (shift > 31){
+			this.setValue(0,this._lValue);
+			if (shift==32){
+				return;
+			}
+			this._hValue=(this._hValue << (shift-32))& 4294967295;
+			return;
+		}
+		if (shift==0){
+			return;
+		};
+		var tmp=this._lValue >>> (32-shift);
+		this._hValue=(this._hValue << shift)& 4294967295;
+		this._lValue=(this._lValue << shift)& 4294967295;
+		this._hValue |=tmp;
+	}
+
+	__proto.andInt=function(v){
+		return this._lValue & v;
+	}
+
+	__proto.and=function(v){
+		this._hValue &=v._hValue;
+		this._lValue &=v._lValue;
+		this._hValue >>>=0;
+		this._lValue >>>=0;
+		return this;
+	}
+
+	__proto.or=function(v){
+		this._hValue |=v._hValue;
+		this._lValue |=v._lValue;
+		this._hValue >>>=0;
+		this._lValue >>>=0;
+	}
+
+	// _hexValue=(ZERO+_hValue.toString(16)).substr(-8,8)+(ZERO+_lValue.toString(16)).substr(-8,8);
+	__proto.makeHex=function(){
+		this._hexValue=("0000000000000000"+this._hValue.toString(16)).substr(-8,8)+("0000000000000000"+this._lValue.toString(16)).substr(-8,8);
+	}
+
+	long.create=function(low){
+		return long.create0(0,low);
+	}
+
+	long.create0=function(high,low){
+		var v=new long();
+		v._hValue=high >>> 0;
+		v._lValue=low >>> 0;
+		v._hexValue=("0000000000000000"+high.toString(16)).substr(-8,8)+("0000000000000000"+low.toString(16)).substr(-8,8);
+		return v;
+	}
+
+	long.create1=function(l){
+		return long.create0(l.hValue,l.lValue);
+	}
+
+	long.valueOf=function(num){
+		return long.create0(Math.floor(num / 0x100000000),Math.floor(num % 0x100000000));
+	}
+
+	return long;
+})(Int64)
+
+
+//class engine.pui.components.PAutoBitmap extends laya.ui.AutoBitmap
+var PAutoBitmap=(function(_super){
+	function PAutoBitmap(){
+		PAutoBitmap.__super.call(this);
+	}
+
+	__class(PAutoBitmap,'engine.pui.components.PAutoBitmap',_super);
+	return PAutoBitmap;
+})(AutoBitmap)
 
 
 //class engine.animation.MAnimationControlBase extends laya.display.Node
@@ -9116,17 +9127,6 @@ var MAnimationControlBase=(function(_super){
 	MAnimationControlBase.WRAP_PINGPONG=2;
 	return MAnimationControlBase;
 })(Node)
-
-
-//class engine.pui.components.PAutoBitmap extends laya.ui.AutoBitmap
-var PAutoBitmap=(function(_super){
-	function PAutoBitmap(){
-		PAutoBitmap.__super.call(this);
-	}
-
-	__class(PAutoBitmap,'engine.pui.components.PAutoBitmap',_super);
-	return PAutoBitmap;
-})(AutoBitmap)
 
 
 //class engine.layaex.container.MSprite extends laya.display.Sprite
@@ -10051,876 +10051,6 @@ var PScene=(function(_super){
 })(Scene)
 
 
-//class engine.pui.components.PText extends laya.display.Text
-var PText=(function(_super){
-	function PText(){
-		this._initText=null;
-		PText.__super.call(this);
-	}
-
-	__class(PText,'engine.pui.components.PText',_super);
-	var __proto=PText.prototype;
-	__proto.destroy=function(d){
-		(d===void 0)&& (d=true);
-		PUIBitmapFont.Ins.off("complete",this,this.OnBitmapLoaded);
-		_super.prototype.destroy.call(this,d);
-	}
-
-	__proto.OnBitmapLoaded=function(font){
-		if (this.destroyed || this._font !=font)return;
-		PUIBitmapFont.Ins.off("complete",this,this.OnBitmapLoaded);
-		Laya.superSet(Text,this,'font',font);
-	}
-
-	__getset(0,__proto,'text',_super.prototype._$get_text,function(value){
-		if (this._initText==null){
-			this._initText=value;
-		}
-		Laya.superSet(Text,this,'text',value);
-	});
-
-	__getset(0,__proto,'font',_super.prototype._$get_font,function(value){
-		if (PUIBitmapFont.Ins.isBitmapFont(value)){
-			PUIBitmapFont.Ins.on("complete",this,this.OnBitmapLoaded);
-			PUIBitmapFont.Ins.getFont(value);
-		}
-		Laya.superSet(Text,this,'font',value);
-	});
-
-	__getset(0,__proto,'x',_super.prototype._$get_x,function(value){
-		Laya.superSet(Text,this,'x',Math.round(value));
-	});
-
-	__getset(0,__proto,'initText',function(){
-		return this._initText;
-		},function(value){
-		this._initText=value;
-	});
-
-	__getset(0,__proto,'y',_super.prototype._$get_y,function(value){
-		Laya.superSet(Text,this,'y',Math.round(value));
-	});
-
-	return PText;
-})(Text)
-
-
-/**
-*报错弹窗
-*/
-//class engine.ui.debug.TinyMessageBox extends engine.ui.debug.tinyui.TinyPanel
-var TinyMessageBox=(function(_super){
-	function TinyMessageBox(){
-		this._btnClose=null;
-		this._txt=null;
-		TinyMessageBox.__super.call(this,500,200);
-		this._txt=new Label();
-		this._txt.fontSize=16;
-		this._txt.color="#ffffff";
-		this._txt.width=this.width-20;
-		this._txt.x=10;
-		this._txt.mouseEnabled=false;
-		this._txt.wordWrap=true;
-		this.addChild(this._txt);
-		this._btnClose=new Button();
-		this._btnClose.label="关闭";
-		this._btnClose.width=this._btnClose.height=40;
-		this._btnClose.graphics.save();
-		this._btnClose.graphics.alpha(0.5);
-		this._btnClose.graphics.drawRect(0,0,40,40,"#000000","#ffffff");
-		this._btnClose.graphics.restore();
-		this._btnClose.x=this.width-this._btnClose.width;
-		this._btnClose.y=0;
-		this._btnClose.on("click",this,this.CloseHandler);
-		this.addChild(this._btnClose);
-	}
-
-	__class(TinyMessageBox,'engine.ui.debug.TinyMessageBox',_super);
-	var __proto=TinyMessageBox.prototype;
-	__proto.SetData=function(txt){
-		this._txt.text+=txt;
-		this._txt.text+="\n";
-	}
-
-	__proto.CloseHandler=function(e){
-		this._txt.text="";
-		TinyPanel.ShowHideType(TinyMessageBox,2);
-	}
-
-	TinyMessageBox.Show=function(txt){
-		var p=TinyPanel.ShowHideType(TinyMessageBox,1);
-		p.SetData(txt);
-	}
-
-	return TinyMessageBox;
-})(TinyPanel)
-
-
-/**
-*2d动画组类
-*带挂件
-*/
-//class engine.animation.MAnimation2DGroup extends engine.layaex.container.MSprite
-var MAnimation2DGroup=(function(_super){
-	function MAnimation2DGroup(owner,endCaller,endMethod,frameCaller,frameMethod){
-		this._ani=null;
-		this._partAnimList=null;
-		this._owner=null;
-		// 动画播放结束
-		this._end_caller=null;
-		this._end_method=null;
-		// 动画帧改变
-		this._frame_caller=null;
-		this._frame_medthod=null;
-		MAnimation2DGroup.__super.call(this);
-		this._end_caller=endCaller;
-		this._end_method=endMethod;
-		this._frame_caller=frameCaller;
-		this._frame_medthod=frameMethod;
-		this._owner=owner;
-		this._ani=new MAnimation2D(owner,this,this.OnPlayEnd,this,this.OnFrameChange);
-		this.addChild(this._ani);
-	}
-
-	__class(MAnimation2DGroup,'engine.animation.MAnimation2DGroup',_super);
-	var __proto=MAnimation2DGroup.prototype;
-	Laya.imps(__proto,{"engine.animation.interfaces.IAnimationGroup":true})
-	__proto.SetData=function(resType,resId,resExtra,sortList,actionChangeMap){
-		this._ani.SetData(resType,resId,resExtra,sortList,actionChangeMap,null);
-	}
-
-	/**
-	*执行指定动作
-	*@param actType 动作ID
-	*@param dir 方向
-	*
-	*/
-	__proto.DoAction=function(actType,dir,loop){
-		(loop===void 0)&& (loop=false);
-		this._ani.DoAction(actType,dir,loop);
-		if (this._partAnimList !=null){
-			var part;
-			for(var $each_part in this._partAnimList){
-				part=this._partAnimList[$each_part];
-				if (!part.isActiveAction)
-					part.DoAction(actType,dir,loop);
-				else
-				part.SetDirection(dir);
-			}
-			this.CheckPartSort();
-		}
-	}
-
-	/**
-	*添加一个绑定动画挂件 （resType和resId必须唯一）
-	*@param resType 资源类型
-	*@param resId 资源id
-	*@param resExtra 资源扩展目录
-	*@param sortList 方向的排序等级
-	*@param actionChangeMap 动作转换表，设置的动作会被转换成另外的动作
-	*@param actionChangeHandler 动作转换函数，有些特殊表现简单映射实现不了的就传函数实现
-	*
-	*/
-	__proto.BindPart=function(resType,resId,resExtra,sortList,actionChangeMap,actionChangeHandler){
-		if (this._partAnimList==null)
-			this._partAnimList=[];
-		var anim=new MAnimation2D(this._owner);
-		anim.SetData(resType,resId,resExtra,sortList,actionChangeMap,actionChangeHandler);
-		anim.isPart=true;
-		anim.Stop();
-		this._partAnimList.push(anim);
-		this.addChild(anim);
-		anim.DoAction(this._ani.GetActType(),this.direction,this._ani.isloop);
-		anim.GotoFrameIdx(this._ani.curDirFrameIdx);
-		this.CheckPartSort();
-		return anim;
-	}
-
-	/**
-	*移除绑定动画
-	*@param resType 资源类型
-	*@param resId 资源id
-	*@param resExtra 资源扩展目录
-	*/
-	__proto.RemovePart=function(resType,resId,resExtra){
-		if (this._partAnimList==null)
-			return;
-		for (var i=this._partAnimList.length-1;i >=0;--i){
-			var anim=this._partAnimList[i];
-			if (anim.GetType()==resType && anim.GetId()==resId && anim.GetExtra()==resExtra){
-				this._partAnimList.splice(i,1);
-				this.removeChild(anim);
-				anim.destroy();
-				break ;
-			}
-		}
-	}
-
-	__proto.RemoveAllPart=function(){
-		if (this._partAnimList==null)
-			return;
-		for (var i=0;i < this._partAnimList.length;++i){
-			var anim=this._partAnimList[i];
-			anim.destroy();
-		}
-		this._partAnimList=null;
-	}
-
-	/**
-	*挂件排序
-	*/
-	__proto.CheckPartSort=function(){
-		var parts=this._partAnimList;
-		if (parts==null)
-			return;
-		parts.sort(this.SortPartFunc);
-		var idx=0;
-		var isInsertMain=false;
-		var len=parts.length;
-		for (var i=0;i < len;++i){
-			if (parts[i].parent !=this)
-				continue ;
-			if (parts[i].curSortValue >=0 && !isInsertMain){
-				this.setChildIndex(this._ani,idx++);
-				isInsertMain=true;
-			}
-			this.setChildIndex(parts[i],idx++);
-		}
-	}
-
-	__proto.SortPartFunc=function(a,b){
-		var s1=a.curSortValue;
-		var s2=b.curSortValue;
-		if (s1 < s2)
-			return-1;
-		else if (s1 > s2)
-		return 1;
-		return 0;
-	}
-
-	__proto.SetPlaySpeed=function(v){
-		this._ani.SetPlaySpeed(v);
-	}
-
-	__proto.SetDirection=function(v){
-		this._ani.SetDirection(v);
-		var parts=this._partAnimList;
-		if (parts !=null){
-			for (var i=0;i < parts.length;++i){
-				parts[i].SetDirection(v);
-			}
-			this.CheckPartSort();
-		}
-	}
-
-	__proto.SetAlpha=function(value){
-		Laya.superSet(MSprite,this,'alpha',value);
-	}
-
-	/**
-	*播放动画。
-	*@param start 开始播放的动画索引
-	*@param loop 是否循环。
-	*/
-	__proto.Play=function(start,loop){
-		(start===void 0)&& (start=0);
-		(loop===void 0)&& (loop=true);
-		this._ani.Play(start,loop);
-	}
-
-	/**
-	*停止播放。
-	*/
-	__proto.Stop=function(){
-		this._ani.Stop();
-	}
-
-	/**
-	*暂停
-	*/
-	__proto.Pause=function(pause){
-		if (pause){
-			if (!this._ani.isPlaying)
-				return;
-			this._ani.Stop();
-		}
-		else{
-			if (this._ani.isPlaying)
-				return;
-			this._ani.Play(this._ani.stopAtIdx,this._ani.isloop);
-		}
-	}
-
-	/**
-	*切换到某帧并停止
-	*@param idx
-	*/
-	__proto.GotoAndStop=function(idx){
-		this._ani.GotoAndStop(idx);
-	}
-
-	/**
-	*设置到某一帧
-	*/
-	__proto.GotoFrameIdx=function(idx){
-		this._ani.GotoFrameIdx(idx);
-	}
-
-	/**当前播放索引。*/
-	__proto.GetFrameIdx=function(){
-		return this._ani.GetFrameIdx();
-	}
-
-	/**
-	*动作播放完成是触发
-	*/
-	__proto.OnPlayEnd=function(){
-		if (this._end_method !=null && !this._ani.loop){
-			this._end_method.call(this._end_caller);
-		}
-	}
-
-	/**
-	*动作帧改变触发
-	*@param idx
-	*
-	*/
-	__proto.OnFrameChange=function(idx){
-		var parts=this._partAnimList;
-		if (parts !=null){
-			var part;
-			for(var $each_part in parts){
-				part=parts[$each_part];
-				if (!part.isActiveAction){
-					part.GotoFrameIdx(idx);
-				}
-			}
-		}
-		if (this._frame_medthod !=null){
-			this._frame_medthod.call(this._frame_caller,idx);
-		}
-	}
-
-	__proto.clear=function(){
-		if (this._ani)
-			this._ani.clear();
-		var parts=this._partAnimList;
-		if (parts !=null){
-			var anim;
-			for(var $each_anim in parts){
-				anim=parts[$each_anim];
-				anim.clear();
-			}
-		}
-	}
-
-	__proto.destroy=function(destroyChild){
-		(destroyChild===void 0)&& (destroyChild=true);
-		if (this._ani !=null){
-			this._ani.destroy(destroyChild);
-			this._ani=null;
-		}
-		this._end_caller=this._end_method=null;
-		this._frame_caller=this._frame_medthod=null;
-		var parts=this._partAnimList;
-		if (parts !=null){
-			var anim;
-			for(var $each_anim in parts){
-				anim=parts[$each_anim];
-				anim.clear();
-			}
-			this._partAnimList=null;
-		}
-		this._owner=null;
-		laya.display.Sprite.prototype.destroy.call(this,destroyChild);
-	}
-
-	__getset(0,__proto,'direction',function(){
-		return this._ani.direction;
-	});
-
-	__getset(0,__proto,'alpha',_super.prototype._$get_alpha,function(value){
-		this.SetAlpha(value);
-	});
-
-	__getset(0,__proto,'partAnimList',function(){
-		return this._partAnimList;
-	});
-
-	__getset(0,__proto,'ani',function(){
-		return this._ani;
-	});
-
-	/**
-	*是否在播放中
-	*/
-	__getset(0,__proto,'isPlaying',function(){
-		return this._ani.isPlaying;
-	});
-
-	__getset(0,__proto,'curAction',function(){
-		return this._ani.GetActType();
-	});
-
-	return MAnimation2DGroup;
-})(MSprite)
-
-
-/**
-*场景对象基类
-*@author Administrator
-*/
-//class engine.scene.obj.SceneObjectBase extends engine.layaex.container.MSprite
-var SceneObjectBase=(function(_super){
-	function SceneObjectBase(){
-		this.map=null;
-		this._gid=0;
-		this._pooltype=0;
-		this._diffTime=0;
-		this._lastTime=0;
-		SceneObjectBase.__super.call(this);
-	}
-
-	__class(SceneObjectBase,'engine.scene.obj.SceneObjectBase',_super);
-	var __proto=SceneObjectBase.prototype;
-	Laya.imps(__proto,{"engine.scene.obj.ISceneObjectBase":true})
-	__proto.SetRawData=function(bean){}
-	__proto.destroy=function(destroyChild){
-		(destroyChild===void 0)&& (destroyChild=true);
-		laya.display.Sprite.prototype.destroy.call(this,destroyChild);
-		this._gid=0;
-	}
-
-	__proto.CheckLocalBounding=function(wx,wy){
-		return false;
-	}
-
-	__proto.CalcZOrder=function(){
-		this.SetLocalZOrder(this.map.CalcSceneZOrder(this.pixX,this.pixY));
-	}
-
-	__proto.SetLocalZOrder=function(value){
-		this.zOrder=value;
-	}
-
-	__proto.OnFrame=function(curtime){
-		if (this._lastTime==0)
-			this._lastTime=curtime;
-		this._diffTime=curtime-this._lastTime;
-		this._lastTime=curtime;
-	}
-
-	/**
-	*获得当前的格子坐标
-	*@return
-	*/
-	__proto.GetGridPt=function(){
-		var gridPt=ToolMap.PixPt2GridPt(this.pixX,this.pixY);
-		return gridPt;
-	}
-
-	__proto.SetGridPt=function(gx,gy){
-		var pt=ToolMap.GridPt2PixPt(gx,gy,true);
-		this.SetPixPt(pt.x,pt.y);
-		this.CalcZOrder();
-	}
-
-	__getset(0,__proto,'isNonMouseHit',function(){
-		return true;
-	});
-
-	__getset(0,__proto,'pooltype',function(){
-		return this._pooltype;
-		},function(value){
-		this._pooltype=value;
-	});
-
-	__getset(0,__proto,'gid',function(){
-		return this._gid;
-	});
-
-	__getset(0,__proto,'objectType',function(){
-		return 0;
-	});
-
-	return SceneObjectBase;
-})(MSprite)
-
-
-/**
-*图块拼接 针对LayaBox的简化版本
-*@author yq
-*
-*/
-//class engine.scene.chunk.MapChunkShow extends engine.layaex.container.MSprite
-var MapChunkShow=(function(_super){
-	function MapChunkShow(){
-		this._map=null;
-		this._meta=null;
-		// 场景实际大小
-		this._sceneWidth=0;
-		this._sceneHeight=0;
-		this._resId=0;
-		// 加载控制锁，用于地图坐标还未知的情况下不进行加载地图
-		this._loadChunkLock=true;
-		// 地表图块
-		this._chunkControl=null;
-		this._thumbnail=null;
-		MapChunkShow.__super.call(this);
-		this._chunkControl=new PTileImageControl();
-		this.cacheAs="normal";
-	}
-
-	__class(MapChunkShow,'engine.scene.chunk.MapChunkShow',_super);
-	var __proto=MapChunkShow.prototype;
-	Laya.imps(__proto,{"engine.base.tile.IMTitleContainer":true})
-	__proto.Init=function(map){
-		this._map=map;
-		this._chunkControl.Init(this);
-	}
-
-	/**
-	*清除数据块
-	*
-	*/
-	__proto.Clear=function(){
-		this._resId=0;
-		this.graphics.clear();
-		if (this._thumbnail !=null){
-			this._thumbnail=null;
-		}
-		this._chunkControl.Clear();
-		this._loadChunkLock=true;
-	}
-
-	__proto.reConnect=function(){
-		this._chunkControl.clearFailIDXs();
-	}
-
-	__proto.GetChunkUrls=function(sceneRect){
-		return this._chunkControl.GetChunkUrls(sceneRect);
-	}
-
-	__proto.LoadChunk=function(cx,cy){
-		this._chunkControl.LoadChunk(cx,cy);
-	}
-
-	__proto.OnFrame=function(curtime){
-		var screenRect=this._map.mapLayer.GetScreenSceneRect();
-		if (this._loadChunkLock)
-			return;
-		this._chunkControl.UpdateChunk(screenRect);
-	}
-
-	/**
-	*切换地图
-	*@param meta
-	*
-	*/
-	__proto.ChangeMap=function(meta,$thumbnail){
-		this._meta=meta;
-		this._sceneWidth=meta.sceneWidth;
-		this._sceneHeight=meta.sceneHeight;
-		this._resId=meta.mapresid;
-		var ext=".jpg";
-		if (WebGLContext._compressedTextureEtc1 || WebGLContext._compressedTexturePvrtc){
-			if(!Browser.onWeiXin)
-				ext=Browser.onAndroid ? ".ktx" :".pvr";
-		};
-		var url="res/map/"+this._resId+"/chunks/ml_{0}_{1}"+ext;
-		var chunkversion=ResourceVersionEx.getChunkVersion("res/map/"+this._resId+"/"+"thumbnail.jpg");
-		if (chunkversion)
-			url=chunkversion+"/"+url;
-		var d=meta.layerDataGround;
-		this._chunkControl.SetData(url,d.pixw,d.pixh,d.sizew,d.sizeh,d.pixw / this._sceneWidth,d.pixh / this._sceneHeight);
-		this.width=d.pixw;
-		this.height=d.pixh;
-		this._thumbnail=$thumbnail;
-		if (this._thumbnail !=null)
-			this.graphics.drawTexture(this._thumbnail,0,0,this.width,this.height);
-	}
-
-	__proto.SetLoadChunkLock=function(v){
-		this._loadChunkLock=v;
-	}
-
-	__getset(0,__proto,'thumbnail',function(){
-		return this._thumbnail;
-	});
-
-	return MapChunkShow;
-})(MSprite)
-
-
-//class engine.pui.components.PHTMLDivElement extends laya.html.dom.HTMLDivElement
-var PHTMLDivElement=(function(_super){
-	function PHTMLDivElement(){
-		PHTMLDivElement.__super.call(this);
-	}
-
-	__class(PHTMLDivElement,'engine.pui.components.PHTMLDivElement',_super);
-	var __proto=PHTMLDivElement.prototype;
-	__proto._afterInited=function(){
-		this._element.width=this.width;
-		this._element.height=this.height;
-	}
-
-	__getset(0,__proto,'innerHTML',_super.prototype._$get_innerHTML,function(value){
-		if (this.initHtmlText==null)this.initHtmlText=value;
-		Laya.superSet(HTMLDivElement,this,'innerHTML',value);
-	});
-
-	return PHTMLDivElement;
-})(HTMLDivElement)
-
-
-/**
-*格子组组件
-*
-*@author Administrator
-*/
-//class engine.pui.componentext.PGridGroup extends laya.ui.UIComponent
-var PGridGroup=(function(_super){
-	function PGridGroup(){
-		// 排列模式
-		this._layoutModel=0;
-		// 单行最大数量
-		this._lineMaxNum=-1;
-		// 水平间距
-		this._marginh=2;
-		// 垂直间距
-		this._marginv=2;
-		// 格子背景资源
-		this._skin=null;
-		// 格子宽高
-		this._gridW=0;
-		this._gridH=0;
-		PGridGroup.__super.call(this);
-		this._grids=[];
-	}
-
-	__class(PGridGroup,'engine.pui.componentext.PGridGroup',_super);
-	var __proto=PGridGroup.prototype;
-	__proto.destroy=function(destroyChild){
-		(destroyChild===void 0)&& (destroyChild=true);
-		this.Clean();
-		_super.prototype.destroy.call(this,destroyChild);
-	}
-
-	__proto.AddItem=function(data,param){
-		if (data==null)
-			return null;
-		var grid=new PGrid();
-		if (this._gridW !=0)
-			grid.width=this._gridW;
-		if (this._gridH !=0)
-			grid.height=this._gridH;
-		grid.skin=this._skin;
-		grid.on("resize",this,this.LayoutGroup);
-		data.SetForGrid(grid,param);
-		this.addChild(grid);
-		this._grids.push(grid);
-		this.LayoutGroup();
-		return grid;
-	}
-
-	__proto.LayoutGroup=function(){
-		this.callLater(this._LayoutGroup);
-	}
-
-	__proto._LayoutGroup=function(){
-		if (this.destroyed)return;
-		var i=0;
-		var tmpLen=0;
-		if (this._layoutModel==0){
-			for (i=0;i < this._grids.length;i++){
-				if (this._lineMaxNum > 0){
-					this._grids[i].x=Math.floor(i % this._lineMaxNum)*(this._grids[i].width+this._marginh);
-					this._grids[i].y=Math.floor(i / this._lineMaxNum)*(this._grids[i].height+this._marginv);
-				}
-				else{
-					this._grids[i].x=i *(this._grids[i].width+this._marginh);
-					this._grids[i].y=0;
-				}
-			}
-		}
-		else if (this._layoutModel==1){
-			tmpLen=Math.min(this._grids.length,this._lineMaxNum);
-			for (i=0;i < this._grids.length;i++){
-				if (this._lineMaxNum > 0){
-					this._grids[i].x=-(tmpLen *(this.width+this._marginh)/ 2)+Math.floor(i % this._lineMaxNum)*(this._grids[i].width+this._marginh)+this.width / 2+(this._marginh / 2);
-					this._grids[i].y=Math.floor(i / this._lineMaxNum)*(this._grids[i].height+this._marginv);
-				}
-				else{
-					this._grids[i].x=-(this._grids.length *(this.width+this._marginh)/ 2)+i *(this._grids[i].width+this._marginh)+this.width / 2;
-					this._grids[i].y=0;
-				}
-			}
-		}
-		else if (this._layoutModel==2){
-			for (i=0;i < this._grids.length;i++){
-				if (this._lineMaxNum > 0){
-					this._grids[i].x=-Math.floor(i % this._lineMaxNum)*(this._grids[i].width+this._marginh);
-					this._grids[i].y=Math.floor(i / this._lineMaxNum)*(this._grids[i].height+this._marginv);
-				}
-				else{
-					this._grids[i].x=-i *(this._grids[i].width+this._marginh);
-					this._grids[i].y=0;
-				}
-			}
-		}
-		else if (this._layoutModel==3){
-			for (i=0;i < this._grids.length;i++){
-				if (this._lineMaxNum > 0){
-					this._grids[i].x=Math.floor(i / this._lineMaxNum)*(this._grids[i].width+this._marginh);
-					this._grids[i].y=Math.floor(i % this._lineMaxNum)*(this._grids[i].height+this._marginv);
-				}
-				else{
-					this._grids[i].y=i *(this._grids[i].height+this._marginv);
-					this._grids[i].x=0;
-				}
-			}
-		}
-		else if (this._layoutModel==4){
-			tmpLen=Math.min(this._grids.length,this._lineMaxNum);
-			for (i=0;i < this._grids.length;i++){
-				if (this._lineMaxNum > 0){
-					this._grids[i].x=Math.floor(i / this._lineMaxNum)*(this._grids[i].width+this._marginh);
-					this._grids[i].y=-(tmpLen *(this.height+this._marginv)/ 2)+Math.floor(i % this._lineMaxNum)*(this._grids[i].height+this._marginv)+this.height / 2+(this._marginv / 2);
-				}
-				else{
-					this._grids[i].x=0;
-					this._grids[i].y=-(this._grids.length *(this.height+this._marginv)/ 2)+i *(this._grids[i].height+this._marginv)+this.height / 2;
-				}
-			}
-		}
-		else if (this._layoutModel==5){
-			for (i=0;i < this._grids.length;i++){
-				if (this._lineMaxNum > 0){
-					this._grids[i].x=Math.floor(i / this._lineMaxNum)*(this._grids[i].width+this._marginh);
-					this._grids[i].y=-Math.floor(i % this._lineMaxNum)*(this._grids[i].height+this._marginv);
-				}
-				else{
-					this._grids[i].x=0;
-					this._grids[i].y=-i *(this._grids[i].height+this._marginv);
-				}
-			}
-		}
-	}
-
-	__proto.Clean=function(){
-		var grid;
-		for(var $each_grid in this._grids){
-			grid=this._grids[$each_grid];
-			grid.destroy();
-		}
-		this._grids.length=0;
-	}
-
-	__proto.Clone=function(){
-		var ret=new PGridGroup();
-		ret.size(this.width,this.height);
-		ret.layoutModel=this.layoutModel;
-		ret.marginh=this.marginh;
-		ret.marginv=this.marginv;
-		ret.skin=this.skin;
-		return ret;
-	}
-
-	/**
-	*设置布局模式
-	*@param 0 水平上居左 1 水平上居中 2水平上居右 3垂直 4垂直 5垂直
-	*/
-	__getset(0,__proto,'layoutModel',function(){
-		return this._layoutModel;
-		},function(value){
-		if (value < 0 || value > 5)
-			return;
-		this._layoutModel=value;
-		this.LayoutGroup();
-	});
-
-	__getset(0,__proto,'lineMaxNum',function(){
-		return this._lineMaxNum;
-		},function(value){
-		if (value <=0)
-			value=-1;
-		this._lineMaxNum=value;
-		this.LayoutGroup();
-	});
-
-	__getset(0,__proto,'marginh',function(){
-		return this._marginh;
-		},function(value){
-		this._marginh=value;
-		this.LayoutGroup();
-	});
-
-	__getset(0,__proto,'width',function(){
-		if (this._layoutModel==0){
-			if (this._grids.length > 0){
-				if (this._lineMaxNum > 0 && this._grids.length > this._lineMaxNum){
-					return this._grids[this._lineMaxNum-1].x+this._grids[this._lineMaxNum-1].width;
-				}
-				else{
-					return this._grids[this._grids.length-1].x+this._grids[this._grids.length-1].width;
-				}
-			}
-		}
-		return this._gridW;
-	},_super.prototype._$set_width);
-
-	__getset(0,__proto,'marginv',function(){
-		return this._marginv;
-		},function(value){
-		this._marginv=value;
-		this.LayoutGroup();
-	});
-
-	__getset(0,__proto,'skin',function(){
-		return this._skin;
-		},function(value){
-		this._skin=value;
-	});
-
-	__getset(0,__proto,'height',function(){
-		if (this._layoutModel==0){
-			if (this._grids.length > 0){
-				if (this._lineMaxNum > 0 && this._grids.length > this._lineMaxNum){
-					return (Math.floor(this._grids.length / this._lineMaxNum)+(((this._grids.length % this._lineMaxNum)!=0)? 1 :0))*(this._grids[0].height+this._marginv);
-				}
-				else{
-					return this._grids[0].height;
-				}
-			}
-		}
-		return this._gridH;
-	},_super.prototype._$set_height);
-
-	__getset(0,__proto,'gridW',null,function(value){
-		this._gridW=value;
-	});
-
-	__getset(0,__proto,'gridH',null,function(value){
-		this._gridH=value;
-	});
-
-	__getset(0,__proto,'grids',function(){
-		return this._grids;
-	});
-
-	__getset(0,__proto,'x',_super.prototype._$get_x,function(value){
-		Laya.superSet(UIComponent,this,'x',Math.round(value));
-	});
-
-	__getset(0,__proto,'y',_super.prototype._$get_y,function(value){
-		Laya.superSet(UIComponent,this,'y',Math.round(value));
-	});
-
-	return PGridGroup;
-})(UIComponent)
-
-
 /**
 *2d单一动画类
 */
@@ -11357,6 +10487,243 @@ var MAnimation2D=(function(_super){
 })(MSprite)
 
 
+/**
+*报错弹窗
+*/
+//class engine.ui.debug.TinyMessageBox extends engine.ui.debug.tinyui.TinyPanel
+var TinyMessageBox=(function(_super){
+	function TinyMessageBox(){
+		this._btnClose=null;
+		this._txt=null;
+		TinyMessageBox.__super.call(this,500,200);
+		this._txt=new Label();
+		this._txt.fontSize=16;
+		this._txt.color="#ffffff";
+		this._txt.width=this.width-20;
+		this._txt.x=10;
+		this._txt.mouseEnabled=false;
+		this._txt.wordWrap=true;
+		this.addChild(this._txt);
+		this._btnClose=new Button();
+		this._btnClose.label="关闭";
+		this._btnClose.width=this._btnClose.height=40;
+		this._btnClose.graphics.save();
+		this._btnClose.graphics.alpha(0.5);
+		this._btnClose.graphics.drawRect(0,0,40,40,"#000000","#ffffff");
+		this._btnClose.graphics.restore();
+		this._btnClose.x=this.width-this._btnClose.width;
+		this._btnClose.y=0;
+		this._btnClose.on("click",this,this.CloseHandler);
+		this.addChild(this._btnClose);
+	}
+
+	__class(TinyMessageBox,'engine.ui.debug.TinyMessageBox',_super);
+	var __proto=TinyMessageBox.prototype;
+	__proto.SetData=function(txt){
+		this._txt.text+=txt;
+		this._txt.text+="\n";
+	}
+
+	__proto.CloseHandler=function(e){
+		this._txt.text="";
+		TinyPanel.ShowHideType(TinyMessageBox,2);
+	}
+
+	TinyMessageBox.Show=function(txt){
+		var p=TinyPanel.ShowHideType(TinyMessageBox,1);
+		p.SetData(txt);
+	}
+
+	return TinyMessageBox;
+})(TinyPanel)
+
+
+/**
+*场景对象基类
+*@author Administrator
+*/
+//class engine.scene.obj.SceneObjectBase extends engine.layaex.container.MSprite
+var SceneObjectBase=(function(_super){
+	function SceneObjectBase(){
+		this.map=null;
+		this._gid=0;
+		this._pooltype=0;
+		this._diffTime=0;
+		this._lastTime=0;
+		SceneObjectBase.__super.call(this);
+	}
+
+	__class(SceneObjectBase,'engine.scene.obj.SceneObjectBase',_super);
+	var __proto=SceneObjectBase.prototype;
+	Laya.imps(__proto,{"engine.scene.obj.ISceneObjectBase":true})
+	__proto.SetRawData=function(bean){}
+	__proto.destroy=function(destroyChild){
+		(destroyChild===void 0)&& (destroyChild=true);
+		laya.display.Sprite.prototype.destroy.call(this,destroyChild);
+		this._gid=0;
+	}
+
+	__proto.CheckLocalBounding=function(wx,wy){
+		return false;
+	}
+
+	__proto.CalcZOrder=function(){
+		this.SetLocalZOrder(this.map.CalcSceneZOrder(this.pixX,this.pixY));
+	}
+
+	__proto.SetLocalZOrder=function(value){
+		this.zOrder=value;
+	}
+
+	__proto.OnFrame=function(curtime){
+		if (this._lastTime==0)
+			this._lastTime=curtime;
+		this._diffTime=curtime-this._lastTime;
+		this._lastTime=curtime;
+	}
+
+	/**
+	*获得当前的格子坐标
+	*@return
+	*/
+	__proto.GetGridPt=function(){
+		var gridPt=ToolMap.PixPt2GridPt(this.pixX,this.pixY);
+		return gridPt;
+	}
+
+	__proto.SetGridPt=function(gx,gy){
+		var pt=ToolMap.GridPt2PixPt(gx,gy,true);
+		this.SetPixPt(pt.x,pt.y);
+		this.CalcZOrder();
+	}
+
+	__getset(0,__proto,'isNonMouseHit',function(){
+		return true;
+	});
+
+	__getset(0,__proto,'pooltype',function(){
+		return this._pooltype;
+		},function(value){
+		this._pooltype=value;
+	});
+
+	__getset(0,__proto,'gid',function(){
+		return this._gid;
+	});
+
+	__getset(0,__proto,'objectType',function(){
+		return 0;
+	});
+
+	return SceneObjectBase;
+})(MSprite)
+
+
+/**
+*图块拼接 针对LayaBox的简化版本
+*@author yq
+*
+*/
+//class engine.scene.chunk.MapChunkShow extends engine.layaex.container.MSprite
+var MapChunkShow=(function(_super){
+	function MapChunkShow(){
+		this._map=null;
+		this._meta=null;
+		// 场景实际大小
+		this._sceneWidth=0;
+		this._sceneHeight=0;
+		this._resId=0;
+		// 加载控制锁，用于地图坐标还未知的情况下不进行加载地图
+		this._loadChunkLock=true;
+		// 地表图块
+		this._chunkControl=null;
+		this._thumbnail=null;
+		MapChunkShow.__super.call(this);
+		this._chunkControl=new PTileImageControl();
+		this.cacheAs="normal";
+	}
+
+	__class(MapChunkShow,'engine.scene.chunk.MapChunkShow',_super);
+	var __proto=MapChunkShow.prototype;
+	Laya.imps(__proto,{"engine.base.tile.IMTitleContainer":true})
+	__proto.Init=function(map){
+		this._map=map;
+		this._chunkControl.Init(this);
+	}
+
+	/**
+	*清除数据块
+	*
+	*/
+	__proto.Clear=function(){
+		this._resId=0;
+		this.graphics.clear();
+		if (this._thumbnail !=null){
+			this._thumbnail=null;
+		}
+		this._chunkControl.Clear();
+		this._loadChunkLock=true;
+	}
+
+	__proto.reConnect=function(){
+		this._chunkControl.clearFailIDXs();
+	}
+
+	__proto.GetChunkUrls=function(sceneRect){
+		return this._chunkControl.GetChunkUrls(sceneRect);
+	}
+
+	__proto.LoadChunk=function(cx,cy){
+		this._chunkControl.LoadChunk(cx,cy);
+	}
+
+	__proto.OnFrame=function(curtime){
+		var screenRect=this._map.mapLayer.GetScreenSceneRect();
+		if (this._loadChunkLock)
+			return;
+		this._chunkControl.UpdateChunk(screenRect);
+	}
+
+	/**
+	*切换地图
+	*@param meta
+	*
+	*/
+	__proto.ChangeMap=function(meta,$thumbnail){
+		this._meta=meta;
+		this._sceneWidth=meta.sceneWidth;
+		this._sceneHeight=meta.sceneHeight;
+		this._resId=meta.mapresid;
+		var ext=".jpg";
+		if (WebGLContext._compressedTextureEtc1 || WebGLContext._compressedTexturePvrtc){
+			if(!Browser.onWeiXin)
+				ext=Browser.onAndroid ? ".ktx" :".pvr";
+		};
+		var url="res/map/"+this._resId+"/chunks/ml_{0}_{1}"+ext;
+		var chunkversion=ResourceVersionEx.getChunkVersion("res/map/"+this._resId+"/"+"thumbnail.jpg");
+		if (chunkversion)
+			url=chunkversion+"/"+url;
+		var d=meta.layerDataGround;
+		this._chunkControl.SetData(url,d.pixw,d.pixh,d.sizew,d.sizeh,d.pixw / this._sceneWidth,d.pixh / this._sceneHeight);
+		this.width=d.pixw;
+		this.height=d.pixh;
+		this._thumbnail=$thumbnail;
+		if (this._thumbnail !=null)
+			this.graphics.drawTexture(this._thumbnail,0,0,this.width,this.height);
+	}
+
+	__proto.SetLoadChunkLock=function(v){
+		this._loadChunkLock=v;
+	}
+
+	__getset(0,__proto,'thumbnail',function(){
+		return this._thumbnail;
+	});
+
+	return MapChunkShow;
+})(MSprite)
+
+
 //class engine.templet.MTemplet extends laya.ani.bone.Templet
 var MTemplet=(function(_super){
 	function MTemplet(){
@@ -11413,6 +10780,639 @@ var MTemplet=(function(_super){
 
 	return MTemplet;
 })(Templet)
+
+
+/**
+*格子组组件
+*
+*@author Administrator
+*/
+//class engine.pui.componentext.PGridGroup extends laya.ui.UIComponent
+var PGridGroup=(function(_super){
+	function PGridGroup(){
+		// 排列模式
+		this._layoutModel=0;
+		// 单行最大数量
+		this._lineMaxNum=-1;
+		// 水平间距
+		this._marginh=2;
+		// 垂直间距
+		this._marginv=2;
+		// 格子背景资源
+		this._skin=null;
+		// 格子宽高
+		this._gridW=0;
+		this._gridH=0;
+		PGridGroup.__super.call(this);
+		this._grids=[];
+	}
+
+	__class(PGridGroup,'engine.pui.componentext.PGridGroup',_super);
+	var __proto=PGridGroup.prototype;
+	__proto.destroy=function(destroyChild){
+		(destroyChild===void 0)&& (destroyChild=true);
+		this.Clean();
+		_super.prototype.destroy.call(this,destroyChild);
+	}
+
+	__proto.AddItem=function(data,param){
+		if (data==null)
+			return null;
+		var grid=new PGrid();
+		if (this._gridW !=0)
+			grid.width=this._gridW;
+		if (this._gridH !=0)
+			grid.height=this._gridH;
+		grid.skin=this._skin;
+		grid.on("resize",this,this.LayoutGroup);
+		data.SetForGrid(grid,param);
+		this.addChild(grid);
+		this._grids.push(grid);
+		this.LayoutGroup();
+		return grid;
+	}
+
+	__proto.LayoutGroup=function(){
+		this.callLater(this._LayoutGroup);
+	}
+
+	__proto._LayoutGroup=function(){
+		if (this.destroyed)return;
+		var i=0;
+		var tmpLen=0;
+		if (this._layoutModel==0){
+			for (i=0;i < this._grids.length;i++){
+				if (this._lineMaxNum > 0){
+					this._grids[i].x=Math.floor(i % this._lineMaxNum)*(this._grids[i].width+this._marginh);
+					this._grids[i].y=Math.floor(i / this._lineMaxNum)*(this._grids[i].height+this._marginv);
+				}
+				else{
+					this._grids[i].x=i *(this._grids[i].width+this._marginh);
+					this._grids[i].y=0;
+				}
+			}
+		}
+		else if (this._layoutModel==1){
+			tmpLen=Math.min(this._grids.length,this._lineMaxNum);
+			for (i=0;i < this._grids.length;i++){
+				if (this._lineMaxNum > 0){
+					this._grids[i].x=-(tmpLen *(this.width+this._marginh)/ 2)+Math.floor(i % this._lineMaxNum)*(this._grids[i].width+this._marginh)+this.width / 2+(this._marginh / 2);
+					this._grids[i].y=Math.floor(i / this._lineMaxNum)*(this._grids[i].height+this._marginv);
+				}
+				else{
+					this._grids[i].x=-(this._grids.length *(this.width+this._marginh)/ 2)+i *(this._grids[i].width+this._marginh)+this.width / 2;
+					this._grids[i].y=0;
+				}
+			}
+		}
+		else if (this._layoutModel==2){
+			for (i=0;i < this._grids.length;i++){
+				if (this._lineMaxNum > 0){
+					this._grids[i].x=-Math.floor(i % this._lineMaxNum)*(this._grids[i].width+this._marginh);
+					this._grids[i].y=Math.floor(i / this._lineMaxNum)*(this._grids[i].height+this._marginv);
+				}
+				else{
+					this._grids[i].x=-i *(this._grids[i].width+this._marginh);
+					this._grids[i].y=0;
+				}
+			}
+		}
+		else if (this._layoutModel==3){
+			for (i=0;i < this._grids.length;i++){
+				if (this._lineMaxNum > 0){
+					this._grids[i].x=Math.floor(i / this._lineMaxNum)*(this._grids[i].width+this._marginh);
+					this._grids[i].y=Math.floor(i % this._lineMaxNum)*(this._grids[i].height+this._marginv);
+				}
+				else{
+					this._grids[i].y=i *(this._grids[i].height+this._marginv);
+					this._grids[i].x=0;
+				}
+			}
+		}
+		else if (this._layoutModel==4){
+			tmpLen=Math.min(this._grids.length,this._lineMaxNum);
+			for (i=0;i < this._grids.length;i++){
+				if (this._lineMaxNum > 0){
+					this._grids[i].x=Math.floor(i / this._lineMaxNum)*(this._grids[i].width+this._marginh);
+					this._grids[i].y=-(tmpLen *(this.height+this._marginv)/ 2)+Math.floor(i % this._lineMaxNum)*(this._grids[i].height+this._marginv)+this.height / 2+(this._marginv / 2);
+				}
+				else{
+					this._grids[i].x=0;
+					this._grids[i].y=-(this._grids.length *(this.height+this._marginv)/ 2)+i *(this._grids[i].height+this._marginv)+this.height / 2;
+				}
+			}
+		}
+		else if (this._layoutModel==5){
+			for (i=0;i < this._grids.length;i++){
+				if (this._lineMaxNum > 0){
+					this._grids[i].x=Math.floor(i / this._lineMaxNum)*(this._grids[i].width+this._marginh);
+					this._grids[i].y=-Math.floor(i % this._lineMaxNum)*(this._grids[i].height+this._marginv);
+				}
+				else{
+					this._grids[i].x=0;
+					this._grids[i].y=-i *(this._grids[i].height+this._marginv);
+				}
+			}
+		}
+	}
+
+	__proto.Clean=function(){
+		var grid;
+		for(var $each_grid in this._grids){
+			grid=this._grids[$each_grid];
+			grid.destroy();
+		}
+		this._grids.length=0;
+	}
+
+	__proto.Clone=function(){
+		var ret=new PGridGroup();
+		ret.size(this.width,this.height);
+		ret.layoutModel=this.layoutModel;
+		ret.marginh=this.marginh;
+		ret.marginv=this.marginv;
+		ret.skin=this.skin;
+		return ret;
+	}
+
+	/**
+	*设置布局模式
+	*@param 0 水平上居左 1 水平上居中 2水平上居右 3垂直 4垂直 5垂直
+	*/
+	__getset(0,__proto,'layoutModel',function(){
+		return this._layoutModel;
+		},function(value){
+		if (value < 0 || value > 5)
+			return;
+		this._layoutModel=value;
+		this.LayoutGroup();
+	});
+
+	__getset(0,__proto,'lineMaxNum',function(){
+		return this._lineMaxNum;
+		},function(value){
+		if (value <=0)
+			value=-1;
+		this._lineMaxNum=value;
+		this.LayoutGroup();
+	});
+
+	__getset(0,__proto,'marginh',function(){
+		return this._marginh;
+		},function(value){
+		this._marginh=value;
+		this.LayoutGroup();
+	});
+
+	__getset(0,__proto,'width',function(){
+		if (this._layoutModel==0){
+			if (this._grids.length > 0){
+				if (this._lineMaxNum > 0 && this._grids.length > this._lineMaxNum){
+					return this._grids[this._lineMaxNum-1].x+this._grids[this._lineMaxNum-1].width;
+				}
+				else{
+					return this._grids[this._grids.length-1].x+this._grids[this._grids.length-1].width;
+				}
+			}
+		}
+		return this._gridW;
+	},_super.prototype._$set_width);
+
+	__getset(0,__proto,'marginv',function(){
+		return this._marginv;
+		},function(value){
+		this._marginv=value;
+		this.LayoutGroup();
+	});
+
+	__getset(0,__proto,'skin',function(){
+		return this._skin;
+		},function(value){
+		this._skin=value;
+	});
+
+	__getset(0,__proto,'height',function(){
+		if (this._layoutModel==0){
+			if (this._grids.length > 0){
+				if (this._lineMaxNum > 0 && this._grids.length > this._lineMaxNum){
+					return (Math.floor(this._grids.length / this._lineMaxNum)+(((this._grids.length % this._lineMaxNum)!=0)? 1 :0))*(this._grids[0].height+this._marginv);
+				}
+				else{
+					return this._grids[0].height;
+				}
+			}
+		}
+		return this._gridH;
+	},_super.prototype._$set_height);
+
+	__getset(0,__proto,'gridW',null,function(value){
+		this._gridW=value;
+	});
+
+	__getset(0,__proto,'gridH',null,function(value){
+		this._gridH=value;
+	});
+
+	__getset(0,__proto,'grids',function(){
+		return this._grids;
+	});
+
+	__getset(0,__proto,'x',_super.prototype._$get_x,function(value){
+		Laya.superSet(UIComponent,this,'x',Math.round(value));
+	});
+
+	__getset(0,__proto,'y',_super.prototype._$get_y,function(value){
+		Laya.superSet(UIComponent,this,'y',Math.round(value));
+	});
+
+	return PGridGroup;
+})(UIComponent)
+
+
+/**
+*2d动画组类
+*带挂件
+*/
+//class engine.animation.MAnimation2DGroup extends engine.layaex.container.MSprite
+var MAnimation2DGroup=(function(_super){
+	function MAnimation2DGroup(owner,endCaller,endMethod,frameCaller,frameMethod){
+		this._ani=null;
+		this._partAnimList=null;
+		this._owner=null;
+		// 动画播放结束
+		this._end_caller=null;
+		this._end_method=null;
+		// 动画帧改变
+		this._frame_caller=null;
+		this._frame_medthod=null;
+		MAnimation2DGroup.__super.call(this);
+		this._end_caller=endCaller;
+		this._end_method=endMethod;
+		this._frame_caller=frameCaller;
+		this._frame_medthod=frameMethod;
+		this._owner=owner;
+		this._ani=new MAnimation2D(owner,this,this.OnPlayEnd,this,this.OnFrameChange);
+		this.addChild(this._ani);
+	}
+
+	__class(MAnimation2DGroup,'engine.animation.MAnimation2DGroup',_super);
+	var __proto=MAnimation2DGroup.prototype;
+	Laya.imps(__proto,{"engine.animation.interfaces.IAnimationGroup":true})
+	__proto.SetData=function(resType,resId,resExtra,sortList,actionChangeMap){
+		this._ani.SetData(resType,resId,resExtra,sortList,actionChangeMap,null);
+	}
+
+	/**
+	*执行指定动作
+	*@param actType 动作ID
+	*@param dir 方向
+	*
+	*/
+	__proto.DoAction=function(actType,dir,loop){
+		(loop===void 0)&& (loop=false);
+		this._ani.DoAction(actType,dir,loop);
+		if (this._partAnimList !=null){
+			var part;
+			for(var $each_part in this._partAnimList){
+				part=this._partAnimList[$each_part];
+				if (!part.isActiveAction)
+					part.DoAction(actType,dir,loop);
+				else
+				part.SetDirection(dir);
+			}
+			this.CheckPartSort();
+		}
+	}
+
+	/**
+	*添加一个绑定动画挂件 （resType和resId必须唯一）
+	*@param resType 资源类型
+	*@param resId 资源id
+	*@param resExtra 资源扩展目录
+	*@param sortList 方向的排序等级
+	*@param actionChangeMap 动作转换表，设置的动作会被转换成另外的动作
+	*@param actionChangeHandler 动作转换函数，有些特殊表现简单映射实现不了的就传函数实现
+	*
+	*/
+	__proto.BindPart=function(resType,resId,resExtra,sortList,actionChangeMap,actionChangeHandler){
+		if (this._partAnimList==null)
+			this._partAnimList=[];
+		var anim=new MAnimation2D(this._owner);
+		anim.SetData(resType,resId,resExtra,sortList,actionChangeMap,actionChangeHandler);
+		anim.isPart=true;
+		anim.Stop();
+		this._partAnimList.push(anim);
+		this.addChild(anim);
+		anim.DoAction(this._ani.GetActType(),this.direction,this._ani.isloop);
+		anim.GotoFrameIdx(this._ani.curDirFrameIdx);
+		this.CheckPartSort();
+		return anim;
+	}
+
+	/**
+	*移除绑定动画
+	*@param resType 资源类型
+	*@param resId 资源id
+	*@param resExtra 资源扩展目录
+	*/
+	__proto.RemovePart=function(resType,resId,resExtra){
+		if (this._partAnimList==null)
+			return;
+		for (var i=this._partAnimList.length-1;i >=0;--i){
+			var anim=this._partAnimList[i];
+			if (anim.GetType()==resType && anim.GetId()==resId && anim.GetExtra()==resExtra){
+				this._partAnimList.splice(i,1);
+				this.removeChild(anim);
+				anim.destroy();
+				break ;
+			}
+		}
+	}
+
+	__proto.RemoveAllPart=function(){
+		if (this._partAnimList==null)
+			return;
+		for (var i=0;i < this._partAnimList.length;++i){
+			var anim=this._partAnimList[i];
+			anim.destroy();
+		}
+		this._partAnimList=null;
+	}
+
+	/**
+	*挂件排序
+	*/
+	__proto.CheckPartSort=function(){
+		var parts=this._partAnimList;
+		if (parts==null)
+			return;
+		parts.sort(this.SortPartFunc);
+		var idx=0;
+		var isInsertMain=false;
+		var len=parts.length;
+		for (var i=0;i < len;++i){
+			if (parts[i].parent !=this)
+				continue ;
+			if (parts[i].curSortValue >=0 && !isInsertMain){
+				this.setChildIndex(this._ani,idx++);
+				isInsertMain=true;
+			}
+			this.setChildIndex(parts[i],idx++);
+		}
+	}
+
+	__proto.SortPartFunc=function(a,b){
+		var s1=a.curSortValue;
+		var s2=b.curSortValue;
+		if (s1 < s2)
+			return-1;
+		else if (s1 > s2)
+		return 1;
+		return 0;
+	}
+
+	__proto.SetPlaySpeed=function(v){
+		this._ani.SetPlaySpeed(v);
+	}
+
+	__proto.SetDirection=function(v){
+		this._ani.SetDirection(v);
+		var parts=this._partAnimList;
+		if (parts !=null){
+			for (var i=0;i < parts.length;++i){
+				parts[i].SetDirection(v);
+			}
+			this.CheckPartSort();
+		}
+	}
+
+	__proto.SetAlpha=function(value){
+		Laya.superSet(MSprite,this,'alpha',value);
+	}
+
+	/**
+	*播放动画。
+	*@param start 开始播放的动画索引
+	*@param loop 是否循环。
+	*/
+	__proto.Play=function(start,loop){
+		(start===void 0)&& (start=0);
+		(loop===void 0)&& (loop=true);
+		this._ani.Play(start,loop);
+	}
+
+	/**
+	*停止播放。
+	*/
+	__proto.Stop=function(){
+		this._ani.Stop();
+	}
+
+	/**
+	*暂停
+	*/
+	__proto.Pause=function(pause){
+		if (pause){
+			if (!this._ani.isPlaying)
+				return;
+			this._ani.Stop();
+		}
+		else{
+			if (this._ani.isPlaying)
+				return;
+			this._ani.Play(this._ani.stopAtIdx,this._ani.isloop);
+		}
+	}
+
+	/**
+	*切换到某帧并停止
+	*@param idx
+	*/
+	__proto.GotoAndStop=function(idx){
+		this._ani.GotoAndStop(idx);
+	}
+
+	/**
+	*设置到某一帧
+	*/
+	__proto.GotoFrameIdx=function(idx){
+		this._ani.GotoFrameIdx(idx);
+	}
+
+	/**当前播放索引。*/
+	__proto.GetFrameIdx=function(){
+		return this._ani.GetFrameIdx();
+	}
+
+	/**
+	*动作播放完成是触发
+	*/
+	__proto.OnPlayEnd=function(){
+		if (this._end_method !=null && !this._ani.loop){
+			this._end_method.call(this._end_caller);
+		}
+	}
+
+	/**
+	*动作帧改变触发
+	*@param idx
+	*
+	*/
+	__proto.OnFrameChange=function(idx){
+		var parts=this._partAnimList;
+		if (parts !=null){
+			var part;
+			for(var $each_part in parts){
+				part=parts[$each_part];
+				if (!part.isActiveAction){
+					part.GotoFrameIdx(idx);
+				}
+			}
+		}
+		if (this._frame_medthod !=null){
+			this._frame_medthod.call(this._frame_caller,idx);
+		}
+	}
+
+	__proto.clear=function(){
+		if (this._ani)
+			this._ani.clear();
+		var parts=this._partAnimList;
+		if (parts !=null){
+			var anim;
+			for(var $each_anim in parts){
+				anim=parts[$each_anim];
+				anim.clear();
+			}
+		}
+	}
+
+	__proto.destroy=function(destroyChild){
+		(destroyChild===void 0)&& (destroyChild=true);
+		if (this._ani !=null){
+			this._ani.destroy(destroyChild);
+			this._ani=null;
+		}
+		this._end_caller=this._end_method=null;
+		this._frame_caller=this._frame_medthod=null;
+		var parts=this._partAnimList;
+		if (parts !=null){
+			var anim;
+			for(var $each_anim in parts){
+				anim=parts[$each_anim];
+				anim.clear();
+			}
+			this._partAnimList=null;
+		}
+		this._owner=null;
+		laya.display.Sprite.prototype.destroy.call(this,destroyChild);
+	}
+
+	__getset(0,__proto,'direction',function(){
+		return this._ani.direction;
+	});
+
+	__getset(0,__proto,'alpha',_super.prototype._$get_alpha,function(value){
+		this.SetAlpha(value);
+	});
+
+	__getset(0,__proto,'partAnimList',function(){
+		return this._partAnimList;
+	});
+
+	__getset(0,__proto,'ani',function(){
+		return this._ani;
+	});
+
+	/**
+	*是否在播放中
+	*/
+	__getset(0,__proto,'isPlaying',function(){
+		return this._ani.isPlaying;
+	});
+
+	__getset(0,__proto,'curAction',function(){
+		return this._ani.GetActType();
+	});
+
+	return MAnimation2DGroup;
+})(MSprite)
+
+
+//class engine.pui.components.PText extends laya.display.Text
+var PText=(function(_super){
+	function PText(){
+		this._initText=null;
+		PText.__super.call(this);
+	}
+
+	__class(PText,'engine.pui.components.PText',_super);
+	var __proto=PText.prototype;
+	__proto.destroy=function(d){
+		(d===void 0)&& (d=true);
+		PUIBitmapFont.Ins.off("complete",this,this.OnBitmapLoaded);
+		_super.prototype.destroy.call(this,d);
+	}
+
+	__proto.OnBitmapLoaded=function(font){
+		if (this.destroyed || this._font !=font)return;
+		PUIBitmapFont.Ins.off("complete",this,this.OnBitmapLoaded);
+		Laya.superSet(Text,this,'font',font);
+	}
+
+	__getset(0,__proto,'text',_super.prototype._$get_text,function(value){
+		if (this._initText==null){
+			this._initText=value;
+		}
+		Laya.superSet(Text,this,'text',value);
+	});
+
+	__getset(0,__proto,'font',_super.prototype._$get_font,function(value){
+		if (PUIBitmapFont.Ins.isBitmapFont(value)){
+			PUIBitmapFont.Ins.on("complete",this,this.OnBitmapLoaded);
+			PUIBitmapFont.Ins.getFont(value);
+		}
+		Laya.superSet(Text,this,'font',value);
+	});
+
+	__getset(0,__proto,'x',_super.prototype._$get_x,function(value){
+		Laya.superSet(Text,this,'x',Math.round(value));
+	});
+
+	__getset(0,__proto,'initText',function(){
+		return this._initText;
+		},function(value){
+		this._initText=value;
+	});
+
+	__getset(0,__proto,'y',_super.prototype._$get_y,function(value){
+		Laya.superSet(Text,this,'y',Math.round(value));
+	});
+
+	return PText;
+})(Text)
+
+
+//class engine.pui.components.PHTMLDivElement extends laya.html.dom.HTMLDivElement
+var PHTMLDivElement=(function(_super){
+	function PHTMLDivElement(){
+		PHTMLDivElement.__super.call(this);
+	}
+
+	__class(PHTMLDivElement,'engine.pui.components.PHTMLDivElement',_super);
+	var __proto=PHTMLDivElement.prototype;
+	__proto._afterInited=function(){
+		this._element.width=this.width;
+		this._element.height=this.height;
+	}
+
+	__getset(0,__proto,'innerHTML',_super.prototype._$get_innerHTML,function(value){
+		if (this.initHtmlText==null)this.initHtmlText=value;
+		Laya.superSet(HTMLDivElement,this,'innerHTML',value);
+	});
+
+	return PHTMLDivElement;
+})(HTMLDivElement)
 
 
 //class engine.pui.components.PView extends laya.ui.View
@@ -11556,29 +11556,17 @@ var PView=(function(_super){
 })(View)
 
 
-//class engine.pui.components.PProgressBar extends laya.ui.ProgressBar
-var PProgressBar=(function(_super){
-	function PProgressBar(skin){
-		PProgressBar.__super.call(this,skin);
+//class engine.pui.components.PClip extends laya.ui.Clip
+var PClip=(function(_super){
+	function PClip(url,clipX,clipY){
+		(clipX===void 0)&& (clipX=1);
+		(clipY===void 0)&& (clipY=1);
+		PClip.__super.call(this,url,clipX,clipY);
 	}
 
-	__class(PProgressBar,'engine.pui.components.PProgressBar',_super);
-	var __proto=PProgressBar.prototype;
-	__proto._skinLoaded=function(){
-		if (this.destroyed)return;
-		_super.prototype._skinLoaded.call(this);
-	}
-
-	__getset(0,__proto,'x',_super.prototype._$get_x,function(value){
-		Laya.superSet(ProgressBar,this,'x',Math.round(value));
-	});
-
-	__getset(0,__proto,'y',_super.prototype._$get_y,function(value){
-		Laya.superSet(ProgressBar,this,'y',Math.round(value));
-	});
-
-	return PProgressBar;
-})(ProgressBar)
+	__class(PClip,'engine.pui.components.PClip',_super);
+	return PClip;
+})(Clip)
 
 
 //class engine.pui.components.PImage extends laya.ui.Image
@@ -11638,26 +11626,6 @@ var PImage=(function(_super){
 })(Image)
 
 
-//class engine.pui.components.PComboBox extends laya.ui.ComboBox
-var PComboBox=(function(_super){
-	function PComboBox(skin,labels){
-		PComboBox.__super.call(this,skin,labels);
-	}
-
-	__class(PComboBox,'engine.pui.components.PComboBox',_super);
-	var __proto=PComboBox.prototype;
-	__getset(0,__proto,'x',_super.prototype._$get_x,function(value){
-		Laya.superSet(ComboBox,this,'x',Math.round(value));
-	});
-
-	__getset(0,__proto,'y',_super.prototype._$get_y,function(value){
-		Laya.superSet(ComboBox,this,'y',Math.round(value));
-	});
-
-	return PComboBox;
-})(ComboBox)
-
-
 //class engine.pui.components.PSlider extends laya.ui.Slider
 var PSlider=(function(_super){
 	function PSlider(skin){
@@ -11667,39 +11635,6 @@ var PSlider=(function(_super){
 	__class(PSlider,'engine.pui.components.PSlider',_super);
 	return PSlider;
 })(Slider)
-
-
-//class engine.pui.components.PBox extends laya.ui.Box
-var PBox=(function(_super){
-	function PBox(){
-		PBox.__super.call(this);
-	}
-
-	__class(PBox,'engine.pui.components.PBox',_super);
-	var __proto=PBox.prototype;
-	__getset(0,__proto,'x',_super.prototype._$get_x,function(value){
-		Laya.superSet(Box,this,'x',Math.round(value));
-	});
-
-	__getset(0,__proto,'y',_super.prototype._$get_y,function(value){
-		Laya.superSet(Box,this,'y',Math.round(value));
-	});
-
-	return PBox;
-})(Box)
-
-
-//class engine.pui.components.PClip extends laya.ui.Clip
-var PClip=(function(_super){
-	function PClip(url,clipX,clipY){
-		(clipX===void 0)&& (clipX=1);
-		(clipY===void 0)&& (clipY=1);
-		PClip.__super.call(this,url,clipX,clipY);
-	}
-
-	__class(PClip,'engine.pui.components.PClip',_super);
-	return PClip;
-})(Clip)
 
 
 //class engine.pui.components.PHSlider extends laya.ui.Slider
@@ -11727,59 +11662,24 @@ var PScrollBar=(function(_super){
 })(ScrollBar)
 
 
-//class engine.pui.components.PLabel extends laya.ui.Label
-var PLabel=(function(_super){
-	function PLabel(text){
-		(text===void 0)&& (text="");
-		PLabel.__super.call(this,text);
+//class engine.pui.components.PBox extends laya.ui.Box
+var PBox=(function(_super){
+	function PBox(){
+		PBox.__super.call(this);
 	}
 
-	__class(PLabel,'engine.pui.components.PLabel',_super);
-	var __proto=PLabel.prototype;
-	__proto.createChildren=function(){
-		this.addChild(this._tf=new PText());
-	}
-
-	__proto.Clone=function(){
-		var ret=new PLabel();
-		ret.size(this.width,this.height);
-		ret.font=this.font;
-		ret.fontSize=this.fontSize;
-		ret.left=this.left;
-		ret.leading=this.leading;
-		ret.align=this.align;
-		ret.color=this.color;
-		ret.wordWrap=this.wordWrap;
-		ret.stroke=this.stroke;
-		ret.strokeColor=this.strokeColor;
-		ret.text=this.initText;
-		return ret;
-	}
+	__class(PBox,'engine.pui.components.PBox',_super);
+	var __proto=PBox.prototype;
+	__getset(0,__proto,'x',_super.prototype._$get_x,function(value){
+		Laya.superSet(Box,this,'x',Math.round(value));
+	});
 
 	__getset(0,__proto,'y',_super.prototype._$get_y,function(value){
-		Laya.superSet(Label,this,'y',Math.round(value));
+		Laya.superSet(Box,this,'y',Math.round(value));
 	});
 
-	__getset(0,__proto,'initText',function(){
-		return (this._tf).initText;
-		},function(value){
-		(this._tf).initText=value;
-	});
-
-	__getset(0,__proto,'textW',function(){
-		return this._tf.textWidth;
-	});
-
-	__getset(0,__proto,'textH',function(){
-		return this._tf.textHeight;
-	});
-
-	__getset(0,__proto,'x',_super.prototype._$get_x,function(value){
-		Laya.superSet(Label,this,'x',Math.round(value));
-	});
-
-	return PLabel;
-})(Label)
+	return PBox;
+})(Box)
 
 
 //class engine.pui.components.PButton extends laya.ui.Button
@@ -11902,6 +11802,106 @@ var PHScrollBar=(function(_super){
 
 	return PHScrollBar;
 })(ScrollBar)
+
+
+//class engine.pui.components.PLabel extends laya.ui.Label
+var PLabel=(function(_super){
+	function PLabel(text){
+		(text===void 0)&& (text="");
+		PLabel.__super.call(this,text);
+	}
+
+	__class(PLabel,'engine.pui.components.PLabel',_super);
+	var __proto=PLabel.prototype;
+	__proto.createChildren=function(){
+		this.addChild(this._tf=new PText());
+	}
+
+	__proto.Clone=function(){
+		var ret=new PLabel();
+		ret.size(this.width,this.height);
+		ret.font=this.font;
+		ret.fontSize=this.fontSize;
+		ret.left=this.left;
+		ret.leading=this.leading;
+		ret.align=this.align;
+		ret.color=this.color;
+		ret.wordWrap=this.wordWrap;
+		ret.stroke=this.stroke;
+		ret.strokeColor=this.strokeColor;
+		ret.text=this.initText;
+		return ret;
+	}
+
+	__getset(0,__proto,'y',_super.prototype._$get_y,function(value){
+		Laya.superSet(Label,this,'y',Math.round(value));
+	});
+
+	__getset(0,__proto,'initText',function(){
+		return (this._tf).initText;
+		},function(value){
+		(this._tf).initText=value;
+	});
+
+	__getset(0,__proto,'textW',function(){
+		return this._tf.textWidth;
+	});
+
+	__getset(0,__proto,'textH',function(){
+		return this._tf.textHeight;
+	});
+
+	__getset(0,__proto,'x',_super.prototype._$get_x,function(value){
+		Laya.superSet(Label,this,'x',Math.round(value));
+	});
+
+	return PLabel;
+})(Label)
+
+
+//class engine.pui.components.PProgressBar extends laya.ui.ProgressBar
+var PProgressBar=(function(_super){
+	function PProgressBar(skin){
+		PProgressBar.__super.call(this,skin);
+	}
+
+	__class(PProgressBar,'engine.pui.components.PProgressBar',_super);
+	var __proto=PProgressBar.prototype;
+	__proto._skinLoaded=function(){
+		if (this.destroyed)return;
+		_super.prototype._skinLoaded.call(this);
+	}
+
+	__getset(0,__proto,'x',_super.prototype._$get_x,function(value){
+		Laya.superSet(ProgressBar,this,'x',Math.round(value));
+	});
+
+	__getset(0,__proto,'y',_super.prototype._$get_y,function(value){
+		Laya.superSet(ProgressBar,this,'y',Math.round(value));
+	});
+
+	return PProgressBar;
+})(ProgressBar)
+
+
+//class engine.pui.components.PComboBox extends laya.ui.ComboBox
+var PComboBox=(function(_super){
+	function PComboBox(skin,labels){
+		PComboBox.__super.call(this,skin,labels);
+	}
+
+	__class(PComboBox,'engine.pui.components.PComboBox',_super);
+	var __proto=PComboBox.prototype;
+	__getset(0,__proto,'x',_super.prototype._$get_x,function(value){
+		Laya.superSet(ComboBox,this,'x',Math.round(value));
+	});
+
+	__getset(0,__proto,'y',_super.prototype._$get_y,function(value){
+		Laya.superSet(ComboBox,this,'y',Math.round(value));
+	});
+
+	return PComboBox;
+})(ComboBox)
 
 
 //class engine.pui.componentext.PGrid extends engine.pui.components.PImage
@@ -12519,48 +12519,6 @@ var PGrid=(function(_super){
 
 	return PGrid;
 })(PImage)
-
-
-//class engine.pui.components.PTree extends laya.ui.Tree
-var PTree=(function(_super){
-	function PTree(){
-		PTree.__super.call(this);
-	}
-
-	__class(PTree,'engine.pui.components.PTree',_super);
-	return PTree;
-})(Tree)
-
-
-//class engine.pui.components.PList extends laya.ui.List
-var PList=(function(_super){
-	function PList(){
-		PList.__super.call(this);
-	}
-
-	__class(PList,'engine.pui.components.PList',_super);
-	return PList;
-})(List)
-
-
-//class engine.pui.components.PFontClip extends laya.ui.FontClip
-var PFontClip=(function(_super){
-	function PFontClip(skin,sheet){
-		PFontClip.__super.call(this,skin,sheet);
-	}
-
-	__class(PFontClip,'engine.pui.components.PFontClip',_super);
-	var __proto=PFontClip.prototype;
-	__getset(0,__proto,'x',_super.prototype._$get_x,function(value){
-		Laya.superSet(FontClip,this,'x',Math.round(value));
-	});
-
-	__getset(0,__proto,'y',_super.prototype._$get_y,function(value){
-		Laya.superSet(FontClip,this,'y',Math.round(value));
-	});
-
-	return PFontClip;
-})(FontClip)
 
 
 //class engine.pui.components.PVSlider extends engine.pui.components.PSlider
@@ -13229,6 +13187,48 @@ var PDialog=(function(_super){
 
 	return PDialog;
 })(Dialog)
+
+
+//class engine.pui.components.PFontClip extends laya.ui.FontClip
+var PFontClip=(function(_super){
+	function PFontClip(skin,sheet){
+		PFontClip.__super.call(this,skin,sheet);
+	}
+
+	__class(PFontClip,'engine.pui.components.PFontClip',_super);
+	var __proto=PFontClip.prototype;
+	__getset(0,__proto,'x',_super.prototype._$get_x,function(value){
+		Laya.superSet(FontClip,this,'x',Math.round(value));
+	});
+
+	__getset(0,__proto,'y',_super.prototype._$get_y,function(value){
+		Laya.superSet(FontClip,this,'y',Math.round(value));
+	});
+
+	return PFontClip;
+})(FontClip)
+
+
+//class engine.pui.components.PTree extends laya.ui.Tree
+var PTree=(function(_super){
+	function PTree(){
+		PTree.__super.call(this);
+	}
+
+	__class(PTree,'engine.pui.components.PTree',_super);
+	return PTree;
+})(Tree)
+
+
+//class engine.pui.components.PList extends laya.ui.List
+var PList=(function(_super){
+	function PList(){
+		PList.__super.call(this);
+	}
+
+	__class(PList,'engine.pui.components.PList',_super);
+	return PList;
+})(List)
 
 
 //class engine.pui.components.PRadio extends laya.ui.Radio

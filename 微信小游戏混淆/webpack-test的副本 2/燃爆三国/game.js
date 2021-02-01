@@ -334,7 +334,6 @@ let version = __wxConfig.envVersion;
 console.log('envVersion-----------'+version);
 if(version=="release")
   window.release= true;
-
 //是否是小游戏
 window.IsMinG= true;
 //指尖微信为true

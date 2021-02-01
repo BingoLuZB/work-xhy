@@ -9,194 +9,148 @@
 	var Label=laya.ui.Label,Loader=laya.net.Loader,LoaderManager=laya.net.LoaderManager,LocalStorage=laya.net.LocalStorage;
 	var MiniAdpter=laya.wx.mini.MiniAdpter,MiniFileMgr=laya.wx.mini.MiniFileMgr,Panel=laya.ui.Panel,Radio=laya.ui.Radio;
 	var RadioGroup=laya.ui.RadioGroup,Render=laya.renders.Render,RotationInfo=laya.device.motion.RotationInfo;
-	var Scene=laya.display.Scene,Shader=laya.webgl.shader.Shader,SoundManager=laya.media.SoundManager,Sprite=laya.display.Sprite;
-	var Stage=laya.display.Stage,Text=laya.display.Text,TextInput=laya.ui.TextInput,Texture=laya.resource.Texture;
-	var Texture2D=laya.webgl.resource.Texture2D,TimeLine=laya.utils.TimeLine,Tween=laya.utils.Tween,URL=laya.net.URL;
-	var View=laya.ui.View,WebGL=laya.webgl.WebGL,WebGLContext=laya.webgl.WebGLContext;
+	var Scene=laya.display.Scene,SoundManager=laya.media.SoundManager,Sprite=laya.display.Sprite,Stage=laya.display.Stage;
+	var Text=laya.display.Text,TextInput=laya.ui.TextInput,Texture=laya.resource.Texture,Texture2D=laya.webgl.resource.Texture2D;
+	var TimeLine=laya.utils.TimeLine,Tween=laya.utils.Tween,URL=laya.net.URL,View=laya.ui.View,WebGL=laya.webgl.WebGL;
+	var WebGLContext=laya.webgl.WebGLContext;
+Laya.interface('boots.selserver.ISelServer');
 Laya.interface('boots.nativee.INativeInterface');
 Laya.interface('boots.selserver.med.ISelServerMediator');
 /**
-*游戏配置
-*@author Administrator
-*
+*选服页
 */
-//class boots.GameCfg
-var GameCfg=(function(){
-	function GameCfg(){}
-	__class(GameCfg,'boots.GameCfg');
-	__getset(1,GameCfg,'IsWetestApp',function(){
-		return GameCfg.GAMENAME==GameCfg.GAMENAME_WAIWANG;
-	});
+//class boots.selserver.med.SelServerMediator
+var SelServerMediator=(function(){
+	function SelServerMediator(p){
+		this._p=null;
+		// 是否显示测试服
+		this._showTest=false;
+		this._curZone=null;
+		this._curServer=null;
+		/**是否请求上次登录服成功**/
+		this.isReqLastSucc=false;
+		/**是否请求组下的服务器列表成功**/
+		this.isReqListSucc=false;
+		this._zones=[];
+		this._radioZones=[];
+		this._p=p;
+		this._p.imgServerBG.alpha=0;
+		this._p.imgServerBG.y=this._p.height;
+	}
 
-	__getset(1,GameCfg,'IsNeiWang',function(){
-		if(Web37Util.isOpen||Browser.onMiniGame)
-			return false;
-		if(WebfingertipUtil.isOpen||WebmojieUtil.isOpen){
-			console.log("WebfingertipUtil.isOpen  ？  GameCfg:游戏配置");
-			return false;
-		}
-		return GameCfg.GAMENAME==GameCfg.GAMENAME_NEIWANG;
-	});
+	__class(SelServerMediator,'boots.selserver.med.SelServerMediator');
+	var __proto=SelServerMediator.prototype;
+	Laya.imps(__proto,{"boots.selserver.med.ISelServerMediator":true})
+	__proto.ClickSwitch=function(){}
+	__proto.OnShow=function(){}
+	__proto.OnHide=function(){}
+	__proto.destroy=function(){
+		this.OnHide();
+		this._p=null;
+	}
 
-	GameCfg.ParseWebParam=function(){
-		if(Web37Util.isOpen){
-			var param=window.webParam();
-			GameCfg.BOOTVERSION=param["boot"];
-			GameCfg.SIGN="v_4";
-		}
-		else if(WebfingertipUtil.isOpen){
-			console.log("WebfingertipUtil.isOpen  ？  GameCfg:获取服务器列表");
-			var param=window.zhijianParams();
-			GameCfg.BOOTVERSION=param["boot"];
-			GameCfg.GAMENAME=GameCfg.GAMENAME_zhijianWEB;
-			var str=window.zhijianExt();
-			var obj=JSON.parse(str);
-			if(obj["istest"]==1)
-				GameCfg.SIGN="v_17";
-			else if (param["cpgameid"]==197){
-				GameCfg.SIGN="v_10";
+	__proto.UpdateZoneList=function(){
+		for (var i=0;i < this._radioZones.length;++i){
+			this._p.radioServerTab.delItem(this._radioZones[i]);
+		};
+		var c=0;
+		for (var i=0;i < this._zones.length;++i){
+			if (!this._showTest && (this._zones[i].zoneID==9999||this._zones[i].zoneID==9))
+				continue ;
+			var radio;
+			if (c >=this._radioZones.length){
+				radio=BootUIUtil.CloneRadio(this._p.radioT);
+				this._radioZones.push(radio);
+				}else{
+				radio=this._radioZones[c];
 			}
-			else if (param["cpgameid"]==211){
-				GameCfg.SIGN="v_16";
-			}
-			else if (param["cpgameid"]==224){
-				GameCfg.SIGN="v_18";
-			}
-		}
-		else if(WebmojieUtil.isOpen){
-			console.log("WebmojieUtil.isOpen  ？  GameCfg:获取服务器列表");
-			var param=window.mojieParams();
-			GameCfg.GAMENAME=GameCfg.GAMENAME_MJ;
-			GameCfg.SIGN="v_19";
-		}
-		else{
-			var search=Browser.window.location.search;
-			GameCfg.ParseParams(search);
-			if(Browser.inQQ)
-				GameCfg.SIGN="v_7";
-			if(Browser.inWeChat){
-				if(Browser.IszhijianWeChat)
-				{
-					if(window.release)
-						GameCfg.SIGN="v_15";
-					else
-						GameCfg.SIGN="t_3";
+			radio.label=this._zones[i].zoneName;
+			radio.name="item"+c;
+			this._p.radioServerTab.addItem(radio);
+			c++;
+		};
+		var findIdx=Math.max(0,this._zones.length-1);
+		if (GameCfg.IsNeiWang){
+			for (var i=this._zones.length-1;i >=0;i--){
+				if (this._zones[i].zoneID==9999){
+					findIdx=i;
+					break ;
 				}
-					
-				else
-				GameCfg.SIGN="v_11";
 			}
-			if(Browser.inBiLi)
-				GameCfg.SIGN="v_18";
-			var reloadparam=LocalStorage.getItem("reloadparam");
-			LocalStorage.removeItem("reloadparam");
-			GameCfg.ParseReloadParam(decodeURIComponent(reloadparam));
-		}
-	}
-
-	GameCfg.ParseAppParam=function(obj){
-		for (var key in obj){
-			if (key=="reloadparam"){
-				GameCfg.ParseReloadParam(decodeURIComponent(obj[key]));
-			}
-			else if (key=="params"){
-				GameCfg.ParseAppBootParam(obj[key]);
-			}
-			else{
-				if (key=="gamename")
-					GameCfg.GAMENAME=obj[key];
-				else if (key=="logintype")
-				GameCfg.LOGINTYPE=parseInt(obj[key]);
-				else if (key=="channel")
-				GameCfg.CHANNEL=obj[key];
-				else if (key=="sign")
-				GameCfg.SIGN=obj[key];
-				else if (key=="deviceid")
-				GameCfg.DEVICEID=obj[key];
-				else if(key=="platform")
-				GameCfg.PLATFORM=obj[key]
-			}
-		}
-	}
-
-	GameCfg.ParseReloadParam=function(reloadparam){
-		if (reloadparam !=null && reloadparam !=""){
-			var obj=JSON.parse(reloadparam);
-			if (obj !=null){
-				for (var key in obj){
-					if (key=="logintype")
-						GameCfg.LOGINTYPE=parseInt(obj[key]);
-					else if (key=="sign")
-					GameCfg.SIGN=obj[key];
-					else
-					GameCfg.RELOAD_PARAM[key]=obj[key];
+			}else{
+			for (var i=this._zones.length-1;i >=0;i--){
+				if (this._zones[i].zoneID !=9999){
+					findIdx=i;
+					break ;
 				}
 			}
 		}
+		this._p.radioServerTab.selectedIndex=findIdx;
 	}
 
-	GameCfg.ParseParams=function(search){
-		console.log("ParseParams:"+search);
-		if (search !=null && search !=""){
-			if (search[0]=="?")
-				search=search.substr(1);
-			var arr=search.split("&");
-			for (var i=0;i < arr.length;++i){
-				var p=arr[i].split("=");
-				if (p[0]=="gamename")
-					GameCfg.GAMENAME=p[1];
-				else if (p[0]=="boot")
-				GameCfg.BOOTVERSION=p[1];
-				else if (p[0]=="channel")
-				GameCfg.CHANNEL=p[1];
-				else if (p[0]=="sign")
-				GameCfg.SIGN=p[1];
-			}
-		}
+	__proto.Login=function(){}
+	return SelServerMediator;
+})()
+
+
+//class boots.selserver.med.LoadingMediator
+var LoadingMediator=(function(){
+	function LoadingMediator(p){
+		this._title=null;
+		this._p=null;
+		this._p=p;
+		this._p.labRefresh.on("click",this,this.clickRefresh);
 	}
 
-	GameCfg.ParseAppBootParam=function(obj){
-		for (var key in obj){
-			if (key=="boot")
-				GameCfg.BOOTVERSION=obj[key];
-		}
+	__class(LoadingMediator,'boots.selserver.med.LoadingMediator');
+	var __proto=LoadingMediator.prototype;
+	Laya.imps(__proto,{"boots.selserver.med.ISelServerMediator":true})
+	__proto.OnShow=function(){
+		EventCenter.On("loading_title",this,this.onTitle);
+		EventCenter.On("loading_progress",this,this.onProgress);
 	}
 
-	GameCfg.getWssOrWs=function(){
-		if(Browser.inQQ)return true;
-		if(Browser.inWeChat)return true;
-		if(Browser.inBiLi)return true;
-		if(boots.GameCfg.GAMENAME==boots.GameCfg.GAMENAME_FINGERAPP)return true;
-		if(WebfingertipUtil.isOpen||WebmojieUtil.isOpen)return true;
-		var bool=window.isWebOpen();
-		return bool;
+	//UpdateProgress(0);
+	__proto.OnHide=function(){
+		EventCenter.Off("loading_title",this,this.onTitle);
+		EventCenter.Off("loading_progress",this,this.onProgress);
 	}
 
-	GameCfg.ISBANSHU=false;
-	GameCfg.isMultiRole=false;
-	GameCfg.MONI_WAIWANG=false;
-	GameCfg.MONI_ACCOUNT="1501750306";
-	GameCfg.MONI_TOKEN="ZDllZVN4N1JxU040ZktvMnhieUxpeGk0cURtek1RMktRTGg5SklvbE44TkVvQnF5OHpwZU5JTU5wUjk0STdiUGhBM2VmMmMrQmdyVVpVWVVVT3hvdHVibjlkbmRLWENLWGpPV2IweG5IVXZ5YmRpMkhEVGJBQXJRUkhwcWZRNFVWTlVNdEtMMU9UUlBRWGp0VFFvUEN4eUlraEg4cys0bzNVelFHalB3dEU1Rk1mUnFDR2RFYnVwVGZkWUhoaXhhZGNpYndTajBNYzZUYzZoWUJick16SWtveVFRcnk5NA==";
-	GameCfg.GAMENAME_WAIWANG="lsmjz_waiwang";
-	GameCfg.GAMENAME_37="lsmjz_37ranbao";
-	GameCfg.GAMENAME_NEIWANG="lsmjz_neiwang";
-	GameCfg.GAMENAME_BANSHU="lsmjz_banshu";
-	GameCfg.GAMENAME_BANSHU2="lsmjz_37banshu";
-	GameCfg.GAMENAME_BMH="lsmjz_baomihua";
-	GameCfg.GAMENAME_MJ="GAMENAME_MJ";
-	GameCfg.GAMENAME_FINGERAPP="lsmjz_baomihua_cs";
-	GameCfg.GAMENAME_XIYOUAPK="lsmjz_baomihua_xy";
-	GameCfg.GAMENAME_zhijianWEB="GAMENAME_zhijianWEB";
-	GameCfg.DEVICEID="";
-	GameCfg.BOOTVERSION="";
-	GameCfg.LOGINTYPE=0;
-	GameCfg.RELOAD_PARAM={};
-	GameCfg.isGmOpen=false;
-	GameCfg.SIGN="v_10002";
-	__static(GameCfg,
-	['PLATFORM',function(){return this.PLATFORM=EnumPlatformID.P37.toString();},'CHANNEL',function(){return this.CHANNEL=EnumChannel.PDev.toString();},'GAMENAME',function(){return this.GAMENAME=GameCfg.GAMENAME_NEIWANG;}
-	]);
-	return GameCfg;
+	__proto.destroy=function(){
+		this.OnHide();
+		this._p=null;
+	}
+
+	__proto.clickRefresh=function(){
+		PlatformLoginUtil.Reload(2);
+	}
+
+	__proto.onTitle=function(title){
+		this.SetTitle(title);
+	}
+
+	__proto.onProgress=function(v){
+		this.SetProgress(v);
+	}
+
+	__proto.SetTitle=function(title){
+		this._title=title;
+		this._p.txtDesc.text=BootUtil.FormatStr(this._title,["0%"]);
+	}
+
+	__proto.SetProgress=function(value){
+		if (value > 1)value=1;
+		var txt=BootUtil.FormatStr(this._title,[(value*100|0)+"%"]);
+		this._p.txtDesc.text=txt;
+		this.UpdateProgress(value);
+	}
+
+	__proto.UpdateProgress=function(value){
+		this._p.imgProg.scaleX=value;
+		this._p.sprYun.x=this._p.imgProg.x+this._p.imgProg.width *value-this._p.sprYun.width/2;
+	}
+
+	return LoadingMediator;
 })()
 
 
@@ -226,6 +180,7 @@ var LoadBootCfg=(function(){
 		this.BOOTVERSION=GameCfg.BOOTVERSION;
 	}
 
+	__proto.ParseParams=function(){}
 	__proto.StartFristShow=function(){
 		this._bg=new Image();
 		this._bg.size(Laya.stage.width,Laya.stage.height);
@@ -238,7 +193,11 @@ var LoadBootCfg=(function(){
 		this._comp=callback;
 		Laya.stage.on("resize",this,this.ResizeHandler);
 		this.ResizeHandler();
-		this.LoadCfg();
+		if (!Browser.IsMinG &&(Render.isConchApp|| NativeUtil.IsWebview)){
+		}
+		else{
+			this.LoadCfg();
+		}
 	}
 
 	__proto.ResizeHandler=function(){
@@ -354,6 +313,94 @@ var LoadBootCfg=(function(){
 })()
 
 
+//class boots.selserver.SelServerUtil
+var SelServerUtil=(function(){
+	function SelServerUtil(){}
+	__class(SelServerUtil,'boots.selserver.SelServerUtil');
+	SelServerUtil.Init=function(){
+		if (GameCfg.MONI_WAIWANG){
+			GameCfg.GAMENAME=GameCfg.GAMENAME_37;
+			GameCfg.CHANNEL=EnumChannel.P37H5.toString();
+		}
+		PlatformLoginUtil.Init();
+		SelServerUtil.ShowSelServer(true,SelServerUtil.IsCanDirectEnter()? 2 :1);
+	}
+
+	SelServerUtil.IsCanDirectEnter=function(){
+		return GameCfg.LOGINTYPE==2
+		&& PlatformLoginUtil.vo.server_ip !=null && PlatformLoginUtil.vo.server_ip !=""
+		&& (!PlatformLoginUtil.login.hasSDK || PlatformLoginUtil.login.isVerify)
+	}
+
+	SelServerUtil.ShowSelServer=function(value,type){
+		if (value){
+			if (SelServerUtil._loginPanel==null){
+				SelServerUtil._loginPanel=new SelServerPanelExt();
+			}
+			if (type !=3)
+				SelServerUtil.PlayBgMusic();
+			Scene.root.addChild(SelServerUtil._loginPanel);
+			SelServerUtil._loginPanel.zOrder=29;
+			SelServerUtil._loginPanel.onOpened(type);
+		}
+		else{
+			if (SelServerUtil._loginPanel !=null && SelServerUtil._loginPanel.medType==type){
+				SelServerUtil._loginPanel.destroy();
+				SelServerUtil._loginPanel=null;
+			}
+		}
+	}
+
+	SelServerUtil.PlayBgMusic=function(){
+		var url="res/ui/image/boot/login.mp3";
+		if (SoundManager._bgMusic !=URL.formatURL(url)){
+			SoundManager.playMusic(url);
+		}
+	}
+
+	SelServerUtil.SelServer=function(){
+		PlatformLoginUtil.OnSelSever();
+		boots.selserver.SelServerUtil.ShowSelServer(true,2);
+	}
+
+	SelServerUtil.GetServerStateIcon=function(state){
+		if (state==0)
+			return "res/ui/image/boot/_ui_icon_weihu.png";
+		else if (state==2)
+		return "res/ui/image/boot/_ui_icon_tongchang.png";
+		else
+		return "res/ui/image/boot/_ui_icon_tongchang.png";
+	}
+
+	SelServerUtil.TestGroupId=9999;
+	SelServerUtil.TestGroupId2=9;
+	SelServerUtil._loginPanel=null;
+	return SelServerUtil;
+})()
+
+
+//class boots.selserver.EnumSelServerType
+var EnumSelServerType=(function(){
+	function EnumSelServerType(){}
+	__class(EnumSelServerType,'boots.selserver.EnumSelServerType');
+	EnumSelServerType.SELSERVER=1;
+	EnumSelServerType.LOADMAIN=2;
+	EnumSelServerType.LOADING=3;
+	return EnumSelServerType;
+})()
+
+
+//class boots.BootLang
+var BootLang=(function(){
+	function BootLang(){}
+	__class(BootLang,'boots.BootLang');
+	BootLang.JZZCX="资源加载中:";
+	BootLang.JMZCX="资源加载中:";
+	BootLang.DQZCX="资源加载中:";
+	return BootLang;
+})()
+
+
 /**
 *服务器组
 */
@@ -395,74 +442,6 @@ var SelZoneVo=(function(){
 })()
 
 
-//class boots.utils.Web37Util
-var Web37Util=(function(){
-	function Web37Util(){}
-	__class(Web37Util,'boots.utils.Web37Util');
-	//选服上报信息
-	__getset(1,Web37Util,'reportServerData',function(){
-		var data={};
-		data.serverid=PlatformLoginUtil.vo.serverID;
-		data.servername=PlatformLoginUtil.vo.server_name;
-		data.rolename="";
-		data.roleid="";
-		data.rolelevel="";
-		data.viplevel="";
-		data.fightvalue="";
-		data.balance="";
-		data.country="";
-		data.countryid="";
-		data.countryrolename="";
-		data.timestamp=new Date().getTime();
-		data.rolecreatetime="";
-		data.roles=[];
-		return data;
-	});
-
-	__getset(1,Web37Util,'isOpen',function(){
-		if(Browser.onMiniGame)return false;
-		return window.isWebOpen();
-	});
-
-	/**是否用宽屏布局**/
-	__getset(1,Web37Util,'isWideScreen',function(){
-		return false;
-	});
-
-	Web37Util.report=function(type){
-		if(!Web37Util.isOpen)
-			return;
-		var data=null;
-		switch (type){
-			case "server":
-				data=Web37Util.reportServerData;
-				break ;
-			}
-		if(data !=null)
-			window.report(data,type);
-		else
-		console.log("report data does not exsit!type="+type);
-	}
-
-	Web37Util.REPORT_SERVER="server";
-	Web37Util.REPORT_CREATE="create";
-	Web37Util.REPORT_ENTERGAME="entergame";
-	Web37Util.REPORT_LEVELUP="levelup";
-	return Web37Util;
-})()
-
-
-//class boots.selserver.EnumSelServerType
-var EnumSelServerType=(function(){
-	function EnumSelServerType(){}
-	__class(EnumSelServerType,'boots.selserver.EnumSelServerType');
-	EnumSelServerType.SELSERVER=1;
-	EnumSelServerType.LOADMAIN=2;
-	EnumSelServerType.LOADING=3;
-	return EnumSelServerType;
-})()
-
-
 /**
 *单个服务器数据
 */
@@ -499,6 +478,101 @@ var SelServerVo=(function(){
 	}
 
 	return SelServerVo;
+})()
+
+
+//class boots.RunDriverEx
+var RunDriverEx=(function(){
+	function RunDriverEx(){}
+	__class(RunDriverEx,'boots.RunDriverEx');
+	RunDriverEx.init=function(){
+		if (Render.isConchApp){
+			HTMLImage.create=function (width,height,format){
+				var tex=new Texture2D(width,height,format,false,false);
+				tex.wrapModeU=1;
+				tex.wrapModeV=1;
+				return tex;
+			}
+			Laya.Shader.prototype.uploadTexture2D=function (value,alphaMask){
+				var CTX=WebGLContext;
+				if(CTX._activeTextures[0]!==value){
+					CTX.activeTexture(WebGL.mainContext,0x84C0);
+					CTX.bindTexture(WebGL.mainContext,CTX.TEXTURE_2D,value);
+					CTX._activeTextures[0]=value;
+				}
+				if (alphaMask && CTX._activeTextures[1]!==alphaMask){
+					CTX.activeTexture(WebGL.mainContext,0x84C1);
+					CTX.bindTexture(WebGL.mainContext,CTX.TEXTURE_2D,alphaMask);
+					CTX._activeTextures[1]=alphaMask;
+				}
+			}
+		}
+		Laya.BitmapFont.prototype._drawText=function (text,sprite,drawX,drawY,align,width){
+			var tWidth=this.getTextWidth(text);
+			var tTexture;
+			var dx=0;
+			align==="center" && (dx=(width-tWidth)/ 2);
+			align==="right" && (dx=(width-tWidth));
+			drawY=Math.round(drawY);
+			var tx=0;
+			for (var i=0,n=text.length;i < n;i++){
+				tTexture=this.getCharTexture(text.charAt(i));
+				if (tTexture){
+					var realx=Math.round(drawX+tx+dx);
+					sprite.graphics.drawImage(tTexture,realx,drawY);
+					tx+=this.getCharWidth(text.charAt(i));
+				}
+			}
+		}
+	}
+
+	return RunDriverEx;
+})()
+
+
+//class boots.utils.BootUIUtil
+var BootUIUtil=(function(){
+	function BootUIUtil(){}
+	__class(BootUIUtil,'boots.utils.BootUIUtil');
+	BootUIUtil.AddButtonFeed=function(btn){
+		btn.on("mousedown",null,BootUIUtil.BeginFeedBack);
+		btn.on("mouseup",null,BootUIUtil.EndFeedBack);
+		btn.on("mouseout",null,BootUIUtil.EndFeedBack);
+	}
+
+	BootUIUtil.BeginFeedBack=function(e){
+		var btn=e.currentTarget;
+		btn.tag={downX:btn.x,downY:btn.y,isFeed:true};
+		btn.pos(btn.x+2,btn.y+2);
+	}
+
+	BootUIUtil.EndFeedBack=function(e){
+		var btn=e.currentTarget;
+		if (btn.tag==null)return;
+		btn.pos(btn.tag.downX,btn.tag.downY);
+		btn.tag={downX:btn.x,downY:btn.y,isFeed:false};
+	}
+
+	BootUIUtil.CloneRadio=function(src){
+		var ret=new Radio();
+		ret.skin=src.skin;
+		ret.sizeGrid=src.sizeGrid;
+		ret.label=src.label;
+		ret.labelFont=src.labelFont;
+		ret.labelSize=src.labelSize;
+		ret.stateNum=src.stateNum;
+		ret.labelColors=src.labelColors;
+		ret.labelPadding=src.labelPadding;
+		ret.labelAlign=src.labelAlign;
+		ret._autoSize=true;
+		ret.text.align="center";
+		ret.text.valign="middle";
+		ret.text.width=src.width;
+		ret.text.height=src.height;
+		return ret;
+	}
+
+	return BootUIUtil;
 })()
 
 
@@ -565,111 +639,350 @@ var PlatformLoginBase=(function(){
 })()
 
 
-//class boots.GameFont
-var GameFont=(function(){
-	function GameFont(){
-		this._caller=null;
-		this._method=null;
-	}
-
-	__class(GameFont,'boots.GameFont');
-	var __proto=GameFont.prototype;
-	__proto.Init=function(caller,method){
-		this._caller=caller;
-		this._method=method;
-		BootUtil.Log("加载字体文件1");
-		Laya.loader.load("res/ui/image/boot/DFYuanW5.ttf",Handler.create(this,this.ConchLoadFontComp));
-	}
-
-	/**
-	*字体加载完成
-	*/
-	__proto.ConchLoadFontComp=function(){
-		if (this._method!=null)
-			this._method.call(this._caller);
-		this._method=this._caller=null;
-		var arr=Laya.loader.getRes("res/ui/image/boot/DFYuanW5.ttf");
-		if(Browser.window.conch){
-			Browser.window.conch.setFontFaceFromBuffer("DFYuanW5",arr);
+//class boots.LoadBoot
+var LoadBoot=(function(){
+	function LoadBoot(){
+		this.Root=null;
+		if (Browser.IsMinG){
+			if(Browser.inWeChat){
+				if(Browser.IszhijianWeChat)
+					this.Root=new LoadBootWXZJ();
+				else
+				this.Root=new LoadBootWX();
+			}
+			else if(Browser.inQQ)
+			this.Root=new LoadBootQQ();
+			else if(Browser.inBiLi)
+			this.Root=new LoadBootbilibili();
 		}
+		else if (Render.isConchApp|| NativeUtil.IsWebview)
+		this.Root=new LoadBootApp();
+		else
+		this.Root=new LoadBootCfg();
 	}
 
-	GameFont.YAHEI="DFYuanW5";
-	GameFont.DEFAULT="DFYuanW5";
-	__static(GameFont,
-	['Ins',function(){return this.Ins=new GameFont();}
+	__class(LoadBoot,'boots.LoadBoot');
+	__static(LoadBoot,
+	['Ins',function(){return this.Ins=new LoadBoot();}
 	]);
-	return GameFont;
+	return LoadBoot;
 })()
 
 
-//class boots.EnumVersionType
-var EnumVersionType=(function(){
-	function EnumVersionType(){}
-	__class(EnumVersionType,'boots.EnumVersionType');
-	EnumVersionType.VERSION_DEFAULT=0;
-	EnumVersionType.VERSION_CHAllENGE=1;
-	return EnumVersionType;
+// 和EnumUILayer一致
+//class boots.enums.EnumBootUILayer
+var EnumBootUILayer=(function(){
+	function EnumBootUILayer(){}
+	__class(EnumBootUILayer,'boots.enums.EnumBootUILayer');
+	EnumBootUILayer.BOOTLOADING=26;
+	EnumBootUILayer.LOGIN=29;
+	EnumBootUILayer.TOTAST=31;
+	return EnumBootUILayer;
+})()
+
+
+//class boots.utils.BootUtil
+var BootUtil=(function(){
+	function BootUtil(){}
+	__class(BootUtil,'boots.utils.BootUtil');
+	var __proto=BootUtil.prototype;
+	__proto.GetStackTrace=function(pre){
+		var str="";
+		str+="// ==========================================================================\n";
+		str+=pre+"\n";
+		var caller=arguments.callee.caller;
+		var i=0;
+		str+=("***----------------------------------------  ** "+(i+1))+"\n";
+		while (caller && i < 10){
+			str+=(caller.toString())+"\n";
+			caller=caller.caller;
+			i++;
+			str+=("***---------------------------------------- ** "+(i+1))+"\n";
+		}
+		str+="// ==========================================================================\n";
+		return str;
+	}
+
+	BootUtil.GetTimer=function(){
+		var ret=0;
+		ret=new Date().getTime();;
+		return ret;
+	}
+
+	BootUtil.Log=function(log){
+		var ret=0;
+		ret=new Date().getTime();;
+		log="["+ret+"]"+log;
+		console.log(log);
+	}
+
+	BootUtil.encode=function(o){
+		return JSON.stringify(o);
+	}
+
+	BootUtil.decode=function(s){
+		var ret=null;
+		try{
+			if (s==null || s=="")
+				return null;
+			ret=JSON.parse(s);
+		}
+		catch (err){
+			console.log("decode json error:"+err.message);
+			ret=null;
+		}
+		return ret;
+	}
+
+	BootUtil.FormatStr=function(str,params){
+		if (str==null)
+			return str;
+		if (params !=null){
+			var keyStr="{@}";
+			var isNumRep=(str.indexOf(keyStr)==-1);
+			var len=params.length;
+			var param;
+			for (var i=0;i < len;++i){
+				if (isNumRep)
+					keyStr="{"+(i)+"}";
+				param=params[i];
+				str=str.replace(keyStr,param);
+			}
+		}
+		return str;
+	}
+
+	BootUtil.isHtml=function(str){
+		var reg=/<.*?>/g;
+		return reg.test(str);
+	}
+
+	BootUtil.RemoveHTMLTag=function(text){
+		return text==null ? text :text.replace(/<.*?>/g,"");
+	}
+
+	__static(BootUtil,
+	['Ins',function(){return this.Ins=new BootUtil();}
+	]);
+	return BootUtil;
+})()
+
+
+//class boots.nativee.NativeInterfaceWebView
+var NativeInterfaceWebView=(function(){
+	function NativeInterfaceWebView(){}
+	__class(NativeInterfaceWebView,'boots.nativee.NativeInterfaceWebView');
+	var __proto=NativeInterfaceWebView.prototype;
+	Laya.imps(__proto,{"boots.nativee.INativeInterface":true})
+	__proto.HasNative=function(){
+		return Browser.window.NativeUtilWebView !=null && typeof(Browser.window.NativeUtilWebView)!=undefined;
+	}
+
+	/**
+	*调用native函数
+	*/
+	__proto.CallPlatform=function(data){
+		console.log("CallPlatform:"+data);
+		Browser.window.NativeUtilWebView.CallFromJS(data);
+	}
+
+	return NativeInterfaceWebView;
 })()
 
 
 /**
-*渠道列表
+*游戏配置
+*@author Administrator
+*
 */
-//class boots.platform.channel.EnumChannel
-var EnumChannel=(function(){
-	function EnumChannel(){}
-	__class(EnumChannel,'boots.platform.channel.EnumChannel');
-	EnumChannel.channelName=function(agent){
-		var dic=EnumChannel.ShowName2ID;
-		for (var key in dic){
-			if (dic[key]==agent)
-				return key;
+//class boots.GameCfg
+var GameCfg=(function(){
+	function GameCfg(){}
+	__class(GameCfg,'boots.GameCfg');
+	__getset(1,GameCfg,'IsWetestApp',function(){
+		return GameCfg.GAMENAME==GameCfg.GAMENAME_WAIWANG;
+	});
+
+	__getset(1,GameCfg,'IsNeiWang',function(){
+		if(Web37Util.isOpen||Browser.onMiniGame)
+			return false;
+		if(WebfingertipUtil.isOpen||WebmojieUtil.isOpen){
+			console.log("WebfingertipUtil.isOpen  ？  GameCfg:游戏配置");
+			return false;
 		}
-		return "dev";
+		return GameCfg.GAMENAME==GameCfg.GAMENAME_NEIWANG;
+	});
+
+	GameCfg.ParseWebParam=function(){
+		if(Web37Util.isOpen){
+			var param=window.webParam();
+			GameCfg.BOOTVERSION=param["boot"];
+			GameCfg.SIGN="v_4";
+		}
+		else if(WebfingertipUtil.isOpen){
+			console.log("WebfingertipUtil.isOpen  ？  GameCfg:获取服务器列表");
+			var param=window.zhijianParams();
+			GameCfg.BOOTVERSION=param["boot"];
+			GameCfg.GAMENAME=GameCfg.GAMENAME_zhijianWEB;
+			var str=window.zhijianExt();
+			var obj=JSON.parse(str);
+			if(obj["istest"]==1)
+				GameCfg.SIGN="v_17";
+			else if (param["cpgameid"]==197){
+				GameCfg.SIGN="v_10";
+			}
+			else if (param["cpgameid"]==211){
+				GameCfg.SIGN="v_16";
+			}
+			else if (param["cpgameid"]==224){
+				GameCfg.SIGN="v_18";
+			}
+		}
+		else if(WebmojieUtil.isOpen){
+			console.log("WebmojieUtil.isOpen  ？  GameCfg:获取服务器列表");
+			var param=window.mojieParams();
+			GameCfg.GAMENAME=GameCfg.GAMENAME_MJ;
+			GameCfg.SIGN="v_19";
+		}
+		else{
+			var search=Browser.window.location.search;
+			GameCfg.ParseParams(search);
+			if(Browser.inQQ){
+				if (Browser.release)
+					GameCfg.SIGN="v_7";
+				else
+				GameCfg.SIGN="t_1";
+			}
+			if(Browser.inWeChat){
+				if(Browser.IszhijianWeChat){
+					if (Browser.release)
+						GameCfg.SIGN="v_15";
+					else
+					GameCfg.SIGN="t_3";
+				}
+				else{
+					if (Browser.release)
+						GameCfg.SIGN="v_11";
+					else
+					GameCfg.SIGN="t_2";
+				}
+			}
+			if(Browser.inBiLi){
+				if (Browser.release)
+					GameCfg.SIGN="v_18";
+				else
+				GameCfg.SIGN="t_4";
+			};
+			var reloadparam=LocalStorage.getItem("reloadparam");
+			LocalStorage.removeItem("reloadparam");
+			GameCfg.ParseReloadParam(decodeURIComponent(reloadparam));
+		}
 	}
 
-	EnumChannel.channelID=function(n){
-		return EnumChannel.ShowName2ID[n] !=null ? EnumChannel.ShowName2ID[n] :1;
+	GameCfg.ParseAppParam=function(obj){
+		for (var key in obj){
+			if (key=="reloadparam"){
+				GameCfg.ParseReloadParam(decodeURIComponent(obj[key]));
+			}
+			else if (key=="params"){
+				GameCfg.ParseAppBootParam(obj[key]);
+			}
+			else{
+				if (key=="gamename")
+					GameCfg.GAMENAME=obj[key];
+				else if (key=="logintype")
+				GameCfg.LOGINTYPE=parseInt(obj[key]);
+				else if (key=="channel")
+				GameCfg.CHANNEL=obj[key];
+				else if (key=="sign")
+				GameCfg.SIGN=obj[key];
+				else if (key=="deviceid")
+				GameCfg.DEVICEID=obj[key];
+				else if(key=="platform")
+				GameCfg.PLATFORM=obj[key]
+			}
+		}
 	}
 
-	EnumChannel.PDev=99999999;
-	EnumChannel.P37H5=1;
-	EnumChannel.vivo=2;
-	EnumChannel.oppo=3;
-	EnumChannel.xiaomi=4;
-	EnumChannel.huawei=5;
-	EnumChannel.amigo=6;
-	EnumChannel.flyme=7;
-	EnumChannel.lenovo=8;
-	EnumChannel.coolpad=9;
-	EnumChannel.baidu=10;
-	EnumChannel.qihoo=11;
-	EnumChannel.uc=12;
-	EnumChannel.tencent=13;
-	EnumChannel.xiyouys=14;
-	__static(EnumChannel,
-	['ShowName2ID',function(){return this.ShowName2ID={
-			"dev":99999999,
-			"37h5":1,
-			"37zyios":1,
-			"vivo":2,
-			"oppo":3,
-			"xiaomi":4,
-			"huawei":5,
-			"amigo":6,
-			"flyme":7,
-			"lenovo":8,
-			"coolpad":9,
-			"baidu":10,
-			"qihoo":11,
-			"uc":12,
-			"tencent":13,
-			"xiyouys":14
-	};}
+	GameCfg.ParseReloadParam=function(reloadparam){
+		if (reloadparam !=null && reloadparam !=""){
+			var obj=JSON.parse(reloadparam);
+			if (obj !=null){
+				for (var key in obj){
+					if (key=="logintype")
+						GameCfg.LOGINTYPE=parseInt(obj[key]);
+					else if (key=="sign")
+					GameCfg.SIGN=obj[key];
+					else
+					GameCfg.RELOAD_PARAM[key]=obj[key];
+				}
+			}
+		}
+	}
 
+	GameCfg.ParseParams=function(search){
+		console.log("ParseParams:"+search);
+		if (search !=null && search !=""){
+			if (search[0]=="?")
+				search=search.substr(1);
+			var arr=search.split("&");
+			for (var i=0;i < arr.length;++i){
+				var p=arr[i].split("=");
+				if (p[0]=="gamename")
+					GameCfg.GAMENAME=p[1];
+				else if (p[0]=="boot")
+				GameCfg.BOOTVERSION=p[1];
+				else if (p[0]=="channel")
+				GameCfg.CHANNEL=p[1];
+				else if (p[0]=="sign")
+				GameCfg.SIGN=p[1];
+			}
+		}
+	}
+
+	GameCfg.ParseAppBootParam=function(obj){
+		for (var key in obj){
+			if (key=="boot")
+				GameCfg.BOOTVERSION=obj[key];
+		}
+	}
+
+	GameCfg.getWssOrWs=function(){
+		if(Browser.inQQ)return true;
+		if(Browser.inWeChat)return true;
+		if(Browser.inBiLi)return true;
+		if(boots.GameCfg.GAMENAME==boots.GameCfg.GAMENAME_FINGERAPP)return true;
+		if(WebfingertipUtil.isOpen||WebmojieUtil.isOpen)return true;
+		var bool=window.isWebOpen();
+		return bool;
+	}
+
+	GameCfg.ISBANSHU=false;
+	GameCfg.isMultiRole=false;
+	GameCfg.MONI_WAIWANG=false;
+	GameCfg.MONI_ACCOUNT="1501750306";
+	GameCfg.MONI_TOKEN="ZDllZVN4N1JxU040ZktvMnhieUxpeGk0cURtek1RMktRTGg5SklvbE44TkVvQnF5OHpwZU5JTU5wUjk0STdiUGhBM2VmMmMrQmdyVVpVWVVVT3hvdHVibjlkbmRLWENLWGpPV2IweG5IVXZ5YmRpMkhEVGJBQXJRUkhwcWZRNFVWTlVNdEtMMU9UUlBRWGp0VFFvUEN4eUlraEg4cys0bzNVelFHalB3dEU1Rk1mUnFDR2RFYnVwVGZkWUhoaXhhZGNpYndTajBNYzZUYzZoWUJick16SWtveVFRcnk5NA==";
+	GameCfg.GAMENAME_WAIWANG="lsmjz_waiwang";
+	GameCfg.GAMENAME_37="lsmjz_37ranbao";
+	GameCfg.GAMENAME_NEIWANG="lsmjz_neiwang";
+	GameCfg.GAMENAME_BANSHU="lsmjz_banshu";
+	GameCfg.GAMENAME_BANSHU2="lsmjz_37banshu";
+	GameCfg.GAMENAME_BMH="lsmjz_baomihua";
+	GameCfg.GAMENAME_MJ="GAMENAME_MJ";
+	GameCfg.GAMENAME_FINGERAPP="lsmjz_baomihua_cs";
+	GameCfg.GAMENAME_XIYOUAPK="lsmjz_baomihua_xy";
+	GameCfg.GAMENAME_ZHANGYUAPK="lsmjz_baomihua";
+	GameCfg.GAMENAME_zhijianWEB="GAMENAME_zhijianWEB";
+	GameCfg.DEVICEID="";
+	GameCfg.BOOTVERSION="";
+	GameCfg.LOGINTYPE=0;
+	GameCfg.RELOAD_PARAM={};
+	GameCfg.isGmOpen=false;
+	GameCfg.SIGN="v_10002";
+	__static(GameCfg,
+	['PLATFORM',function(){return this.PLATFORM=EnumPlatformID.P37.toString();},'CHANNEL',function(){return this.CHANNEL=EnumChannel.PDev.toString();},'GAMENAME',function(){return this.GAMENAME=GameCfg.GAMENAME_NEIWANG;}
 	]);
-	return EnumChannel;
+	return GameCfg;
 })()
 
 
@@ -685,6 +998,7 @@ var EnumPlatformID=(function(){
 	EnumPlatformID.mohe=8;
 	EnumPlatformID.zhangyu=10;
 	EnumPlatformID.xiyou=12;
+	EnumPlatformID.newMohe=15;
 	return EnumPlatformID;
 })()
 
@@ -846,86 +1160,282 @@ var NativeUtil=(function(){
 })()
 
 
-//class boots.nativee.NativeInterfaceWebView
-var NativeInterfaceWebView=(function(){
-	function NativeInterfaceWebView(){}
-	__class(NativeInterfaceWebView,'boots.nativee.NativeInterfaceWebView');
-	var __proto=NativeInterfaceWebView.prototype;
+//class boots.ResourceVersionEx
+var ResourceVersionEx=(function(){
+	function ResourceVersionEx(){}
+	__class(ResourceVersionEx,'boots.ResourceVersionEx');
+	ResourceVersionEx.getChunkVersion=function(thumbnail){
+		var ret;
+		if (ResourceVersionEx.manifest){
+			ret=ResourceVersionEx.manifest[thumbnail];
+			if (!ret)ret="1";
+		}
+		return ret;
+	}
+
+	ResourceVersionEx.addVersionPrefix=function(originURL){
+		originURL=URL.getAdptedFilePath(originURL);
+		if (ResourceVersionEx.manifest){
+			if (ResourceVersionEx.isMapChunk(originURL)){
+				return originURL;
+			}
+			else{
+				var ver=ResourceVersionEx.manifest[originURL];
+				if (!ver){
+					var i1=originURL.indexOf("/");
+					if (i1 > 0 && !isNaN(parseFloat(originURL.substr(0,i1)))){
+						return originURL;
+					}
+					ver="1";
+				}
+				return ver+"/"+originURL;
+			}
+		}
+		return originURL;
+	}
+
+	ResourceVersionEx.isMapChunk=function(url){
+		return url.indexOf("res/map")!=-1 && url.indexOf("/chunks")!=-1;
+	}
+
+	ResourceVersionEx.initver="1";
+	ResourceVersionEx.manifest=null;
+	ResourceVersionEx.THUMBNAIL="thumbnail.jpg";
+	return ResourceVersionEx;
+})()
+
+
+/**
+*与NATIVE通信的消息id
+*/
+//class boots.nativee.EnumNativeID
+var EnumNativeID=(function(){
+	function EnumNativeID(){}
+	__class(EnumNativeID,'boots.nativee.EnumNativeID');
+	EnumNativeID.REQ_CONNECT=1;
+	EnumNativeID.REC_CONNECT=2;
+	EnumNativeID.REQ_BATERRY=3;
+	EnumNativeID.REC_BATERRY=4;
+	EnumNativeID.REQ_SIGNAL=5;
+	EnumNativeID.REC_SIGNAL=6;
+	EnumNativeID.REQ_EXIT=7;
+	EnumNativeID.REQ_COPYCLIPBOARD=8;
+	EnumNativeID.REC_BACKGROUND=9;
+	EnumNativeID.REQ_RELOAD=100;
+	EnumNativeID.REQ_SHOCK=101;
+	EnumNativeID.REQ_SOUND_RECORD=1001;
+	EnumNativeID.REQ_SOUND_RECORD_END=1002;
+	EnumNativeID.REC_SOUND_RECORD_COMPLETE=1003;
+	EnumNativeID.REQ_SOUND_PLAY=1004;
+	EnumNativeID.REC_SOUND_PLAY_COMPLETE=1005;
+	EnumNativeID.REQ_SOUND_STOP=1006;
+	EnumNativeID.REC_SOUND_STOP_COMPLETE=1006;
+	EnumNativeID.REQ_PLATFORM=10001;
+	EnumNativeID.REC_PLATFORM=10002;
+	EnumNativeID.REQ_UMENG=20001;
+	EnumNativeID.REC_UMENG=20002;
+	return EnumNativeID;
+})()
+
+
+//class boots.utils.Web37Util
+var Web37Util=(function(){
+	function Web37Util(){}
+	__class(Web37Util,'boots.utils.Web37Util');
+	//选服上报信息
+	__getset(1,Web37Util,'reportServerData',function(){
+		var data={};
+		data.serverid=PlatformLoginUtil.vo.serverID;
+		data.servername=PlatformLoginUtil.vo.server_name;
+		data.rolename="";
+		data.roleid="";
+		data.rolelevel="";
+		data.viplevel="";
+		data.fightvalue="";
+		data.balance="";
+		data.country="";
+		data.countryid="";
+		data.countryrolename="";
+		data.timestamp=new Date().getTime();
+		data.rolecreatetime="";
+		data.roles=[];
+		return data;
+	});
+
+	__getset(1,Web37Util,'isOpen',function(){
+		if(Browser.onMiniGame)return false;
+		return window.isWebOpen();
+	});
+
+	/**是否用宽屏布局**/
+	__getset(1,Web37Util,'isWideScreen',function(){
+		return false;
+	});
+
+	Web37Util.report=function(type){
+		if(!Web37Util.isOpen)
+			return;
+		var data=null;
+		switch (type){
+			case "server":
+				data=Web37Util.reportServerData;
+				break ;
+			}
+		if(data !=null)
+			window.report(data,type);
+		else
+		console.log("report data does not exsit!type="+type);
+	}
+
+	Web37Util.REPORT_SERVER="server";
+	Web37Util.REPORT_CREATE="create";
+	Web37Util.REPORT_ENTERGAME="entergame";
+	Web37Util.REPORT_LEVELUP="levelup";
+	return Web37Util;
+})()
+
+
+//class boots.nativee.NativeInterfaceConchApp
+var NativeInterfaceConchApp=(function(){
+	function NativeInterfaceConchApp(){
+		this.PLATFORMCLASS=null;
+		if (this.PLATFORMCLASS==null && Laya.PlatformClass !=null){
+			if (Browser.onAndroid)
+				this.PLATFORMCLASS=Laya.PlatformClass.createClass("com.popcornie.lsmjz.nativee.NativeUtil");
+			else if (Browser.onIOS)
+			this.PLATFORMCLASS=Laya.PlatformClass.createClass("NativeUtil");
+			else
+			this.PLATFORMCLASS=Laya.PlatformClass.createClass("com.popcornie.lsmjz.nativee.NativeUtil");
+		}
+	}
+
+	__class(NativeInterfaceConchApp,'boots.nativee.NativeInterfaceConchApp');
+	var __proto=NativeInterfaceConchApp.prototype;
 	Laya.imps(__proto,{"boots.nativee.INativeInterface":true})
 	__proto.HasNative=function(){
-		return Browser.window.NativeUtilWebView !=null && typeof(Browser.window.NativeUtilWebView)!=undefined;
+		return this.PLATFORMCLASS !=null;
 	}
 
 	/**
 	*调用native函数
 	*/
 	__proto.CallPlatform=function(data){
-		console.log("CallPlatform:"+data);
-		Browser.window.NativeUtilWebView.CallFromJS(data);
+		if (this.PLATFORMCLASS !=null){
+			if (Browser.onIOS)
+				this.PLATFORMCLASS.call("CallFromJS:",data);
+			else
+			this.PLATFORMCLASS.call("CallFromJS",data);
+		}
+		else{
+			BootUtil.Log("call native but no native");
+		}
 	}
 
-	return NativeInterfaceWebView;
+	return NativeInterfaceConchApp;
+})()
+
+
+//class boots.platform.EnumPlatform
+var EnumPlatform=(function(){
+	function EnumPlatform(){}
+	__class(EnumPlatform,'boots.platform.EnumPlatform');
+	EnumPlatform.TYPE_SHARE=1;
+	EnumPlatform.TYPE_SUBSCRIBE=2;
+	EnumPlatform.TYPE_WD_DOWNLOAD=3;
+	EnumPlatform.TYPE_VERIFY=4;
+	EnumPlatform.TYPE_SAVE_DESKTOP=5;
+	EnumPlatform.REQ_LOGIN=1;
+	EnumPlatform.REC_LOGIN_SUC=2;
+	EnumPlatform.REC_LOGIN_FAIL=3;
+	EnumPlatform.REQ_LOGOUT=10;
+	EnumPlatform.REC_LOGOUT_SUC=11;
+	EnumPlatform.REC_LOGOUT_FAIL=12;
+	EnumPlatform.REQ_PAY=30;
+	EnumPlatform.REC_PAY_SUC=31;
+	EnumPlatform.REC_PAY_FAIL=32;
+	EnumPlatform.REQ_REPORT=40;
+	EnumPlatform.REQ_QUIT=50;
+	EnumPlatform.GAMEDATA_TYPE_CREATE_ROLE=1;
+	EnumPlatform.GAMEDATA_TYPE_ENTER_GAME=2;
+	EnumPlatform.GAMEDATA_TYPE_ROLE_UPDATE=3;
+	EnumPlatform.GAMEDATA_TYPE_EXIT=4;
+	return EnumPlatform;
+})()
+
+
+//class boots.GameFont
+var GameFont=(function(){
+	function GameFont(){
+		this._caller=null;
+		this._method=null;
+	}
+
+	__class(GameFont,'boots.GameFont');
+	var __proto=GameFont.prototype;
+	__proto.Init=function(caller,method){
+		this._caller=caller;
+		this._method=method;
+		BootUtil.Log("加载字体文件1");
+		Laya.loader.load("res/ui/image/boot/DFYuanW5.ttf",Handler.create(this,this.ConchLoadFontComp));
+	}
+
+	/**
+	*字体加载完成
+	*/
+	__proto.ConchLoadFontComp=function(){
+		if (this._method!=null)
+			this._method.call(this._caller);
+		this._method=this._caller=null;
+	}
+
+	GameFont.YAHEI="DFYuanW5";
+	GameFont.DEFAULT="DFYuanW5";
+	__static(GameFont,
+	['Ins',function(){return this.Ins=new GameFont();}
+	]);
+	return GameFont;
 })()
 
 
 /**
-*url请求工具
+*参数字符串常量
 */
-//class boots.utils.RequestUtil
-var RequestUtil=(function(){
-	function RequestUtil(caller,onsuc,onerror,data){
-		this._caller=null;
-		this._success=null;
-		this._error=null;
-		this._data=null;
-		this._caller=caller;
-		this._success=onsuc;
-		this._error=onerror;
-		this._data=data;
-	}
+//class boots.enums.EnumParamStr
+var EnumParamStr=(function(){
+	function EnumParamStr(){}
+	__class(EnumParamStr,'boots.enums.EnumParamStr');
+	EnumParamStr.ACCOUNT="account";
+	EnumParamStr.SERVER_HOST="serverhost";
+	EnumParamStr.SERVER_PORT="serverport";
+	EnumParamStr.SERVER_ID="serverid";
+	EnumParamStr.SERVER_NAME="servername";
+	EnumParamStr.ADULT="adult";
+	EnumParamStr.TIME="time";
+	EnumParamStr.LOGINTYPE="logintype";
+	EnumParamStr.BOOT_VERSION="boot";
+	EnumParamStr.DEVICEID="deviceid";
+	EnumParamStr.PLATFORM="platform";
+	EnumParamStr.CHANNEL="channel";
+	EnumParamStr.RELOAD_PARAM="reloadparam";
+	EnumParamStr.SIGN="sign";
+	EnumParamStr.BOOT_CFG="bootcfg";
+	EnumParamStr.MAINVERSION="mainversion";
+	EnumParamStr.NoticeStr="NoticeStr";
+	return EnumParamStr;
+})()
 
-	__class(RequestUtil,'boots.utils.RequestUtil');
-	var __proto=RequestUtil.prototype;
-	__proto.Send=function(url){
-		AlertToastExt.Show(0);
-		var req=new HttpRequest();
-		req.on("complete",this,this.CompleteHandler);
-		req.on("error",this,this.ErrorHandler);
-		req.send(url);
-	}
 
-	__proto.Clear=function(){
-		this._caller=null;
-		this._success=null;
-		this._error=null;
-		this._data=null;
-	}
-
-	__proto.CompleteHandler=function(result){
-		AlertToastExt.Hide(0);
-		if (this._success !=null){
-			if (this._data !=null){
-				this._success.apply(this._caller,[result,this._data]);
-				}else{
-				this._success.call(this._caller,[result]);
-			}
-		}
-		this.Clear();
-	}
-
-	__proto.ErrorHandler=function(result){
-		AlertToastExt.Hide(0);
-		if (this._error !=null){
-			if (this._data !=null){
-				this._error.apply(this._caller,[result,this._data]);
-				}else{
-				this._error.call(this._caller,result);
-			}
-		}
-		this.Clear();
-	}
-
-	return RequestUtil;
+//class boots.selserver.SelServerEvent
+var SelServerEvent=(function(){
+	function SelServerEvent(){}
+	__class(SelServerEvent,'boots.selserver.SelServerEvent');
+	SelServerEvent.LOADMAIN_TITLE="loadmain_title";
+	SelServerEvent.LOADMAIN_PROG="loadmain_progress";
+	SelServerEvent.LOADING_TITLE="loading_title";
+	SelServerEvent.LOADING_PROG="loading_progress";
+	SelServerEvent.LOADING_LETTER="LOADING_LETTER";
+	SelServerEvent.APP_NATIVE="APP_NATIVE";
+	return SelServerEvent;
 })()
 
 
@@ -1019,15 +1529,21 @@ var boot=(function(){
 	}
 
 	__proto.OnFont=function(){
-		if (Browser.IsMinG)
-			GameCfg.ParseWebParam();
-		else if (Render.isConchApp|| NativeUtil.IsWebview)
-		this.AppBoot();
+		if (Browser.IsMinG){
+			LoadBoot.Ins.Root.ParseParams();
+			LoadBoot.Ins.Root.Start(Handler.create(this,this.BootCfgHandler));
+			LoadBoot.Ins.Root.ParseWebParam();
+		}
+		else if (Render.isConchApp|| NativeUtil.IsWebview){
+			this.AppBoot();
+			LoadBoot.Ins.Root.Start(Handler.create(this,this.BootCfgHandler));
+			LoadBoot.Ins.Root.ParseWebParam();
+		}
 		else{
 			GameCfg.ParseWebParam();
+			LoadBoot.Ins.Root.Start(Handler.create(this,this.BootCfgHandler));
+			LoadBoot.Ins.Root.ParseWebParam();
 		}
-		LoadBoot.Ins.Root.Start(Handler.create(this,this.BootCfgHandler));
-		LoadBoot.Ins.Root.ParseWebParam();
 	}
 
 	// }
@@ -1089,14 +1605,15 @@ var boot=(function(){
 			GameCfg.ParseAppParam(NativeUtil.NATIVE_OBJ);
 			UMengUtil.Register();
 			UMengUtil.AddPoint("bootloaded","","",0);
+			EventCenter.Event("APP_NATIVE");
 		}
 	}
 
 	boot.Ins=null;
 	boot.initDesignW=720;
 	boot.initDesignH=1280;
+	boot.isSpecialScreen=false;
 	boot.zhijianWeChatRecahrge=null;
-	boot._bg=null;
 	__static(boot,
 	['designW',function(){return this.designW=boot.initDesignW;},'designH',function(){return this.designH=boot.initDesignH;}
 	]);
@@ -1104,250 +1621,13 @@ var boot=(function(){
 })()
 
 
-/**
-*选服页
-*/
-//class boots.selserver.med.SelServerMediator
-var SelServerMediator=(function(){
-	function SelServerMediator(p){
-		this._p=null;
-		// 是否显示测试服
-		this._showTest=false;
-		this._curZone=null;
-		this._curServer=null;
-		/**是否请求上次登录服成功**/
-		this.isReqLastSucc=false;
-		/**是否请求组下的服务器列表成功**/
-		this.isReqListSucc=false;
-		this._zones=[];
-		this._radioZones=[];
-		this._p=p;
-		this._p.imgServerBG.alpha=0;
-		this._p.imgServerBG.y=this._p.height;
-	}
-
-	__class(SelServerMediator,'boots.selserver.med.SelServerMediator');
-	var __proto=SelServerMediator.prototype;
-	Laya.imps(__proto,{"boots.selserver.med.ISelServerMediator":true})
-	__proto.ClickSwitch=function(){}
-	__proto.OnShow=function(){}
-	__proto.OnHide=function(){}
-	__proto.destroy=function(){
-		this.OnHide();
-		this._p=null;
-	}
-
-	__proto.UpdateZoneList=function(){
-		for (var i=0;i < this._radioZones.length;++i){
-			this._p.radioServerTab.delItem(this._radioZones[i]);
-		};
-		var c=0;
-		for (var i=0;i < this._zones.length;++i){
-			if (!this._showTest && (this._zones[i].zoneID==9999||this._zones[i].zoneID==9))
-				continue ;
-			var radio;
-			if (c >=this._radioZones.length){
-				radio=BootUIUtil.CloneRadio(this._p.radioT);
-				this._radioZones.push(radio);
-				}else{
-				radio=this._radioZones[c];
-			}
-			radio.label=this._zones[i].zoneName;
-			radio.name="item"+c;
-			this._p.radioServerTab.addItem(radio);
-			c++;
-		};
-		var findIdx=Math.max(0,this._zones.length-1);
-		if (GameCfg.IsNeiWang){
-			for (var i=this._zones.length-1;i >=0;i--){
-				if (this._zones[i].zoneID==9999){
-					findIdx=i;
-					break ;
-				}
-			}
-			}else{
-			for (var i=this._zones.length-1;i >=0;i--){
-				if (this._zones[i].zoneID !=9999){
-					findIdx=i;
-					break ;
-				}
-			}
-		}
-		this._p.radioServerTab.selectedIndex=findIdx;
-	}
-
-	__proto.Login=function(){}
-	return SelServerMediator;
-})()
-
-
-/**
-*参数字符串常量
-*/
-//class boots.enums.EnumParamStr
-var EnumParamStr=(function(){
-	function EnumParamStr(){}
-	__class(EnumParamStr,'boots.enums.EnumParamStr');
-	EnumParamStr.ACCOUNT="account";
-	EnumParamStr.SERVER_HOST="serverhost";
-	EnumParamStr.SERVER_PORT="serverport";
-	EnumParamStr.SERVER_ID="serverid";
-	EnumParamStr.SERVER_NAME="servername";
-	EnumParamStr.ADULT="adult";
-	EnumParamStr.TIME="time";
-	EnumParamStr.LOGINTYPE="logintype";
-	EnumParamStr.BOOT_VERSION="boot";
-	EnumParamStr.DEVICEID="deviceid";
-	EnumParamStr.PLATFORM="platform";
-	EnumParamStr.CHANNEL="channel";
-	EnumParamStr.RELOAD_PARAM="reloadparam";
-	EnumParamStr.SIGN="sign";
-	EnumParamStr.BOOT_CFG="bootcfg";
-	EnumParamStr.MAINVERSION="mainversion";
-	EnumParamStr.NoticeStr="NoticeStr";
-	return EnumParamStr;
-})()
-
-
-/**
-*umeng接口
-*/
-//class boots.utils.UMengUtil
-var UMengUtil=(function(){
-	function UMengUtil(){}
-	__class(UMengUtil,'boots.utils.UMengUtil');
-	UMengUtil.Register=function(){
-		NativeUtil.Register(20002,null,UMengUtil.CallFromNative);
-		UMengUtil.ReqLogEnable(true);
-	}
-
-	UMengUtil.CallFromNative=function(o){
-		var funcid=o["funcid"];
-		if (funcid==4){
-			Laya.stage.event("umeng_device_info",o);
-		}
-		else if (funcid==30){
-			UMengUtil.RecPushDefine(o);
-		}
-		else if (funcid==32){
-			UMengUtil.RecGetTags(o);
-		}
-		else if (funcid==34){
-			UMengUtil.RecAddTags(o);
-		}
-		else if (funcid==36){
-			UMengUtil.RecDelTags(o);
-		}
-	}
-
-	UMengUtil.CallToNative=function(o){
-		o.msgid=20001;
-		NativeUtil.CallPlatformWithObj(o);
-	}
-
-	UMengUtil.AddPoint=function(eventid,uid,rolename,zoneid){
-		var http=new HttpRequest();
-		if (Render.isConchApp)
-			http.send(BootUtil.FormatStr("https://h5.c.popcornie.com/clog?uuid={@}&usr={@}&desc={@}&extra={@}",[GameCfg.DEVICEID,uid,eventid,rolename+"-"+zoneid]));
-		else
-		http.send(BootUtil.FormatStr("https://h5.c.popcornie.com/clog?uuid={@}&usr={@}&desc={@}&extra={@}",["web",uid,eventid,rolename+"-"+zoneid]));
-	}
-
-	UMengUtil.ReqDeviceInfo=function(){
-		UMengUtil.CallToNative({funcid:3});
-	}
-
-	UMengUtil.ReportEvent=function(eventid,value){
-		UMengUtil.CallToNative({funcid:1,eventid:eventid,value:value});
-	}
-
-	UMengUtil.ReportError=function(value){
-		UMengUtil.CallToNative({funcid:2,value:value});
-	}
-
-	UMengUtil.ReqLogEnable=function(value){
-		UMengUtil.CallToNative({funcid:100,value:value});
-	}
-
-	UMengUtil.RecPushDefine=function(o){
-		console.log(o.toString());
-	}
-
-	UMengUtil.ReqGetTags=function(){
-		UMengUtil.CallToNative({funcid:31});
-	}
-
-	UMengUtil.RecGetTags=function(o){}
-	UMengUtil.ReqAddTags=function(value){
-		UMengUtil.CallToNative({funcid:33,value:value});
-	}
-
-	UMengUtil.RecAddTags=function(o){}
-	UMengUtil.ReqDelTags=function(value){
-		UMengUtil.CallToNative({funcid:35,value:value});
-	}
-
-	UMengUtil.RecDelTags=function(o){}
-	UMengUtil.REQ_REPORT_EVENT=1;
-	UMengUtil.REQ_REPORT_ERROR=2;
-	UMengUtil.REQ_DEVICE_INFO=3;
-	UMengUtil.REC_DEVICE_INFO=4;
-	UMengUtil.REQ_ENTER_LEVEL=5;
-	UMengUtil.REQ_FINISH_LEVEL=6;
-	UMengUtil.REQ_FAIL_LEVEL=7;
-	UMengUtil.REQ_BUY=8;
-	UMengUtil.REQ_PAY_COIN=9;
-	UMengUtil.REQ_PAY_ITEM=10;
-	UMengUtil.REQ_EXCHANGE=11;
-	UMengUtil.REQ_USEITEM=12;
-	UMengUtil.REQ_BONUS_COIN=13;
-	UMengUtil.REQ_BONUS_ITEM=14;
-	UMengUtil.REQ_PLAYER_LEVEL=15;
-	UMengUtil.REQ_SIGN_IN=16;
-	UMengUtil.REQ_SIGN_OUT=17;
-	UMengUtil.REC_PUSH_DEFINE=30;
-	UMengUtil.REQ_PUSH_GETTAGS=31;
-	UMengUtil.REC_PUSH_GETTAGS=32;
-	UMengUtil.REQ_PUSH_ADDTAGS=33;
-	UMengUtil.REC_PUSH_ADDTAGS=34;
-	UMengUtil.REQ_PUSH_DELTAGS=35;
-	UMengUtil.REC_PUSH_DELTAGS=36;
-	UMengUtil.REQ_PUSH_NOTIFY_ON_FOREGROUND=37;
-	UMengUtil.REQ_LOG_ENABLE=100;
-	UMengUtil.BootLoaded="bootloaded";
-	UMengUtil.ReqSignIn="reqsignin";
-	UMengUtil.SignInSuc="signinsuc";
-	UMengUtil.SignInFail="signinfail";
-	UMengUtil.VerifySuc="verifysuc";
-	UMengUtil.GameLoaded="gameloaded";
-	UMengUtil.ReqLogin="reqlogin";
-	UMengUtil.LoginSuc="loginsuc";
-	UMengUtil.LoginFail="loginfail";
-	UMengUtil.ClickCreateRole="clickcreaterole";
-	UMengUtil.CreateRoleSuc="createrolesuc";
-	UMengUtil.CreateRoleFail="createrolefail";
-	UMengUtil.PublicResLoaded="publicresloaded";
-	UMengUtil.CfgLoaded="cfgloaded";
-	UMengUtil.DefaultAniLoaded="defaultaniloaded";
-	UMengUtil.ReqEnterScene="reqenterscene";
-	UMengUtil.EnterScene="enterscene";
-	UMengUtil.EnterSceneFail="enterscenefail";
-	UMengUtil.ClickWelcomePanel="clickwelcomepanel";
-	UMengUtil.OpenGeneralPanel="opengeneralpanel";
-	UMengUtil.CLOG_BACKEND="https://h5.c.popcornie.com/clog?uuid={@}&usr={@}&desc={@}&extra={@}";
-	return UMengUtil;
-})()
-
-
-// 和EnumUILayer一致
-//class boots.enums.EnumBootUILayer
-var EnumBootUILayer=(function(){
-	function EnumBootUILayer(){}
-	__class(EnumBootUILayer,'boots.enums.EnumBootUILayer');
-	EnumBootUILayer.BOOTLOADING=26;
-	EnumBootUILayer.LOGIN=29;
-	EnumBootUILayer.TOTAST=31;
-	return EnumBootUILayer;
+//class boots.EnumVersionType
+var EnumVersionType=(function(){
+	function EnumVersionType(){}
+	__class(EnumVersionType,'boots.EnumVersionType');
+	EnumVersionType.VERSION_DEFAULT=0;
+	EnumVersionType.VERSION_CHAllENGE=1;
+	return EnumVersionType;
 })()
 
 
@@ -1496,166 +1776,6 @@ var BootLoader=(function(){
 })()
 
 
-//class boots.selserver.SelServerEvent
-var SelServerEvent=(function(){
-	function SelServerEvent(){}
-	__class(SelServerEvent,'boots.selserver.SelServerEvent');
-	SelServerEvent.LOADMAIN_TITLE="loadmain_title";
-	SelServerEvent.LOADMAIN_PROG="loadmain_progress";
-	SelServerEvent.LOADING_TITLE="loading_title";
-	SelServerEvent.LOADING_PROG="loading_progress";
-	SelServerEvent.LOADING_LETTER="LOADING_LETTER";
-	return SelServerEvent;
-})()
-
-
-//class boots.utils.BootUtil
-var BootUtil=(function(){
-	function BootUtil(){}
-	__class(BootUtil,'boots.utils.BootUtil');
-	var __proto=BootUtil.prototype;
-	__proto.GetStackTrace=function(pre){
-		var str="";
-		str+="// ==========================================================================\n";
-		str+=pre+"\n";
-		var caller=arguments.callee.caller;
-		var i=0;
-		str+=("***----------------------------------------  ** "+(i+1))+"\n";
-		while (caller && i < 10){
-			str+=(caller.toString())+"\n";
-			caller=caller.caller;
-			i++;
-			str+=("***---------------------------------------- ** "+(i+1))+"\n";
-		}
-		str+="// ==========================================================================\n";
-		return str;
-	}
-
-	BootUtil.GetTimer=function(){
-		var ret=0;
-		ret=new Date().getTime();;
-		return ret;
-	}
-
-	BootUtil.Log=function(log){
-		var ret=0;
-		ret=new Date().getTime();;
-		log="["+ret+"]"+log;
-		console.log(log);
-	}
-
-	BootUtil.encode=function(o){
-		return JSON.stringify(o);
-	}
-
-	BootUtil.decode=function(s){
-		var ret=null;
-		try{
-			if (s==null || s=="")
-				return null;
-			ret=JSON.parse(s);
-		}
-		catch (err){
-			console.log("decode json error:"+err.message);
-			ret=null;
-		}
-		return ret;
-	}
-
-	BootUtil.FormatStr=function(str,params){
-		if (str==null)
-			return str;
-		if (params !=null){
-			var keyStr="{@}";
-			var isNumRep=(str.indexOf(keyStr)==-1);
-			var len=params.length;
-			var param;
-			for (var i=0;i < len;++i){
-				if (isNumRep)
-					keyStr="{"+(i)+"}";
-				param=params[i];
-				str=str.replace(keyStr,param);
-			}
-		}
-		return str;
-	}
-
-	BootUtil.isHtml=function(str){
-		var reg=/<.*?>/g;
-		return reg.test(str);
-	}
-
-	BootUtil.RemoveHTMLTag=function(text){
-		return text==null ? text :text.replace(/<.*?>/g,"");
-	}
-
-	__static(BootUtil,
-	['Ins',function(){return this.Ins=new BootUtil();}
-	]);
-	return BootUtil;
-})()
-
-
-/**
-*渠道列表
-*/
-//class boots.platform.channel.EnumChannelPlatName
-var EnumChannelPlatName=(function(){
-	function EnumChannelPlatName(){}
-	__class(EnumChannelPlatName,'boots.platform.channel.EnumChannelPlatName');
-	EnumChannelPlatName.PDev="dev";
-	EnumChannelPlatName.P37H5="37h5";
-	EnumChannelPlatName.xiyouys="xiyouys";
-	return EnumChannelPlatName;
-})()
-
-
-//class boots.utils.BootUIUtil
-var BootUIUtil=(function(){
-	function BootUIUtil(){}
-	__class(BootUIUtil,'boots.utils.BootUIUtil');
-	BootUIUtil.AddButtonFeed=function(btn){
-		btn.on("mousedown",null,BootUIUtil.BeginFeedBack);
-		btn.on("mouseup",null,BootUIUtil.EndFeedBack);
-		btn.on("mouseout",null,BootUIUtil.EndFeedBack);
-	}
-
-	BootUIUtil.BeginFeedBack=function(e){
-		var btn=e.currentTarget;
-		btn.tag={downX:btn.x,downY:btn.y,isFeed:true};
-		btn.pos(btn.x+2,btn.y+2);
-	}
-
-	BootUIUtil.EndFeedBack=function(e){
-		var btn=e.currentTarget;
-		if (btn.tag==null)return;
-		btn.pos(btn.tag.downX,btn.tag.downY);
-		btn.tag={downX:btn.x,downY:btn.y,isFeed:false};
-	}
-
-	BootUIUtil.CloneRadio=function(src){
-		var ret=new Radio();
-		ret.skin=src.skin;
-		ret.sizeGrid=src.sizeGrid;
-		ret.label=src.label;
-		ret.labelFont=src.labelFont;
-		ret.labelSize=src.labelSize;
-		ret.stateNum=src.stateNum;
-		ret.labelColors=src.labelColors;
-		ret.labelPadding=src.labelPadding;
-		ret.labelAlign=src.labelAlign;
-		ret._autoSize=true;
-		ret.text.align="center";
-		ret.text.valign="middle";
-		ret.text.width=src.width;
-		ret.text.height=src.height;
-		return ret;
-	}
-
-	return BootUIUtil;
-})()
-
-
 //class boots.platform.PlatformEvent
 var PlatformEvent=(function(){
 	function PlatformEvent(){}
@@ -1691,66 +1811,6 @@ var WebmojieUtil=(function(){
 	WebmojieUtil.REPORT_ENTERGAME="entergame";
 	WebmojieUtil.REPORT_LEVELUP="levelup";
 	return WebmojieUtil;
-})()
-
-
-//class boots.BootLang
-var BootLang=(function(){
-	function BootLang(){}
-	__class(BootLang,'boots.BootLang');
-	BootLang.JZZCX="资源加载中:";
-	BootLang.JMZCX="资源加载中:";
-	BootLang.DQZCX="资源加载中:";
-	return BootLang;
-})()
-
-
-//class boots.RunDriverEx
-var RunDriverEx=(function(){
-	function RunDriverEx(){}
-	__class(RunDriverEx,'boots.RunDriverEx');
-	RunDriverEx.init=function(){
-		if (Render.isConchApp){
-			HTMLImage.create=function (width,height,format){
-				var tex=new Texture2D(width,height,format,false,false);
-				tex.wrapModeU=1;
-				tex.wrapModeV=1;
-				return tex;
-			}
-			Laya.Shader.prototype.uploadTexture2D=function (value,alphaMask){
-				var CTX=WebGLContext;
-				if(CTX._activeTextures[0]!==value){
-					CTX.activeTexture(WebGL.mainContext,0x84C0);
-					CTX.bindTexture(WebGL.mainContext,CTX.TEXTURE_2D,value);
-					CTX._activeTextures[0]=value;
-				}
-				if (alphaMask && CTX._activeTextures[1]!==alphaMask){
-					CTX.activeTexture(WebGL.mainContext,0x84C1);
-					CTX.bindTexture(WebGL.mainContext,CTX.TEXTURE_2D,alphaMask);
-					CTX._activeTextures[1]=alphaMask;
-				}
-			}
-		}
-		Laya.BitmapFont.prototype._drawText=function (text,sprite,drawX,drawY,align,width){
-			var tWidth=this.getTextWidth(text);
-			var tTexture;
-			var dx=0;
-			align==="center" && (dx=(width-tWidth)/ 2);
-			align==="right" && (dx=(width-tWidth));
-			drawY=Math.round(drawY);
-			var tx=0;
-			for (var i=0,n=text.length;i < n;i++){
-				tTexture=this.getCharTexture(text.charAt(i));
-				if (tTexture){
-					var realx=Math.round(drawX+tx+dx);
-					sprite.graphics.drawImage(tTexture,realx,drawY);
-					tx+=this.getCharWidth(text.charAt(i));
-				}
-			}
-		}
-	}
-
-	return RunDriverEx;
 })()
 
 
@@ -1835,59 +1895,138 @@ var PlatformVo=(function(){
 })()
 
 
-//class boots.platform.EnumPlatform
-var EnumPlatform=(function(){
-	function EnumPlatform(){}
-	__class(EnumPlatform,'boots.platform.EnumPlatform');
-	EnumPlatform.TYPE_SHARE=1;
-	EnumPlatform.TYPE_SUBSCRIBE=2;
-	EnumPlatform.TYPE_WD_DOWNLOAD=3;
-	EnumPlatform.TYPE_VERIFY=4;
-	EnumPlatform.TYPE_SAVE_DESKTOP=5;
-	EnumPlatform.REQ_LOGIN=1;
-	EnumPlatform.REC_LOGIN_SUC=2;
-	EnumPlatform.REC_LOGIN_FAIL=3;
-	EnumPlatform.REQ_LOGOUT=10;
-	EnumPlatform.REC_LOGOUT_SUC=11;
-	EnumPlatform.REC_LOGOUT_FAIL=12;
-	EnumPlatform.REQ_PAY=30;
-	EnumPlatform.REC_PAY_SUC=31;
-	EnumPlatform.REC_PAY_FAIL=32;
-	EnumPlatform.REQ_REPORT=40;
-	EnumPlatform.REQ_QUIT=50;
-	EnumPlatform.GAMEDATA_TYPE_CREATE_ROLE=1;
-	EnumPlatform.GAMEDATA_TYPE_ENTER_GAME=2;
-	EnumPlatform.GAMEDATA_TYPE_ROLE_UPDATE=3;
-	EnumPlatform.GAMEDATA_TYPE_EXIT=4;
-	return EnumPlatform;
+/**
+*渠道列表
+*/
+//class boots.platform.channel.EnumChannel
+var EnumChannel=(function(){
+	function EnumChannel(){}
+	__class(EnumChannel,'boots.platform.channel.EnumChannel');
+	EnumChannel.channelName=function(agent){
+		var dic=EnumChannel.ShowName2ID;
+		for (var key in dic){
+			if (dic[key]==agent)
+				return key;
+		}
+		return "dev";
+	}
+
+	EnumChannel.channelID=function(n){
+		return EnumChannel.ShowName2ID[n] !=null ? EnumChannel.ShowName2ID[n] :1;
+	}
+
+	EnumChannel.PDev=99999999;
+	EnumChannel.P37H5=1;
+	EnumChannel.vivo=2;
+	EnumChannel.oppo=3;
+	EnumChannel.xiaomi=4;
+	EnumChannel.huawei=5;
+	EnumChannel.amigo=6;
+	EnumChannel.flyme=7;
+	EnumChannel.lenovo=8;
+	EnumChannel.coolpad=9;
+	EnumChannel.baidu=10;
+	EnumChannel.qihoo=11;
+	EnumChannel.uc=12;
+	EnumChannel.tencent=13;
+	EnumChannel.xiyouys=14;
+	__static(EnumChannel,
+	['ShowName2ID',function(){return this.ShowName2ID={
+			"dev":99999999,
+			"37h5":1,
+			"37zyios":1,
+			"vivo":2,
+			"oppo":3,
+			"xiaomi":4,
+			"huawei":5,
+			"amigo":6,
+			"flyme":7,
+			"lenovo":8,
+			"coolpad":9,
+			"baidu":10,
+			"qihoo":11,
+			"uc":12,
+			"tencent":13,
+			"xiyouys":14
+	};}
+
+	]);
+	return EnumChannel;
 })()
 
 
-//class boots.LoadBoot
-var LoadBoot=(function(){
-	function LoadBoot(){
-		this.Root=null;
-		if (Browser.IsMinG){
-			if(Browser.inWeChat){
-				if(Browser.IszhijianWeChat)
-					this.Root=new LoadBootWXZJ();
-				else
-				this.Root=new LoadBootWX();
-			}
-			else if(Browser.inQQ)
-			this.Root=new LoadBootQQ();
-			else if(Browser.inBiLi)
-			this.Root=new LoadBootbilibili();
-		}
-		else
-		this.Root=new LoadBootCfg();
+/**
+*url请求工具
+*/
+//class boots.utils.RequestUtil
+var RequestUtil=(function(){
+	function RequestUtil(caller,onsuc,onerror,data){
+		this._caller=null;
+		this._success=null;
+		this._error=null;
+		this._data=null;
+		this._caller=caller;
+		this._success=onsuc;
+		this._error=onerror;
+		this._data=data;
 	}
 
-	__class(LoadBoot,'boots.LoadBoot');
-	__static(LoadBoot,
-	['Ins',function(){return this.Ins=new LoadBoot();}
-	]);
-	return LoadBoot;
+	__class(RequestUtil,'boots.utils.RequestUtil');
+	var __proto=RequestUtil.prototype;
+	__proto.Send=function(url){
+		AlertToastExt.Show(0);
+		var req=new HttpRequest();
+		req.on("complete",this,this.CompleteHandler);
+		req.on("error",this,this.ErrorHandler);
+		req.send(url);
+	}
+
+	__proto.Clear=function(){
+		this._caller=null;
+		this._success=null;
+		this._error=null;
+		this._data=null;
+	}
+
+	__proto.CompleteHandler=function(result){
+		AlertToastExt.Hide(0);
+		if (this._success !=null){
+			if (this._data !=null){
+				this._success.apply(this._caller,[result,this._data]);
+				}else{
+				this._success.call(this._caller,[result]);
+			}
+		}
+		this.Clear();
+	}
+
+	__proto.ErrorHandler=function(result){
+		AlertToastExt.Hide(0);
+		if (this._error !=null){
+			if (this._data !=null){
+				this._error.apply(this._caller,[result,this._data]);
+				}else{
+				this._error.call(this._caller,result);
+			}
+		}
+		this.Clear();
+	}
+
+	return RequestUtil;
+})()
+
+
+/**
+*渠道列表
+*/
+//class boots.platform.channel.EnumChannelPlatName
+var EnumChannelPlatName=(function(){
+	function EnumChannelPlatName(){}
+	__class(EnumChannelPlatName,'boots.platform.channel.EnumChannelPlatName');
+	EnumChannelPlatName.PDev="dev";
+	EnumChannelPlatName.P37H5="37h5";
+	EnumChannelPlatName.xiyouys="xiyouys";
+	return EnumChannelPlatName;
 })()
 
 
@@ -2055,97 +2194,133 @@ var LoadMainMediator=(function(){
 })()
 
 
-//class boots.selserver.med.LoadingMediator
-var LoadingMediator=(function(){
-	function LoadingMediator(p){
-		this._title=null;
-		this._p=null;
-		this._p=p;
-		this._p.labRefresh.on("click",this,this.clickRefresh);
-	}
-
-	__class(LoadingMediator,'boots.selserver.med.LoadingMediator');
-	var __proto=LoadingMediator.prototype;
-	Laya.imps(__proto,{"boots.selserver.med.ISelServerMediator":true})
-	__proto.OnShow=function(){
-		EventCenter.On("loading_title",this,this.onTitle);
-		EventCenter.On("loading_progress",this,this.onProgress);
-	}
-
-	//UpdateProgress(0);
-	__proto.OnHide=function(){
-		EventCenter.Off("loading_title",this,this.onTitle);
-		EventCenter.Off("loading_progress",this,this.onProgress);
-	}
-
-	__proto.destroy=function(){
-		this.OnHide();
-		this._p=null;
-	}
-
-	__proto.clickRefresh=function(){
-		PlatformLoginUtil.Reload(2);
-	}
-
-	__proto.onTitle=function(title){
-		this.SetTitle(title);
-	}
-
-	__proto.onProgress=function(v){
-		this.SetProgress(v);
-	}
-
-	__proto.SetTitle=function(title){
-		this._title=title;
-		this._p.txtDesc.text=BootUtil.FormatStr(this._title,["0%"]);
-	}
-
-	__proto.SetProgress=function(value){
-		if (value > 1)value=1;
-		var txt=BootUtil.FormatStr(this._title,[(value*100|0)+"%"]);
-		this._p.txtDesc.text=txt;
-		this.UpdateProgress(value);
-	}
-
-	__proto.UpdateProgress=function(value){
-		this._p.imgProg.scaleX=value;
-		this._p.sprYun.x=this._p.imgProg.x+this._p.imgProg.width *value-this._p.sprYun.width/2;
-	}
-
-	return LoadingMediator;
-})()
-
-
 /**
-*与NATIVE通信的消息id
+*umeng接口
 */
-//class boots.nativee.EnumNativeID
-var EnumNativeID=(function(){
-	function EnumNativeID(){}
-	__class(EnumNativeID,'boots.nativee.EnumNativeID');
-	EnumNativeID.REQ_CONNECT=1;
-	EnumNativeID.REC_CONNECT=2;
-	EnumNativeID.REQ_BATERRY=3;
-	EnumNativeID.REC_BATERRY=4;
-	EnumNativeID.REQ_SIGNAL=5;
-	EnumNativeID.REC_SIGNAL=6;
-	EnumNativeID.REQ_EXIT=7;
-	EnumNativeID.REQ_COPYCLIPBOARD=8;
-	EnumNativeID.REC_BACKGROUND=9;
-	EnumNativeID.REQ_RELOAD=100;
-	EnumNativeID.REQ_SHOCK=101;
-	EnumNativeID.REQ_SOUND_RECORD=1001;
-	EnumNativeID.REQ_SOUND_RECORD_END=1002;
-	EnumNativeID.REC_SOUND_RECORD_COMPLETE=1003;
-	EnumNativeID.REQ_SOUND_PLAY=1004;
-	EnumNativeID.REC_SOUND_PLAY_COMPLETE=1005;
-	EnumNativeID.REQ_SOUND_STOP=1006;
-	EnumNativeID.REC_SOUND_STOP_COMPLETE=1006;
-	EnumNativeID.REQ_PLATFORM=10001;
-	EnumNativeID.REC_PLATFORM=10002;
-	EnumNativeID.REQ_UMENG=20001;
-	EnumNativeID.REC_UMENG=20002;
-	return EnumNativeID;
+//class boots.utils.UMengUtil
+var UMengUtil=(function(){
+	function UMengUtil(){}
+	__class(UMengUtil,'boots.utils.UMengUtil');
+	UMengUtil.Register=function(){
+		NativeUtil.Register(20002,null,UMengUtil.CallFromNative);
+		UMengUtil.ReqLogEnable(true);
+	}
+
+	UMengUtil.CallFromNative=function(o){
+		var funcid=o["funcid"];
+		if (funcid==4){
+			Laya.stage.event("umeng_device_info",o);
+		}
+		else if (funcid==30){
+			UMengUtil.RecPushDefine(o);
+		}
+		else if (funcid==32){
+			UMengUtil.RecGetTags(o);
+		}
+		else if (funcid==34){
+			UMengUtil.RecAddTags(o);
+		}
+		else if (funcid==36){
+			UMengUtil.RecDelTags(o);
+		}
+	}
+
+	UMengUtil.CallToNative=function(o){
+		o.msgid=20001;
+		NativeUtil.CallPlatformWithObj(o);
+	}
+
+	UMengUtil.AddPoint=function(eventid,uid,rolename,zoneid){
+		var http=new HttpRequest();
+		if (Render.isConchApp)
+			http.send(BootUtil.FormatStr("https://h5.c.popcornie.com/clog?uuid={@}&usr={@}&desc={@}&extra={@}",[GameCfg.DEVICEID,uid,eventid,rolename+"-"+zoneid]));
+		else
+		http.send(BootUtil.FormatStr("https://h5.c.popcornie.com/clog?uuid={@}&usr={@}&desc={@}&extra={@}",["web",uid,eventid,rolename+"-"+zoneid]));
+	}
+
+	UMengUtil.ReqDeviceInfo=function(){
+		UMengUtil.CallToNative({funcid:3});
+	}
+
+	UMengUtil.ReportEvent=function(eventid,value){
+		UMengUtil.CallToNative({funcid:1,eventid:eventid,value:value});
+	}
+
+	UMengUtil.ReportError=function(value){
+		UMengUtil.CallToNative({funcid:2,value:value});
+	}
+
+	UMengUtil.ReqLogEnable=function(value){
+		UMengUtil.CallToNative({funcid:100,value:value});
+	}
+
+	UMengUtil.RecPushDefine=function(o){
+		console.log(o.toString());
+	}
+
+	UMengUtil.ReqGetTags=function(){
+		UMengUtil.CallToNative({funcid:31});
+	}
+
+	UMengUtil.RecGetTags=function(o){}
+	UMengUtil.ReqAddTags=function(value){
+		UMengUtil.CallToNative({funcid:33,value:value});
+	}
+
+	UMengUtil.RecAddTags=function(o){}
+	UMengUtil.ReqDelTags=function(value){
+		UMengUtil.CallToNative({funcid:35,value:value});
+	}
+
+	UMengUtil.RecDelTags=function(o){}
+	UMengUtil.REQ_REPORT_EVENT=1;
+	UMengUtil.REQ_REPORT_ERROR=2;
+	UMengUtil.REQ_DEVICE_INFO=3;
+	UMengUtil.REC_DEVICE_INFO=4;
+	UMengUtil.REQ_ENTER_LEVEL=5;
+	UMengUtil.REQ_FINISH_LEVEL=6;
+	UMengUtil.REQ_FAIL_LEVEL=7;
+	UMengUtil.REQ_BUY=8;
+	UMengUtil.REQ_PAY_COIN=9;
+	UMengUtil.REQ_PAY_ITEM=10;
+	UMengUtil.REQ_EXCHANGE=11;
+	UMengUtil.REQ_USEITEM=12;
+	UMengUtil.REQ_BONUS_COIN=13;
+	UMengUtil.REQ_BONUS_ITEM=14;
+	UMengUtil.REQ_PLAYER_LEVEL=15;
+	UMengUtil.REQ_SIGN_IN=16;
+	UMengUtil.REQ_SIGN_OUT=17;
+	UMengUtil.REC_PUSH_DEFINE=30;
+	UMengUtil.REQ_PUSH_GETTAGS=31;
+	UMengUtil.REC_PUSH_GETTAGS=32;
+	UMengUtil.REQ_PUSH_ADDTAGS=33;
+	UMengUtil.REC_PUSH_ADDTAGS=34;
+	UMengUtil.REQ_PUSH_DELTAGS=35;
+	UMengUtil.REC_PUSH_DELTAGS=36;
+	UMengUtil.REQ_PUSH_NOTIFY_ON_FOREGROUND=37;
+	UMengUtil.REQ_LOG_ENABLE=100;
+	UMengUtil.BootLoaded="bootloaded";
+	UMengUtil.ReqSignIn="reqsignin";
+	UMengUtil.SignInSuc="signinsuc";
+	UMengUtil.SignInFail="signinfail";
+	UMengUtil.VerifySuc="verifysuc";
+	UMengUtil.GameLoaded="gameloaded";
+	UMengUtil.ReqLogin="reqlogin";
+	UMengUtil.LoginSuc="loginsuc";
+	UMengUtil.LoginFail="loginfail";
+	UMengUtil.ClickCreateRole="clickcreaterole";
+	UMengUtil.CreateRoleSuc="createrolesuc";
+	UMengUtil.CreateRoleFail="createrolefail";
+	UMengUtil.PublicResLoaded="publicresloaded";
+	UMengUtil.CfgLoaded="cfgloaded";
+	UMengUtil.DefaultAniLoaded="defaultaniloaded";
+	UMengUtil.ReqEnterScene="reqenterscene";
+	UMengUtil.EnterScene="enterscene";
+	UMengUtil.EnterSceneFail="enterscenefail";
+	UMengUtil.ClickWelcomePanel="clickwelcomepanel";
+	UMengUtil.OpenGeneralPanel="opengeneralpanel";
+	UMengUtil.CLOG_BACKEND="https://h5.c.popcornie.com/clog?uuid={@}&usr={@}&desc={@}&extra={@}";
+	return UMengUtil;
 })()
 
 
@@ -2274,6 +2449,8 @@ var PlatformLoginUtil=(function(){
 						return new PlatfromLoginMohe(platformId,channelID);
 					case 10:
 						return new PlatformLoginZhangYu(platformId,channelID);
+					case 15:
+						return new PlatformLoginNewMohe(platformId,channelID);
 					default :
 						return new PlatformLogin37(platformId,channelID);
 					}
@@ -2432,155 +2609,349 @@ var PlatformLoginUtil=(function(){
 })()
 
 
-//class boots.ResourceVersionEx
-var ResourceVersionEx=(function(){
-	function ResourceVersionEx(){}
-	__class(ResourceVersionEx,'boots.ResourceVersionEx');
-	ResourceVersionEx.getChunkVersion=function(thumbnail){
-		var ret;
-		if (ResourceVersionEx.manifest){
-			ret=ResourceVersionEx.manifest[thumbnail];
-			if (!ret)ret="1";
-		}
+/**
+*内部登陆
+*/
+//class boots.selserver.med.SelServerNormalMediator extends boots.selserver.med.SelServerMediator
+var SelServerNormalMediator=(function(_super){
+	function SelServerNormalMediator(p){
+		this._btnLastLogin=null;
+		this._dispatcher=new EventDispatcher();
+		this._btnServers=[];
+		SelServerNormalMediator.__super.call(this,p);
+		this.HideServerList();
+		this.CreateGroupVo();
+		this.UpdateZoneList();
+		this._p.imgSelServer.on("click",this,this.ClickSelServer);
+		this._p.btnClose.on("click",this,this.CloseSelServer);
+		this._p.btnBack.on("click",this,this.CloseSelServer);
+		this._p.btnLogin.on("click",this,this.ClickLogin);
+		this._p.btnAgreement.on("click",this,this.ClickAgreement);
+		this._p.radioServerTab.on("change",this,this.OnChangeGroupEnd);
+	}
+
+	__class(SelServerNormalMediator,'boots.selserver.med.SelServerNormalMediator',_super);
+	var __proto=SelServerNormalMediator.prototype;
+	__proto.destroy=function(){
+		this._btnServers=null;
+		this._dispatcher=null;
+		_super.prototype.destroy.call(this);
+	}
+
+	__proto.CreateGroupVo=function(){}
+	// _zones.push(g);
+	__proto.CreateServerVo=function(n,zoneId,ip,port){
+		var ret=new SelServerVo();
+		ret.serverName=n;
+		ret.serverID=zoneId;
+		ret.serverIP=ip;
+		ret.serverPort=port;
 		return ret;
 	}
 
-	ResourceVersionEx.addVersionPrefix=function(originURL){
-		originURL=URL.getAdptedFilePath(originURL);
-		if (ResourceVersionEx.manifest){
-			if (ResourceVersionEx.isMapChunk(originURL)){
-				return originURL;
+	__proto.GetGroupVo=function(ip,port,zoneId){
+		for (var i=0;i < this._zones.length;++i){
+			if (this._zones[i].GetServer(ip,port,zoneId)!=null)return this._zones[i];
+		}
+		return null;
+	}
+
+	__proto.GetServerVo=function(ip,port,zoneId){
+		var g=this.GetGroupVo(ip,port,zoneId);
+		return g ? g.GetServer(ip,port,zoneId):null;
+	}
+
+	__proto.CreateServerBtn=function(){
+		var list=this._curZone.servers;
+		for (var i=0;i < list.length;++i){
+			var btn=this._btnServers[i];
+			if (btn==null){
+				btn=new SelServerCellExt();
+				this._btnServers[i]=btn;
 			}
-			else{
-				var ver=ResourceVersionEx.manifest[originURL];
-				if (!ver){
-					var i1=originURL.indexOf("/");
-					if (i1 > 0 && !isNaN(parseFloat(originURL.substr(0,i1)))){
-						return originURL;
-					}
-					ver="1";
-				}
-				return ver+"/"+originURL;
-			}
+			btn.x=0;
+			btn.y=i *btn.height;
+			btn.SetData(list[i]);
+			btn.on("click",this,this.ClickServerBtn);
+			this._p.panServerList.addChild(btn);
 		}
-		return originURL;
-	}
-
-	ResourceVersionEx.isMapChunk=function(url){
-		return url.indexOf("res/map")!=-1 && url.indexOf("/chunks")!=-1;
-	}
-
-	ResourceVersionEx.initver="1";
-	ResourceVersionEx.manifest=null;
-	ResourceVersionEx.THUMBNAIL="thumbnail.jpg";
-	return ResourceVersionEx;
-})()
-
-
-//class boots.selserver.SelServerUtil
-var SelServerUtil=(function(){
-	function SelServerUtil(){}
-	__class(SelServerUtil,'boots.selserver.SelServerUtil');
-	SelServerUtil.Init=function(){
-		if (GameCfg.MONI_WAIWANG){
-			GameCfg.GAMENAME=GameCfg.GAMENAME_37;
-			GameCfg.CHANNEL=EnumChannel.P37H5.toString();
-		}
-		PlatformLoginUtil.Init();
-		SelServerUtil.ShowSelServer(true,SelServerUtil.IsCanDirectEnter()? 2 :1);
-	}
-
-	SelServerUtil.IsCanDirectEnter=function(){
-		return GameCfg.LOGINTYPE==2
-		&& PlatformLoginUtil.vo.server_ip !=null && PlatformLoginUtil.vo.server_ip !=""
-		&& (!PlatformLoginUtil.login.hasSDK || PlatformLoginUtil.login.isVerify)
-	}
-
-	SelServerUtil.ShowSelServer=function(value,type){
-		if (value){
-			if (SelServerUtil._loginPanel==null){
-				SelServerUtil._loginPanel=new SelServerPanelExt();
-			}
-			if (type !=3)
-				SelServerUtil.PlayBgMusic();
-			Scene.root.addChild(SelServerUtil._loginPanel);
-			SelServerUtil._loginPanel.zOrder=29;
-			SelServerUtil._loginPanel.onOpened(type);
-		}
-		else{
-			if (SelServerUtil._loginPanel !=null && SelServerUtil._loginPanel.medType==type){
-				SelServerUtil._loginPanel.destroy();
-				SelServerUtil._loginPanel=null;
-			}
+		for (;i < this._btnServers.length;++i){
+			this._btnServers[i].removeSelf();
 		}
 	}
 
-	SelServerUtil.PlayBgMusic=function(){
-		var url="res/ui/image/boot/login.mp3";
-		if (SoundManager._bgMusic !=URL.formatURL(url)){
-			SoundManager.playMusic(url);
+	__proto.OnChangeGroupEnd=function(e){
+		var g=this._zones[this._p.radioServerTab.selectedIndex];
+		this._curZone=g;
+		this.CreateServerBtn();
+	}
+
+	__proto.ClickServerBtn=function(e){
+		var vo=(e.currentTarget).vo;
+		if(vo==null || vo.serverState==0){
+			AlertBootExt.Show("服务器未开启");
+			return;
 		}
+		this._curServer=vo;
+		this.UpdateSelServer();
+		this.HideServerList();
 	}
 
-	SelServerUtil.SelServer=function(){
-		PlatformLoginUtil.OnSelSever();
-		boots.selserver.SelServerUtil.ShowSelServer(true,2);
+	__proto.ClickSelServer=function(){
+		this.ShowServerList();
 	}
 
-	SelServerUtil.GetServerStateIcon=function(state){
-		if (state==0)
-			return "res/ui/image/boot/_ui_icon_weihu.png";
-		else if (state==2)
-		return "res/ui/image/boot/_ui_icon_tongchang.png";
+	__proto.CloseSelServer=function(){
+		this.HideServerList();
+	}
+
+	__proto.ClickLogin=function(){
+		this.Login();
+	}
+
+	__proto.ClickAgreement=function(){
+		AgreementExt.ShowHide();
+	}
+
+	__proto.OnShow=function(){
+		_super.prototype.OnShow.call(this);
+		this.UpdateDefault();
+		this.UpdateSelServer();
+		this.CreateServerBtn();
+	}
+
+	__proto.OnHide=function(){
+		_super.prototype.OnHide.call(this);
+	}
+
+	__proto.UpdateDefault=function(){
+		var acc=LocalStorage.getItem("account");
+		var ip=LocalStorage.getItem("serverhost");
+		var port=parseInt(LocalStorage.getItem("serverport"));
+		var zoneId=parseInt(LocalStorage.getItem("serverid"));
+		if (acc !=null)
+			this._p.txtAccount.text=acc;
 		else
-		return "res/ui/image/boot/_ui_icon_tongchang.png";
-	}
-
-	SelServerUtil.TestGroupId=9999;
-	SelServerUtil.TestGroupId2=9;
-	SelServerUtil._loginPanel=null;
-	return SelServerUtil;
-})()
-
-
-//class boots.nativee.NativeInterfaceConchApp
-var NativeInterfaceConchApp=(function(){
-	function NativeInterfaceConchApp(){
-		this.PLATFORMCLASS=null;
-		if (this.PLATFORMCLASS==null && Laya.PlatformClass !=null){
-			if (Browser.onAndroid)
-				this.PLATFORMCLASS=Laya.PlatformClass.createClass("com.popcornie.lsmjz.nativee.NativeUtil");
-			else if (Browser.onIOS)
-			this.PLATFORMCLASS=Laya.PlatformClass.createClass("NativeUtil");
-			else
-			this.PLATFORMCLASS=Laya.PlatformClass.createClass("com.popcornie.lsmjz.nativee.NativeUtil");
+		this._p.txtAccount.text="youracc";
+		this._curZone=this.GetGroupVo(ip,port,zoneId);
+		this._curServer=this.GetServerVo(ip,port,zoneId);
+		if (this._curZone==null){
+			this._curZone=this._zones[0];
+			this._curServer=this._curZone.servers[0];
+			if (this._btnLastLogin !=null)
+				this._btnLastLogin.removeSelf();
+			}else{
+			if (this._btnLastLogin==null){
+				this._btnLastLogin=new SelServerCellExt();
+				this._btnLastLogin.on("click",this,this.ClickServerBtn);
+			}
+			this._btnLastLogin.SetData(this._curServer);
 		}
 	}
 
-	__class(NativeInterfaceConchApp,'boots.nativee.NativeInterfaceConchApp');
-	var __proto=NativeInterfaceConchApp.prototype;
-	Laya.imps(__proto,{"boots.nativee.INativeInterface":true})
-	__proto.HasNative=function(){
-		return this.PLATFORMCLASS !=null;
+	// _p.labVer.text='ver:'+Version.VERSION;
+	__proto.Login=function(){
+		BootUtil.Log("click login");
+		if (this._p.txtAccount.text==null || this._p.txtAccount.text=="")return;
+		PlatformLoginUtil.vo.server_ip=this._curServer.serverIP;
+		PlatformLoginUtil.vo.server_port=this._curServer.serverPort;
+		PlatformLoginUtil.vo.server_id=this._curServer.serverID;
+		PlatformLoginUtil.vo.adult=1;
+		if(!WebfingertipUtil.isOpen&&!WebmojieUtil.isOpen)
+			PlatformLoginUtil.vo.account=this._p.txtAccount.text;
+		PlatformLoginUtil.vo.mainversion=this._curServer.mainversion;
+		PlatformLoginUtil.vo.snoNum=this._curServer.snoNum;
+		this.SetEnable(false);
+		LocalStorage.setItem(GameCfg.GAMENAME+"_"+"account",PlatformLoginUtil.vo.account);
+		LocalStorage.setItem(GameCfg.GAMENAME+"_"+"serverip",PlatformLoginUtil.vo.server_ip);
+		LocalStorage.setItem(GameCfg.GAMENAME+"_"+"port",PlatformLoginUtil.vo.server_port.toString());
+		LocalStorage.setItem(GameCfg.GAMENAME+"_"+"zoneid",PlatformLoginUtil.vo.server_id.toString());
+		SelServerUtil.SelServer();
 	}
 
-	/**
-	*调用native函数
-	*/
-	__proto.CallPlatform=function(data){
-		if (this.PLATFORMCLASS !=null){
-			if (Browser.onIOS)
-				this.PLATFORMCLASS.call("CallFromJS:",data);
-			else
-			this.PLATFORMCLASS.call("CallFromJS",data);
-		}
-		else{
-			BootUtil.Log("call native but no native");
+	__proto.UpdateSelServer=function(){
+		if (this._curServer==null){
+			this._p.txtServer.text="未选服";
+			}else{
+			this._p.txtServer.text="当前服："+this._curServer.serverName;
 		}
 	}
 
-	return NativeInterfaceConchApp;
-})()
+	__proto.SetEnable=function(value){
+		this._p.btnLogin.gray=!value;
+		this._p.btnLogin.mouseEnabled=value;
+		this._p.imgSelServer.mouseEnabled=value;
+	}
+
+	__proto.ShowServerList=function(){
+		this._p.showHideServerBg(true);
+		if(Web37Util.isWideScreen)
+			Tween.to(this._p.imgServerBG,{y:(this._p.imgbg.height-this._p.imgServerBG.height*this._p.imgServerBG.scaleY)*0.5,alpha:1},200);
+		else
+		Tween.to(this._p.imgServerBG,{y:(this._p.height-this._p.imgServerBG.height*this._p.imgServerBG.scaleY)*0.5,alpha:1},200);
+	}
+
+	__proto.HideServerList=function(){
+		this._p.showHideServerBg(false);
+		if(Web37Util.isWideScreen)
+			Tween.to(this._p.imgServerBG,{y:this._p.imgbg.height,alpha:0},200);
+		else
+		Tween.to(this._p.imgServerBG,{y:this._p.height,alpha:0},200);
+	}
+
+	return SelServerNormalMediator;
+})(SelServerMediator)
+
+
+/**
+*事件中心
+*
+*@author Administrator
+*/
+//class boots.EventCenter extends laya.events.EventDispatcher
+var EventCenter=(function(_super){
+	// private static const _event:GameEvent=new GameEvent("");
+	function EventCenter(){
+		EventCenter.__super.call(this);
+	}
+
+	__class(EventCenter,'boots.EventCenter',_super);
+	EventCenter.Event=function(type,data){
+		if((data instanceof Array))
+			data=[data];
+		EventCenter._ins.event(type,data);
+	}
+
+	EventCenter.On=function(type,caller,listener,args,once){
+		(once===void 0)&& (once=false);
+		if (once)
+			EventCenter._ins.once(type,caller,listener,args);
+		else
+		EventCenter._ins.on(type,caller,listener,args);
+	}
+
+	EventCenter.Off=function(type,caller,listener){
+		EventCenter._ins.off(type,caller,listener);
+	}
+
+	__static(EventCenter,
+	['_ins',function(){return this._ins=new EventCenter();}
+	]);
+	return EventCenter;
+})(EventDispatcher)
+
+
+//class boots.LoadBootbilibili extends boots.LoadBootCfg
+var LoadBootbilibili=(function(_super){
+	function LoadBootbilibili(){
+		LoadBootbilibili.__super.call(this);
+	}
+
+	__class(LoadBootbilibili,'boots.LoadBootbilibili',_super);
+	var __proto=LoadBootbilibili.prototype;
+	__proto.StartFristShow=function(){
+		this._bg=new Image();
+		this._bg.size(Laya.stage.width,Laya.stage.height);
+		Laya.stage.addChild(this._bg);
+		this._bg.skin="beijingnew.png";
+	}
+
+	__proto.ParseWebParam=function(){
+		this.gameCdn="https://h5.c.popcornie.com/boot?sign=v_18";
+		MiniFileMgr.loadPath=this.gameCdn;
+		Laya.URL.basePath=this.gameCdn;
+	}
+
+	__proto.LoadCfg=function(){
+		GameCfg.ParseWebParam();
+		Laya.loader.load("bootcfg"+".json",Handler.create(this,this.onCfgComplete),null,"json");
+		URL.customFormat=ResourceVersionEx.addVersionPrefix;
+	}
+
+	__proto.loadSubpackage=function(index){
+		var _$this=this;
+		(index===void 0)&& (index=0);
+		_super.prototype.loadSubpackage.call(this,index);
+		var path=this.srclist[index];
+		bl.loadSubpackage({
+			name:path,
+			success:function (res){
+				console.log("success "+path);
+				index++;
+				path=_$this.srclist[index];
+				if (path==null)
+					_$this.EnterGame();
+				else {
+					_$this.loadSubpackage(index);
+				}
+			},
+			fail:function (res){
+				console.log("fail"+path);
+			}
+		})
+	}
+
+	__proto.onCfgComplete=function(data){
+		_super.prototype.onCfgComplete.call(this,data);
+	}
+
+	return LoadBootbilibili;
+})(LoadBootCfg)
+
+
+//class boots.LoadBootWX extends boots.LoadBootCfg
+var LoadBootWX=(function(_super){
+	function LoadBootWX(){
+		LoadBootWX.__super.call(this);
+	}
+
+	__class(LoadBootWX,'boots.LoadBootWX',_super);
+	var __proto=LoadBootWX.prototype;
+	__proto.StartFristShow=function(){
+		this._bg=new Image();
+		this._bg.size(Laya.stage.width,Laya.stage.height);
+		Laya.stage.addChild(this._bg);
+		this._bg.skin="beijingnew.png";
+	}
+
+	__proto.ParseWebParam=function(){
+		this.BOOTVERSION=Browser.BOOTVERSION+"";
+		this.gameCdn="https://cdn-xyx.raink.com.cn/rbsg/";
+		MiniFileMgr.loadPath=this.gameCdn;
+		Laya.URL.basePath=this.gameCdn;
+	}
+
+	__proto.LoadCfg=function(){
+		GameCfg.ParseWebParam();
+		Laya.loader.load("bootcfg"+".json",Handler.create(this,this.onCfgComplete),null,"json");
+		URL.customFormat=ResourceVersionEx.addVersionPrefix;
+	}
+
+	__proto.loadSubpackage=function(index){
+		var _$this=this;
+		(index===void 0)&& (index=0);
+		_super.prototype.loadSubpackage.call(this,index);
+		var path=this.srclist[index];
+		wx.loadSubpackage({
+			name:path ,
+			success:function (res){
+				console.log("success "+path);
+				index++;
+				path=_$this.srclist[index];
+				if(path==null)
+					_$this.EnterGame();
+				else{
+					_$this.loadSubpackage(index);
+				}
+			},
+			fail:function (res){
+				console.log("fail"+path);
+			}
+		});
+	}
+
+	return LoadBootWX;
+})(LoadBootCfg)
 
 
 //class boots.LoadBootWXZJ extends boots.LoadBootCfg
@@ -2629,6 +3000,7 @@ var LoadBootWXZJ=(function(_super){
 	}
 
 	__proto.LoadCfg=function(){
+		GameCfg.ParseWebParam();
 		Laya.loader.load("bootcfg"+".json",Handler.create(this,this.onCfgComplete),null,"json");
 		URL.customFormat=ResourceVersionEx.addVersionPrefix;
 	}
@@ -2637,170 +3009,188 @@ var LoadBootWXZJ=(function(_super){
 })(LoadBootCfg)
 
 
-/**
-*标准ByteArray读法
-*/
-//class boots.ByteArrayClient extends laya.utils.Byte
-var ByteArrayClient=(function(_super){
-	function ByteArrayClient(data){
-		ByteArrayClient.__super.call(this,data);
-		this.endian="bigEndian";
+//class boots.platform.vo.PlatformLoginNewMohe extends boots.platform.vo.PlatformLoginBase
+var PlatformLoginNewMohe=(function(_super){
+	function PlatformLoginNewMohe(pid,cid){
+		this.is_idcard_bind=0;
+		this.is_phone_bind=0;
+		this.is_bind_alias=0;
+		this.is_youke=0;
+		this.vip_level=0;
+		this._token=null;
+		this._accountName=null;
+		this._pid=null;
+		this._clientinfo=null;
+		this._caller=null;
+		this._method=null;
+		PlatformLoginNewMohe.__super.call(this,pid,cid);
+		this.Register();
+		if (GameCfg.RELOAD_PARAM !=null && GameCfg.RELOAD_PARAM[PlatformLoginUtil.vo.channelName] !=null){
+			var obj=GameCfg.RELOAD_PARAM;
+			this._isLoginSDK=obj[PlatformLoginUtil.vo.channelName]["islogin"];
+			this._isVerify=obj[PlatformLoginUtil.vo.channelName]["isverify"];
+			this._token=obj[PlatformLoginUtil.vo.channelName]["token"];
+			this.is_idcard_bind=obj[PlatformLoginUtil.vo.channelName]["is_idcard_bind"];
+			this.is_phone_bind=obj[PlatformLoginUtil.vo.channelName]["is_phone_bind"];
+			this.is_bind_alias=obj[PlatformLoginUtil.vo.channelName]["is_bind_alias"];
+			this.is_youke=obj[PlatformLoginUtil.vo.channelName]["is_youke"];
+			this.vip_level=obj[PlatformLoginUtil.vo.channelName]["vip_level"];
+		}
 	}
 
-	__class(ByteArrayClient,'boots.ByteArrayClient',_super);
-	var __proto=ByteArrayClient.prototype;
-	__proto.uncompress=function(algorithm){
-		(algorithm===void 0)&& (algorithm="zlib");
-		var inflate=new Zlib.Inflate(this._u8d_);
-		this._u8d_=inflate.decompress();
-		this._d_=new DataView(this._u8d_.buffer);;
-		this._length=this._u8d_.byteLength;
+	__class(PlatformLoginNewMohe,'boots.platform.vo.PlatformLoginNewMohe',_super);
+	var __proto=PlatformLoginNewMohe.prototype;
+	__proto.Register=function(){
+		NativeUtil.Register(10002,this,this.CallFromNative);
 	}
 
-	__proto.compress=function(algorithm){
-		(algorithm===void 0)&& (algorithm="zlib");
-		var deflate=new Zlib.Deflate(this._byteView_);
-		this._byteView_=deflate.compress();
-		this._data_=new DataView(this._byteView_.buffer);;
+	__proto.RegisterPlatformCallBack=function(caller,method){
+		this._caller=caller;
+		this._method=method;
 	}
 
-	__proto.GetByteArray=function(offset,dataLen){
-		var dataUnit=new ByteArrayClient(dataLen);
-		dataUnit.writeArrayBuffer(this.getUint8Array(this.pos+offset,dataLen));
-		dataUnit.pos=0;
-		return dataUnit;
+	__proto.CallToNative=function(o){
+		o.msgid=10001;
+		NativeUtil.CallPlatformWithObj(o);
 	}
 
-	/**
-	*改版。。。。。
-	*@private
-	*读取指定长度的 UTF 型字符串。
-	*@param len 需要读取的长度。
-	*@return 读取的字符串。
-	*/
-	__proto.readUTF=function(len){
-		var v="",max=this._pos_+len,c=0,c2=0,c3=0;
-		var u=this._u8d_,i=0;
-		var tempArray=[];
-		var idx=0;
-		while (this._pos_ < max){
-			c=u[this._pos_++];
-			if (c < 0x80){
-				if (c !=0){
-					tempArray[idx++]=c;
-				}
-				}else if (c < 0xE0){
-				tempArray[idx++]=(((c & 0x3F)<< 6)| (u[this._pos_++] & 0x7F));
-				}else if (c < 0xF0){
-				c2=u[this._pos_++];
-				tempArray[idx++]=(((c & 0x1F)<< 12)| ((c2 & 0x7F)<< 6)| (u[this._pos_++] & 0x7F));
-				}else {
-				c2=u[this._pos_++];
-				c3=u[this._pos_++];
-				tempArray[idx++]=(((c & 0x0F)<< 18)| ((c2 & 0x7F)<< 12)| ((c3 << 6)& 0x7F)| (u[this._pos_++] & 0x7F));
+	__proto.CallFromNative=function(o){
+		var funcid=o.funcid;
+		if (funcid==2 || funcid==3){
+			this.OnLoginResult(funcid==2,o);
+			}else if (funcid==11 || funcid==12){
+			this.OnLogoutResult(funcid==11);
+		}
+		if (this._method !=null){
+			this._method.call(this._caller,o);
+		}
+	}
+
+	__proto.GetAgentInfo=function(obj){
+		obj[PlatformLoginUtil.vo.channelName]={};
+		obj[PlatformLoginUtil.vo.channelName]["islogin"]=this._isLoginSDK;
+		obj[PlatformLoginUtil.vo.channelName]["isverify"]=this._isVerify;
+		obj[PlatformLoginUtil.vo.channelName]["token"]=this._token;
+		obj[PlatformLoginUtil.vo.channelName]["is_idcard_bind"]=this.is_idcard_bind;
+		obj[PlatformLoginUtil.vo.channelName]["is_phone_bind"]=this.is_phone_bind;
+		obj[PlatformLoginUtil.vo.channelName]["is_bind_alias"]=this.is_bind_alias;
+		obj[PlatformLoginUtil.vo.channelName]["is_youke"]=this.is_youke;
+		obj[PlatformLoginUtil.vo.channelName]["vip_level"]=this.vip_level;
+	}
+
+	__proto.LoginSDK=function(){
+		if (GameCfg.MONI_WAIWANG){
+			Laya.timer.once(1,this,this.OnLoginResult,[true,{token:GameCfg.MONI_TOKEN,uid:GameCfg.MONI_ACCOUNT,uname:GameCfg.MONI_ACCOUNT}]);
+		}
+		else{
+			this.CallToNative({funcid:1});
+			UMengUtil.AddPoint("reqsignin","","",0);
+		}
+	}
+
+	/**登出SDK**/
+	__proto.LogoutSDK=function(){
+		this.CallToNative({funcid:10});
+	}
+
+	// PlatformUtil.platform.OnLogoutResult();
+	__proto.OnVerify=function(result){
+		if (result !=null){
+			this._isVerify=true;
+			console.log("onVerifySuc:"+result);
+			var o=BootUtil.decode(result);
+			if(o && o.data){
+				PlatformLoginUtil.vo.account=o.data.uid;
+				PlatformLoginUtil.vo.sign=o.sign;
+				PlatformLoginUtil.vo.adult=o.data.is_adult;
+				PlatformLoginUtil.vo.time=o.time;
+				this.is_idcard_bind=o.data.is_idcard_bind;
+				this.is_phone_bind=o.data.is_phone_bind;
+				this.is_bind_alias=o.data.is_bind_alias;
+				this.is_youke=o.data.is_youke;
+				this.vip_level=o.data.vip_level;
+				UMengUtil.AddPoint("verifysuc",PlatformLoginUtil.vo.account,"",0);
+				EventCenter.Event("server_verify",o);
 			}
-			i++;
+			else{
+				EventCenter.Event("server_verify");
+			}
 		}
-		return String.fromCharCode.apply(String,tempArray);
-	}
-
-	__proto.readUTFBytes=function(len){
-		(len===void 0)&& (len=-1);
-		if (len==0)
-			return "";
-		var lastBytes=this.bytesAvailable;
-		if (len > lastBytes)
-			throw "readUTFBytes error - Out of bounds";
-		len=len > 0 ? len :lastBytes;
-		return this.readUTF(len);
-	}
-
-	/**
-	*老版本去读字符串数据，调用频繁会导致内存暴涨！！
-	*@param len
-	*@return
-	*
-	*/
-	__proto.readUTFBytesOld=function(len){
-		(len===void 0)&& (len=-1);
-		return _super.prototype.readUTFBytes.call(this,len);
-	}
-
-	__proto.readDouble=function(){
-		return this.getFloat64();
-	}
-
-	__proto.readFloat=function(){
-		return this.getFloat32();
-	}
-
-	__proto.readBytes=function(bytes,offset,length){
-		(offset===void 0)&& (offset=0);
-		(length===void 0)&& (length=0);
-		if (offset < 0 || length < 0){
-			throw "Read error - Out of bounds";
+		else{
+			EventCenter.Event("server_verify");
 		}
-		if (length==0)length=this.length-this.pos;
-		bytes.writeArrayBuffer(this.getUint8Array(this.pos+offset,length));
 	}
 
-	__proto.readInt=function(){
-		return this.getInt32();
-	}
-
-	__proto.readShort=function(){
-		return this.getInt16();
-	}
-
-	__proto.readUnsignedByte=function(){
-		return this.getUint8();
-	}
-
-	__proto.readUnsignedInt=function(){
-		return this.getUint32();
-	}
-
-	__proto.readUnsignedShort=function(){
-		return this.getUint16();
-	}
-
-	// }
-	__proto.writeFloat=function(x){
-		this.writeFloat32(x);
-	}
-
-	__proto.writeInt=function(value){
-		this.writeInt32(value);
-	}
-
-	__proto.writeShort=function(value){
-		this.writeInt16(value);
-	}
-
-	__proto.writeBytes=function(bytes,offset,length){
-		(offset===void 0)&& (offset=0);
-		(length===void 0)&& (length=0);
-		bytes.pos=0;
-		this.writeArrayBuffer(bytes.getUint8Array(bytes.pos,bytes.length),offset,length);
-	}
-
-	__proto.writeMultiByte=function(value,charSet){
-		value=value+"";
-		if(charSet=="UNICODE" || charSet=="unicode"){
-			throw "not support unicode";
+	// SDK返回
+	__proto.OnLoginResult=function(suc,o){
+		console.log(o+"+---------------------->>>>>>>>>>>SDK返回");
+		this._isLoginSDK=suc;
+		if (o !=null){
+			this._token=o.token;
+			this._accountName=o.uid;
+			PlatformLoginUtil.vo.account=o.uid;
+			this._pid=o.pid;
+			this._clientinfo=o.clientinfo;
+			console.log("onLoginResult uid:"+o.uid+" uname:"+o.uname+" token:"+this._token);
+			if (suc){
+				UMengUtil.AddPoint("signinsuc",o.uname,"",0);
+				EventCenter.Event("sdk_login",this._token);
+				EventCenter.Event("server_verify",o);
+			}
 		}
-		this.writeUTFBytes(value);
+		if (!suc){
+			UMengUtil.AddPoint("signinfail","","",0);
+		}
+		EventCenter.Event("login_sdk");
 	}
 
-	/**
-	*获取此对象的 ArrayBuffer数据,数据只包含有效数据部分 。
-	*/
-	__getset(0,__proto,'buffer',function(){
-		return this._d_.buffer;
+	__proto.OnLogoutResult=function(suc){
+		if (suc){
+			this._isLoginSDK=false;
+			this._isVerify=false;
+			this._token=null;
+			PlatformLoginUtil.Reload();
+		}
+	}
+
+	__getset(0,__proto,'hasSDK',function(){
+		return true;
 	});
 
-	return ByteArrayClient;
-})(Byte)
+	__getset(0,__proto,'token',function(){
+		return this._token;
+	});
+
+	__getset(0,__proto,'accountClientinfo',function(){
+		return this._clientinfo;
+	});
+
+	__getset(0,__proto,'accountName',function(){
+		return this._accountName;
+	});
+
+	__getset(0,__proto,'accountPid',function(){
+		return this._pid;
+	});
+
+	return PlatformLoginNewMohe;
+})(PlatformLoginBase)
+
+
+//class boots.platform.vo.PlatformLoginQQMiniProgram extends boots.platform.vo.PlatformLoginBase
+var PlatformLoginQQMiniProgram=(function(_super){
+	function PlatformLoginQQMiniProgram(pid,cid){
+		PlatformLoginQQMiniProgram.__super.call(this,pid,cid);
+	}
+
+	__class(PlatformLoginQQMiniProgram,'boots.platform.vo.PlatformLoginQQMiniProgram',_super);
+	var __proto=PlatformLoginQQMiniProgram.prototype;
+	__proto.OnSelServer=function(){
+		console.log("qqSDK选服-------------------");
+	}
+
+	return PlatformLoginQQMiniProgram;
+})(PlatformLoginBase)
 
 
 /**
@@ -3038,19 +3428,725 @@ var GameEvent=(function(_super){
 })(Event)
 
 
-//class boots.platform.vo.PlatformLoginZhiJianWeChat extends boots.platform.vo.PlatformLoginBase
-var PlatformLoginZhiJianWeChat=(function(_super){
-	function PlatformLoginZhiJianWeChat(pid,cid){
-		PlatformLoginZhiJianWeChat.__super.call(this,pid,cid);
+/**
+*http请求服务器列表用的
+*/
+//class boots.selserver.med.SelServerHttpMediator extends boots.selserver.med.SelServerMediator
+var SelServerHttpMediator=(function(_super){
+	function SelServerHttpMediator(p){
+		// 获取服务器(最近登录)
+		this.URL_LAST_SERVER="/server?sign={@}&user={@}";
+		// 获取服务器组
+		this.URL_SERVER_GROUP="/group?sign={@}";
+		// 获取服务器(静态组，单个区的服务器列表)
+		this.URL_SERVERS_LIST="/server?sign={@}&group={@}";
+		// 请求选中服的服务器信息（主要是ip和端口）
+		this.URL_SEVER_INFO="/login?server={@}&user={@}";
+		// 上次登陆的组（前端定义的，不要和后端重了）
+		this._lastLoginGroup=999999;
+		this._clickCount=0;
+		this._clickTime=0;
+		// http请求相关
+		this._isReqLastLogin=false;
+		this._lastLoginZone=new SelZoneVo();
+		this._btnServers=[];
+		SelServerHttpMediator.__super.call(this,p);
+		this._p.imgSelServer.on("click",this,this.ClickShowServerList);
+		this._p.btnClose.on("click",this,this.HideServerList);
+		this._p.btnBack.on("click",this,this.HideServerList);
+		this._p.btnLogin.on("click",this,this.ClickLogin);
+		this._p.btnAgreement.on("click",this,this.ClickAgreement);
+		this._p.btnNotice.on("click",this,this.ClickNotice);
+		this._p.radioServerTab.on("change",this,this.OnChangeGroupEnd);
+		this._lastLoginZone.zoneID=this._lastLoginGroup;
+		this._lastLoginZone.zoneName="最近登陆服";
+		if(Web37Util.isOpen||WebfingertipUtil.isOpen||Browser.onMiniGame||WebmojieUtil.isOpen){
+			this._p.txtAccount.visible=false;
+			this._p.btnLogin.y=this._p.imgSelServer.y+this._p.imgSelServer.height+10;
+		}
+		this._p.sprdebug.on("click",this,this.ClickDebug);
 	}
 
-	__class(PlatformLoginZhiJianWeChat,'boots.platform.vo.PlatformLoginZhiJianWeChat',_super);
-	var __proto=PlatformLoginZhiJianWeChat.prototype;
-	__proto.OnSelServer=function(){
-		console.log("指尖WeChatSDK选服-------------------");
+	__class(SelServerHttpMediator,'boots.selserver.med.SelServerHttpMediator',_super);
+	var __proto=SelServerHttpMediator.prototype;
+	__proto.ClickDebug=function(){
+		if (Laya.timer.currTimer-this._clickTime > 3000)this._clickCount=0;
+		else this._clickCount++;
+		this._clickTime=Laya.timer.currTimer;
+		if (this._clickCount > 10){
+			this._showTest=true;
+			this._p.boxtest.visible=true;
+			this._p.server_ip.text="192.168.30.153";
+			this._p.server_port.text="13001";
+			this._p.server_id.text="60005";
+		}
 	}
 
-	return PlatformLoginZhiJianWeChat;
+	__proto.ClickNotice=function(){
+		if(this._curServer==null||this._curServer.serverID==0){
+			AlertBootExt.Show("无法获取公告，请检查您的网络连接");
+			return;
+		}
+		if(!NoticeComPanelExt.IsShow){
+			NoticeComPanelExt.Show(2,this._curServer.serverID,true);
+		}
+		else
+		NoticeComPanelExt.Hide();
+	}
+
+	__proto.OnShow=function(){
+		_super.prototype.OnShow.call(this);
+		this.UpdateDefault();
+	}
+
+	// Login();
+	__proto.OnHide=function(){
+		_super.prototype.OnHide.call(this);
+		Laya.timer.clear(this,this._DelayHttpReqServers);
+	}
+
+	__proto.ClickShowServerList=function(){
+		this.ShowServerList();
+		if (this._lastLoginZone.servers.length==0){
+			this.HttpReqLastLogin();
+		}
+		if (this._zones.length==0){
+			this.HttpReqZone();
+			}else{
+			this.UpdateZoneList();
+		}
+	}
+
+	__proto.ClickServer=function(e){
+		var vo=(e.currentTarget).vo;
+		if(vo==null || vo.IsNotOpen()){
+			AlertBootExt.Show("服务器正在维护中");
+			return;
+		}
+		this.UpdateLoginServer(vo,false);
+		this.HideServerList();
+	}
+
+	__proto.OnChangeGroupEnd=function(){
+		var g=this._zones[this._p.radioServerTab.selectedIndex];
+		if (g==null)return;
+		this._curZone=g;
+		if (this._curZone.servers.length > 0){
+			this.UpdateServers();
+			}else{
+			if (this._curZone==this._lastLoginZone){
+				this.HttpReqLastLogin();
+				}else{
+				this.HttpReqServers(this._curZone.zoneID);
+			}
+		}
+	}
+
+	__proto.ClickLogin=function(){
+		this.Login();
+	}
+
+	__proto.ClickAgreement=function(){
+		AgreementExt.ShowHide();
+	}
+
+	__proto.Login=function(){
+		if(Browser.inWeChat&&Browser.IszhijianWeChat==false){
+			var obj={};
+			obj.id=1003;
+			obj.num="";
+			obj.isRecahrge="";
+			window.WeChatSDK.WeChatSDKReportEvent(obj);
+			var obj1={};
+			obj1.id=1006;
+			obj1.num="";
+			obj1.isRecahrge="";
+			window.WeChatSDK.WeChatSDKReportEvent(obj1);
+			var time=BootUtil.GetTimer();
+			var date=new Date(time);
+			var YY=date.getFullYear()+'-';
+			var MM=(date.getMonth()+1 < 10 ? '0'+(date.getMonth()+1):date.getMonth()+1)+'-';
+			var DD=(date.getDate()< 10 ? '0'+(date.getDate()):date.getDate());
+			var hh=(date.getHours()< 10 ? '0'+date.getHours():date.getHours())+':';
+			var mm=(date.getMinutes()< 10 ? '0'+date.getMinutes():date.getMinutes())+':';
+			var ss=(date.getSeconds()< 10 ? '0'+date.getSeconds():date.getSeconds());
+			console.log("开始初始化（开始读条）时间-------------------------"+YY+MM+DD+" "+hh+mm+ss);
+		}
+		if (!this._showTest &&this._curServer==null){
+			this.HttpReqLastLogin();
+			return;
+		}
+		if (!this._showTest &&this._curServer.serverIP==null){
+			this.HttpReqServerInfo(this._curServer.serverID);
+			return;
+		}
+		if(this._showTest){
+			PlatformLoginUtil.vo.server_ip=this._p.server_id.text;
+			PlatformLoginUtil.vo.server_id=parseInt(this._p.server_id.text);
+			PlatformLoginUtil.vo.server_port=parseInt(this._p.server_id.text);
+		}
+		else{
+			PlatformLoginUtil.vo.server_ip=this._curServer.serverIP;
+			PlatformLoginUtil.vo.server_name=this._curServer.serverName;
+			PlatformLoginUtil.vo.server_port=this._curServer.serverPort;
+			PlatformLoginUtil.vo.server_id=this._curServer.serverID;
+			PlatformLoginUtil.vo.snoNum=this._curServer.snoNum;
+			if(!Web37Util.isOpen&&!WebfingertipUtil.isOpen&&!Browser.onMiniGame&&!WebmojieUtil.isOpen){
+				PlatformLoginUtil.vo.adult=1;
+				PlatformLoginUtil.vo.account=this._p.txtAccount.text;
+			}
+			PlatformLoginUtil.vo.mainversion=this._curServer.mainversion;
+			this.SetEnable(false);
+			LocalStorage.setItem("account",PlatformLoginUtil.vo.account);
+			LocalStorage.setItem("serverhost",PlatformLoginUtil.vo.server_ip);
+			LocalStorage.setItem("serverport",PlatformLoginUtil.vo.server_port.toString());
+			LocalStorage.setItem("serverid",PlatformLoginUtil.vo.server_id.toString());
+			LocalStorage.setItem("servername",PlatformLoginUtil.vo.server_name);
+			LocalStorage.setItem("mainversion",PlatformLoginUtil.vo.mainversion);
+		}
+		SelServerUtil.SelServer();
+	}
+
+	__proto.UpdateDefault=function(){
+		var acc=LocalStorage.getItem("account");
+		var ip=LocalStorage.getItem("serverhost");
+		var port=parseInt(LocalStorage.getItem("serverport"));
+		var serverid=parseInt(LocalStorage.getItem("serverid"));
+		var servername=LocalStorage.getItem("servername");
+		var mainversion=LocalStorage.getItem("mainversion");
+		if (acc==null){
+			acc="youracc";
+		}
+		if(WebfingertipUtil.isOpen){
+			var loginParams=window.zhijianParams();
+			acc=loginParams["qqesuid"];
+		}
+		if(WebmojieUtil.isOpen){
+			var loginParams=window.mojieParams();
+			acc=loginParams["Uid"];
+		}
+		if(!Web37Util.isOpen&&!WebfingertipUtil.isOpen&&!WebmojieUtil.isOpen)
+			PlatformLoginUtil.vo.account=acc;
+		if(!Web37Util.isOpen)
+			PlatformLoginUtil.vo.account=acc;
+		if(!Browser.onMiniGame)
+			PlatformLoginUtil.vo.account=acc;
+		this._p.txtAccount.text=acc;
+		if(Browser.inWeChat&&Browser.IszhijianWeChat==false){
+			var obj={};
+			obj.id=1005;
+			obj.num="";
+			obj.isRecahrge="";
+			window.WeChatSDK.WeChatSDKReportEvent(obj);
+		}
+		this.HttpReqLastLogin();
+		this.HttpReqZone();
+	}
+
+	//直接请求服务器列表
+	__proto.UpdateLoginServer=function(vo,isUpdateNewest){
+		(isUpdateNewest===void 0)&& (isUpdateNewest=true);
+		this._curServer=vo;
+		this._p.txtServer.text="当前服："+vo.serverName;
+		if(isUpdateNewest)
+			this.UpdateNewestServer(vo);
+	}
+
+	// UpdateNewestServer();
+	__proto.UpdateNewestServer=function(vo){
+		if(vo !=null){
+			this._p.imglatest.visible=true;
+			this._p.lablatest.text=vo.serverName;
+		}
+		else{
+			this._p.imglatest.visible=false;
+			this._p.lablatest.text="";
+		}
+	}
+
+	// 刷新服务器列表
+	__proto.UpdateServers=function(){
+		var list=this._curZone.servers;
+		var count=0;
+		for (var i=0;i < list.length;++i){
+			var vo=list[i];
+			var btn=this._btnServers[count];
+			if (btn==null){
+				btn=new SelServerCellExt();
+				this._btnServers[count]=btn;
+			}
+			btn.x=0;
+			btn.y=btn.height *i;
+			btn.SetData(vo);
+			btn.on("click",this,this.ClickServer);
+			this._p.panServerList.addChild(btn);
+			count++;
+		}
+		for (;count < this._btnServers.length;++count){
+			this._btnServers[count].removeSelf();
+		}
+	}
+
+	__proto.SetEnable=function(value){
+		this._p.btnLogin.gray=!value;
+		this._p.btnLogin.mouseEnabled=value;
+		this._p.imgServerBG.mouseEnabled=value;
+	}
+
+	__proto.ShowServerList=function(){
+		this._p.showHideServerBg(true);
+		if(Web37Util.isWideScreen)
+			Tween.to(this._p.imgServerBG,{y:(this._p.imgbg.height-this._p.imgServerBG.height*this._p.imgServerBG.scaleY)*0.5,alpha:1},200);
+		else
+		Tween.to(this._p.imgServerBG,{y:(this._p.height-this._p.imgServerBG.height*this._p.imgServerBG.scaleY)*0.5,alpha:1},200);
+	}
+
+	__proto.HideServerList=function(){
+		this._p.showHideServerBg(false);
+		if(Web37Util.isWideScreen)
+			Tween.to(this._p.imgServerBG,{y:this._p.imgbg.height,alpha:0},200);
+		else
+		Tween.to(this._p.imgServerBG,{y:this._p.height,alpha:0},200);
+	}
+
+	__proto.GetZone=function(id){
+		for (var i=0;i < this._zones.length;++i){
+			if (this._zones[i].zoneID==id)return this._zones[i];
+		}
+		return null;
+	}
+
+	// 获取上次登陆的服务器
+	__proto.HttpReqLastLogin=function(){
+		if (this._isReqLastLogin)return;
+		this._isReqLastLogin=true;
+		var _reqLastLogin=new RequestUtil(this,this.OnHttpReqLastSuc,this.OnHttpReqLastError);
+		_reqLastLogin.Send(this.URL_SERVER_HOST+BootUtil.FormatStr(this.URL_LAST_SERVER,[GameCfg.SIGN,PlatformLoginUtil.vo.account]));
+	}
+
+	// 请求上次登陆成功
+	__proto.OnHttpReqLastSuc=function(result){
+		if (!this._p || this._p.destroyed)return;
+		this._isReqLastLogin=false;
+		this.isReqLastSucc=true;
+		var obj;
+		if(Browser.release==false&&(Browser.inQQ||Browser.inWeChat||Browser.inBiLi))
+			obj=null;
+		else
+		obj=BootUtil.decode(result);
+		if (obj !=null && obj.length > 0){
+			console.log("last login:"+result);
+			this.ParseLastLogin(obj);
+			if (this._curServer==null)
+				this.UpdateLoginServer(this._lastLoginZone.servers[0]);
+			NoticeComPanelExt.Show(2,this._curServer.serverID);
+			if (this._zones.indexOf(this._lastLoginZone)==-1){
+				this._zones.unshift(this._lastLoginZone);
+				this.UpdateZoneList();
+			}
+			this.UpdateServers();
+			}else{
+			this.OnHttpReqLastError(obj ? obj.msg :"error");
+		}
+		this.checkServer();
+	}
+
+	// 请求上次登陆失败
+	__proto.OnHttpReqLastError=function(result){
+		if (!this._p || this._p.destroyed)return;
+		this._isReqLastLogin=false;
+		console.log("last server error:"+result);
+	}
+
+	// 获取大区列表
+	__proto.HttpReqZone=function(){
+		var _reqZone=new RequestUtil(this,this.OnHttpReqZoneSuc,this.OnHttpReqZoneError);
+		_reqZone.Send(this.URL_SERVER_HOST+BootUtil.FormatStr(this.URL_SERVER_GROUP,[GameCfg.SIGN]));
+	}
+
+	// 大区请求成功
+	__proto.OnHttpReqZoneSuc=function(result){
+		if (!this._p || this._p.destroyed)return;
+		var obj=BootUtil.decode(result);
+		if (obj !=null && obj.length > 0){
+			console.log("req zone:"+result);
+			this._zones.length=0;
+			this._zones.push(this._lastLoginZone);
+			var arr=obj;
+			if ((typeof arr=='string'))arr=BootUtil.decode(arr);
+			for (var i=0;i < arr.length;++i){
+				this._zones.push(this.ParseZone(arr[i]));
+			}
+			this.UpdateZoneList();
+			}else{
+			this.OnHttpReqZoneError(obj ? obj.msg :"error");
+		}
+	}
+
+	// 大区请求失败
+	__proto.OnHttpReqZoneError=function(result){
+		if (!this._p || this._p.destroyed)return;
+		AlertBootExt.Show("服务器区服获取失败，请点击选服重试");
+	}
+
+	// 获取大区的服务器列表
+	__proto.HttpReqServers=function(groupId){
+		Laya.timer.once(1,this,this._DelayHttpReqServers,[groupId]);
+	}
+
+	__proto._DelayHttpReqServers=function(groupId){
+		var _reqServers=new RequestUtil(this,this.OnHttpReqServersSuc,this.OnHttpReqServersError,groupId);
+		_reqServers.Send(this.URL_SERVER_HOST+BootUtil.FormatStr(this.URL_SERVERS_LIST,[GameCfg.SIGN,groupId]));
+	}
+
+	// 大区服务器请求成功
+	__proto.OnHttpReqServersSuc=function(result,groupId){
+		if (!this._p || this._p.destroyed)return;
+		this.isReqListSucc=true;
+		var z=this.GetZone(groupId);
+		if (z !=null){
+			z.servers.length=0;
+			}else{
+			console.log("服务器列表返回，但是没找到组："+groupId);
+		};
+		var obj=BootUtil.decode(result);
+		if (obj !=null && obj.length > 0){
+			console.log("req servers:"+result);
+			var arr=obj;
+			for (var i=0;i < arr.length;++i){
+				var server=this.ParseServer(arr[i]);
+				if (z){
+					z.AddServer(server);
+				}
+			}
+			if (groupId==9999){
+				this.CreateTestServers(z);
+			}
+			this.UpdateServers();
+			var server=this._curServer;
+			if (this._curServer==null){
+				this.UpdateLoginServer(z.newestServer);
+			}
+			if(this.isReqLastSucc && this._isReqLastLogin){
+				NoticeComPanelExt.Show(2,this._curServer.serverID);
+			}
+			else{
+				if(server==null)
+					NoticeComPanelExt.Show(1,this._curServer.serverID);
+			}
+			}else{
+			this.OnHttpReqServersError(obj ? obj.msg :"error");
+		}
+		this.checkServer();
+	}
+
+	// 大区服务器请求失败
+	__proto.OnHttpReqServersError=function(result){
+		if (!this._p || this._p.destroyed)return;
+		AlertBootExt.Show("servers error:"+result);
+	}
+
+	// 获取指定服务器信息
+	__proto.HttpReqServerInfo=function(serverId){
+		var _reqServers=new RequestUtil(this,this.OnHttpReqServerInfoSuc,this.OnHttpReqServerInfoError);
+		_reqServers.Send(this.URL_SERVER_HOST+BootUtil.FormatStr(this.URL_SEVER_INFO,[serverId,PlatformLoginUtil.vo.account]));
+	}
+
+	// 请求服务器信息成功
+	__proto.OnHttpReqServerInfoSuc=function(result){
+		if (!this._p || this._p.destroyed)return;
+		var obj=BootUtil.decode(result);
+		if (obj !=null && obj.host !=null){
+			console.log("serverinfo:"+result);
+			this._curServer.serverIP=obj.host;
+			this._curServer.serverPort=obj.port;
+			this.Login();
+			}else{
+			this.OnHttpReqServerInfoError(obj ? obj.msg :"error");
+		}
+	}
+
+	// 请求服务器信息失败
+	__proto.OnHttpReqServerInfoError=function(result){
+		if (!this._p || this._p.destroyed)return;
+		console.log("serverinfo error:"+result);
+		AlertBootExt.Show('获取服务器数据失败，请点击登陆重试');
+	}
+
+	__proto.ParseLastLogin=function(obj){
+		var vos=[];
+		for (var i=0;i < obj.length;++i){
+			vos.push(this.ParseServer(obj[i]));
+		}
+		vos.sort(function(o1,o2){
+			return o1.time > o2.time ?-1 :(o1.time < o2.time ? 1 :0);
+		});
+		this._lastLoginZone.servers.length=0;
+		for (var i=0;i < vos.length;++i){
+			this._lastLoginZone.AddServer(vos[i]);
+		}
+	}
+
+	__proto.ParseServer=function(data){
+		if ((typeof data=='string'))
+			data=BootUtil.decode(data);
+		var ret=new SelServerVo();
+		ret.serverIP=data.host;
+		ret.serverPort=data.port;
+		ret.serverID=data.id;
+		ret.serverName=data.name;
+		ret.serverState=data.state=="OFF" ? 0 :1;
+		ret.mainversion=data.main;
+		ret.time=data.time==null ? 0 :data.time;
+		ret.snoNum=data.sno==null ? 0 :data.sno;
+		return ret;
+	}
+
+	__proto.ParseZone=function(data){
+		if ((typeof data=='string'))
+			data=BootUtil.decode(data);
+		var ret=new SelZoneVo();
+		ret.zoneID=data.id;
+		ret.zoneName=data.name;
+		return ret;
+	}
+
+	__proto.CreateTestServers=function(zone){}
+	// zone.AddServer(CreateServerVo("刘帅",1016,"192.168.0.43",8080));
+	__proto.CreateServerVo=function(n,zoneId,ip,port){
+		var ret=new SelServerVo();
+		ret.serverName=n;
+		ret.serverID=zoneId;
+		ret.serverIP=ip;
+		ret.serverPort=port;
+		return ret;
+	}
+
+	//在37web端进游戏时，新用户直接进入游戏，老用户需要选服进入
+	__proto.checkServer=function(){
+		if(!Web37Util.isOpen)
+			return;
+		if(!Browser.onMiniGame)
+			return;
+		if(!this.isReqLastSucc || !this.isReqListSucc)
+			return;
+		if(this._lastLoginZone==null || this._lastLoginZone.servers.length==0){
+			if(this._curServer !=null)
+				this.Login();
+		}
+	}
+
+	// protected var URL_SERVER_HOST:String="https://h5.jump.bbmmhh.com";
+	__getset(0,__proto,'URL_SERVER_HOST',function(){
+		if(WebfingertipUtil.isOpen||GameCfg.GAMENAME==GameCfg.GAMENAME_BMH||GameCfg.GAMENAME==GameCfg.GAMENAME_FINGERAPP){
+			return "https://h5.zhijian.popcornie.com";
+		}
+		else if(WebmojieUtil.isOpen)
+		return "https://h5.zhijian.popcornie.com";
+		else if(GameCfg.GAMENAME==GameCfg.GAMENAME_XIYOUAPK||GameCfg.GAMENAME==GameCfg.GAMENAME_ZHANGYUAPK)
+		return "https://h5.c.popcornie.com";
+		else if(Web37Util.isOpen)
+		return "https://h5.jump.bbmmhh.com";
+		else if (Browser.inWeChat)
+		return "https://h5.c.popcornie.com";
+		else if (Browser.inQQ)
+		return "https://h5.c.popcornie.com";
+		else if (Browser.inBiLi)
+		return "https://h5.c.popcornie.com";
+		else
+		return "http://info.c.popcornie.com";
+	});
+
+	return SelServerHttpMediator;
+})(SelServerMediator)
+
+
+//class boots.LoadBootApp extends boots.LoadBootCfg
+var LoadBootApp=(function(_super){
+	function LoadBootApp(){
+		LoadBootApp.__super.call(this);
+		EventCenter.On("APP_NATIVE",this,this.LoadCfg);
+	}
+
+	__class(LoadBootApp,'boots.LoadBootApp',_super);
+	var __proto=LoadBootApp.prototype;
+	__proto.LoadCfg=function(){
+		this.ParseWebParam();
+		URL.customFormat=ResourceVersionEx.addVersionPrefix;
+		Laya.loader.load("res/"+"bootcfg"+".json",Handler.create(this,this.onCfgComplete),null,"json");
+	}
+
+	return LoadBootApp;
+})(LoadBootCfg)
+
+
+//class boots.platform.vo.PlatformLoginZhangYu extends boots.platform.vo.PlatformLoginBase
+var PlatformLoginZhangYu=(function(_super){
+	function PlatformLoginZhangYu(pid,cid){
+		this._token=null;
+		this._caller=null;
+		this._method=null;
+		this._accountName=null;
+		this._pid=null;
+		this._clientinfo=null;
+		PlatformLoginZhangYu.__super.call(this,pid,cid);
+		this.Register();
+		if (GameCfg.RELOAD_PARAM !=null && GameCfg.RELOAD_PARAM[PlatformLoginUtil.vo.channelName] !=null){
+			var obj=GameCfg.RELOAD_PARAM;
+			this._isLoginSDK=obj[PlatformLoginUtil.vo.channelName]["islogin"];
+			this._isVerify=obj[PlatformLoginUtil.vo.channelName]["isverify"];
+			this._token=obj[PlatformLoginUtil.vo.channelName]["token"];
+		}
+	}
+
+	__class(PlatformLoginZhangYu,'boots.platform.vo.PlatformLoginZhangYu',_super);
+	var __proto=PlatformLoginZhangYu.prototype;
+	__proto.Register=function(){
+		NativeUtil.Register(10002,this,this.CallFromNative);
+	}
+
+	__proto.RegisterPlatformCallBack=function(caller,method){
+		this._caller=caller;
+		this._method=method;
+	}
+
+	__proto.CallToNative=function(o){
+		o.msgid=10001;
+		NativeUtil.CallPlatformWithObj(o);
+	}
+
+	__proto.CallFromNative=function(o){
+		var funcid=o.funcid;
+		if (funcid==2 || funcid==3){
+			this.OnLoginResult(funcid==2,o);
+			}else if (funcid==11 || funcid==12){
+			this.OnLogoutResult(funcid==11);
+		}
+		if (this._method !=null){
+			this._method.call(this._caller,o);
+		}
+	}
+
+	__proto.GetAgentInfo=function(obj){
+		obj[PlatformLoginUtil.vo.channelName]={};
+		obj[PlatformLoginUtil.vo.channelName]["islogin"]=this._isLoginSDK;
+		obj[PlatformLoginUtil.vo.channelName]["isverify"]=this._isVerify;
+		obj[PlatformLoginUtil.vo.channelName]["token"]=this._token;
+	}
+
+	__proto.LoginSDK=function(){
+		if (GameCfg.MONI_WAIWANG){
+			Laya.timer.once(1,this,this.OnLoginResult,[true,{token:GameCfg.MONI_TOKEN,uid:GameCfg.MONI_ACCOUNT,uname:GameCfg.MONI_ACCOUNT}]);
+		}
+		else{
+			this.CallToNative({funcid:1});
+			UMengUtil.AddPoint("reqsignin","","",0);
+		}
+	}
+
+	/**登出SDK**/
+	__proto.LogoutSDK=function(){
+		this.CallToNative({funcid:10});
+	}
+
+	__proto.OnVerify=function(result){
+		if (result !=null){
+			this._isVerify=true;
+			console.log("onVerifySuc:"+result);
+			var o=BootUtil.decode(result);
+			if(o && o.data){
+				PlatformLoginUtil.vo.account=o.data.uid;
+				PlatformLoginUtil.vo.sign=o.sign;
+				PlatformLoginUtil.vo.adult=o.data.is_adult;
+				PlatformLoginUtil.vo.time=o.time;
+				UMengUtil.AddPoint("verifysuc",PlatformLoginUtil.vo.account,"",0);
+				EventCenter.Event("server_verify",o);
+			}
+			else{
+				EventCenter.Event("server_verify");
+			}
+		}
+		else{
+			EventCenter.Event("server_verify");
+		}
+	}
+
+	// SDK返回
+	__proto.OnLoginResult=function(suc,o){
+		console.log(o+"+---------------------->>>>>>>>>>>SDK返回");
+		this._isLoginSDK=suc;
+		if (o !=null){
+			this._token=o.token;
+			this._accountName=o.uid;
+			PlatformLoginUtil.vo.account=o.uid;
+			this._pid=o.pid;
+			this._clientinfo=o.clientinfo;
+			console.log("onLoginResult uid:"+o.uid+" uname:"+o.uname+" token:"+this._token);
+			if (suc){
+				UMengUtil.AddPoint("signinsuc",o.uname,"",0);
+				EventCenter.Event("sdk_login",this._token);
+				EventCenter.Event("server_verify",o);
+			}
+		}
+		if (!suc){
+			UMengUtil.AddPoint("signinfail","","",0);
+		}
+		EventCenter.Event("login_sdk");
+	}
+
+	__proto.OnLogoutResult=function(suc){
+		if (suc){
+			this._isLoginSDK=false;
+			this._isVerify=false;
+			this._token=null;
+			PlatformLoginUtil.Reload();
+		}
+	}
+
+	__proto.OnSelServer=function(){}
+	// ReportData(PlatformLogin37.GAMEDATA_TYPE_PRE_CREATE_ROLE);
+	__proto.ReportData=function(dataType){
+		var obj={};
+		obj.funcid=40;
+		obj.dataType=dataType;
+		obj.zoneId=PlatformLoginUtil.vo.server_id.toString();
+		obj.zoneName=PlatformLoginUtil.vo.server_name;
+		obj.roleId="";
+		obj.roleName="";
+		obj.partyName="";
+		obj.vip="0";
+		obj.balance=0;
+		obj.level=0;
+		obj.roleCreateTime="-1";
+		obj.roleLevelMTime="-1";
+		this.CallToNative(obj);
+	}
+
+	__proto.QuitGame=function(){
+		this.CallToNative({funcid:50});
+	}
+
+	__getset(0,__proto,'hasSDK',function(){
+		return true;
+	});
+
+	__getset(0,__proto,'token',function(){
+		return this._token;
+	});
+
+	__getset(0,__proto,'accountClientinfo',function(){
+		return this._clientinfo;
+	});
+
+	__getset(0,__proto,'accountName',function(){
+		return this._accountName;
+	});
+
+	__getset(0,__proto,'accountPid',function(){
+		return this._pid;
+	});
+
+	return PlatformLoginZhangYu;
 })(PlatformLoginBase)
 
 
@@ -3249,19 +4345,19 @@ var PlatfromLoginMohe=(function(_super){
 })(PlatformLoginBase)
 
 
-//class boots.platform.vo.PlatformLoginbilibiliGame extends boots.platform.vo.PlatformLoginBase
-var PlatformLoginbilibiliGame=(function(_super){
-	function PlatformLoginbilibiliGame(pid,cid){
-		PlatformLoginbilibiliGame.__super.call(this,pid,cid);
+//class boots.platform.vo.PlatformLoginZhiJianWeChat extends boots.platform.vo.PlatformLoginBase
+var PlatformLoginZhiJianWeChat=(function(_super){
+	function PlatformLoginZhiJianWeChat(pid,cid){
+		PlatformLoginZhiJianWeChat.__super.call(this,pid,cid);
 	}
 
-	__class(PlatformLoginbilibiliGame,'boots.platform.vo.PlatformLoginbilibiliGame',_super);
-	var __proto=PlatformLoginbilibiliGame.prototype;
+	__class(PlatformLoginZhiJianWeChat,'boots.platform.vo.PlatformLoginZhiJianWeChat',_super);
+	var __proto=PlatformLoginZhiJianWeChat.prototype;
 	__proto.OnSelServer=function(){
-		console.log("bilibili选服-------------------");
+		console.log("指尖WeChatSDK选服-------------------");
 	}
 
-	return PlatformLoginbilibiliGame;
+	return PlatformLoginZhiJianWeChat;
 })(PlatformLoginBase)
 
 
@@ -3292,482 +4388,6 @@ var PlatfromLoginFingertip=(function(_super){
 	});
 
 	return PlatfromLoginFingertip;
-})(PlatformLoginBase)
-
-
-//class boots.LoadBootbilibili extends boots.LoadBootCfg
-var LoadBootbilibili=(function(_super){
-	function LoadBootbilibili(){
-		LoadBootbilibili.__super.call(this);
-	}
-
-	__class(LoadBootbilibili,'boots.LoadBootbilibili',_super);
-	var __proto=LoadBootbilibili.prototype;
-	__proto.StartFristShow=function(){
-		this._bg=new Image();
-		this._bg.size(Laya.stage.width,Laya.stage.height);
-		Laya.stage.addChild(this._bg);
-		this._bg.skin="beijingnew.png";
-	}
-
-	__proto.ParseWebParam=function(){
-		this.gameCdn="https://h5.c.popcornie.com/boot?sign=v_18";
-		MiniFileMgr.loadPath=this.gameCdn;
-		Laya.URL.basePath=this.gameCdn;
-	}
-
-	__proto.LoadCfg=function(){
-		Laya.loader.load("bootcfg"+".json",Handler.create(this,this.onCfgComplete),null,"json");
-		URL.customFormat=ResourceVersionEx.addVersionPrefix;
-	}
-
-	__proto.loadSubpackage=function(index){
-		var _$this=this;
-		(index===void 0)&& (index=0);
-		_super.prototype.loadSubpackage.call(this,index);
-		var path=this.srclist[index];
-		bl.loadSubpackage({
-			name:path,
-			success:function (res){
-				console.log("success "+path);
-				index++;
-				path=_$this.srclist[index];
-				if (path==null)
-					_$this.EnterGame();
-				else {
-					_$this.loadSubpackage(index);
-				}
-			},
-			fail:function (res){
-				console.log("fail"+path);
-			}
-		})
-	}
-
-	__proto.onCfgComplete=function(data){
-		_super.prototype.onCfgComplete.call(this,data);
-	}
-
-	return LoadBootbilibili;
-})(LoadBootCfg)
-
-
-//class boots.platform.vo.PlatformLoginZhangYu extends boots.platform.vo.PlatformLoginBase
-var PlatformLoginZhangYu=(function(_super){
-	function PlatformLoginZhangYu(pid,cid){
-		this._token=null;
-		this._caller=null;
-		this._method=null;
-		this._accountName=null;
-		this._pid=null;
-		this._clientinfo=null;
-		PlatformLoginZhangYu.__super.call(this,pid,cid);
-		this.Register();
-		if (GameCfg.RELOAD_PARAM !=null && GameCfg.RELOAD_PARAM[PlatformLoginUtil.vo.channelName] !=null){
-			var obj=GameCfg.RELOAD_PARAM;
-			this._isLoginSDK=obj[PlatformLoginUtil.vo.channelName]["islogin"];
-			this._isVerify=obj[PlatformLoginUtil.vo.channelName]["isverify"];
-			this._token=obj[PlatformLoginUtil.vo.channelName]["token"];
-		}
-	}
-
-	__class(PlatformLoginZhangYu,'boots.platform.vo.PlatformLoginZhangYu',_super);
-	var __proto=PlatformLoginZhangYu.prototype;
-	__proto.Register=function(){
-		NativeUtil.Register(10002,this,this.CallFromNative);
-	}
-
-	__proto.RegisterPlatformCallBack=function(caller,method){
-		this._caller=caller;
-		this._method=method;
-	}
-
-	__proto.CallToNative=function(o){
-		o.msgid=10001;
-		NativeUtil.CallPlatformWithObj(o);
-	}
-
-	__proto.CallFromNative=function(o){
-		var funcid=o.funcid;
-		if (funcid==2 || funcid==3){
-			this.OnLoginResult(funcid==2,o);
-			}else if (funcid==11 || funcid==12){
-			this.OnLogoutResult(funcid==11);
-		}
-		if (this._method !=null){
-			this._method.call(this._caller,o);
-		}
-	}
-
-	__proto.GetAgentInfo=function(obj){
-		obj[PlatformLoginUtil.vo.channelName]={};
-		obj[PlatformLoginUtil.vo.channelName]["islogin"]=this._isLoginSDK;
-		obj[PlatformLoginUtil.vo.channelName]["isverify"]=this._isVerify;
-		obj[PlatformLoginUtil.vo.channelName]["token"]=this._token;
-	}
-
-	__proto.LoginSDK=function(){
-		if (GameCfg.MONI_WAIWANG){
-			Laya.timer.once(1,this,this.OnLoginResult,[true,{token:GameCfg.MONI_TOKEN,uid:GameCfg.MONI_ACCOUNT,uname:GameCfg.MONI_ACCOUNT}]);
-		}
-		else{
-			this.CallToNative({funcid:1});
-			UMengUtil.AddPoint("reqsignin","","",0);
-		}
-	}
-
-	/**登出SDK**/
-	__proto.LogoutSDK=function(){
-		this.CallToNative({funcid:10});
-	}
-
-	__proto.OnVerify=function(result){
-		if (result !=null){
-			this._isVerify=true;
-			console.log("onVerifySuc:"+result);
-			var o=BootUtil.decode(result);
-			if(o && o.data){
-				PlatformLoginUtil.vo.account=o.data.uid;
-				PlatformLoginUtil.vo.sign=o.sign;
-				PlatformLoginUtil.vo.adult=o.data.is_adult;
-				PlatformLoginUtil.vo.time=o.time;
-				UMengUtil.AddPoint("verifysuc",PlatformLoginUtil.vo.account,"",0);
-				EventCenter.Event("server_verify",o);
-			}
-			else{
-				EventCenter.Event("server_verify");
-			}
-		}
-		else{
-			EventCenter.Event("server_verify");
-		}
-	}
-
-	// SDK返回
-	__proto.OnLoginResult=function(suc,o){
-		console.log(o+"+---------------------->>>>>>>>>>>SDK返回");
-		this._isLoginSDK=suc;
-		if (o !=null){
-			this._token=o.token;
-			this._accountName=o.uid;
-			PlatformLoginUtil.vo.account=o.uid;
-			this._pid=o.pid;
-			this._clientinfo=o.clientinfo;
-			console.log("onLoginResult uid:"+o.uid+" uname:"+o.uname+" token:"+this._token);
-			if (suc){
-				UMengUtil.AddPoint("signinsuc",o.uname,"",0);
-				EventCenter.Event("sdk_login",this._token);
-				EventCenter.Event("server_verify",o);
-			}
-		}
-		if (!suc){
-			UMengUtil.AddPoint("signinfail","","",0);
-		}
-		EventCenter.Event("login_sdk");
-	}
-
-	__proto.OnLogoutResult=function(suc){
-		if (suc){
-			this._isLoginSDK=false;
-			this._isVerify=false;
-			this._token=null;
-			PlatformLoginUtil.Reload();
-		}
-	}
-
-	__proto.OnSelServer=function(){
-		this.ReportData(1);
-	}
-
-	__proto.ReportData=function(dataType){
-		var obj={};
-		obj.funcid=40;
-		obj.dataType=dataType;
-		obj.zoneId=PlatformLoginUtil.vo.server_id.toString();
-		obj.zoneName=PlatformLoginUtil.vo.server_name;
-		obj.roleId="";
-		obj.roleName="";
-		obj.partyName="";
-		obj.vip="0";
-		obj.balance=0;
-		obj.level=0;
-		obj.roleCreateTime="-1";
-		obj.roleLevelMTime="-1";
-		this.CallToNative(obj);
-	}
-
-	__proto.QuitGame=function(){
-		this.CallToNative({funcid:50});
-	}
-
-	__getset(0,__proto,'hasSDK',function(){
-		return true;
-	});
-
-	__getset(0,__proto,'token',function(){
-		return this._token;
-	});
-
-	__getset(0,__proto,'accountClientinfo',function(){
-		return this._clientinfo;
-	});
-
-	__getset(0,__proto,'accountName',function(){
-		return this._accountName;
-	});
-
-	__getset(0,__proto,'accountPid',function(){
-		return this._pid;
-	});
-
-	return PlatformLoginZhangYu;
-})(PlatformLoginBase)
-
-
-/**
-*事件中心
-*
-*@author Administrator
-*/
-//class boots.EventCenter extends laya.events.EventDispatcher
-var EventCenter=(function(_super){
-	// private static const _event:GameEvent=new GameEvent("");
-	function EventCenter(){
-		EventCenter.__super.call(this);
-	}
-
-	__class(EventCenter,'boots.EventCenter',_super);
-	EventCenter.Event=function(type,data){
-		if((data instanceof Array))
-			data=[data];
-		EventCenter._ins.event(type,data);
-	}
-
-	EventCenter.On=function(type,caller,listener,args,once){
-		(once===void 0)&& (once=false);
-		if (once)
-			EventCenter._ins.once(type,caller,listener,args);
-		else
-		EventCenter._ins.on(type,caller,listener,args);
-	}
-
-	EventCenter.Off=function(type,caller,listener){
-		EventCenter._ins.off(type,caller,listener);
-	}
-
-	__static(EventCenter,
-	['_ins',function(){return this._ins=new EventCenter();}
-	]);
-	return EventCenter;
-})(EventDispatcher)
-
-
-//class boots.platform.vo.PlatfromLoginFingertipsy extends boots.platform.vo.PlatformLoginBase
-var PlatfromLoginFingertipsy=(function(_super){
-	function PlatfromLoginFingertipsy(pid,cid){
-		// 这一坨是后端通过37验证返回的
-		this.is_idcard_bind=0;
-		this.is_phone_bind=0;
-		this.is_bind_alias=0;
-		this.is_youke=0;
-		this.vip_level=0;
-		this._token=null;
-		this._accountName=null;
-		this._caller=null;
-		this._method=null;
-		PlatfromLoginFingertipsy.__super.call(this,pid,cid);
-		this.Register();
-		if (GameCfg.RELOAD_PARAM !=null && GameCfg.RELOAD_PARAM[PlatformLoginUtil.vo.channelName] !=null){
-			var obj=GameCfg.RELOAD_PARAM;
-			this._isLoginSDK=obj[PlatformLoginUtil.vo.channelName]["islogin"];
-			this._isVerify=obj[PlatformLoginUtil.vo.channelName]["isverify"];
-			this._token=obj[PlatformLoginUtil.vo.channelName]["token"];
-			this.is_idcard_bind=obj[PlatformLoginUtil.vo.channelName]["is_idcard_bind"];
-			this.is_phone_bind=obj[PlatformLoginUtil.vo.channelName]["is_phone_bind"];
-			this.is_bind_alias=obj[PlatformLoginUtil.vo.channelName]["is_bind_alias"];
-			this.is_youke=obj[PlatformLoginUtil.vo.channelName]["is_youke"];
-			this.vip_level=obj[PlatformLoginUtil.vo.channelName]["vip_level"];
-		}
-	}
-
-	__class(PlatfromLoginFingertipsy,'boots.platform.vo.PlatfromLoginFingertipsy',_super);
-	var __proto=PlatfromLoginFingertipsy.prototype;
-	__proto.Register=function(){
-		NativeUtil.Register(10002,this,this.CallFromNative);
-	}
-
-	__proto.RegisterPlatformCallBack=function(caller,method){
-		this._caller=caller;
-		this._method=method;
-	}
-
-	__proto.CallToNative=function(o){
-		o.msgid=10001;
-		NativeUtil.CallPlatformWithObj(o);
-	}
-
-	__proto.CallFromNative=function(o){
-		var funcid=o.funcid;
-		if (funcid==2 || funcid==3){
-			this.OnLoginResult(funcid==2,o);
-			}else if (funcid==11 || funcid==12){
-			this.OnLogoutResult(funcid==11);
-		}
-		if (this._method !=null){
-			this._method.call(this._caller,o);
-		}
-	}
-
-	__proto.GetAgentInfo=function(obj){
-		obj[PlatformLoginUtil.vo.channelName]={};
-		obj[PlatformLoginUtil.vo.channelName]["islogin"]=this._isLoginSDK;
-		obj[PlatformLoginUtil.vo.channelName]["isverify"]=this._isVerify;
-		obj[PlatformLoginUtil.vo.channelName]["token"]=this._token;
-		obj[PlatformLoginUtil.vo.channelName]["is_idcard_bind"]=this.is_idcard_bind;
-		obj[PlatformLoginUtil.vo.channelName]["is_phone_bind"]=this.is_phone_bind;
-		obj[PlatformLoginUtil.vo.channelName]["is_bind_alias"]=this.is_bind_alias;
-		obj[PlatformLoginUtil.vo.channelName]["is_youke"]=this.is_youke;
-		obj[PlatformLoginUtil.vo.channelName]["vip_level"]=this.vip_level;
-	}
-
-	__proto.LoginSDK=function(){
-		if (GameCfg.MONI_WAIWANG){
-			Laya.timer.once(1,this,this.OnLoginResult,[true,{token:GameCfg.MONI_TOKEN,uid:GameCfg.MONI_ACCOUNT,uname:GameCfg.MONI_ACCOUNT}]);
-		}
-		else{
-			this.CallToNative({funcid:1});
-			UMengUtil.AddPoint("reqsignin","","",0);
-		}
-	}
-
-	/**登出SDK**/
-	__proto.LogoutSDK=function(){
-		this.CallToNative({funcid:10});
-	}
-
-	__proto.OnVerify=function(result){
-		if (result !=null){
-			this._isVerify=true;
-			console.log("onVerifySuc:"+result);
-			var o=BootUtil.decode(result);
-			if(o && o.data){
-				PlatformLoginUtil.vo.account=o.data.uid;
-				PlatformLoginUtil.vo.sign=o.sign;
-				PlatformLoginUtil.vo.adult=o.data.is_adult;
-				PlatformLoginUtil.vo.time=o.time;
-				this.is_idcard_bind=o.data.is_idcard_bind;
-				this.is_phone_bind=o.data.is_phone_bind;
-				this.is_bind_alias=o.data.is_bind_alias;
-				this.is_youke=o.data.is_youke;
-				this.vip_level=o.data.vip_level;
-				UMengUtil.AddPoint("verifysuc",PlatformLoginUtil.vo.account,"",0);
-				EventCenter.Event("server_verify",o);
-			}
-			else{
-			}
-		}
-		else{
-		}
-	}
-
-	// SDK返回
-	__proto.OnLoginResult=function(suc,o){
-		this._isLoginSDK=suc;
-		if (o !=null){
-			this._token=o.token;
-			this._accountName=o.uid;
-			PlatformLoginUtil.vo.account=o.uid;
-			console.log("onLoginResult uid:"+o.uid+" uname:"+o.uname+" token:"+this._token);
-			if (suc){
-				UMengUtil.AddPoint("signinsuc",o.uname,"",0);
-				EventCenter.Event("sdk_login",this._token);
-				EventCenter.Event("server_verify",o);
-			}
-		}
-		if (!suc){
-			UMengUtil.AddPoint("signinfail","","",0);
-		}
-		EventCenter.Event("login_sdk");
-	}
-
-	__proto.OnLogoutResult=function(suc){
-		if (suc){
-			this._isLoginSDK=false;
-			this._isVerify=false;
-			this._token=null;
-			PlatformLoginUtil.Reload();
-		}
-	}
-
-	__proto.OnSelServer=function(){}
-	//ReportData(GAMEDATA_TYPE_PRE_CREATE_ROLE);
-	__proto.ReportData=function(dataType){
-		var obj={};
-		obj.funcid=40;
-		obj.dataType=dataType;
-		obj.serverID=PlatformLoginUtil.vo.server_id.toString();
-		obj.serverName=PlatformLoginUtil.vo.server_name;
-		obj.roleId="";
-		obj.roleName="";
-		obj.partyName="";
-		obj.vip="0";
-		obj.balance=0;
-		obj.level=0;
-		obj.roleCreateTime="-1";
-		obj.roleLevelMTime="-1";
-		this.CallToNative(obj);
-	}
-
-	__proto.QuitGame=function(){
-		this.CallToNative({funcid:50});
-	}
-
-	__getset(0,__proto,'hasSDK',function(){
-		return true;
-	});
-
-	__getset(0,__proto,'token',function(){
-		return this._token;
-	});
-
-	__getset(0,__proto,'accountName',function(){
-		return this._accountName;
-	});
-
-	PlatfromLoginFingertipsy.REQ_LOGIN=1;
-	PlatfromLoginFingertipsy.REC_LOGIN_SUC=2;
-	PlatfromLoginFingertipsy.REC_LOGIN_FAIL=3;
-	PlatfromLoginFingertipsy.REQ_LOGOUT=10;
-	PlatfromLoginFingertipsy.REC_LOGOUT_SUC=11;
-	PlatfromLoginFingertipsy.REC_LOGOUT_FAIL=12;
-	PlatfromLoginFingertipsy.REQ_PAY=30;
-	PlatfromLoginFingertipsy.REC_PAY_SUC=31;
-	PlatfromLoginFingertipsy.REC_PAY_FAIL=32;
-	PlatfromLoginFingertipsy.REQ_REPORT=40;
-	PlatfromLoginFingertipsy.REQ_QUIT=50;
-	PlatfromLoginFingertipsy.GAMEDATA_TYPE_PRE_ENTER_GAME=0;
-	PlatfromLoginFingertipsy.GAMEDATA_TYPE_PRE_CREATE_ROLE=1;
-	PlatfromLoginFingertipsy.GAMEDATA_TYPE_CREATE_ROLE=2;
-	PlatfromLoginFingertipsy.GAMEDATA_TYPE_ENTER_GAME=3;
-	PlatfromLoginFingertipsy.GAMEDATA_TYPE_ROLE_UPDATE=4;
-	PlatfromLoginFingertipsy.GAMEDATA_TYPE_EXIT=5;
-	return PlatfromLoginFingertipsy;
-})(PlatformLoginBase)
-
-
-//class boots.platform.vo.PlatformLoginWeChatMiniProgram extends boots.platform.vo.PlatformLoginBase
-var PlatformLoginWeChatMiniProgram=(function(_super){
-	function PlatformLoginWeChatMiniProgram(pid,cid){
-		PlatformLoginWeChatMiniProgram.__super.call(this,pid,cid);
-	}
-
-	__class(PlatformLoginWeChatMiniProgram,'boots.platform.vo.PlatformLoginWeChatMiniProgram',_super);
-	var __proto=PlatformLoginWeChatMiniProgram.prototype;
-	__proto.OnSelServer=function(){
-		console.log("WeChatSDK选服-------------------");
-	}
-
-	return PlatformLoginWeChatMiniProgram;
 })(PlatformLoginBase)
 
 
@@ -3981,6 +4601,24 @@ var LoadBootQQ=(function(_super){
 		this._bg.skin="beijingnew.png";
 	}
 
+	__proto.ParseParams=function(){
+		var _$this=this;
+		qq.request({
+			url:"https://h5.c.popcornie.com/boot?sign=v_7",
+			header:{'content-type':'application/json'},
+			method:'GET',
+			success:function (res){
+				_$this.BOOTVERSION=res.data["boot"];
+				var cdnStr=res.data["cdn"];
+				var cdnStr1="https://res-rbsg.oclkj.com/qqMini_new/release=true";
+				var arr=cdnStr.split('/');
+				var arrRelease=arr[4].split('=');
+				Browser.release=JSON.parse(arrRelease[1]);
+				GameCfg.ParseWebParam();
+			}
+		});
+	}
+
 	__proto.ParseWebParam=function(){
 		this.BOOTVERSION=Browser.BOOTVERSION+"";
 		this.gameCdn="https://res-rbsg.oclkj.com/qqMini_new/";
@@ -4020,58 +4658,229 @@ var LoadBootQQ=(function(_super){
 })(LoadBootCfg)
 
 
-//class boots.LoadBootWX extends boots.LoadBootCfg
-var LoadBootWX=(function(_super){
-	function LoadBootWX(){
-		LoadBootWX.__super.call(this);
+//class boots.platform.vo.PlatfromLoginFingertipsy extends boots.platform.vo.PlatformLoginBase
+var PlatfromLoginFingertipsy=(function(_super){
+	function PlatfromLoginFingertipsy(pid,cid){
+		// 这一坨是后端通过37验证返回的
+		this.is_idcard_bind=0;
+		this.is_phone_bind=0;
+		this.is_bind_alias=0;
+		this.is_youke=0;
+		this.vip_level=0;
+		this._token=null;
+		this._accountName=null;
+		this._caller=null;
+		this._method=null;
+		PlatfromLoginFingertipsy.__super.call(this,pid,cid);
+		this.Register();
+		if (GameCfg.RELOAD_PARAM !=null && GameCfg.RELOAD_PARAM[PlatformLoginUtil.vo.channelName] !=null){
+			var obj=GameCfg.RELOAD_PARAM;
+			this._isLoginSDK=obj[PlatformLoginUtil.vo.channelName]["islogin"];
+			this._isVerify=obj[PlatformLoginUtil.vo.channelName]["isverify"];
+			this._token=obj[PlatformLoginUtil.vo.channelName]["token"];
+			this.is_idcard_bind=obj[PlatformLoginUtil.vo.channelName]["is_idcard_bind"];
+			this.is_phone_bind=obj[PlatformLoginUtil.vo.channelName]["is_phone_bind"];
+			this.is_bind_alias=obj[PlatformLoginUtil.vo.channelName]["is_bind_alias"];
+			this.is_youke=obj[PlatformLoginUtil.vo.channelName]["is_youke"];
+			this.vip_level=obj[PlatformLoginUtil.vo.channelName]["vip_level"];
+		}
 	}
 
-	__class(LoadBootWX,'boots.LoadBootWX',_super);
-	var __proto=LoadBootWX.prototype;
-	__proto.StartFristShow=function(){
-		this._bg=new Image();
-		this._bg.size(Laya.stage.width,Laya.stage.height);
-		Laya.stage.addChild(this._bg);
-		this._bg.skin="beijingnew.png";
+	__class(PlatfromLoginFingertipsy,'boots.platform.vo.PlatfromLoginFingertipsy',_super);
+	var __proto=PlatfromLoginFingertipsy.prototype;
+	__proto.Register=function(){
+		NativeUtil.Register(10002,this,this.CallFromNative);
 	}
 
-	__proto.ParseWebParam=function(){
-		this.BOOTVERSION=Browser.BOOTVERSION+"";
-		this.gameCdn="https://cdn-xyx.raink.com.cn/rbsg/";
-		MiniFileMgr.loadPath=this.gameCdn;
-		Laya.URL.basePath=this.gameCdn;
+	__proto.RegisterPlatformCallBack=function(caller,method){
+		this._caller=caller;
+		this._method=method;
 	}
 
-	__proto.LoadCfg=function(){
-		Laya.loader.load("bootcfg"+".json",Handler.create(this,this.onCfgComplete),null,"json");
-		URL.customFormat=ResourceVersionEx.addVersionPrefix;
+	__proto.CallToNative=function(o){
+		o.msgid=10001;
+		NativeUtil.CallPlatformWithObj(o);
 	}
 
-	__proto.loadSubpackage=function(index){
-		var _$this=this;
-		(index===void 0)&& (index=0);
-		_super.prototype.loadSubpackage.call(this,index);
-		var path=this.srclist[index];
-		wx.loadSubpackage({
-			name:path ,
-			success:function (res){
-				console.log("success "+path);
-				index++;
-				path=_$this.srclist[index];
-				if(path==null)
-					_$this.EnterGame();
-				else{
-					_$this.loadSubpackage(index);
-				}
-			},
-			fail:function (res){
-				console.log("fail"+path);
+	__proto.CallFromNative=function(o){
+		var funcid=o.funcid;
+		if (funcid==2 || funcid==3){
+			this.OnLoginResult(funcid==2,o);
+			}else if (funcid==11 || funcid==12){
+			this.OnLogoutResult(funcid==11);
+		}
+		if (this._method !=null){
+			this._method.call(this._caller,o);
+		}
+	}
+
+	__proto.GetAgentInfo=function(obj){
+		obj[PlatformLoginUtil.vo.channelName]={};
+		obj[PlatformLoginUtil.vo.channelName]["islogin"]=this._isLoginSDK;
+		obj[PlatformLoginUtil.vo.channelName]["isverify"]=this._isVerify;
+		obj[PlatformLoginUtil.vo.channelName]["token"]=this._token;
+		obj[PlatformLoginUtil.vo.channelName]["is_idcard_bind"]=this.is_idcard_bind;
+		obj[PlatformLoginUtil.vo.channelName]["is_phone_bind"]=this.is_phone_bind;
+		obj[PlatformLoginUtil.vo.channelName]["is_bind_alias"]=this.is_bind_alias;
+		obj[PlatformLoginUtil.vo.channelName]["is_youke"]=this.is_youke;
+		obj[PlatformLoginUtil.vo.channelName]["vip_level"]=this.vip_level;
+	}
+
+	__proto.LoginSDK=function(){
+		if (GameCfg.MONI_WAIWANG){
+			Laya.timer.once(1,this,this.OnLoginResult,[true,{token:GameCfg.MONI_TOKEN,uid:GameCfg.MONI_ACCOUNT,uname:GameCfg.MONI_ACCOUNT}]);
+		}
+		else{
+			this.CallToNative({funcid:1});
+			UMengUtil.AddPoint("reqsignin","","",0);
+		}
+	}
+
+	/**登出SDK**/
+	__proto.LogoutSDK=function(){
+		this.CallToNative({funcid:10});
+	}
+
+	__proto.OnVerify=function(result){
+		if (result !=null){
+			this._isVerify=true;
+			console.log("onVerifySuc:"+result);
+			var o=BootUtil.decode(result);
+			if(o && o.data){
+				PlatformLoginUtil.vo.account=o.data.uid;
+				PlatformLoginUtil.vo.sign=o.sign;
+				PlatformLoginUtil.vo.adult=o.data.is_adult;
+				PlatformLoginUtil.vo.time=o.time;
+				this.is_idcard_bind=o.data.is_idcard_bind;
+				this.is_phone_bind=o.data.is_phone_bind;
+				this.is_bind_alias=o.data.is_bind_alias;
+				this.is_youke=o.data.is_youke;
+				this.vip_level=o.data.vip_level;
+				UMengUtil.AddPoint("verifysuc",PlatformLoginUtil.vo.account,"",0);
+				EventCenter.Event("server_verify",o);
 			}
-		});
+			else{
+			}
+		}
+		else{
+		}
 	}
 
-	return LoadBootWX;
-})(LoadBootCfg)
+	// SDK返回
+	__proto.OnLoginResult=function(suc,o){
+		this._isLoginSDK=suc;
+		if (o !=null){
+			this._token=o.token;
+			this._accountName=o.uid;
+			PlatformLoginUtil.vo.account=o.uid;
+			console.log("onLoginResult uid:"+o.uid+" uname:"+o.uname+" token:"+this._token);
+			if (suc){
+				UMengUtil.AddPoint("signinsuc",o.uname,"",0);
+				EventCenter.Event("sdk_login",this._token);
+				EventCenter.Event("server_verify",o);
+			}
+		}
+		if (!suc){
+			UMengUtil.AddPoint("signinfail","","",0);
+		}
+		EventCenter.Event("login_sdk");
+	}
+
+	__proto.OnLogoutResult=function(suc){
+		if (suc){
+			this._isLoginSDK=false;
+			this._isVerify=false;
+			this._token=null;
+			PlatformLoginUtil.Reload();
+		}
+	}
+
+	__proto.OnSelServer=function(){}
+	//ReportData(GAMEDATA_TYPE_PRE_CREATE_ROLE);
+	__proto.ReportData=function(dataType){
+		var obj={};
+		obj.funcid=40;
+		obj.dataType=dataType;
+		obj.serverID=PlatformLoginUtil.vo.server_id.toString();
+		obj.serverName=PlatformLoginUtil.vo.server_name;
+		obj.roleId="";
+		obj.roleName="";
+		obj.partyName="";
+		obj.vip="0";
+		obj.balance=0;
+		obj.level=0;
+		obj.roleCreateTime="-1";
+		obj.roleLevelMTime="-1";
+		this.CallToNative(obj);
+	}
+
+	__proto.QuitGame=function(){
+		this.CallToNative({funcid:50});
+	}
+
+	__getset(0,__proto,'hasSDK',function(){
+		return true;
+	});
+
+	__getset(0,__proto,'token',function(){
+		return this._token;
+	});
+
+	__getset(0,__proto,'accountName',function(){
+		return this._accountName;
+	});
+
+	PlatfromLoginFingertipsy.REQ_LOGIN=1;
+	PlatfromLoginFingertipsy.REC_LOGIN_SUC=2;
+	PlatfromLoginFingertipsy.REC_LOGIN_FAIL=3;
+	PlatfromLoginFingertipsy.REQ_LOGOUT=10;
+	PlatfromLoginFingertipsy.REC_LOGOUT_SUC=11;
+	PlatfromLoginFingertipsy.REC_LOGOUT_FAIL=12;
+	PlatfromLoginFingertipsy.REQ_PAY=30;
+	PlatfromLoginFingertipsy.REC_PAY_SUC=31;
+	PlatfromLoginFingertipsy.REC_PAY_FAIL=32;
+	PlatfromLoginFingertipsy.REQ_REPORT=40;
+	PlatfromLoginFingertipsy.REQ_QUIT=50;
+	PlatfromLoginFingertipsy.GAMEDATA_TYPE_PRE_ENTER_GAME=0;
+	PlatfromLoginFingertipsy.GAMEDATA_TYPE_PRE_CREATE_ROLE=1;
+	PlatfromLoginFingertipsy.GAMEDATA_TYPE_CREATE_ROLE=2;
+	PlatfromLoginFingertipsy.GAMEDATA_TYPE_ENTER_GAME=3;
+	PlatfromLoginFingertipsy.GAMEDATA_TYPE_ROLE_UPDATE=4;
+	PlatfromLoginFingertipsy.GAMEDATA_TYPE_EXIT=5;
+	return PlatfromLoginFingertipsy;
+})(PlatformLoginBase)
+
+
+//class boots.platform.vo.PlatformLoginWeChatMiniProgram extends boots.platform.vo.PlatformLoginBase
+var PlatformLoginWeChatMiniProgram=(function(_super){
+	function PlatformLoginWeChatMiniProgram(pid,cid){
+		PlatformLoginWeChatMiniProgram.__super.call(this,pid,cid);
+	}
+
+	__class(PlatformLoginWeChatMiniProgram,'boots.platform.vo.PlatformLoginWeChatMiniProgram',_super);
+	var __proto=PlatformLoginWeChatMiniProgram.prototype;
+	__proto.OnSelServer=function(){
+		console.log("WeChatSDK选服-------------------");
+	}
+
+	return PlatformLoginWeChatMiniProgram;
+})(PlatformLoginBase)
+
+
+//class boots.platform.vo.PlatformLoginbilibiliGame extends boots.platform.vo.PlatformLoginBase
+var PlatformLoginbilibiliGame=(function(_super){
+	function PlatformLoginbilibiliGame(pid,cid){
+		PlatformLoginbilibiliGame.__super.call(this,pid,cid);
+	}
+
+	__class(PlatformLoginbilibiliGame,'boots.platform.vo.PlatformLoginbilibiliGame',_super);
+	var __proto=PlatformLoginbilibiliGame.prototype;
+	__proto.OnSelServer=function(){
+		console.log("bilibili选服-------------------");
+	}
+
+	return PlatformLoginbilibiliGame;
+})(PlatformLoginBase)
 
 
 //class boots.platform.vo.PlatformLoginWeb37 extends boots.platform.vo.PlatformLoginBase
@@ -4119,733 +4928,169 @@ var PlatformLoginWeb37=(function(_super){
 
 
 /**
-*http请求服务器列表用的
+*标准ByteArray读法
 */
-//class boots.selserver.med.SelServerHttpMediator extends boots.selserver.med.SelServerMediator
-var SelServerHttpMediator=(function(_super){
-	function SelServerHttpMediator(p){
-		// 获取服务器(最近登录)
-		this.URL_LAST_SERVER="/server?sign={@}&user={@}";
-		// 获取服务器组
-		this.URL_SERVER_GROUP="/group?sign={@}";
-		// 获取服务器(静态组，单个区的服务器列表)
-		this.URL_SERVERS_LIST="/server?sign={@}&group={@}";
-		// 请求选中服的服务器信息（主要是ip和端口）
-		this.URL_SEVER_INFO="/login?server={@}&user={@}";
-		// 上次登陆的组（前端定义的，不要和后端重了）
-		this._lastLoginGroup=999999;
-		this._clickCount=0;
-		this._clickTime=0;
-		// http请求相关
-		this._isReqLastLogin=false;
-		this._lastLoginZone=new SelZoneVo();
-		this._btnServers=[];
-		SelServerHttpMediator.__super.call(this,p);
-		this._p.imgSelServer.on("click",this,this.ClickShowServerList);
-		this._p.btnClose.on("click",this,this.HideServerList);
-		this._p.btnBack.on("click",this,this.HideServerList);
-		this._p.btnLogin.on("click",this,this.ClickLogin);
-		this._p.btnAgreement.on("click",this,this.ClickAgreement);
-		this._p.btnNotice.on("click",this,this.ClickNotice);
-		this._p.radioServerTab.on("change",this,this.OnChangeGroupEnd);
-		this._lastLoginZone.zoneID=this._lastLoginGroup;
-		this._lastLoginZone.zoneName="最近登陆服";
-		if(Web37Util.isOpen||WebfingertipUtil.isOpen||Browser.onMiniGame||WebmojieUtil.isOpen){
-			this._p.txtAccount.visible=false;
-			this._p.btnLogin.y=this._p.imgSelServer.y+this._p.imgSelServer.height+10;
-		}
-		this._p.sprdebug.on("click",this,this.ClickDebug);
+//class boots.ByteArrayClient extends laya.utils.Byte
+var ByteArrayClient=(function(_super){
+	function ByteArrayClient(data){
+		ByteArrayClient.__super.call(this,data);
+		this.endian="bigEndian";
 	}
 
-	__class(SelServerHttpMediator,'boots.selserver.med.SelServerHttpMediator',_super);
-	var __proto=SelServerHttpMediator.prototype;
-	__proto.ClickDebug=function(){
-		if (Laya.timer.currTimer-this._clickTime > 3000)this._clickCount=0;
-		else this._clickCount++;
-		this._clickTime=Laya.timer.currTimer;
-		if (this._clickCount > 10){
-			this._showTest=true;
-			this.UpdateZoneList();
-			this.HttpReqServers(9999);
-		}
+	__class(ByteArrayClient,'boots.ByteArrayClient',_super);
+	var __proto=ByteArrayClient.prototype;
+	__proto.uncompress=function(algorithm){
+		(algorithm===void 0)&& (algorithm="zlib");
+		var inflate=new Zlib.Inflate(this._u8d_);
+		this._u8d_=inflate.decompress();
+		this._d_=new DataView(this._u8d_.buffer);;
+		this._length=this._u8d_.byteLength;
 	}
 
-	__proto.ClickNotice=function(){
-		if(this._curServer==null||this._curServer.serverID==0){
-			AlertBootExt.Show("无法获取公告，请检查您的网络连接");
-			return;
-		}
-		if(!NoticeComPanelExt.IsShow){
-			NoticeComPanelExt.Show(2,this._curServer.serverID,true);
-		}
-		else
-		NoticeComPanelExt.Hide();
+	__proto.compress=function(algorithm){
+		(algorithm===void 0)&& (algorithm="zlib");
+		var deflate=new Zlib.Deflate(this._byteView_);
+		this._byteView_=deflate.compress();
+		this._data_=new DataView(this._byteView_.buffer);;
 	}
 
-	__proto.OnShow=function(){
-		_super.prototype.OnShow.call(this);
-		this.UpdateDefault();
+	__proto.GetByteArray=function(offset,dataLen){
+		var dataUnit=new ByteArrayClient(dataLen);
+		dataUnit.writeArrayBuffer(this.getUint8Array(this.pos+offset,dataLen));
+		dataUnit.pos=0;
+		return dataUnit;
 	}
 
-	// Login();
-	__proto.OnHide=function(){
-		_super.prototype.OnHide.call(this);
-		Laya.timer.clear(this,this._DelayHttpReqServers);
-	}
-
-	__proto.ClickShowServerList=function(){
-		this.ShowServerList();
-		if (this._lastLoginZone.servers.length==0){
-			this.HttpReqLastLogin();
-		}
-		if (this._zones.length==0){
-			this.HttpReqZone();
-			}else{
-			this.UpdateZoneList();
-		}
-	}
-
-	__proto.ClickServer=function(e){
-		var vo=(e.currentTarget).vo;
-		if(vo==null || vo.IsNotOpen()){
-			AlertBootExt.Show("服务器正在维护中");
-			return;
-		}
-		this.UpdateLoginServer(vo,false);
-		this.HideServerList();
-	}
-
-	__proto.OnChangeGroupEnd=function(){
-		var g=this._zones[this._p.radioServerTab.selectedIndex];
-		if (g==null)return;
-		this._curZone=g;
-		if (this._curZone.servers.length > 0){
-			this.UpdateServers();
-			}else{
-			if (this._curZone==this._lastLoginZone){
-				this.HttpReqLastLogin();
-				}else{
-				this.HttpReqServers(this._curZone.zoneID);
-			}
-		}
-	}
-
-	__proto.ClickLogin=function(){
-		this.Login();
-	}
-
-	__proto.ClickAgreement=function(){
-		AgreementExt.ShowHide();
-	}
-
-	__proto.Login=function(){
-		if(Browser.inWeChat&&Browser.IszhijianWeChat==false){
-			var obj={};
-			obj.id=1003;
-			obj.num="";
-			obj.isRecahrge="";
-			window.WeChatSDK.WeChatSDKReportEvent(obj);
-			var obj1={};
-			obj1.id=1006;
-			obj1.num="";
-			obj1.isRecahrge="";
-			window.WeChatSDK.WeChatSDKReportEvent(obj1);
-			var time=BootUtil.GetTimer();
-			var date=new Date(time);
-			var YY=date.getFullYear()+'-';
-			var MM=(date.getMonth()+1 < 10 ? '0'+(date.getMonth()+1):date.getMonth()+1)+'-';
-			var DD=(date.getDate()< 10 ? '0'+(date.getDate()):date.getDate());
-			var hh=(date.getHours()< 10 ? '0'+date.getHours():date.getHours())+':';
-			var mm=(date.getMinutes()< 10 ? '0'+date.getMinutes():date.getMinutes())+':';
-			var ss=(date.getSeconds()< 10 ? '0'+date.getSeconds():date.getSeconds());
-			console.log("开始初始化（开始读条）时间-------------------------"+YY+MM+DD+" "+hh+mm+ss);
-		}
-		if (this._curServer==null){
-			this.HttpReqLastLogin();
-			return;
-		}
-		if (this._curServer.serverIP==null){
-			this.HttpReqServerInfo(this._curServer.serverID);
-			return;
-		}
-		PlatformLoginUtil.vo.server_ip=this._curServer.serverIP;
-		PlatformLoginUtil.vo.server_name=this._curServer.serverName;
-		PlatformLoginUtil.vo.server_port=this._curServer.serverPort;
-		PlatformLoginUtil.vo.server_id=this._curServer.serverID;
-		PlatformLoginUtil.vo.snoNum=this._curServer.snoNum;
-		if(!Web37Util.isOpen&&!WebfingertipUtil.isOpen&&!Browser.onMiniGame&&!WebmojieUtil.isOpen){
-			PlatformLoginUtil.vo.adult=1;
-			PlatformLoginUtil.vo.account=this._p.txtAccount.text;
-		}
-		PlatformLoginUtil.vo.mainversion=this._curServer.mainversion;
-		this.SetEnable(false);
-		LocalStorage.setItem("account",PlatformLoginUtil.vo.account);
-		LocalStorage.setItem("serverhost",PlatformLoginUtil.vo.server_ip);
-		LocalStorage.setItem("serverport",PlatformLoginUtil.vo.server_port.toString());
-		LocalStorage.setItem("serverid",PlatformLoginUtil.vo.server_id.toString());
-		LocalStorage.setItem("servername",PlatformLoginUtil.vo.server_name);
-		LocalStorage.setItem("mainversion",PlatformLoginUtil.vo.mainversion);
-		SelServerUtil.SelServer();
-	}
-
-	__proto.UpdateDefault=function(){
-		var acc=LocalStorage.getItem("account");
-		var ip=LocalStorage.getItem("serverhost");
-		var port=parseInt(LocalStorage.getItem("serverport"));
-		var serverid=parseInt(LocalStorage.getItem("serverid"));
-		var servername=LocalStorage.getItem("servername");
-		var mainversion=LocalStorage.getItem("mainversion");
-		if (acc==null){
-			acc="youracc";
-		}
-		if(WebfingertipUtil.isOpen){
-			var loginParams=window.zhijianParams();
-			acc=loginParams["qqesuid"];
-		}
-		if(WebmojieUtil.isOpen){
-			var loginParams=window.mojieParams();
-			acc=loginParams["Uid"];
-		}
-		if(!Web37Util.isOpen&&!WebfingertipUtil.isOpen&&!WebmojieUtil.isOpen)
-			PlatformLoginUtil.vo.account=acc;
-		if(!Web37Util.isOpen)
-			PlatformLoginUtil.vo.account=acc;
-		if(!Browser.onMiniGame)
-			PlatformLoginUtil.vo.account=acc;
-		this._p.txtAccount.text=acc;
-		if(Browser.inWeChat&&Browser.IszhijianWeChat==false){
-			var obj={};
-			obj.id=1005;
-			obj.num="";
-			obj.isRecahrge="";
-			window.WeChatSDK.WeChatSDKReportEvent(obj);
-		}
-		this.HttpReqLastLogin();
-		this.HttpReqZone();
-	}
-
-	//直接请求服务器列表
-	__proto.UpdateLoginServer=function(vo,isUpdateNewest){
-		(isUpdateNewest===void 0)&& (isUpdateNewest=true);
-		this._curServer=vo;
-		this._p.txtServer.text="当前服："+vo.serverName;
-		if(isUpdateNewest)
-			this.UpdateNewestServer(vo);
-	}
-
-	// UpdateNewestServer();
-	__proto.UpdateNewestServer=function(vo){
-		if(vo !=null){
-			this._p.imglatest.visible=true;
-			this._p.lablatest.text=vo.serverName;
-		}
-		else{
-			this._p.imglatest.visible=false;
-			this._p.lablatest.text="";
-		}
-	}
-
-	// 刷新服务器列表
-	__proto.UpdateServers=function(){
-		var list=this._curZone.servers;
-		var count=0;
-		for (var i=0;i < list.length;++i){
-			var vo=list[i];
-			var btn=this._btnServers[count];
-			if (btn==null){
-				btn=new SelServerCellExt();
-				this._btnServers[count]=btn;
-			}
-			btn.x=0;
-			btn.y=btn.height *i;
-			btn.SetData(vo);
-			btn.on("click",this,this.ClickServer);
-			this._p.panServerList.addChild(btn);
-			count++;
-		}
-		for (;count < this._btnServers.length;++count){
-			this._btnServers[count].removeSelf();
-		}
-	}
-
-	__proto.SetEnable=function(value){
-		this._p.btnLogin.gray=!value;
-		this._p.btnLogin.mouseEnabled=value;
-		this._p.imgServerBG.mouseEnabled=value;
-	}
-
-	__proto.ShowServerList=function(){
-		this._p.showHideServerBg(true);
-		if(Web37Util.isWideScreen)
-			Tween.to(this._p.imgServerBG,{y:(this._p.imgbg.height-this._p.imgServerBG.height*this._p.imgServerBG.scaleY)*0.5,alpha:1},200);
-		else
-		Tween.to(this._p.imgServerBG,{y:(this._p.height-this._p.imgServerBG.height*this._p.imgServerBG.scaleY)*0.5,alpha:1},200);
-	}
-
-	__proto.HideServerList=function(){
-		this._p.showHideServerBg(false);
-		if(Web37Util.isWideScreen)
-			Tween.to(this._p.imgServerBG,{y:this._p.imgbg.height,alpha:0},200);
-		else
-		Tween.to(this._p.imgServerBG,{y:this._p.height,alpha:0},200);
-	}
-
-	__proto.GetZone=function(id){
-		for (var i=0;i < this._zones.length;++i){
-			if (this._zones[i].zoneID==id)return this._zones[i];
-		}
-		return null;
-	}
-
-	// 获取上次登陆的服务器
-	__proto.HttpReqLastLogin=function(){
-		if (this._isReqLastLogin)return;
-		this._isReqLastLogin=true;
-		var _reqLastLogin=new RequestUtil(this,this.OnHttpReqLastSuc,this.OnHttpReqLastError);
-		_reqLastLogin.Send(this.URL_SERVER_HOST+BootUtil.FormatStr(this.URL_LAST_SERVER,[GameCfg.SIGN,PlatformLoginUtil.vo.account]));
-	}
-
-	// 请求上次登陆成功
-	__proto.OnHttpReqLastSuc=function(result){
-		if (!this._p || this._p.destroyed)return;
-		this._isReqLastLogin=false;
-		this.isReqLastSucc=true;
-		var obj=BootUtil.decode(result);
-		if (obj !=null && obj.length > 0){
-			console.log("last login:"+result);
-			this.ParseLastLogin(obj);
-			if (this._curServer==null)
-				this.UpdateLoginServer(this._lastLoginZone.servers[0]);
-			NoticeComPanelExt.Show(2,this._curServer.serverID);
-			if (this._zones.indexOf(this._lastLoginZone)==-1){
-				this._zones.unshift(this._lastLoginZone);
-				this.UpdateZoneList();
-			}
-			this.UpdateServers();
-			}else{
-			this.OnHttpReqLastError(obj ? obj.msg :"error");
-		}
-		this.checkServer();
-	}
-
-	// 请求上次登陆失败
-	__proto.OnHttpReqLastError=function(result){
-		if (!this._p || this._p.destroyed)return;
-		this._isReqLastLogin=false;
-		console.log("last server error:"+result);
-	}
-
-	// 获取大区列表
-	__proto.HttpReqZone=function(){
-		var _reqZone=new RequestUtil(this,this.OnHttpReqZoneSuc,this.OnHttpReqZoneError);
-		_reqZone.Send(this.URL_SERVER_HOST+BootUtil.FormatStr(this.URL_SERVER_GROUP,[GameCfg.SIGN]));
-	}
-
-	// 大区请求成功
-	__proto.OnHttpReqZoneSuc=function(result){
-		if (!this._p || this._p.destroyed)return;
-		var obj=BootUtil.decode(result);
-		if (obj !=null && obj.length > 0){
-			console.log("req zone:"+result);
-			this._zones.length=0;
-			this._zones.push(this._lastLoginZone);
-			var arr=obj;
-			if ((typeof arr=='string'))arr=BootUtil.decode(arr);
-			for (var i=0;i < arr.length;++i){
-				this._zones.push(this.ParseZone(arr[i]));
-			}
-			this.UpdateZoneList();
-			}else{
-			this.OnHttpReqZoneError(obj ? obj.msg :"error");
-		}
-	}
-
-	// 大区请求失败
-	__proto.OnHttpReqZoneError=function(result){
-		if (!this._p || this._p.destroyed)return;
-		AlertBootExt.Show("服务器区服获取失败，请点击选服重试");
-	}
-
-	// 获取大区的服务器列表
-	__proto.HttpReqServers=function(groupId){
-		Laya.timer.once(1,this,this._DelayHttpReqServers,[groupId]);
-	}
-
-	__proto._DelayHttpReqServers=function(groupId){
-		var _reqServers=new RequestUtil(this,this.OnHttpReqServersSuc,this.OnHttpReqServersError,groupId);
-		_reqServers.Send(this.URL_SERVER_HOST+BootUtil.FormatStr(this.URL_SERVERS_LIST,[GameCfg.SIGN,groupId]));
-	}
-
-	// 大区服务器请求成功
-	__proto.OnHttpReqServersSuc=function(result,groupId){
-		if (!this._p || this._p.destroyed)return;
-		this.isReqListSucc=true;
-		var z=this.GetZone(groupId);
-		if (z !=null){
-			z.servers.length=0;
-			}else{
-			console.log("服务器列表返回，但是没找到组："+groupId);
-		};
-		var obj=BootUtil.decode(result);
-		if (obj !=null && obj.length > 0){
-			console.log("req servers:"+result);
-			var arr=obj;
-			for (var i=0;i < arr.length;++i){
-				var server=this.ParseServer(arr[i]);
-				if (z){
-					z.AddServer(server);
+	/**
+	*改版。。。。。
+	*@private
+	*读取指定长度的 UTF 型字符串。
+	*@param len 需要读取的长度。
+	*@return 读取的字符串。
+	*/
+	__proto.readUTF=function(len){
+		var v="",max=this._pos_+len,c=0,c2=0,c3=0;
+		var u=this._u8d_,i=0;
+		var tempArray=[];
+		var idx=0;
+		while (this._pos_ < max){
+			c=u[this._pos_++];
+			if (c < 0x80){
+				if (c !=0){
+					tempArray[idx++]=c;
 				}
+				}else if (c < 0xE0){
+				tempArray[idx++]=(((c & 0x3F)<< 6)| (u[this._pos_++] & 0x7F));
+				}else if (c < 0xF0){
+				c2=u[this._pos_++];
+				tempArray[idx++]=(((c & 0x1F)<< 12)| ((c2 & 0x7F)<< 6)| (u[this._pos_++] & 0x7F));
+				}else {
+				c2=u[this._pos_++];
+				c3=u[this._pos_++];
+				tempArray[idx++]=(((c & 0x0F)<< 18)| ((c2 & 0x7F)<< 12)| ((c3 << 6)& 0x7F)| (u[this._pos_++] & 0x7F));
 			}
-			if (groupId==9999){
-				this.CreateTestServers(z);
-			}
-			this.UpdateServers();
-			var server=this._curServer;
-			if (this._curServer==null){
-				this.UpdateLoginServer(z.newestServer);
-			}
-			if(this.isReqLastSucc && this._isReqLastLogin){
-				NoticeComPanelExt.Show(2,this._curServer.serverID);
-			}
-			else{
-				if(server==null)
-					NoticeComPanelExt.Show(1,this._curServer.serverID);
-			}
-			}else{
-			this.OnHttpReqServersError(obj ? obj.msg :"error");
+			i++;
 		}
-		this.checkServer();
+		return String.fromCharCode.apply(String,tempArray);
 	}
 
-	// 大区服务器请求失败
-	__proto.OnHttpReqServersError=function(result){
-		if (!this._p || this._p.destroyed)return;
-		AlertBootExt.Show("servers error:"+result);
+	__proto.readUTFBytes=function(len){
+		(len===void 0)&& (len=-1);
+		if (len==0)
+			return "";
+		var lastBytes=this.bytesAvailable;
+		if (len > lastBytes)
+			throw "readUTFBytes error - Out of bounds";
+		len=len > 0 ? len :lastBytes;
+		return this.readUTF(len);
 	}
 
-	// 获取指定服务器信息
-	__proto.HttpReqServerInfo=function(serverId){
-		var _reqServers=new RequestUtil(this,this.OnHttpReqServerInfoSuc,this.OnHttpReqServerInfoError);
-		_reqServers.Send(this.URL_SERVER_HOST+BootUtil.FormatStr(this.URL_SEVER_INFO,[serverId,PlatformLoginUtil.vo.account]));
+	/**
+	*老版本去读字符串数据，调用频繁会导致内存暴涨！！
+	*@param len
+	*@return
+	*
+	*/
+	__proto.readUTFBytesOld=function(len){
+		(len===void 0)&& (len=-1);
+		return _super.prototype.readUTFBytes.call(this,len);
 	}
 
-	// 请求服务器信息成功
-	__proto.OnHttpReqServerInfoSuc=function(result){
-		if (!this._p || this._p.destroyed)return;
-		var obj=BootUtil.decode(result);
-		if (obj !=null && obj.host !=null){
-			console.log("serverinfo:"+result);
-			this._curServer.serverIP=obj.host;
-			this._curServer.serverPort=obj.port;
-			this.Login();
-			}else{
-			this.OnHttpReqServerInfoError(obj ? obj.msg :"error");
+	__proto.readDouble=function(){
+		return this.getFloat64();
+	}
+
+	__proto.readFloat=function(){
+		return this.getFloat32();
+	}
+
+	__proto.readBytes=function(bytes,offset,length){
+		(offset===void 0)&& (offset=0);
+		(length===void 0)&& (length=0);
+		if (offset < 0 || length < 0){
+			throw "Read error - Out of bounds";
 		}
+		if (length==0)length=this.length-this.pos;
+		bytes.writeArrayBuffer(this.getUint8Array(this.pos+offset,length));
 	}
 
-	// 请求服务器信息失败
-	__proto.OnHttpReqServerInfoError=function(result){
-		if (!this._p || this._p.destroyed)return;
-		console.log("serverinfo error:"+result);
-		AlertBootExt.Show('获取服务器数据失败，请点击登陆重试');
+	__proto.readInt=function(){
+		return this.getInt32();
 	}
 
-	__proto.ParseLastLogin=function(obj){
-		var vos=[];
-		for (var i=0;i < obj.length;++i){
-			vos.push(this.ParseServer(obj[i]));
+	__proto.readShort=function(){
+		return this.getInt16();
+	}
+
+	__proto.readUnsignedByte=function(){
+		return this.getUint8();
+	}
+
+	__proto.readUnsignedInt=function(){
+		return this.getUint32();
+	}
+
+	__proto.readUnsignedShort=function(){
+		return this.getUint16();
+	}
+
+	// }
+	__proto.writeFloat=function(x){
+		this.writeFloat32(x);
+	}
+
+	__proto.writeInt=function(value){
+		this.writeInt32(value);
+	}
+
+	__proto.writeShort=function(value){
+		this.writeInt16(value);
+	}
+
+	__proto.writeBytes=function(bytes,offset,length){
+		(offset===void 0)&& (offset=0);
+		(length===void 0)&& (length=0);
+		bytes.pos=0;
+		this.writeArrayBuffer(bytes.getUint8Array(bytes.pos,bytes.length),offset,length);
+	}
+
+	__proto.writeMultiByte=function(value,charSet){
+		value=value+"";
+		if(charSet=="UNICODE" || charSet=="unicode"){
+			throw "not support unicode";
 		}
-		vos.sort(function(o1,o2){
-			return o1.time > o2.time ?-1 :(o1.time < o2.time ? 1 :0);
-		});
-		this._lastLoginZone.servers.length=0;
-		for (var i=0;i < vos.length;++i){
-			this._lastLoginZone.AddServer(vos[i]);
-		}
+		this.writeUTFBytes(value);
 	}
 
-	__proto.ParseServer=function(data){
-		if ((typeof data=='string'))
-			data=BootUtil.decode(data);
-		var ret=new SelServerVo();
-		ret.serverIP=data.host;
-		ret.serverPort=data.port;
-		ret.serverID=data.id;
-		ret.serverName=data.name;
-		ret.serverState=data.state=="OFF" ? 0 :1;
-		ret.mainversion=data.main;
-		ret.time=data.time==null ? 0 :data.time;
-		ret.snoNum=data.sno==null ? 0 :data.sno;
-		return ret;
-	}
-
-	__proto.ParseZone=function(data){
-		if ((typeof data=='string'))
-			data=BootUtil.decode(data);
-		var ret=new SelZoneVo();
-		ret.zoneID=data.id;
-		ret.zoneName=data.name;
-		return ret;
-	}
-
-	__proto.CreateTestServers=function(zone){}
-	// zone.AddServer(CreateServerVo("刘帅",1016,"192.168.0.43",8080));
-	__proto.CreateServerVo=function(n,zoneId,ip,port){
-		var ret=new SelServerVo();
-		ret.serverName=n;
-		ret.serverID=zoneId;
-		ret.serverIP=ip;
-		ret.serverPort=port;
-		return ret;
-	}
-
-	//在37web端进游戏时，新用户直接进入游戏，老用户需要选服进入
-	__proto.checkServer=function(){
-		if(!Web37Util.isOpen)
-			return;
-		if(!Browser.onMiniGame)
-			return;
-		if(!this.isReqLastSucc || !this.isReqListSucc)
-			return;
-		if(this._lastLoginZone==null || this._lastLoginZone.servers.length==0){
-			if(this._curServer !=null)
-				this.Login();
-		}
-	}
-
-	// protected var URL_SERVER_HOST:String="https://h5.jump.bbmmhh.com";
-	__getset(0,__proto,'URL_SERVER_HOST',function(){
-		if(WebfingertipUtil.isOpen||GameCfg.GAMENAME==GameCfg.GAMENAME_BMH||GameCfg.GAMENAME==GameCfg.GAMENAME_FINGERAPP){
-			return "https://h5.zhijian.popcornie.com";
-		}
-		else if(WebmojieUtil.isOpen)
-		return "https://h5.zhijian.popcornie.com";
-		else if(GameCfg.GAMENAME==GameCfg.GAMENAME_XIYOUAPK)
-		return "https://h5.c.popcornie.com";
-		else if(Web37Util.isOpen)
-		return "https://h5.jump.bbmmhh.com";
-		else if (Browser.inWeChat)
-		return "https://h5.c.popcornie.com";
-		else if (Browser.inQQ)
-		return "https://h5.c.popcornie.com";
-		else if (Browser.inBiLi)
-		return "https://h5.c.popcornie.com";
-		else
-		return "http://info.c.popcornie.com";
+	/**
+	*获取此对象的 ArrayBuffer数据,数据只包含有效数据部分 。
+	*/
+	__getset(0,__proto,'buffer',function(){
+		return this._d_.buffer;
 	});
 
-	return SelServerHttpMediator;
-})(SelServerMediator)
-
-
-//class boots.platform.vo.PlatformLoginQQMiniProgram extends boots.platform.vo.PlatformLoginBase
-var PlatformLoginQQMiniProgram=(function(_super){
-	function PlatformLoginQQMiniProgram(pid,cid){
-		PlatformLoginQQMiniProgram.__super.call(this,pid,cid);
-	}
-
-	__class(PlatformLoginQQMiniProgram,'boots.platform.vo.PlatformLoginQQMiniProgram',_super);
-	var __proto=PlatformLoginQQMiniProgram.prototype;
-	__proto.OnSelServer=function(){
-		console.log("qqSDK选服-------------------");
-	}
-
-	return PlatformLoginQQMiniProgram;
-})(PlatformLoginBase)
-
-
-/**
-*内部登陆
-*/
-//class boots.selserver.med.SelServerNormalMediator extends boots.selserver.med.SelServerMediator
-var SelServerNormalMediator=(function(_super){
-	function SelServerNormalMediator(p){
-		this._btnLastLogin=null;
-		this._dispatcher=new EventDispatcher();
-		this._btnServers=[];
-		SelServerNormalMediator.__super.call(this,p);
-		this.HideServerList();
-		this.CreateGroupVo();
-		this.UpdateZoneList();
-		this._p.imgSelServer.on("click",this,this.ClickSelServer);
-		this._p.btnClose.on("click",this,this.CloseSelServer);
-		this._p.btnBack.on("click",this,this.CloseSelServer);
-		this._p.btnLogin.on("click",this,this.ClickLogin);
-		this._p.btnAgreement.on("click",this,this.ClickAgreement);
-		this._p.radioServerTab.on("change",this,this.OnChangeGroupEnd);
-	}
-
-	__class(SelServerNormalMediator,'boots.selserver.med.SelServerNormalMediator',_super);
-	var __proto=SelServerNormalMediator.prototype;
-	__proto.destroy=function(){
-		this._btnServers=null;
-		this._dispatcher=null;
-		_super.prototype.destroy.call(this);
-	}
-
-	__proto.CreateGroupVo=function(){}
-	// _zones.push(g);
-	__proto.CreateServerVo=function(n,zoneId,ip,port){
-		var ret=new SelServerVo();
-		ret.serverName=n;
-		ret.serverID=zoneId;
-		ret.serverIP=ip;
-		ret.serverPort=port;
-		return ret;
-	}
-
-	__proto.GetGroupVo=function(ip,port,zoneId){
-		for (var i=0;i < this._zones.length;++i){
-			if (this._zones[i].GetServer(ip,port,zoneId)!=null)return this._zones[i];
-		}
-		return null;
-	}
-
-	__proto.GetServerVo=function(ip,port,zoneId){
-		var g=this.GetGroupVo(ip,port,zoneId);
-		return g ? g.GetServer(ip,port,zoneId):null;
-	}
-
-	__proto.CreateServerBtn=function(){
-		var list=this._curZone.servers;
-		for (var i=0;i < list.length;++i){
-			var btn=this._btnServers[i];
-			if (btn==null){
-				btn=new SelServerCellExt();
-				this._btnServers[i]=btn;
-			}
-			btn.x=0;
-			btn.y=i *btn.height;
-			btn.SetData(list[i]);
-			btn.on("click",this,this.ClickServerBtn);
-			this._p.panServerList.addChild(btn);
-		}
-		for (;i < this._btnServers.length;++i){
-			this._btnServers[i].removeSelf();
-		}
-	}
-
-	__proto.OnChangeGroupEnd=function(e){
-		var g=this._zones[this._p.radioServerTab.selectedIndex];
-		this._curZone=g;
-		this.CreateServerBtn();
-	}
-
-	__proto.ClickServerBtn=function(e){
-		var vo=(e.currentTarget).vo;
-		if(vo==null || vo.serverState==0){
-			AlertBootExt.Show("服务器未开启");
-			return;
-		}
-		this._curServer=vo;
-		this.UpdateSelServer();
-		this.HideServerList();
-	}
-
-	__proto.ClickSelServer=function(){
-		this.ShowServerList();
-	}
-
-	__proto.CloseSelServer=function(){
-		this.HideServerList();
-	}
-
-	__proto.ClickLogin=function(){
-		this.Login();
-	}
-
-	__proto.ClickAgreement=function(){
-		AgreementExt.ShowHide();
-	}
-
-	__proto.OnShow=function(){
-		_super.prototype.OnShow.call(this);
-		this.UpdateDefault();
-		this.UpdateSelServer();
-		this.CreateServerBtn();
-	}
-
-	__proto.OnHide=function(){
-		_super.prototype.OnHide.call(this);
-	}
-
-	__proto.UpdateDefault=function(){
-		var acc=LocalStorage.getItem("account");
-		var ip=LocalStorage.getItem("serverhost");
-		var port=parseInt(LocalStorage.getItem("serverport"));
-		var zoneId=parseInt(LocalStorage.getItem("serverid"));
-		if (acc !=null)
-			this._p.txtAccount.text=acc;
-		else
-		this._p.txtAccount.text="youracc";
-		this._curZone=this.GetGroupVo(ip,port,zoneId);
-		this._curServer=this.GetServerVo(ip,port,zoneId);
-		if (this._curZone==null){
-			this._curZone=this._zones[0];
-			this._curServer=this._curZone.servers[0];
-			if (this._btnLastLogin !=null)
-				this._btnLastLogin.removeSelf();
-			}else{
-			if (this._btnLastLogin==null){
-				this._btnLastLogin=new SelServerCellExt();
-				this._btnLastLogin.on("click",this,this.ClickServerBtn);
-			}
-			this._btnLastLogin.SetData(this._curServer);
-		}
-	}
-
-	// _p.labVer.text='ver:'+Version.VERSION;
-	__proto.Login=function(){
-		BootUtil.Log("click login");
-		if (this._p.txtAccount.text==null || this._p.txtAccount.text=="")return;
-		PlatformLoginUtil.vo.server_ip=this._curServer.serverIP;
-		PlatformLoginUtil.vo.server_port=this._curServer.serverPort;
-		PlatformLoginUtil.vo.server_id=this._curServer.serverID;
-		PlatformLoginUtil.vo.adult=1;
-		if(!WebfingertipUtil.isOpen&&!WebmojieUtil.isOpen)
-			PlatformLoginUtil.vo.account=this._p.txtAccount.text;
-		PlatformLoginUtil.vo.mainversion=this._curServer.mainversion;
-		PlatformLoginUtil.vo.snoNum=this._curServer.snoNum;
-		this.SetEnable(false);
-		LocalStorage.setItem(GameCfg.GAMENAME+"_"+"account",PlatformLoginUtil.vo.account);
-		LocalStorage.setItem(GameCfg.GAMENAME+"_"+"serverip",PlatformLoginUtil.vo.server_ip);
-		LocalStorage.setItem(GameCfg.GAMENAME+"_"+"port",PlatformLoginUtil.vo.server_port.toString());
-		LocalStorage.setItem(GameCfg.GAMENAME+"_"+"zoneid",PlatformLoginUtil.vo.server_id.toString());
-		SelServerUtil.SelServer();
-	}
-
-	__proto.UpdateSelServer=function(){
-		if (this._curServer==null){
-			this._p.txtServer.text="未选服";
-			}else{
-			this._p.txtServer.text="当前服："+this._curServer.serverName;
-		}
-	}
-
-	__proto.SetEnable=function(value){
-		this._p.btnLogin.gray=!value;
-		this._p.btnLogin.mouseEnabled=value;
-		this._p.imgSelServer.mouseEnabled=value;
-	}
-
-	__proto.ShowServerList=function(){
-		this._p.showHideServerBg(true);
-		if(Web37Util.isWideScreen)
-			Tween.to(this._p.imgServerBG,{y:(this._p.imgbg.height-this._p.imgServerBG.height*this._p.imgServerBG.scaleY)*0.5,alpha:1},200);
-		else
-		Tween.to(this._p.imgServerBG,{y:(this._p.height-this._p.imgServerBG.height*this._p.imgServerBG.scaleY)*0.5,alpha:1},200);
-	}
-
-	__proto.HideServerList=function(){
-		this._p.showHideServerBg(false);
-		if(Web37Util.isWideScreen)
-			Tween.to(this._p.imgServerBG,{y:this._p.imgbg.height,alpha:0},200);
-		else
-		Tween.to(this._p.imgServerBG,{y:this._p.height,alpha:0},200);
-	}
-
-	return SelServerNormalMediator;
-})(SelServerMediator)
+	return ByteArrayClient;
+})(Byte)
 
 
 //class boots.platform.vo.PlatformLogin37 extends boots.platform.vo.PlatformLoginBase
@@ -5069,6 +5314,37 @@ var SelServerBanshuMediator=(function(_super){
 
 
 /**
+*外网选服页
+*/
+//class boots.selserver.med.SelServerWaiWangMediator extends boots.selserver.med.SelServerNormalMediator
+var SelServerWaiWangMediator=(function(_super){
+	function SelServerWaiWangMediator(p){
+		SelServerWaiWangMediator.__super.call(this,p);
+	}
+
+	__class(SelServerWaiWangMediator,'boots.selserver.med.SelServerWaiWangMediator',_super);
+	var __proto=SelServerWaiWangMediator.prototype;
+	__proto.CreateGroupVo=function(){}
+	// _zones.push(g);
+	__proto.OnShow=function(){
+		_super.prototype.OnShow.call(this);
+	}
+
+	__proto.UpdateDefault=function(){
+		var acc=LocalStorage.getItem(GameCfg.GAMENAME+"_"+"account");
+		if (acc !=null)
+			this._p.txtAccount.text=acc;
+		else
+		this._p.txtAccount.text="youracc";
+		this._curZone=this._zones[0];
+		this._curServer=this._curZone.servers[0];
+	}
+
+	return SelServerWaiWangMediator;
+})(SelServerNormalMediator)
+
+
+/**
 *平台选服页
 */
 //class boots.selserver.med.SelServerHttpAgentMediator extends boots.selserver.med.SelServerHttpMediator
@@ -5180,37 +5456,6 @@ var SelServerHttpAgentMediator=(function(_super){
 
 	return SelServerHttpAgentMediator;
 })(SelServerHttpMediator)
-
-
-/**
-*外网选服页
-*/
-//class boots.selserver.med.SelServerWaiWangMediator extends boots.selserver.med.SelServerNormalMediator
-var SelServerWaiWangMediator=(function(_super){
-	function SelServerWaiWangMediator(p){
-		SelServerWaiWangMediator.__super.call(this,p);
-	}
-
-	__class(SelServerWaiWangMediator,'boots.selserver.med.SelServerWaiWangMediator',_super);
-	var __proto=SelServerWaiWangMediator.prototype;
-	__proto.CreateGroupVo=function(){}
-	// _zones.push(g);
-	__proto.OnShow=function(){
-		_super.prototype.OnShow.call(this);
-	}
-
-	__proto.UpdateDefault=function(){
-		var acc=LocalStorage.getItem(GameCfg.GAMENAME+"_"+"account");
-		if (acc !=null)
-			this._p.txtAccount.text=acc;
-		else
-		this._p.txtAccount.text="youracc";
-		this._curZone=this._zones[0];
-		this._curServer=this._curZone.servers[0];
-	}
-
-	return SelServerWaiWangMediator;
-})(SelServerNormalMediator)
 
 
 /**
@@ -5409,6 +5654,10 @@ var SelServerPanelExt=(function(_super){
 		this.lab_des=null;
 		this.loadingAni=null;
 		this.btnNotice=null;
+		this.boxtest=null;
+		this.server_ip=null;
+		this.server_port=null;
+		this.server_id=null;
 		this._medType=0;
 		this._med=null;
 		this.radioT=null;
@@ -5708,7 +5957,7 @@ var SelServerPanelExt=(function(_super){
 		return this._medType;
 	});
 
-	SelServerPanelExt.uiView={"type":"View","props":{"width":720,"height":1280},"compId":2,"child":[{"type":"Image","props":{"y":0,"x":0,"var":"imgbg","skin":"res/ui/image/boot/beijingnew.png"},"compId":3,"child":[{"type":"Image","props":{"y":1130,"x":153,"var":"imgDi","skin":"res/ui/image/boot/di.png","sizeGrid":"20,20,20,20"},"compId":106}]},{"type":"Box","props":{"y":1155,"x":0,"width":720,"var":"boxWord","mouseThrough":true,"mouseEnabled":false,"height":125},"compId":67,"child":[{"type":"Label","props":{"y":25,"x":153,"width":413,"var":"labWord1","text":"适龄提示：本游戏适合18周岁以上用户参与","stroke":2,"height":20,"fontSize":20,"font":"DFYuanW5","color":"#FFDDAC","bold":true,"align":"center"},"compId":68},{"type":"Text","props":{"y":108,"x":25,"width":670,"var":"txtWord0","text":"适度游戏益脑,沉迷游戏伤身.合理安排时间,享受健康生活.","strokeColor":"#080808","stroke":2,"name":"","height":17,"fontSize":16,"font":"DFYuanW5","color":"#FFDDAC","bold":true,"align":"center","runtime":"laya.display.Text"},"compId":113},{"type":"Text","props":{"y":88,"x":25,"width":670,"var":"txtWord1","text":"抵制不良游戏,拒绝盗版游戏.注意自我保护,谨防受骗上当.","strokeColor":"#080808","stroke":2,"name":"","height":17,"fontSize":16,"font":"DFYuanW5","color":"#FFDDAC","bold":true,"align":"center","runtime":"laya.display.Text"},"compId":74},{"type":"Text","props":{"y":68,"x":35,"wordWrap":false,"width":650,"var":"txtWord2","text":"ISBN:978-7-498-06291-8 软著登字第2375736号  著作权人: 广州喵宝网络科技有限公司","strokeColor":"#080808","stroke":2,"name":"","height":16,"fontSize":16,"font":"DFYuanW5","color":"#FFDDAC","bold":true,"align":"center","runtime":"laya.display.Text"},"compId":70},{"type":"Text","props":{"y":49,"x":128,"wordWrap":false,"width":463,"var":"txtWord3","text":"版号:国新出审[2019]1112号  出版单位:杭州群游科技有限公司","strokeColor":"#080808","stroke":2,"height":16,"fontSize":16,"font":"DFYuanW5","color":"#FFDDAC","bold":true,"align":"center","runtime":"laya.display.Text"},"compId":72}]},{"type":"Box","props":{"y":1058,"x":0,"width":720,"visible":false,"var":"boxWord2","height":220},"compId":58,"child":[{"type":"Text","props":{"y":164,"x":169.98599243164062,"wordWrap":false,"valign":"middle","text":"著作权人： 广州喵宝网络科技有限公司","stroke":2,"name":"","fontSize":22,"font":"DFYuanW5","color":"#FFDDAC","align":"center","runtime":"laya.display.Text"},"compId":59},{"type":"Text","props":{"y":137,"x":120,"wordWrap":false,"valign":"middle","text":"ISBN：978-7-498-06291-8 软著登字第2375736号","strokeColor":"#080808","stroke":2,"name":"","fontSize":22,"font":"DFYuanW5","color":"#FFDDAC","align":"center","runtime":"laya.display.Text"},"compId":60},{"type":"Text","props":{"y":106,"x":196,"wordWrap":false,"valign":"middle","text":"出版单位：杭州群游科技有限公司","strokeColor":"#080808","stroke":2,"name":"","fontSize":22,"font":"DFYuanW5","color":"#FFDDAC","align":"center","runtime":"laya.display.Text"},"compId":61},{"type":"Text","props":{"y":75,"x":216,"wordWrap":false,"valign":"middle","text":"版号：国新出审[2019]1112号","strokeColor":"#080808","stroke":2,"name":"","fontSize":22,"font":"DFYuanW5","color":"#FFDDAC","align":"center","runtime":"laya.display.Text"},"compId":62},{"type":"Text","props":{"y":44,"x":53,"text":"适度游戏益脑，沉迷游戏伤身。合理安排时间，享受健康生活。","strokeColor":"#080808","stroke":2,"name":"","fontSize":22,"font":"DFYuanW5","color":"#FFDDAC","align":"center","runtime":"laya.display.Text"},"compId":63},{"type":"Text","props":{"y":13,"x":53,"text":"抵制不良游戏，拒绝盗版游戏。注意自我保护，谨防受骗上当。","strokeColor":"#080808","stroke":2,"name":"","fontSize":22,"font":"DFYuanW5","color":"#FFDDAC","align":"center","runtime":"laya.display.Text"},"compId":64}]},{"type":"Box","props":{"y":0,"x":0,"width":720,"var":"boxSelServer","mouseThrough":true,"mouseEnabled":true,"height":1280},"compId":90,"child":[{"type":"Button","props":{"y":185,"x":606,"var":"btnAgreement","stateNum":1,"skin":"res/ui/image/boot/xieyi.png"},"compId":81},{"type":"Button","props":{"y":279,"x":606,"var":"btnNotice","stateNum":1,"skin":"res/ui/image/boot/notice.png"},"compId":114},{"type":"Box","props":{"y":859,"x":0,"width":720,"var":"boxServer","height":395},"compId":65,"child":[{"type":"Image","props":{"y":5,"x":60,"width":600,"var":"imglatest","skin":"res/ui/image/boot/name_bg.png","sizeGrid":"18,37,18,37","height":78},"compId":53,"child":[{"type":"Label","props":{"y":26,"x":20,"width":250,"var":"labNew","text":"最新服：","prompt":"服务器地址","height":34,"fontSize":30,"font":"DFYuanW5","color":"#ffffff","align":"right"},"compId":66},{"type":"Label","props":{"y":26,"x":270,"width":300,"var":"lablatest","text":"{@}","prompt":"服务器地址","height":34,"fontSize":30,"font":"DFYuanW5","color":"#00FF00","bold":true,"align":"left"},"compId":56}]},{"type":"Image","props":{"y":91,"x":60,"width":600,"var":"imgSelServer","skin":"res/ui/image/boot/name_bg.png","sizeGrid":"18,37,18,37","height":78},"compId":29,"child":[{"type":"Button","props":{"y":21,"x":433,"var":"btnSelectServer","stateNum":1,"skin":"res/ui/image/boot/select.png"},"compId":9},{"type":"Label","props":{"y":22,"x":21,"width":415,"var":"txtServer","text":"当前服：  燃爆三国1服","prompt":"服务器地址","height":34,"fontSize":30,"font":"DFYuanW5","color":"#ffffff","align":"center"},"compId":8}]},{"type":"TextInput","props":{"y":177,"x":60,"width":600,"var":"txtAccount","skin":"res/ui/image/boot/name_bg.png","sizeGrid":"18,37,18,37","prompt":"账户名称","height":78,"fontSize":28,"font":"DFYuanW5","color":"#ffffff","align":"center"},"compId":10},{"type":"Button","props":{"y":261,"x":207,"var":"btnLogin","stateNum":1,"skin":"res/ui/image/boot/anniu.png"},"compId":7,"child":[{"type":"Sprite","props":{"y":17,"x":50,"texture":"res/ui/image/boot/start.png"},"compId":57}]}]},{"type":"Image","props":{"y":137,"x":0,"width":720,"var":"imgServerBG","skin":"res/ui/image/boot/mainbg_1.png","sizeGrid":"115,117,115,117","height":1063},"compId":12,"child":[{"type":"Image","props":{"y":11,"x":19,"width":681,"skin":"res/ui/image/boot/mainbg_2.png","sizeGrid":"84,82,67,82","height":932},"compId":75},{"type":"Sprite","props":{"y":-44,"x":185,"var":"sprdebug","texture":"res/ui/image/boot/title_1.png"},"compId":13,"child":[{"type":"Sprite","props":{"y":11,"x":82,"visible":true,"texture":"res/ui/image/boot/_ui_cj_bm_fuwuqixuanzhe.png"},"compId":16}]},{"type":"Image","props":{"y":-15,"x":0,"width":720,"skin":"res/ui/image/boot/title_down1.png","sizeGrid":"0,213,0,213"},"compId":34},{"type":"Sprite","props":{"y":105,"x":345,"texture":"res/ui/image/boot/figure_1.png","pivotY":65,"pivotX":25},"compId":36},{"type":"Button","props":{"y":-3,"x":612,"var":"btnClose","stateNum":1,"skin":"res/ui/image/boot/close1.png"},"compId":14},{"type":"Button","props":{"y":944,"x":604,"var":"btnBack","stateNum":1,"skin":"res/ui/image/boot/back1.png"},"compId":28},{"type":"Image","props":{"y":79,"x":264,"width":419,"skin":"res/ui/image/boot/_ui_sbm_002.png","sizeGrid":"8,8,8,8","height":820},"compId":25,"child":[{"type":"Panel","props":{"y":5,"x":9,"width":402,"var":"panServerList","height":810},"compId":27}]},{"type":"Image","props":{"y":79,"x":36,"width":225,"skin":"res/ui/image/boot/_ui_sbm_002.png","sizeGrid":"8,8,8,8","height":820},"compId":18,"child":[{"type":"Panel","props":{"y":15,"x":5,"width":214,"var":"panServerTab","height":863},"compId":20,"child":[{"type":"RadioGroup","props":{"y":0,"x":0,"width":214,"var":"radioServerTab","stateNum":3,"space":0,"skin":"res/ui/image/boot/_ui_bt_fuwuqi02_comBtn.png","selectedIndex":0,"labelSize":28,"labelAlign":"center","height":852,"direction":"vertical"},"compId":22,"child":[{"type":"Radio","props":{"y":0,"x":0,"width":214,"skin":"res/ui/image/boot/_ui_bt_fuwuqi02_comBtn.png","name":"item0","labelSize":28,"labelColors":"#9A6F46,#AA5300,#AA5300,#9A6F46","height":77},"compId":44}]}]}]}]}]},{"type":"Box","props":{"y":-1,"x":0,"width":482,"var":"boxLoadMain","mouseThrough":true,"mouseEnabled":false,"height":622},"compId":89,"child":[{"type":"Sprite","props":{"y":460,"x":242,"width":240,"var":"sprLoading","texture":"res/ui/image/boot/jiazaidi.png","height":162},"compId":85,"child":[{"type":"Sprite","props":{"y":66,"x":120,"var":"sprQuan","texture":"res/ui/image/boot/jiazaiquan.png","pivotY":65.5,"pivotX":65.5},"compId":86},{"type":"Label","props":{"y":131,"x":-110,"width":459,"var":"labDesc","text":"正在加载：{@}","height":28,"fontSize":24,"font":"DFYuanW5","color":"#FFDDAC","align":"center"},"compId":87}]}]},{"type":"Box","props":{"y":-101,"x":0,"width":720,"var":"boxLoading","mouseThrough":true,"mouseEnabled":true,"height":1120},"compId":88,"child":[{"type":"Sprite","props":{"y":960,"x":0,"width":720,"texture":"res/ui/image/boot/word_di.png","height":145},"compId":91},{"type":"Image","props":{"y":948,"x":64,"width":591,"visible":true,"var":"prog1Image","skin":"res/ui/image/boot/pro1.png","sizeGrid":"0,54,0,54","height":30},"compId":93,"child":[{"type":"Image","props":{"y":6,"x":6,"width":579,"var":"imgProg1","skin":"res/ui/image/boot/pro1$bar.png","sizeGrid":"0,10,0,10","height":20},"compId":94},{"type":"Sprite","props":{"y":-17,"x":542.5,"var":"sprYun1","texture":"res/ui/image/boot/prolight.png"},"compId":95},{"type":"Text","props":{"y":2,"x":126,"width":339,"var":"txtDesc1","text":"100%","height":25,"fontSize":24,"font":"DFYuanW5","color":"#FFFFFF","align":"center","runtime":"laya.display.Text"},"compId":96},{"type":"Label","props":{"y":34,"x":109,"width":371.73,"visible":true,"text":"首次加载时间稍长,请耐心等待","stroke":2,"height":28,"fontSize":28,"font":"DFYuanW5","color":"#F7C016"},"compId":97}]},{"type":"Image","props":{"y":1029,"x":64,"width":591,"var":"progimage","skin":"res/ui/image/boot/pro2.png","sizeGrid":"0,54,0,54","height":30},"compId":98,"child":[{"type":"Image","props":{"y":5,"x":6,"width":579,"var":"imgProg","skin":"res/ui/image/boot/pro2$bar.png","sizeGrid":"0,10,0,10","height":20},"compId":99},{"type":"Sprite","props":{"y":-17,"x":542.5,"var":"sprYun","texture":"res/ui/image/boot/prolight.png"},"compId":100},{"type":"Text","props":{"y":2,"x":126,"width":339,"var":"txtDesc","text":"进度","height":25,"fontSize":24,"font":"DFYuanW5","color":"#FFFFFF","align":"center","runtime":"laya.display.Text"},"compId":101},{"type":"Label","props":{"y":34,"x":114,"width":227,"visible":true,"text":"如果无法进入游戏","stroke":2,"height":28,"fontSize":28,"font":"DFYuanW5","color":"#F7C016"},"compId":103},{"type":"Label","props":{"y":34,"x":341.5,"visible":true,"var":"labRefresh","underline":true,"text":"请点击刷新","strokeColor":"#080808","stroke":2,"fontSize":28,"font":"DFYuanW5","color":"#00FF1e"},"compId":104}]},{"type":"Text","props":{"y":20,"x":0,"width":720,"visible":false,"text":"进度","height":55,"fontSize":25,"font":"DFYuanW5","color":"#000000","align":"center","runtime":"laya.display.Text"},"compId":92},{"type":"Sprite","props":{"y":850,"x":110,"var":"loadingAni"},"compId":109},{"type":"Label","props":{"y":997,"x":6,"width":707,"var":"lab_des","text":"{@}","height":28,"fontSize":24,"font":"DFYuanW5","color":"#FFDDAC","align":"center"},"compId":115}]}],"loadList":["res/ui/image/boot/di.png","res/ui/image/boot/xieyi.png","res/ui/image/boot/notice.png","res/ui/image/boot/name_bg.png","res/ui/image/boot/select.png","res/ui/image/boot/anniu.png","res/ui/image/boot/start.png","res/ui/image/boot/mainbg_1.png","res/ui/image/boot/mainbg_2.png","res/ui/image/boot/title_1.png","res/ui/image/boot/_ui_cj_bm_fuwuqixuanzhe.png","res/ui/image/boot/title_down1.png","res/ui/image/boot/figure_1.png","res/ui/image/boot/close1.png","res/ui/image/boot/back1.png","res/ui/image/boot/_ui_sbm_002.png","res/ui/image/boot/_ui_bt_fuwuqi02_comBtn.png","res/ui/image/boot/jiazaidi.png","res/ui/image/boot/jiazaiquan.png","res/ui/image/boot/word_di.png","res/ui/image/boot/pro1.png","res/ui/image/boot/pro1$bar.png","res/ui/image/boot/prolight.png","res/ui/image/boot/pro2.png","res/ui/image/boot/pro2$bar.png","res/ui/image/boot/beijingnew.png"],"loadList3D":[]};
+	SelServerPanelExt.uiView={"type":"View","props":{"width":720,"height":1280},"compId":2,"child":[{"type":"Image","props":{"y":0,"x":0,"var":"imgbg","skin":"res/ui/image/boot/beijing.png"},"compId":3,"child":[{"type":"Image","props":{"y":1130,"x":153,"var":"imgDi","skin":"res/ui/image/boot/di.png","sizeGrid":"20,20,20,20"},"compId":106}]},{"type":"Box","props":{"y":1155,"x":0,"width":720,"var":"boxWord","mouseThrough":true,"mouseEnabled":false,"height":125},"compId":67,"child":[{"type":"Label","props":{"y":25,"x":153,"width":413,"var":"labWord1","text":"适龄提示：本游戏适合18周岁以上用户参与","stroke":2,"height":20,"fontSize":20,"font":"DFYuanW5","color":"#FFDDAC","bold":true,"align":"center"},"compId":68},{"type":"Text","props":{"y":108,"x":25,"width":670,"var":"txtWord0","text":"适度游戏益脑,沉迷游戏伤身.合理安排时间,享受健康生活.","strokeColor":"#080808","stroke":2,"name":"","height":17,"fontSize":16,"font":"DFYuanW5","color":"#FFDDAC","bold":true,"align":"center","runtime":"laya.display.Text"},"compId":113},{"type":"Text","props":{"y":88,"x":25,"width":670,"var":"txtWord1","text":"抵制不良游戏,拒绝盗版游戏.注意自我保护,谨防受骗上当.","strokeColor":"#080808","stroke":2,"name":"","height":17,"fontSize":16,"font":"DFYuanW5","color":"#FFDDAC","bold":true,"align":"center","runtime":"laya.display.Text"},"compId":74},{"type":"Text","props":{"y":68,"x":35,"wordWrap":false,"width":650,"var":"txtWord2","text":"ISBN:978-7-498-06291-8 软著登字第2375736号  著作权人: 广州喵宝网络科技有限公司","strokeColor":"#080808","stroke":2,"name":"","height":16,"fontSize":16,"font":"DFYuanW5","color":"#FFDDAC","bold":true,"align":"center","runtime":"laya.display.Text"},"compId":70},{"type":"Text","props":{"y":49,"x":128,"wordWrap":false,"width":463,"var":"txtWord3","text":"版号:国新出审[2019]1112号  出版单位:杭州群游科技有限公司","strokeColor":"#080808","stroke":2,"height":16,"fontSize":16,"font":"DFYuanW5","color":"#FFDDAC","bold":true,"align":"center","runtime":"laya.display.Text"},"compId":72}]},{"type":"Box","props":{"y":1058,"x":0,"width":720,"visible":false,"var":"boxWord2","height":220},"compId":58,"child":[{"type":"Text","props":{"y":164,"x":169.98599243164062,"wordWrap":false,"valign":"middle","text":"著作权人： 广州喵宝网络科技有限公司","stroke":2,"name":"","fontSize":22,"font":"DFYuanW5","color":"#FFDDAC","align":"center","runtime":"laya.display.Text"},"compId":59},{"type":"Text","props":{"y":137,"x":120,"wordWrap":false,"valign":"middle","text":"ISBN：978-7-498-06291-8 软著登字第2375736号","strokeColor":"#080808","stroke":2,"name":"","fontSize":22,"font":"DFYuanW5","color":"#FFDDAC","align":"center","runtime":"laya.display.Text"},"compId":60},{"type":"Text","props":{"y":106,"x":196,"wordWrap":false,"valign":"middle","text":"出版单位：杭州群游科技有限公司","strokeColor":"#080808","stroke":2,"name":"","fontSize":22,"font":"DFYuanW5","color":"#FFDDAC","align":"center","runtime":"laya.display.Text"},"compId":61},{"type":"Text","props":{"y":75,"x":216,"wordWrap":false,"valign":"middle","text":"版号：国新出审[2019]1112号","strokeColor":"#080808","stroke":2,"name":"","fontSize":22,"font":"DFYuanW5","color":"#FFDDAC","align":"center","runtime":"laya.display.Text"},"compId":62},{"type":"Text","props":{"y":44,"x":53,"text":"适度游戏益脑，沉迷游戏伤身。合理安排时间，享受健康生活。","strokeColor":"#080808","stroke":2,"name":"","fontSize":22,"font":"DFYuanW5","color":"#FFDDAC","align":"center","runtime":"laya.display.Text"},"compId":63},{"type":"Text","props":{"y":13,"x":53,"text":"抵制不良游戏，拒绝盗版游戏。注意自我保护，谨防受骗上当。","strokeColor":"#080808","stroke":2,"name":"","fontSize":22,"font":"DFYuanW5","color":"#FFDDAC","align":"center","runtime":"laya.display.Text"},"compId":64}]},{"type":"Box","props":{"y":0,"x":0,"width":720,"var":"boxSelServer","mouseThrough":true,"mouseEnabled":true,"height":1280},"compId":90,"child":[{"type":"Button","props":{"y":185,"x":606,"var":"btnAgreement","stateNum":1,"skin":"res/ui/image/boot/xieyi.png"},"compId":81},{"type":"Button","props":{"y":279,"x":606,"var":"btnNotice","stateNum":1,"skin":"res/ui/image/boot/notice.png"},"compId":114},{"type":"Box","props":{"y":859,"x":0,"width":720,"var":"boxServer","height":395},"compId":65,"child":[{"type":"Image","props":{"y":5,"x":60,"width":600,"var":"imglatest","skin":"res/ui/image/boot/name_bg.png","sizeGrid":"18,37,18,37","height":78},"compId":53,"child":[{"type":"Label","props":{"y":26,"x":20,"width":250,"var":"labNew","text":"最新服：","prompt":"服务器地址","height":34,"fontSize":30,"font":"DFYuanW5","color":"#ffffff","align":"right"},"compId":66},{"type":"Label","props":{"y":26,"x":270,"width":300,"var":"lablatest","text":"{@}","prompt":"服务器地址","height":34,"fontSize":30,"font":"DFYuanW5","color":"#00FF00","bold":true,"align":"left"},"compId":56}]},{"type":"Image","props":{"y":91,"x":60,"width":600,"var":"imgSelServer","skin":"res/ui/image/boot/name_bg.png","sizeGrid":"18,37,18,37","height":78},"compId":29,"child":[{"type":"Button","props":{"y":21,"x":433,"var":"btnSelectServer","stateNum":1,"skin":"res/ui/image/boot/select.png"},"compId":9},{"type":"Label","props":{"y":22,"x":21,"width":415,"var":"txtServer","text":"当前服：  燃爆三国1服","prompt":"服务器地址","height":34,"fontSize":30,"font":"DFYuanW5","color":"#ffffff","align":"center"},"compId":8}]},{"type":"TextInput","props":{"y":177,"x":60,"width":600,"var":"txtAccount","skin":"res/ui/image/boot/name_bg.png","sizeGrid":"18,37,18,37","prompt":"账户名称","height":78,"fontSize":28,"font":"DFYuanW5","color":"#ffffff","align":"center"},"compId":10},{"type":"Button","props":{"y":261,"x":207,"var":"btnLogin","stateNum":1,"skin":"res/ui/image/boot/anniu.png"},"compId":7,"child":[{"type":"Sprite","props":{"y":17,"x":50,"texture":"res/ui/image/boot/start.png"},"compId":57}]}]},{"type":"Image","props":{"y":137,"x":0,"width":720,"var":"imgServerBG","skin":"res/ui/image/boot/mainbg_1.png","sizeGrid":"115,117,115,117","height":1063},"compId":12,"child":[{"type":"Image","props":{"y":11,"x":19,"width":681,"skin":"res/ui/image/boot/mainbg_2.png","sizeGrid":"84,82,67,82","height":932},"compId":75},{"type":"Sprite","props":{"y":-44,"x":185,"var":"sprdebug","texture":"res/ui/image/boot/title_1.png"},"compId":13,"child":[{"type":"Sprite","props":{"y":11,"x":82,"visible":true,"texture":"res/ui/image/boot/_ui_cj_bm_fuwuqixuanzhe.png"},"compId":16}]},{"type":"Image","props":{"y":-15,"x":0,"width":720,"skin":"res/ui/image/boot/title_down1.png","sizeGrid":"0,213,0,213"},"compId":34},{"type":"Sprite","props":{"y":105,"x":345,"texture":"res/ui/image/boot/figure_1.png","pivotY":65,"pivotX":25},"compId":36},{"type":"Button","props":{"y":-3,"x":612,"var":"btnClose","stateNum":1,"skin":"res/ui/image/boot/close1.png"},"compId":14},{"type":"Button","props":{"y":944,"x":604,"var":"btnBack","stateNum":1,"skin":"res/ui/image/boot/back1.png"},"compId":28},{"type":"Image","props":{"y":79,"x":264,"width":419,"skin":"res/ui/image/boot/_ui_sbm_002.png","sizeGrid":"8,8,8,8","height":820},"compId":25,"child":[{"type":"Panel","props":{"y":5,"x":9,"width":402,"var":"panServerList","height":810},"compId":27}]},{"type":"Image","props":{"y":79,"x":36,"width":225,"skin":"res/ui/image/boot/_ui_sbm_002.png","sizeGrid":"8,8,8,8","height":820},"compId":18,"child":[{"type":"Panel","props":{"y":15,"x":5,"width":214,"var":"panServerTab","height":863},"compId":20,"child":[{"type":"RadioGroup","props":{"y":0,"x":0,"width":214,"var":"radioServerTab","stateNum":3,"space":0,"skin":"res/ui/image/boot/_ui_bt_fuwuqi02_comBtn.png","selectedIndex":0,"labelSize":28,"labelAlign":"center","height":852,"direction":"vertical"},"compId":22,"child":[{"type":"Radio","props":{"y":0,"x":0,"width":214,"skin":"res/ui/image/boot/_ui_bt_fuwuqi02_comBtn.png","name":"item0","labelSize":28,"labelColors":"#9A6F46,#AA5300,#AA5300,#9A6F46","height":77},"compId":44}]}]}]}]}]},{"type":"Box","props":{"y":-1,"x":0,"width":482,"var":"boxLoadMain","mouseThrough":true,"mouseEnabled":false,"height":622},"compId":89,"child":[{"type":"Sprite","props":{"y":460,"x":242,"width":240,"var":"sprLoading","texture":"res/ui/image/boot/jiazaidi.png","height":162},"compId":85,"child":[{"type":"Sprite","props":{"y":66,"x":120,"var":"sprQuan","texture":"res/ui/image/boot/jiazaiquan.png","pivotY":65.5,"pivotX":65.5},"compId":86},{"type":"Label","props":{"y":131,"x":-110,"width":459,"var":"labDesc","text":"正在加载：{@}","height":28,"fontSize":24,"font":"DFYuanW5","color":"#FFDDAC","align":"center"},"compId":87}]}]},{"type":"Box","props":{"y":-101,"x":0,"width":720,"var":"boxLoading","mouseThrough":true,"mouseEnabled":true,"height":1120},"compId":88,"child":[{"type":"Sprite","props":{"y":960,"x":0,"width":720,"texture":"res/ui/image/boot/word_di.png","height":145},"compId":91},{"type":"Image","props":{"y":948,"x":64,"width":591,"visible":true,"var":"prog1Image","skin":"res/ui/image/boot/pro1.png","sizeGrid":"0,54,0,54","height":30},"compId":93,"child":[{"type":"Image","props":{"y":6,"x":6,"width":579,"var":"imgProg1","skin":"res/ui/image/boot/pro1$bar.png","sizeGrid":"0,10,0,10","height":20},"compId":94},{"type":"Sprite","props":{"y":-17,"x":542.5,"var":"sprYun1","texture":"res/ui/image/boot/prolight.png"},"compId":95},{"type":"Text","props":{"y":2,"x":126,"width":339,"var":"txtDesc1","text":"100%","height":25,"fontSize":24,"font":"DFYuanW5","color":"#FFFFFF","align":"center","runtime":"laya.display.Text"},"compId":96},{"type":"Label","props":{"y":34,"x":109,"width":371.73,"visible":true,"text":"首次加载时间稍长,请耐心等待","stroke":2,"height":28,"fontSize":28,"font":"DFYuanW5","color":"#F7C016"},"compId":97}]},{"type":"Image","props":{"y":1029,"x":64,"width":591,"var":"progimage","skin":"res/ui/image/boot/pro2.png","sizeGrid":"0,54,0,54","height":30},"compId":98,"child":[{"type":"Image","props":{"y":5,"x":6,"width":579,"var":"imgProg","skin":"res/ui/image/boot/pro2$bar.png","sizeGrid":"0,10,0,10","height":20},"compId":99},{"type":"Sprite","props":{"y":-17,"x":542.5,"var":"sprYun","texture":"res/ui/image/boot/prolight.png"},"compId":100},{"type":"Text","props":{"y":2,"x":126,"width":339,"var":"txtDesc","text":"进度","height":25,"fontSize":24,"font":"DFYuanW5","color":"#FFFFFF","align":"center","runtime":"laya.display.Text"},"compId":101},{"type":"Label","props":{"y":34,"x":114,"width":227,"visible":true,"text":"如果无法进入游戏","stroke":2,"height":28,"fontSize":28,"font":"DFYuanW5","color":"#F7C016"},"compId":103},{"type":"Label","props":{"y":34,"x":341.5,"visible":true,"var":"labRefresh","underline":true,"text":"请点击刷新","strokeColor":"#080808","stroke":2,"fontSize":28,"font":"DFYuanW5","color":"#00FF1e"},"compId":104}]},{"type":"Text","props":{"y":20,"x":0,"width":720,"visible":false,"text":"进度","height":55,"fontSize":25,"font":"DFYuanW5","color":"#000000","align":"center","runtime":"laya.display.Text"},"compId":92},{"type":"Sprite","props":{"y":850,"x":110,"var":"loadingAni"},"compId":109},{"type":"Label","props":{"y":997,"x":6,"width":707,"var":"lab_des","text":"{@}","height":28,"fontSize":24,"font":"DFYuanW5","color":"#FFDDAC","align":"center"},"compId":115}]},{"type":"Box","props":{"visible":false,"var":"boxtest"},"compId":117,"child":[{"type":"TextInput","props":{"y":177,"x":67,"width":600,"var":"server_ip","skin":"res/ui/image/boot/name_bg.png","sizeGrid":"18,37,18,37","prompt":"server_ip","height":78,"fontSize":28,"font":"DFYuanW5","color":"#ffffff","align":"center"},"compId":118},{"type":"TextInput","props":{"y":255,"x":67,"width":600,"var":"server_port","skin":"res/ui/image/boot/name_bg.png","sizeGrid":"18,37,18,37","prompt":"server_port","height":78,"fontSize":28,"font":"DFYuanW5","color":"#ffffff","align":"center"},"compId":119},{"type":"TextInput","props":{"y":341,"x":68,"width":600,"var":"server_id","skin":"res/ui/image/boot/name_bg.png","sizeGrid":"18,37,18,37","prompt":"server_id","height":78,"fontSize":28,"font":"DFYuanW5","color":"#ffffff","align":"center"},"compId":120}]}],"loadList":["res/ui/image/boot/beijing.png","res/ui/image/boot/di.png","res/ui/image/boot/xieyi.png","res/ui/image/boot/notice.png","res/ui/image/boot/name_bg.png","res/ui/image/boot/select.png","res/ui/image/boot/anniu.png","res/ui/image/boot/start.png","res/ui/image/boot/mainbg_1.png","res/ui/image/boot/mainbg_2.png","res/ui/image/boot/title_1.png","res/ui/image/boot/_ui_cj_bm_fuwuqixuanzhe.png","res/ui/image/boot/title_down1.png","res/ui/image/boot/figure_1.png","res/ui/image/boot/close1.png","res/ui/image/boot/back1.png","res/ui/image/boot/_ui_sbm_002.png","res/ui/image/boot/_ui_bt_fuwuqi02_comBtn.png","res/ui/image/boot/jiazaidi.png","res/ui/image/boot/jiazaiquan.png","res/ui/image/boot/word_di.png","res/ui/image/boot/pro1.png","res/ui/image/boot/pro1$bar.png","res/ui/image/boot/prolight.png","res/ui/image/boot/pro2.png","res/ui/image/boot/pro2$bar.png"],"loadList3D":[]};
 	return SelServerPanelExt;
 })(View)
 
