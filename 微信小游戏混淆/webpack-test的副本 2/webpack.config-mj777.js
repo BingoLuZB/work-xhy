@@ -9,24 +9,24 @@ const list = {
     '马甲777（传奇）/core2': {
         // 'game': './传奇/core2/game.js', //base64
     },
-    // '马甲777（传奇）/core3': {
-    //     'game3': './传奇/core3/game.js', //hexadecimal
-    // },
+    '马甲777（传奇）/core3': {
+        'game3': './传奇/core3/game.js', //hexadecimal
+    },
     '马甲777（传奇）/libs': {
-        'gamestart': './传奇/libs/gamestart.js', //base64 0.7
+        // 'gamestart': './传奇/libs/gamestart.js', //base64 0.7
     },
 }
 
 const mjConfig = {
-    //林泽数组 (不过审)
+    //单个数组
     stringArrayThreshold: 0.7,
     // stringArrayEncoding: 'rc4',
-    // identifierNamesGenerator: 'hexadecimal',
+    identifierNamesGenerator: 'hexadecimal',
     nameList: getEntryPath(true), //json文件列表 读取全部列表，写定的地址列表
     isNeedOneJson: false, //是否需要合并一个json文件,
     mjNum: 777,
     // controlFlowFlattening: true, //是否启用代码控制流平整
-    // controlFlowFlatteningThreshold: 0.3, //转换将应用于任何给定节点的概率。
+    // controlFlowFlatteningThreshold: 0.2, //转换将应用于任何给定节点的概率。
 }
 
 const finalConfig = Object.assign(config, mjConfig)
