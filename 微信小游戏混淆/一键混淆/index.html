@@ -26,11 +26,12 @@
                 </li>
                 <li>
                     <div> 要混淆的文件：</div>
-                    <textarea required name="file" placeholder="例：三国/js/customlib.min.js            /代表的就是下一层的意思"></textarea>
+                    <textarea required name="file" placeholder="例：js:a.js,b.js                  stage1:main1.js,main2.js           三国文件夹下，js文件夹的a.js b.js        注意：所有标点符号都要用英文输入法的             不同文件之间要用英文的,隔开"></textarea>
                 </li>
                 <li>
-                    游戏ID：
-                    <input type="test" name="idArr" placeholder="多个id请用 , 隔开" value="" required>
+                    游戏ID及其对应的小游戏appid：
+                    <textarea required name="idArr" placeholder="例：1: wx6515165132,                         2:wx65123184891,                   3:wx6165165165                            注意：所有标点符号都要用英文输入法的             不同文件之间要用英文的,隔开"></textarea>
+                
                 </li>
                 <li>
                     混淆方式:
@@ -144,7 +145,6 @@
         padding: 20px;
         border: solid 6px #87CEFA;
         flex: 0;
-
     }
 
     #form1 .addBtn {

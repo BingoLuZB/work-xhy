@@ -3,6 +3,8 @@ const cp = require('child_process');
 const http = require("http");
 const httpUrl = 'localhost'
 const querystring = require('querystring')
+const gameDir = 'inputGame'
+const configDir = 'config'
 module.exports = {
     // windows 警告框
     showAlert(str) {
@@ -24,7 +26,7 @@ module.exports = {
 
     // 用浏览器打开index.html
     openHtml() {
-        let fileNames = fs.readdirSync('inputGame')
+        let fileNames = fs.readdirSync(gameDir)
         // 打开html
         return new Promise((resolve, reject) => {
             http.createServer((req, res) => {
@@ -34,8 +36,7 @@ module.exports = {
                         res.setHeader("Content-Type", "text/plain");
                         res.end("Not Found!");
                         reject()
-                    }
-                    else {
+                    } else {
                         res.statusCode = 200;
                         res.setHeader("Content-Type", "text/html");
                         res.end(data);
@@ -57,7 +58,7 @@ module.exports = {
                             // 如果有多个打包配置
                             for (let i = 0; i < resData.game.length; i++) {
                                 let obj = {}
-                                for(let j in resData) {
+                                for (let j in resData) {
                                     obj[j] = resData[j][i]
                                 }
                                 inputConfig[obj.game] = obj
@@ -67,22 +68,64 @@ module.exports = {
                             inputConfig[resData.game] = resData
                         }
                         for (let i in inputConfig) {
+                            // 先判断inputGame目录下有没有用户输入的游戏
                             if (fileNames.includes(i)) {
+                                // 这里的item是某个游戏的配置的对象
                                 let item = inputConfig[i]
                                 for (let j in item) {
                                     switch (j) {
                                         // 处理要混淆文件的格式
-                                        case 'file':    
-                                            console.log(item.j);
+                                        case 'file':
+                                            let arr = item[j].split('\r\n')
+                                            let game = i
+                                            let fileObj = {}
+                                            arr.forEach((item2, index) => {
+                                                // 这里的item2是file之后分割字符串
+                                                let finalFile = ''
+                                                if (item2.includes(':')) {
+                                                    // 如果混淆的不是根目录的文件
+                                                    let fileStr = item2.split(':')
+                                                    let dir = fileStr[0]
+                                                    let file = fileStr[1]
+                                                    if (file.includes(',')) {
+                                                    // 如果某个目录下要混淆多个文件
+                                                        let fileArr = file.split(',')
+                                                        fileArr.forEach((item3, index) => {
+                                                            // 这里的item3是某个js文件
+                                                            let afterDelJs = item3.split('.js')
+                                                            finalFile = `${game}/${dir}/${afterDelJs[0]}`
+                                                            fileObj[finalFile] = `${finalFile}.js`
+                                                        })
+                                                    } else {
+                                                        // 如果某个目录下要混淆某个文件
+                                                        let finalFile = file.split('.js')[0]
+                                                        finalFile = `${game}/${dir}/${finalFile}`
+                                                        fileObj[finalFile] = `${finalFile}.js`
+                                                    }
+                                                } else {
+                                                    // 如果混淆的是根目录的文件
+                                                    finalFile = `${game}/${item2.split('.js')[0]}`
+                                                    fileObj[finalFile] = `${finalFile}.js`
+                                                }
+                                            })
+                                            item.file = fileObj
                                             break;
-                                        // 把用户输入的游戏id变成数组
+                                            // 把用户输入的游戏id appid 变成数组
                                         case 'idArr':
-                                            console.log(item.j);
+                                            let idArr = item[j].split('\r\n')
+                                            let idObj = {}
+                                            idArr.forEach((item, index) => {
+                                                let str = item.split(':')
+                                                let key = str[0]
+                                                let value = str[1]
+                                                idObj[key] = value
+                                            })
+                                            item[j] = idObj
                                             break;
                                     }
                                 }
                             } else {
-                                cp.exec(`msg %username% inputGame目录下没有游戏：${i}`)
+                                cp.exec(`msg %username% ${gameDir}目录下没有游戏：${i}`)
                                 return false
                             }
                         }

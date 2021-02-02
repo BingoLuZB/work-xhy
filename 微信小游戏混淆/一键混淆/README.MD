@@ -24,7 +24,7 @@ outputGame
 思路：
     1、用node把config里面的对应的配置文件内容给复制了，然后把内容放到一个新的webpack.config.js里面去
 
-    2、用node，根据config里面的配置，判断是用哪种混淆方式，用在indexCode对应的源码文件复制/覆盖到打包工具里面去，然后启动powerShell，打包多个游戏
+    2、用node，根据config里面的配置，判断是用哪种混淆方式，用在indexCode对应的源码文件复制/覆盖到打包工具里面去，然后打包多个游戏
 
     3、打包结束后，用node在input里面复制对应的游戏包到output，然后在output里面修改对应游戏的appid,游戏id（这些在config里面的配置文件设置），再把dist里面混淆好的文件覆盖到output的游戏里面去
 

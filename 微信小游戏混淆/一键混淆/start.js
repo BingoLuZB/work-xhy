@@ -15,6 +15,51 @@ const jsonCopyStr = {
 let inputConfig = {}
 
 
+// 获取入口文件路径集合
+
+// function getEntryPath(getNames) {
+//     let obj = {
+//         'dog/': {
+//             'platform': './dog/platform.js'
+//         },
+//         'dog/stage1': {
+//             'main': './dog/stage1/main.js'
+//         },
+//         'dog/js': {
+//             'assetsmanager.min': './dog/js/assetsmanager.js',
+//             'default.thm': './dog/js/default.thm.js',
+//             'egret.min': './dog/js/egret.js',
+//             'tween.min': './dog/js/tween.js'
+//         }
+//     }
+//     const entryFolderArr = Object.keys(obj);
+//     ``
+//     let entryPath = {};
+//     let nameArr = []
+//     entryFolderArr.map(item => {
+//         for (const key in obj[item]) {
+//             entryPath[`${item}/${key}`] = obj[item][key]
+//             if (key.includes('.')) {
+//                 nameArr.push(key.split('.')[0])
+//             } else {
+//                 nameArr.push(key)
+//             }
+//         }
+//     })
+//     if (getNames) {
+//         console.log(nameArr, '=nameArr')
+//         return nameArr
+//     } else {
+//         console.log(entryPath, '=entryPath')
+//         return entryPath;
+//     }
+// }
+// getEntryPath(true)
+// getEntryPath()
+
+
+
+
 
 init()
 
@@ -23,8 +68,13 @@ init()
 async function init() {
     // 打开网页，并拿到用户输入的数据
     try {
-        inputConfig = await openHtml()
+        // inputConfig = await openHtml()
+        // if (inputConfig) {
 
+        // }
+        let dir = fs.readdirSync('node_modules/_javascript-obfuscator@0.18.8@javascript-obfuscator/dist')
+        console.log(dir)
+        console.log(inputConfig, '======inputConfig');
     } catch (error) {
         console.error(error, '===error`')
     }
