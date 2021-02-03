@@ -12,7 +12,7 @@ const list = {
         // 'sdkConfig.min': `./${name}/js/sdkConfig.min.js`, //base64
     },
     '马甲781（魔戒传奇OL）/stage1': {
-        'main.min': `./${name}/stage1/main.min.js`, //base64
+        'main.min': `./${name}/stage1/main.min.js`, //hexadecimal
     },
     '马甲781（魔戒传奇OL）/stage2': {
         // 'default.thm': `./${name}/js/default.thm.js`, //base64
