@@ -11,7 +11,7 @@ foreach ($n in $array){npm run build-$n}
 obfuscatorCode
     混淆源码文件夹
 config
-    各个打包的配置文件
+    各个打包配置的历史记录
 modules
     各种模板文件的文件夹（package.json模板 webpack-config.js模板 微信小游戏game.js模板）
 inputGame
@@ -20,6 +20,10 @@ miniGame
     小游戏壳文件夹
 outputGame
     提审游戏包文件夹
+dist
+    混淆之后的js文件
+jsonList
+    混淆之后的json文件
 
 思路：
     1、用node把config里面的对应的配置文件内容给复制了，然后把内容放到一个新的webpack.config.js里面去

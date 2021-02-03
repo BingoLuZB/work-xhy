@@ -68,3 +68,7 @@ var mjConfig = {"obfuscatorType":"1","stringArrayThreshold":"0.5","stringArrayEn
 //appid=wx123sadasdqw 2021-02-03 19:59:53
 var list = {"三国/js/customlib.min":"./inputGame/三国/js/customlib.min.js"}
 var mjConfig = {"obfuscatorType":"1","stringArrayThreshold":0.5,"stringArrayEncoding":"base64","identifierNamesGenerator":"mangled","miniGame":"0"}
+
+//appid=wx123sadasdqw 2021-02-03 20:18:36
+var list = {"三国/js/customlib.min":"./inputGame/三国/js/customlib.min.js"}
+var mjConfig = {"obfuscatorType":"1","stringArrayThreshold":0.5,"stringArrayEncoding":"base64","identifierNamesGenerator":"mangled","miniGame":"0"}
