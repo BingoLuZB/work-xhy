@@ -26,11 +26,11 @@
                 </li>
                 <li>
                     <div> 要混淆的文件：</div>
-                    <textarea required name="file" placeholder="例：js:a.js,b.js                  stage1:main1.js,main2.js           三国文件夹下，js文件夹的a.js b.js        注意：所有标点符号都要用英文输入法的             不同文件之间要用英文的,隔开"></textarea>
+                    <textarea required name="file" placeholder="例：要混淆的游戏选择了三国的前提下 js:a.js,b.js                             三国文件夹下，js文件夹的a.js b.js                   game.js                                    三国文件夹下的game.js                  注意：所有标点符号都要用英文输入法的             不同文件之间要用英文的,隔开"></textarea>
                 </li>
                 <li>
                     游戏ID及其对应的小游戏appid：
-                    <textarea required name="idArr" placeholder="例：1: wx6515165132,                         2:wx65123184891,                   3:wx6165165165                            注意：所有标点符号都要用英文输入法的             不同文件之间要用英文的,隔开"></textarea>
+                    <textarea required name="idObj" placeholder="例：1: wx6515165132,                         2:wx65123184891,                   3:wx6165165165                            注意：所有标点符号都要用英文输入法的             不同文件之间要用英文的,隔开"></textarea>
                 
                 </li>
                 <li>
@@ -45,18 +45,18 @@
                 </li>
                 <li>
                     混淆程度:
-                    <input style="width: 80px;" type='text' name="level" placeholder="0~1逐步增大" value="0.5">
+                    <input style="width: 80px;" type='number' min="0" max="1" name="stringArrayThreshold" placeholder="0~1逐步增大" value="0.5">
                 </li>
                 <li>
                     编码方式：
-                    <select name="codingType">
+                    <select name="stringArrayEncoding">
                         <option value="base64">base64</option>
                         <option value="rc4">rc4</option>
                     </select>
                 </li>
                 <li>
                     标识符：
-                    <select name="strLength">
+                    <select name="identifierNamesGenerator">
                         <option value="mangled">短标识符</option>
                         <option value="hexadecimal">长标识符</option>
                     </select>

@@ -4,7 +4,7 @@ const http = require("http");
 const httpUrl = 'localhost'
 const querystring = require('querystring')
 const gameDir = 'inputGame'
-const configDir = 'config'
+const allConfig = require('./allConfig')
 module.exports = {
     // windows 警告框
     showAlert(str) {
@@ -72,9 +72,12 @@ module.exports = {
                             if (fileNames.includes(i)) {
                                 // 这里的item是某个游戏的配置的对象
                                 let item = inputConfig[i]
+                                let obfuscatorObj = {}
                                 for (let j in item) {
                                     switch (j) {
-                                        // 处理要混淆文件的格式
+                                        case 'game':
+                                            break
+                                            // 处理要混淆文件的格式
                                         case 'file':
                                             let arr = item[j].split('\r\n')
                                             let game = i
@@ -88,33 +91,33 @@ module.exports = {
                                                     let dir = fileStr[0]
                                                     let file = fileStr[1]
                                                     if (file.includes(',')) {
-                                                    // 如果某个目录下要混淆多个文件
+                                                        // 如果某个目录下要混淆多个文件
                                                         let fileArr = file.split(',')
                                                         fileArr.forEach((item3, index) => {
                                                             // 这里的item3是某个js文件
                                                             let afterDelJs = item3.split('.js')
-                                                            finalFile = `${game}/${dir}/${afterDelJs[0]}`
+                                                            finalFile = `./${allConfig.inputGame}/${game}/${dir}/${afterDelJs[0]}`
                                                             fileObj[finalFile] = `${finalFile}.js`
                                                         })
                                                     } else {
                                                         // 如果某个目录下要混淆某个文件
                                                         let finalFile = file.split('.js')[0]
-                                                        finalFile = `${game}/${dir}/${finalFile}`
+                                                        finalFile = `./${allConfig.inputGame}/${game}/${dir}/${finalFile}`
                                                         fileObj[finalFile] = `${finalFile}.js`
                                                     }
                                                 } else {
                                                     // 如果混淆的是根目录的文件
-                                                    finalFile = `${game}/${item2.split('.js')[0]}`
+                                                    finalFile = `./${allConfig.inputGame}/${game}/${item2.split('.js')[0]}`
                                                     fileObj[finalFile] = `${finalFile}.js`
                                                 }
                                             })
                                             item.file = fileObj
                                             break;
                                             // 把用户输入的游戏id appid 变成数组
-                                        case 'idArr':
-                                            let idArr = item[j].split('\r\n')
+                                        case 'idObj':
+                                            let idStr = item[j].split('\r\n')
                                             let idObj = {}
-                                            idArr.forEach((item, index) => {
+                                            idStr.forEach((item, index) => {
                                                 let str = item.split(':')
                                                 let key = str[0]
                                                 let value = str[1]
@@ -122,8 +125,13 @@ module.exports = {
                                             })
                                             item[j] = idObj
                                             break;
+                                        default:
+                                            // 把game file idArr以外的混淆配置放到obfuscatorObj里面去
+                                            obfuscatorObj[j] = item[j]
+                                            delete item[j]
                                     }
                                 }
+                                item.obfuscatorObj = obfuscatorObj
                             } else {
                                 cp.exec(`msg %username% ${gameDir}目录下没有游戏：${i}`)
                                 return false
@@ -140,6 +148,15 @@ module.exports = {
                 console.log("listened");
             });
         })
+    },
+    
+    // 获取当前详细日期
+    getDate() {
+        var now = new Date(),
+            y = now.getFullYear(),
+            m = now.getMonth() + 1,
+            d = now.getDate();
+        return y + "-" + (m < 10 ? "0" + m : m) + "-" + (d < 10 ? "0" + d : d) + " " + now.toTimeString().substr(0, 8);
     }
 
 }
