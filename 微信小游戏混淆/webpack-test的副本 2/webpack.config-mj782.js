@@ -80,7 +80,6 @@ module.exports = {
 function getEntryPath(getNames) {
     let obj = list
     const entryFolderArr = Object.keys(obj);
-    ``
     let entryPath = {};
     let nameArr = []
     entryFolderArr.map(item => {
@@ -97,6 +96,7 @@ function getEntryPath(getNames) {
         console.log(nameArr, '=nameArr')
         return nameArr
     } else {
+        console.log(entryPath, '=entryPath')
         return entryPath;
     }
 }

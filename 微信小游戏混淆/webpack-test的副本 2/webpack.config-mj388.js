@@ -9,21 +9,21 @@ const list = {
     '马甲388（燃爆三国）/boot': {
         'boot.max': './燃爆三国/boot/boot.max.js', //base64
     },
-    '马甲388（燃爆三国）/js/com': {
-        'com': './燃爆三国/js/com/com.js', //base64
-    },
-    '马甲388（燃爆三国）/js/datasets': {
-        'datasets': './燃爆三国/js/datasets/datasets.js', //base64
-    },
-    '马甲388（燃爆三国）/js/enem': {
-        'enem': './燃爆三国/js/enem/enem.js', //base64
-    },
-    '马甲388（燃爆三国）/js/net': {
-        'net': './燃爆三国/js/net/net.js', //base64
-    },
-    '马甲388（燃爆三国）/js/pages': {
-        'pages': './燃爆三国/js/pages/pages.js', //base64
-    },
+    // '马甲388（燃爆三国）/js/com': {
+    //     'com': './燃爆三国/js/com/com.js', //base64
+    // },
+    // '马甲388（燃爆三国）/js/datasets': {
+    //     'datasets': './燃爆三国/js/datasets/datasets.js', //base64
+    // },
+    // '马甲388（燃爆三国）/js/enem': {
+    //     'enem': './燃爆三国/js/enem/enem.js', //base64
+    // },
+    // '马甲388（燃爆三国）/js/net': {
+    //     'net': './燃爆三国/js/net/net.js', //base64
+    // },
+    // '马甲388（燃爆三国）/js/pages': {
+    //     'pages': './燃爆三国/js/pages/pages.js', //base64
+    // },
 }
 
 const mjConfig = {

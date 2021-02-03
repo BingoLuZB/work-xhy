@@ -1,3 +1,7 @@
+
+//appid=wx123sadasdqw 2021-02-03 19:59:53
+var list = {"三国/js/customlib.min":"./inputGame/三国/js/customlib.min.js"}
+var mjConfig = {"obfuscatorType":"1","stringArrayThreshold":0.5,"stringArrayEncoding":"base64","identifierNamesGenerator":"mangled","miniGame":"0"}
 // 更改混淆方式
 const fs = require('fs');
 const allConfig = require('./allConfig.js')
@@ -11,19 +15,18 @@ const JavaScriptObfuscator = require('webpack-obfuscator');
 // 配置
 const config = require(`./${allConfig.modules}/defaultConfig.js`)
 
-// 设置当前的特定配置
+// 更改当前的特定配置
 let nameList = []
-Object.keys(list).forEach((item, index) => {
-    item = checkStr(item)
-    nameList.push(item)
+Object.keys(list).forEach((item,index) => {
+  item = checkStr(item)
+  nameList.push(item)
 })
-let filename = __filename.split("\\").pop();
+let filename= __filename.split("\\").pop();
 let myNum = filename.replace('.js', '').split('-')[1]
 
 mjConfig.nameList = nameList
 mjConfig.myNum = myNum
 
-// 合成最终配置
 const finalConfig = Object.assign(config, mjConfig)
 
 console.log(finalConfig, '===finalConfig');
@@ -72,7 +75,31 @@ module.exports = {
         // })
     ]
 }
-
+// 获取入口文件路径集合
+// function getEntryPath(getNames) {
+//     console.log(process.argv, '=====test')
+//     let obj = list
+//     const entryFolderArr = Object.keys(obj);
+//     ``
+//     let entryPath = {};
+//     let nameArr = []
+//     entryFolderArr.map(item => {
+//         for (const key in obj[item]) {
+//             entryPath[`${item}/${key}`] = obj[item][key]
+//             if (key.includes('.')) {
+//                 nameArr.push(key.split('.')[0])
+//             } else {
+//                 nameArr.push(key)
+//             }
+//         }
+//     })
+//     if (getNames) {
+//         console.log(nameArr, '=nameArr')
+//         return nameArr
+//     } else {
+//         return entryPath;
+//     }
+// }
 function checkStr(s) {
     var str = s.replace(/%/g, "").replace(/\+/g, "").replace(/\s/g, ""); //   %   +   \s 
     str = str.replace(/-/g, "").replace(/\*/g, "").replace(/\//g, ""); //   -   *   / 
@@ -81,4 +108,21 @@ function checkStr(s) {
     str = str.replace(/\,/g, "").replace(/\./g, "").replace(/#/g, ""); //   ,   .   # 
     str = str.replace(/([^\u0000-\u00FF])/g, '') // 删除中文
     return str;
+}
+
+function getNumArr() {
+    const obj = entry.path
+    const arr = []
+    for (let i in obj) {
+        for (const key in obj[i]) {
+            let end = key.lastIndexOf('/')
+            let str = key.slice(end + 1, key.length)
+            if (str.includes('.')) {
+                str = str.slice(0, str.indexOf('.'))
+            }
+            arr.push(str)
+        }
+    }
+    console.log(arr, '===nameArr')
+    return arr
 }
