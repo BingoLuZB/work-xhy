@@ -13,7 +13,13 @@ obfuscatorCode
 config
     各个打包配置的历史记录
 modules
-    各种模板文件的文件夹（package.json模板 webpack-config.js模板 微信小游戏game.js模板）
+    各种模板文件的文件夹（
+    defaultConfig.js 默认的混淆配置
+    package.json 默认package.json
+    webpack-config.js 默认的打包配置模板 
+    game.js 微信小游戏模板 
+    afterMath 善后模板，处理混淆之后的所有事情
+    ）
 inputGame
     各个游戏的源吗/要混淆的游戏的源码 的文件夹
 miniGame
@@ -24,6 +30,7 @@ dist
     混淆之后的js文件
 jsonList
     混淆之后的json文件
+
 
 思路：
     1、用node把config里面的对应的配置文件内容给复制了，然后把内容放到一个新的webpack.config.js里面去
@@ -36,3 +43,4 @@ jsonList
 
 需要工具：
 npm install concurrently --save 这个可以同时执行多个命令
+compressing 用于压缩

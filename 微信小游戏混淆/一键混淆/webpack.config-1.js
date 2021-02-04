@@ -1,5 +1,6 @@
 
-//appid=wx123sadasdqw 2021-02-03 20:18:36
+//appid=wx123sadasdqw 2021-02-04 14:28:08
+var game= "三国"
 var list = {"三国/js/customlib.min":"./inputGame/三国/js/customlib.min.js"}
 var mjConfig = {"obfuscatorType":"1","stringArrayThreshold":0.5,"stringArrayEncoding":"base64","identifierNamesGenerator":"mangled","miniGame":"0"}
 // 更改混淆方式
@@ -15,17 +16,17 @@ const JavaScriptObfuscator = require('webpack-obfuscator');
 // 配置
 const config = require(`./${allConfig.modules}/defaultConfig.js`)
 
-// 设置当前的特定配置
+// 设置当前的特定配置 nameList mjNum
 let nameList = []
 Object.keys(list).forEach((item, index) => {
     item = checkStr(item)
     nameList.push(item)
 })
 let filename = __filename.split("\\").pop();
-let myNum = filename.replace('.js', '').split('-')[1]
+let mjNum = filename.replace('.js', '').split('-')[1]
 
 mjConfig.nameList = nameList
-mjConfig.myNum = myNum
+mjConfig.mjNum = mjNum
 
 // 合成最终配置
 const finalConfig = Object.assign(config, mjConfig)
@@ -76,7 +77,6 @@ module.exports = {
         // })
     ]
 }
-
 function checkStr(s) {
     var str = s.replace(/%/g, "").replace(/\+/g, "").replace(/\s/g, ""); //   %   +   \s 
     str = str.replace(/-/g, "").replace(/\*/g, "").replace(/\//g, ""); //   -   *   / 
