@@ -35,7 +35,7 @@ const {
 init()
 
 function init() {
-    // json2Zip()
+    json2Zip()
     copyGame()
 }
 
@@ -142,7 +142,7 @@ function mkdirs(dirname, callback) {
 }  
 
 // 复制游戏
-function copyGame() {
+function copyGame(cb) {
     let src = path.join(inputGame,game)
     // let target = path.join(outputGame,game)
     let target = path.join(outputGame,game,`mj${mjNum}`)
@@ -153,10 +153,11 @@ function copyGame() {
         }
     } catch (error) {
         mkdirs(target, () => {
-            copyDir(src, target)
+            copyDir(src, target, cb)
         })
     }
 }
+
 
 
 // 刪除模板的 aftermath.js 以及webapck.config.js
