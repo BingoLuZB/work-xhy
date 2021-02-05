@@ -1,3 +1,8 @@
+
+//2021-02-05 20:21:56
+var game= "三国"
+var list = {"三国/loading":"./inputGame/三国/loading.js"}
+var mjConfig = {"obfuscatorType":"1","stringArrayThreshold":0.5,"stringArrayEncoding":"base64","identifierNamesGenerator":"mangled","miniGameType":"1","mjNum":"1","appid":"wx123sadasdqw"}
 /**
  * 此文件用于 把inputGame的小游戏复制到 outputGame/游戏名 里面去，命名为game-${id}     outputGame/游戏名 已经有的话则不执行
  * 压缩jsonList对应游戏的json
@@ -6,37 +11,58 @@
  * 更改小游戏的参数配置  outputGame/游戏名 已经有的话则不执行
  * 
  */
-var game = "三国"
-var list = {
-    "三国/js/customlib.min": "./inputGame/三国/js/customlib.min.js"
-}
-var mjConfig = {
-    "obfuscatorType": "1",
-    "stringArrayThreshold": 0.5,
-    "stringArrayEncoding": "base64",
-    "identifierNamesGenerator": "mangled",
-    "miniGame": "0"
-}
+
+// var game = "三国"
+// var list = {
+//     "三国/js/customlib.min": "./inputGame/三国/js/customlib.min.js",
+//     "三国/package1/main": "./inputGame/三国/package1/main.js",
+//     "三国/loading": "./inputGame/三国/loading.js"
+// }
+// var mjConfig = {
+//     "obfuscatorType": "1",
+//     "stringArrayThreshold": 0.5,
+//     "stringArrayEncoding": "base64",
+//     "identifierNamesGenerator": "mangled",
+//     "miniGame": "1",
+//     "mjNum": "1",
+//     "appid": "wx123sadasdqw"
+// }
 
 const fs = require('fs')
 const path = require('path')
 const compressing = require('compressing');
-const filename = __filename.split("\\").pop();
-const mjNum = filename.replace('.js', '').split('-')[1]
+const {
+    mjNum,
+    appid,
+    miniGameType
+} = mjConfig
+
 const {
     dist,
     jsonList,
     inputGame,
-    outputGame
+    outputGame,
+    miniGame
 } = require('./allConfig.js')
 
-
+const {
+    rf,
+    checkStr
+} = require('./nodeUtil.js');
+const {
+    log
+} = require('console');
 
 init()
 
-function init() {
+async function init() {
+    // 压缩json文件
     json2Zip()
-    copyGame()
+    // 复制 小游戏、混淆之后的文件
+    await copyGame()
+    copyMiniGame()
+
+    // 复制小游戏
 }
 
 // 把json文件转成zip文件
@@ -54,7 +80,6 @@ function json2Zip() {
             setTimeout(() => {
                 compressing.zip.compressDir(`${file}/${item}`, `${file}/${itemName}.zip`)
                     .then(() => {
-                        console.log('success');
                         fs.unlinkSync(`${file}/${item}`)
                     })
                     .catch(err => {
@@ -64,8 +89,6 @@ function json2Zip() {
         }
     })
 }
-
-
 
 // 复制文件
 function copyFile(srcPath, tarPath, cb) {
@@ -93,8 +116,10 @@ function copyFile(srcPath, tarPath, cb) {
 function copyDir(srcDir, tarDir, cb) {
     fs.readdir(srcDir, (err, files) => {
         var count = 0
-        function checkEnd () {
+
+        function checkEnd() {
             ++count == files.length && cb && cb()
+            // ++count == files.length && resolve()
         }
         if (err) {
             checkEnd()
@@ -102,18 +127,21 @@ function copyDir(srcDir, tarDir, cb) {
         }
         files.forEach(function (file) {
             // 拼接地址
-            
             var srcPath = path.join(srcDir, file)
             var tarPath = path.join(tarDir, file)
             fs.stat(srcPath, function (err, stats) {
                 // 判断是否是文件夹，文件夹的话则进行递归读取,复制文件夹，不是文件夹的话则执行复制文件
                 if (stats.isDirectory()) {
-                    console.log('mkdir', tarPath)
                     // 创建同名文件夹
                     fs.mkdir(tarPath, function (err) {
                         if (err) {
-                            console.log(err)
-                            return
+                            if (srcDir.includes(checkStr(dist)) || srcDir.includes(checkStr(miniGame))) {
+                                // 复制混淆之后的js
+                                copyDir(srcPath, tarPath, checkEnd)
+                            } else {
+                                console.log(err)
+                                return false
+                            }
                         }
                         copyDir(srcPath, tarPath, checkEnd)
                     })
@@ -128,36 +156,68 @@ function copyDir(srcDir, tarDir, cb) {
 }
 
 // 连续创建多层文件夹
-function mkdirs(dirname, callback) {  
-    fs.exists(dirname, function (exists) {  
-        if (exists) {  
-            callback();  
-        } else {  
+function mkdirs(dirname, callback) {
+    fs.exists(dirname, function (exists) {
+        if (exists) {
+            callback();
+        } else {
             // console.log(path.dirname(dirname));  
-            mkdirs(path.dirname(dirname), function () {  
-                fs.mkdir(dirname, callback);  
-            });  
-        }  
-    });  
-}  
-
-// 复制游戏
-function copyGame(cb) {
-    let src = path.join(inputGame,game)
-    // let target = path.join(outputGame,game)
-    let target = path.join(outputGame,game,`mj${mjNum}`)
-    try {
-        let flag = fs.statSync(target).isDirectory()
-        if (flag) {
-            console.log(`${inputGame}已有相同游戏`);
+            mkdirs(path.dirname(dirname), function () {
+                fs.mkdir(dirname, callback);
+            });
         }
-    } catch (error) {
-        mkdirs(target, () => {
-            copyDir(src, target, cb)
-        })
-    }
+    });
 }
 
+// 复制游戏
+async function copyGame(cb) {
+    return new Promise((resolve, reject) => {
+        let inputSrc = path.join(inputGame, game)
+        let outputSrc = path.join(outputGame, game, `mj${mjNum}`)
+        let distSrc = path.join(dist, game, `mj${mjNum}`)
+
+        function copyDist() {
+            console.log('开始复制混淆文件');
+            copyDir(distSrc, outputSrc)
+        }
+        try {
+            let flag = fs.statSync(outputSrc).isDirectory()
+            if (flag) {
+                console.log(`${outputGame}已有相同游戏`);
+                copyDist()
+                resolve()
+
+            }
+        } catch (error) {
+            mkdirs(outputSrc, () => {
+                copyDir(inputSrc, outputSrc, () => {
+                    copyDist()
+                    resolve()
+                })
+            })
+        }
+    })
+}
+
+// 复制壳
+async function copyMiniGame() {
+    let miniFile = fs.readdirSync(miniGame)
+    if (miniFile.includes(miniGameType)) {
+        let miniSrc = path.join(miniGame, miniGameType, 'tarMini')
+        let outputSrc = path.join(outputGame, game, `mj${mjNum}`)
+        copyDir(miniSrc, outputSrc, () => {
+            let isHaveWeapp = fs.readdirSync(outputSrc).includes('weapp-adapter.js')
+            let tarSrc = path.join(miniGame, miniGameType, 'weapp-adapter.js')
+            let weappSrc = path.join(outputGame, game, `mj${mjNum}`, 'weapp-adapter.js')
+            if (!isHaveWeapp) {
+                copyFile(tarSrc, weappSrc)
+            }
+        })
+    } else {
+        showAlert('找不到对应的壳')
+        return false
+    }
+}
 
 
 // 刪除模板的 aftermath.js 以及webapck.config.js

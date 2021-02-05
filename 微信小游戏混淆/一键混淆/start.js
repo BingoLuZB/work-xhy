@@ -26,7 +26,9 @@ let inputConfig = {
     '三国': {
         game: '三国',
         file: {
-            '三国/js/customlib.min': './inputGame/三国/js/customlib.min.js',
+            // '三国/js/customlib.min': './inputGame/三国/js/customlib.min.js',
+            // '三国/package1/main': './inputGame/三国/package1/main.js',
+            '三国/loading': './inputGame/三国/loading.js',
         },
         idObj: {
             '1': 'wx123sadasdqw'
@@ -36,7 +38,7 @@ let inputConfig = {
             stringArrayThreshold: 0.5,
             stringArrayEncoding: 'base64',
             identifierNamesGenerator: 'mangled',
-            miniGame: '0'
+            miniGameType: '1'
         }
     }
 }
@@ -188,16 +190,8 @@ function openHtml() {
     })
 }
 
-// 获取当前详细日期
-function getDate() {
-    var now = new Date(),
-        y = now.getFullYear(),
-        m = now.getMonth() + 1,
-        d = now.getDate();
-    return y + "-" + (m < 10 ? "0" + m : m) + "-" + (d < 10 ? "0" + d : d) + " " + now.toTimeString().substr(0, 8);
-}
 
-// 新增webpackConfig package.json
+// 新增webpack.config-id.js aftermath-id.js package.json
 async function changePackageJson() {
     // 读取config里面的配置文件
     // let allStr = "concurrently "
@@ -206,7 +200,9 @@ async function changePackageJson() {
         // itemI 某个游戏的配置
         let itemI = inputConfig[i]
         for (let j in itemI.idObj) {
-            const configData = `\r\n//appid=${itemI.idObj[j]} ${getDate()}\r\nvar game= "${i}"\r\nvar list = ${JSON.stringify(itemI.file)}\r\nvar mjConfig = ${JSON.stringify(itemI.obfuscatorObj)}\r\n`
+            let list = JSON.stringify(itemI.file)
+            let mjConfig = JSON.stringify({...itemI.obfuscatorObj, ...{mjNum: j, appid: itemI.idObj[j]}})
+            const configData = `\r\n//${getDate()}\r\nvar game= "${i}"\r\nvar list = ${list}\r\nvar mjConfig = ${mjConfig}\r\n`
             // 追加记录 config.${id}.js
             // 把配置都放到config对应的游戏id的js里面去
             wf(`config/config.${j}.js`, configData, 'as')
@@ -235,4 +231,13 @@ async function changePackageJson() {
         await wf('package.json', packageJsonData)
         console.log('混淆即将开始！');
     }
+}
+
+// 获取当前详细日期
+function getDate() {
+    var now = new Date(),
+        y = now.getFullYear(),
+        m = now.getMonth() + 1,
+        d = now.getDate();
+    return y + "-" + (m < 10 ? "0" + m : m) + "-" + (d < 10 ? "0" + d : d) + " " + now.toTimeString().substr(0, 8);
 }

@@ -1,12 +1,23 @@
 
-//appid=wx123sadasdqw 2021-02-04 14:28:08
+//2021-02-05 20:21:56
 var game= "三国"
-var list = {"三国/js/customlib.min":"./inputGame/三国/js/customlib.min.js"}
-var mjConfig = {"obfuscatorType":"1","stringArrayThreshold":0.5,"stringArrayEncoding":"base64","identifierNamesGenerator":"mangled","miniGame":"0"}
+var list = {"三国/loading":"./inputGame/三国/loading.js"}
+var mjConfig = {"obfuscatorType":"1","stringArrayThreshold":0.5,"stringArrayEncoding":"base64","identifierNamesGenerator":"mangled","miniGameType":"1","mjNum":"1","appid":"wx123sadasdqw"}
+
 // 更改混淆方式
 const fs = require('fs');
-const allConfig = require('./allConfig.js')
-let code = fs.readFileSync(`./${allConfig.obfuscatorCode}/${mjConfig.obfuscatorType}.js`, 'utf-8')
+const {
+    obfuscatorCode,
+    modules
+} = require('./allConfig.js')
+const {
+    checkStr
+} = require('./nodeUtil.js')
+const {
+    obfuscatorType,
+    mjNum
+} = mjConfig
+let code = fs.readFileSync(`./${obfuscatorCode}/${obfuscatorType}.js`, 'utf-8')
 fs.writeFileSync('node_modules/_javascript-obfuscator@0.18.8@javascript-obfuscator/dist/index.js', code)
 
 const path = require("path");
@@ -14,26 +25,28 @@ const CleanPlugin = require('clean-webpack-plugin');
 const JavaScriptObfuscator = require('webpack-obfuscator');
 
 // 配置
-const config = require(`./${allConfig.modules}/defaultConfig.js`)
+const config = require(`./${modules}/defaultConfig.js`)
 
-// 设置当前的特定配置 nameList mjNum
+// 设置当前的特定配置mjConfig里面的 nameList
+
+// nameList 用于混淆文件的代码命名
 let nameList = []
 Object.keys(list).forEach((item, index) => {
-    item = checkStr(item)
-    nameList.push(item)
+    nameList.push(checkStr(item))
+    let gameEnd = item.indexOf('/')
+    newItem = item.slice(0, gameEnd) + `/mj${mjNum}` + item.slice(gameEnd)
+    list[newItem] = list[item]
+    delete list[item]
 })
-let filename = __filename.split("\\").pop();
-let mjNum = filename.replace('.js', '').split('-')[1]
+
 
 mjConfig.nameList = nameList
-mjConfig.mjNum = mjNum
 
 // 合成最终配置
 const finalConfig = Object.assign(config, mjConfig)
 
 console.log(finalConfig, '===finalConfig');
 console.log(list, '===list');
-
 
 module.exports = {
     entry: list,
@@ -76,13 +89,4 @@ module.exports = {
         //     dry: false,
         // })
     ]
-}
-function checkStr(s) {
-    var str = s.replace(/%/g, "").replace(/\+/g, "").replace(/\s/g, ""); //   %   +   \s 
-    str = str.replace(/-/g, "").replace(/\*/g, "").replace(/\//g, ""); //   -   *   / 
-    str = str.replace(/\&/g, "").replace(/!/g, "").replace(/\=/g, ""); //   &   !   = 
-    str = str.replace(/\?/g, "").replace(/:/g, "").replace(/\|/g, ""); //   ?   :   | 
-    str = str.replace(/\,/g, "").replace(/\./g, "").replace(/#/g, ""); //   ,   .   # 
-    str = str.replace(/([^\u0000-\u00FF])/g, '') // 删除中文
-    return str;
 }
