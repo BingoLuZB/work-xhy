@@ -55,9 +55,8 @@ async function init() {
     json2Zip()
     // 复制 小游戏、混淆之后的文件
     await copyGame()
+    // 复制壳
     copyMiniGame()
-
-    // 复制小游戏
 }
 
 // 把json文件转成zip文件
@@ -203,9 +202,9 @@ async function copyMiniGame() {
         copyDir(miniSrc, outputSrc, () => {
             let weappStr = 'weapp-adapter.js'
             let isHaveWeapp = fs.readdirSync(outputSrc).includes(weappStr)
-            let tarSrc = path.join(miniGame, miniGameType, weappStr)
-            let weappSrc = path.join(outputGame, game, `mj${mjNum}`, weappStr)
             if (!isHaveWeapp) {
+                let tarSrc = path.join(miniGame, miniGameType, weappStr)
+                let weappSrc = path.join(outputGame, game, `mj${mjNum}`, weappStr)
                 copyFile(tarSrc, weappSrc)
             }
         })
@@ -214,6 +213,7 @@ async function copyMiniGame() {
         return false
     }
 }
+
 
 
 // 刪除模板的 aftermath.js 以及webapck.config.js
