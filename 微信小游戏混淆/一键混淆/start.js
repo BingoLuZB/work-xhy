@@ -22,27 +22,29 @@ const jsonCopyStr = {
     value: 'newBuild-value'
 }
 // 用户选择的配置
-// let inputConfig = {
-//     '三国': {
-//         game: '三国',
-//         file: {
-//             // '三国/js/customlib.min': './inputGame/三国/js/customlib.min.js',
-//             // '三国/package1/main': './inputGame/三国/package1/main.js',
-//             '三国/loading': './inputGame/三国/loading.js',
-//         },
-//         idObj: {
-//             '1': 'wx123sadasdqw'
-//         },
-//         obfuscatorObj: {
-//             obfuscatorType: '1',
-//             stringArrayThreshold: 0.5,
-//             stringArrayEncoding: 'base64',
-//             identifierNamesGenerator: 'mangled',
-//             miniGameType: '1'
-//         }
-//     }
-// }
-let inputConfig = {}
+let inputConfig = {
+    '三国': {
+        game: '三国',
+        file: {
+            // '三国/js/customlib.min': './inputGame/三国/js/customlib.min.js',
+            // '三国/package1/main': './inputGame/三国/package1/main.js',
+            '三国/loading': './inputGame/三国/loading.js',
+        },
+        idObj: {
+            '1': 'wx123sadasdqw'
+        },
+        obfuscatorObj: {
+            obfuscatorType: '1',
+            stringArrayThreshold: 0.5,
+            stringArrayEncoding: 'base64',
+            identifierNamesGenerator: 'mangled',
+            miniGameType: '1',
+            version: '1.0.0',
+            gameAbbr: 'SG'
+        }
+    }
+}
+// let inputConfig = {}
 
 
 
@@ -54,7 +56,7 @@ init()
 async function init() {
     // 打开网页，并拿到用户输入的数据
     try {
-        inputConfig = await openHtml()
+        // inputConfig = await openHtml()
         console.log(inputConfig, '===inputConfig');
         changePackageJson()
     } catch (error) {
