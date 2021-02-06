@@ -195,6 +195,7 @@ async function copyGame(cb) {
 
 // 复制壳
 async function copyMiniGame() {
+    if (!miniGameType) return false
     let miniFile = fs.readdirSync(miniGame)
     if (miniFile.includes(miniGameType)) {
         let miniSrc = path.join(miniGame, miniGameType, 'tarMini')
