@@ -1,8 +1,8 @@
 
-//2021-02-06 18:59:04
+//2021-02-07 18:31:25
 var game= "三国"
 var list = {"三国/loading":"./inputGame/三国/loading.js"}
-var mjConfig = {"obfuscatorType":"1","stringArrayThreshold":0.5,"stringArrayEncoding":"base64","identifierNamesGenerator":"mangled","miniGameType":"1","version":"1.0.0","gameAbbr":"SG","mjNum":"1","appid":"wx123sadasdqw"}
+var mjConfig = {"obfuscatorType":"1","stringArrayThreshold":0.5,"stringArrayEncoding":"base64","identifierNamesGenerator":"mangled","miniGameType":"1","version":"1.0.2","gameAbbr":"SG","mjNum":"1","appid":"wx123sadasdqw"}
 
 // 更改混淆方式
 const fs = require('fs');

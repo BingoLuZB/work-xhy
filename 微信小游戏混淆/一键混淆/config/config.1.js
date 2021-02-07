@@ -913,3 +913,373 @@ var mjConfig = {"obfuscatorType":"1","stringArrayThreshold":0.5,"stringArrayEnco
 var game= "三国"
 var list = {"三国/loading":"./inputGame/三国/loading.js"}
 var mjConfig = {"obfuscatorType":"1","stringArrayThreshold":0.5,"stringArrayEncoding":"base64","identifierNamesGenerator":"mangled","miniGameType":"1","version":"1.0.0","gameAbbr":"SG","mjNum":"1","appid":"wx123sadasdqw"}
+
+//2021-02-07 14:24:43
+var game= "三国"
+var list = {"三国/loading":"./inputGame/三国/loading.js"}
+var mjConfig = {"obfuscatorType":"1","stringArrayThreshold":0.5,"stringArrayEncoding":"base64","identifierNamesGenerator":"mangled","miniGameType":"1","version":"1.0.0","gameAbbr":"SG","mjNum":"1","appid":"wx123sadasdqw"}
+
+//2021-02-07 14:27:21
+var game= "三国"
+var list = {"三国/loading":"./inputGame/三国/loading.js"}
+var mjConfig = {"obfuscatorType":"1","stringArrayThreshold":0.5,"stringArrayEncoding":"base64","identifierNamesGenerator":"mangled","miniGameType":"1","version":"1.0.0","gameAbbr":"SG","mjNum":"1","appid":"wx123sadasdqw"}
+
+//2021-02-07 14:27:56
+var game= "三国"
+var list = {"三国/loading":"./inputGame/三国/loading.js"}
+var mjConfig = {"obfuscatorType":"1","stringArrayThreshold":0.5,"stringArrayEncoding":"base64","identifierNamesGenerator":"mangled","miniGameType":"1","version":"1.0.0","gameAbbr":"SG","mjNum":"1","appid":"wx123sadasdqw"}
+
+//2021-02-07 14:28:19
+var game= "三国"
+var list = {"三国/loading":"./inputGame/三国/loading.js"}
+var mjConfig = {"obfuscatorType":"1","stringArrayThreshold":0.5,"stringArrayEncoding":"base64","identifierNamesGenerator":"mangled","miniGameType":"1","version":"1.0.0","gameAbbr":"SG","mjNum":"1","appid":"wx123sadasdqw"}
+
+//2021-02-07 14:30:02
+var game= "三国"
+var list = {"三国/loading":"./inputGame/三国/loading.js"}
+var mjConfig = {"obfuscatorType":"1","stringArrayThreshold":0.5,"stringArrayEncoding":"base64","identifierNamesGenerator":"mangled","miniGameType":"1","version":"1.0.0","gameAbbr":"SG","mjNum":"1","appid":"wx123sadasdqw"}
+
+//2021-02-07 15:24:07
+var game= "三国"
+var list = {"三国/loading":"./inputGame/三国/loading.js"}
+var mjConfig = {"obfuscatorType":"1","stringArrayThreshold":0.5,"stringArrayEncoding":"base64","identifierNamesGenerator":"mangled","miniGameType":"1","version":"1.0.0","gameAbbr":"SG","mjNum":"1","appid":"wx123sadasdqw"}
+
+//2021-02-07 15:28:22
+var game= "三国"
+var list = {"三国/loading":"./inputGame/三国/loading.js"}
+var mjConfig = {"obfuscatorType":"1","stringArrayThreshold":0.5,"stringArrayEncoding":"base64","identifierNamesGenerator":"mangled","miniGameType":"1","version":"1.0.0","gameAbbr":"SG","mjNum":"1","appid":"wx123sadasdqw"}
+
+//2021-02-07 15:30:04
+var game= "三国"
+var list = {"三国/loading":"./inputGame/三国/loading.js"}
+var mjConfig = {"obfuscatorType":"1","stringArrayThreshold":0.5,"stringArrayEncoding":"base64","identifierNamesGenerator":"mangled","miniGameType":"1","version":"1.0.0","gameAbbr":"SG","mjNum":"1","appid":"wx123sadasdqw"}
+
+//2021-02-07 15:33:04
+var game= "三国"
+var list = {"三国/loading":"./inputGame/三国/loading.js"}
+var mjConfig = {"obfuscatorType":"1","stringArrayThreshold":0.5,"stringArrayEncoding":"base64","identifierNamesGenerator":"mangled","miniGameType":"1","version":"1.0.0","gameAbbr":"SG","mjNum":"1","appid":"wx123sadasdqw"}
+
+//2021-02-07 15:33:50
+var game= "三国"
+var list = {"三国/loading":"./inputGame/三国/loading.js"}
+var mjConfig = {"obfuscatorType":"1","stringArrayThreshold":0.5,"stringArrayEncoding":"base64","identifierNamesGenerator":"mangled","miniGameType":"1","version":"1.0.0","gameAbbr":"SG","mjNum":"1","appid":"wx123sadasdqw"}
+
+//2021-02-07 15:34:44
+var game= "三国"
+var list = {"三国/loading":"./inputGame/三国/loading.js"}
+var mjConfig = {"obfuscatorType":"1","stringArrayThreshold":0.5,"stringArrayEncoding":"base64","identifierNamesGenerator":"mangled","miniGameType":"1","version":"1.0.0","gameAbbr":"SG","mjNum":"1","appid":"wx123sadasdqw"}
+
+//2021-02-07 15:38:30
+var game= "三国"
+var list = {"三国/loading":"./inputGame/三国/loading.js"}
+var mjConfig = {"obfuscatorType":"1","stringArrayThreshold":0.5,"stringArrayEncoding":"base64","identifierNamesGenerator":"mangled","miniGameType":"1","version":"1.0.0","gameAbbr":"SG","mjNum":"1","appid":"wx123sadasdqw"}
+
+//2021-02-07 15:41:36
+var game= "三国"
+var list = {"三国/loading":"./inputGame/三国/loading.js"}
+var mjConfig = {"obfuscatorType":"1","stringArrayThreshold":0.5,"stringArrayEncoding":"base64","identifierNamesGenerator":"mangled","miniGameType":"1","version":"1.0.0","gameAbbr":"SG","mjNum":"1","appid":"wx123sadasdqw"}
+
+//2021-02-07 15:41:47
+var game= "三国"
+var list = {"三国/loading":"./inputGame/三国/loading.js"}
+var mjConfig = {"obfuscatorType":"1","stringArrayThreshold":0.5,"stringArrayEncoding":"base64","identifierNamesGenerator":"mangled","miniGameType":"1","version":"1.0.0","gameAbbr":"SG","mjNum":"1","appid":"wx123sadasdqw"}
+
+//2021-02-07 15:50:10
+var game= "三国"
+var list = {"三国/loading":"./inputGame/三国/loading.js"}
+var mjConfig = {"obfuscatorType":"1","stringArrayThreshold":0.5,"stringArrayEncoding":"base64","identifierNamesGenerator":"mangled","miniGameType":"1","version":"1.0.0","gameAbbr":"SG","mjNum":"1","appid":"wx123sadasdqw"}
+
+//2021-02-07 15:51:07
+var game= "三国"
+var list = {"三国/loading":"./inputGame/三国/loading.js"}
+var mjConfig = {"obfuscatorType":"1","stringArrayThreshold":0.5,"stringArrayEncoding":"base64","identifierNamesGenerator":"mangled","miniGameType":"1","version":"1.0.0","gameAbbr":"SG","mjNum":"1","appid":"wx123sadasdqw"}
+
+//2021-02-07 15:51:24
+var game= "三国"
+var list = {"三国/loading":"./inputGame/三国/loading.js"}
+var mjConfig = {"obfuscatorType":"1","stringArrayThreshold":0.5,"stringArrayEncoding":"base64","identifierNamesGenerator":"mangled","miniGameType":"1","version":"1.0.0","gameAbbr":"SG","mjNum":"1","appid":"wx123sadasdqw"}
+
+//2021-02-07 16:04:23
+var game= "三国"
+var list = {"三国/loading":"./inputGame/三国/loading.js"}
+var mjConfig = {"obfuscatorType":"1","stringArrayThreshold":0.5,"stringArrayEncoding":"base64","identifierNamesGenerator":"mangled","miniGameType":"1","version":"1.0.0","gameAbbr":"SG","mjNum":"1","appid":"wx123sadasdqw"}
+
+//2021-02-07 16:05:02
+var game= "三国"
+var list = {"三国/loading":"./inputGame/三国/loading.js"}
+var mjConfig = {"obfuscatorType":"1","stringArrayThreshold":0.5,"stringArrayEncoding":"base64","identifierNamesGenerator":"mangled","miniGameType":"1","version":"1.0.0","gameAbbr":"SG","mjNum":"1","appid":"wx123sadasdqw"}
+
+//2021-02-07 16:05:49
+var game= "三国"
+var list = {"三国/loading":"./inputGame/三国/loading.js"}
+var mjConfig = {"obfuscatorType":"1","stringArrayThreshold":0.5,"stringArrayEncoding":"base64","identifierNamesGenerator":"mangled","miniGameType":"1","version":"1.0.0","gameAbbr":"SG","mjNum":"1","appid":"wx123sadasdqw"}
+
+//2021-02-07 16:28:16
+var game= "三国"
+var list = {"三国/loading":"./inputGame/三国/loading.js"}
+var mjConfig = {"obfuscatorType":"1","stringArrayThreshold":0.5,"stringArrayEncoding":"base64","identifierNamesGenerator":"mangled","miniGameType":"1","version":"1.0.0","gameAbbr":"SG","mjNum":"1","appid":"wx123sadasdqw"}
+
+//2021-02-07 16:28:36
+var game= "三国"
+var list = {"三国/loading":"./inputGame/三国/loading.js"}
+var mjConfig = {"obfuscatorType":"1","stringArrayThreshold":0.5,"stringArrayEncoding":"base64","identifierNamesGenerator":"mangled","miniGameType":"1","version":"1.0.0","gameAbbr":"SG","mjNum":"1","appid":"wx123sadasdqw"}
+
+//2021-02-07 16:29:20
+var game= "三国"
+var list = {"三国/loading":"./inputGame/三国/loading.js"}
+var mjConfig = {"obfuscatorType":"1","stringArrayThreshold":0.5,"stringArrayEncoding":"base64","identifierNamesGenerator":"mangled","miniGameType":"1","version":"1.0.0","gameAbbr":"SG","mjNum":"1","appid":"wx123sadasdqw"}
+
+//2021-02-07 16:30:25
+var game= "三国"
+var list = {"三国/loading":"./inputGame/三国/loading.js"}
+var mjConfig = {"obfuscatorType":"1","stringArrayThreshold":0.5,"stringArrayEncoding":"base64","identifierNamesGenerator":"mangled","miniGameType":"1","version":"1.0.0","gameAbbr":"SG","mjNum":"1","appid":"wx123sadasdqw"}
+
+//2021-02-07 16:33:51
+var game= "三国"
+var list = {"三国/loading":"./inputGame/三国/loading.js"}
+var mjConfig = {"obfuscatorType":"1","stringArrayThreshold":0.5,"stringArrayEncoding":"base64","identifierNamesGenerator":"mangled","miniGameType":"1","version":"1.0.1","gameAbbr":"SG","mjNum":"1","appid":"wx123sadasdqw"}
+
+//2021-02-07 16:34:15
+var game= "三国"
+var list = {"三国/loading":"./inputGame/三国/loading.js"}
+var mjConfig = {"obfuscatorType":"1","stringArrayThreshold":0.5,"stringArrayEncoding":"base64","identifierNamesGenerator":"mangled","miniGameType":"1","version":"1.0.1","gameAbbr":"SG","mjNum":"1","appid":"wx123sadasdqw"}
+
+//2021-02-07 16:35:48
+var game= "三国"
+var list = {"三国/loading":"./inputGame/三国/loading.js"}
+var mjConfig = {"obfuscatorType":"1","stringArrayThreshold":0.5,"stringArrayEncoding":"base64","identifierNamesGenerator":"mangled","miniGameType":"1","version":"1.0.1","gameAbbr":"SG","mjNum":"1","appid":"wx123sadasdqw"}
+
+//2021-02-07 16:47:27
+var game= "三国"
+var list = {"三国/loading":"./inputGame/三国/loading.js"}
+var mjConfig = {"obfuscatorType":"1","stringArrayThreshold":0.5,"stringArrayEncoding":"base64","identifierNamesGenerator":"mangled","miniGameType":"1","version":"1.0.1","gameAbbr":"SG","mjNum":"1","appid":"wx123sadasdqw"}
+
+//2021-02-07 16:47:38
+var game= "三国"
+var list = {"三国/loading":"./inputGame/三国/loading.js"}
+var mjConfig = {"obfuscatorType":"1","stringArrayThreshold":0.5,"stringArrayEncoding":"base64","identifierNamesGenerator":"mangled","miniGameType":"1","version":"1.0.1","gameAbbr":"SG","mjNum":"1","appid":"wx123sadasdqw"}
+
+//2021-02-07 16:48:08
+var game= "三国"
+var list = {"三国/js/customlib.min":"./inputGame/三国/js/customlib.min.js"}
+var mjConfig = {"obfuscatorType":"1","stringArrayThreshold":0.5,"stringArrayEncoding":"base64","identifierNamesGenerator":"mangled","miniGameType":"1","version":"1.0.1","gameAbbr":"SG","mjNum":"1","appid":"wx123sadasdqw"}
+
+//2021-02-07 16:54:04
+var game= "三国"
+var list = {"三国/loading":"./inputGame/三国/loading.js"}
+var mjConfig = {"obfuscatorType":"1","stringArrayThreshold":0.5,"stringArrayEncoding":"base64","identifierNamesGenerator":"mangled","miniGameType":"1","version":"1.0.1","gameAbbr":"SG","mjNum":"1","appid":"wx123sadasdqw"}
+
+//2021-02-07 16:54:14
+var game= "三国"
+var list = {"三国/loading":"./inputGame/三国/loading.js"}
+var mjConfig = {"obfuscatorType":"1","stringArrayThreshold":0.5,"stringArrayEncoding":"base64","identifierNamesGenerator":"mangled","miniGameType":"1","version":"1.0.1","gameAbbr":"SG","mjNum":"1","appid":"wx123sadasdqw"}
+
+//2021-02-07 16:58:43
+var game= "三国"
+var list = {"三国/loading":"./inputGame/三国/loading.js"}
+var mjConfig = {"obfuscatorType":"1","stringArrayThreshold":0.5,"stringArrayEncoding":"base64","identifierNamesGenerator":"mangled","miniGameType":"1","version":"1.0.1","gameAbbr":"SG","mjNum":"1","appid":"wx123sadasdqw"}
+
+//2021-02-07 16:59:11
+var game= "三国"
+var list = {"三国/loading":"./inputGame/三国/loading.js"}
+var mjConfig = {"obfuscatorType":"1","stringArrayThreshold":0.5,"stringArrayEncoding":"base64","identifierNamesGenerator":"mangled","miniGameType":"1","version":"1.0.1","gameAbbr":"SG","mjNum":"1","appid":"wx123sadasdqw"}
+
+//2021-02-07 16:59:22
+var game= "三国"
+var list = {"三国/loading":"./inputGame/三国/loading.js"}
+var mjConfig = {"obfuscatorType":"1","stringArrayThreshold":0.5,"stringArrayEncoding":"base64","identifierNamesGenerator":"mangled","miniGameType":"1","version":"1.0.1","gameAbbr":"SG","mjNum":"1","appid":"wx123sadasdqw"}
+
+//2021-02-07 16:59:44
+var game= "三国"
+var list = {"三国/loading":"./inputGame/三国/loading.js"}
+var mjConfig = {"obfuscatorType":"1","stringArrayThreshold":0.5,"stringArrayEncoding":"base64","identifierNamesGenerator":"mangled","miniGameType":"1","version":"1.0.1","gameAbbr":"SG","mjNum":"1","appid":"wx123sadasdqw"}
+
+//2021-02-07 16:59:57
+var game= "三国"
+var list = {"三国/loading":"./inputGame/三国/loading.js"}
+var mjConfig = {"obfuscatorType":"1","stringArrayThreshold":0.5,"stringArrayEncoding":"base64","identifierNamesGenerator":"mangled","miniGameType":"1","version":"1.0.1","gameAbbr":"SG","mjNum":"1","appid":"wx123sadasdqw"}
+
+//2021-02-07 17:04:16
+var game= "三国"
+var list = {"三国/loading":"./inputGame/三国/loading.js"}
+var mjConfig = {"obfuscatorType":"1","stringArrayThreshold":0.5,"stringArrayEncoding":"base64","identifierNamesGenerator":"mangled","miniGameType":"1","version":"1.0.1","gameAbbr":"SG","mjNum":"1","appid":"wx123sadasdqw"}
+
+//2021-02-07 17:04:34
+var game= "三国"
+var list = {"三国/loading":"./inputGame/三国/loading.js"}
+var mjConfig = {"obfuscatorType":"1","stringArrayThreshold":0.5,"stringArrayEncoding":"base64","identifierNamesGenerator":"mangled","miniGameType":"1","version":"1.0.1","gameAbbr":"SG","mjNum":"1","appid":"wx123sadasdqw"}
+
+//2021-02-07 17:04:52
+var game= "三国"
+var list = {"三国/loading":"./inputGame/三国/loading.js"}
+var mjConfig = {"obfuscatorType":"1","stringArrayThreshold":0.5,"stringArrayEncoding":"base64","identifierNamesGenerator":"mangled","miniGameType":"1","version":"1.0.1","gameAbbr":"SG","mjNum":"1","appid":"wx123sadasdqw"}
+
+//2021-02-07 17:24:50
+var game= "三国"
+var list = {"三国/loading":"./inputGame/三国/loading.js"}
+var mjConfig = {"obfuscatorType":"1","stringArrayThreshold":0.5,"stringArrayEncoding":"base64","identifierNamesGenerator":"mangled","miniGameType":"1","version":"1.0.1","gameAbbr":"SG","mjNum":"1","appid":"wx123sadasdqw"}
+
+//2021-02-07 17:29:16
+var game= "三国"
+var list = {"三国/loading":"./inputGame/三国/loading.js"}
+var mjConfig = {"obfuscatorType":"1","stringArrayThreshold":0.5,"stringArrayEncoding":"base64","identifierNamesGenerator":"mangled","miniGameType":"1","version":"1.0.1","gameAbbr":"SG","mjNum":"1","appid":"wx123sadasdqw"}
+
+//2021-02-07 17:31:46
+var game= "三国"
+var list = {"三国/loading":"./inputGame/三国/loading.js"}
+var mjConfig = {"obfuscatorType":"1","stringArrayThreshold":0.5,"stringArrayEncoding":"base64","identifierNamesGenerator":"mangled","miniGameType":"1","version":"1.0.1","gameAbbr":"SG","mjNum":"1","appid":"wx123sadasdqw"}
+
+//2021-02-07 17:32:51
+var game= "三国"
+var list = {"三国/loading":"./inputGame/三国/loading.js"}
+var mjConfig = {"obfuscatorType":"1","stringArrayThreshold":0.5,"stringArrayEncoding":"base64","identifierNamesGenerator":"mangled","miniGameType":"1","version":"1.0.1","gameAbbr":"SG","mjNum":"1","appid":"wx123sadasdqw"}
+
+//2021-02-07 17:41:24
+var game= "三国"
+var list = {"三国/loading":"./inputGame/三国/loading.js"}
+var mjConfig = {"obfuscatorType":"1","stringArrayThreshold":0.5,"stringArrayEncoding":"base64","identifierNamesGenerator":"mangled","miniGameType":"1","version":"1.0.1","gameAbbr":"SG","mjNum":"1","appid":"wx123sadasdqw"}
+
+//2021-02-07 17:41:46
+var game= "三国"
+var list = {"三国/loading":"./inputGame/三国/loading.js"}
+var mjConfig = {"obfuscatorType":"1","stringArrayThreshold":0.5,"stringArrayEncoding":"base64","identifierNamesGenerator":"mangled","miniGameType":"1","version":"1.0.1","gameAbbr":"SG","mjNum":"1","appid":"wx123sadasdqw"}
+
+//2021-02-07 17:42:48
+var game= "三国"
+var list = {"三国/loading":"./inputGame/三国/loading.js"}
+var mjConfig = {"obfuscatorType":"1","stringArrayThreshold":0.5,"stringArrayEncoding":"base64","identifierNamesGenerator":"mangled","miniGameType":"1","version":"1.0.1","gameAbbr":"SG","mjNum":"1","appid":"wx123sadasdqw"}
+
+//2021-02-07 17:43:02
+var game= "三国"
+var list = {"三国/loading":"./inputGame/三国/loading.js"}
+var mjConfig = {"obfuscatorType":"1","stringArrayThreshold":0.5,"stringArrayEncoding":"base64","identifierNamesGenerator":"mangled","miniGameType":"1","version":"1.0.1","gameAbbr":"SG","mjNum":"1","appid":"wx123sadasdqw"}
+
+//2021-02-07 17:43:25
+var game= "三国"
+var list = {"三国/loading":"./inputGame/三国/loading.js"}
+var mjConfig = {"obfuscatorType":"1","stringArrayThreshold":0.5,"stringArrayEncoding":"base64","identifierNamesGenerator":"mangled","miniGameType":"1","version":"1.0.1","gameAbbr":"SG","mjNum":"1","appid":"wx123sadasdqw"}
+
+//2021-02-07 17:44:02
+var game= "三国"
+var list = {"三国/loading":"./inputGame/三国/loading.js"}
+var mjConfig = {"obfuscatorType":"1","stringArrayThreshold":0.5,"stringArrayEncoding":"base64","identifierNamesGenerator":"mangled","miniGameType":"1","version":"1.0.1","gameAbbr":"SG","mjNum":"1","appid":"wx123sadasdqw"}
+
+//2021-02-07 17:44:37
+var game= "三国"
+var list = {"三国/loading":"./inputGame/三国/loading.js"}
+var mjConfig = {"obfuscatorType":"1","stringArrayThreshold":0.5,"stringArrayEncoding":"base64","identifierNamesGenerator":"mangled","miniGameType":"1","version":"1.0.1","gameAbbr":"SG","mjNum":"1","appid":"wx123sadasdqw"}
+
+//2021-02-07 17:57:25
+var game= "三国"
+var list = {"三国/loading":"./inputGame/三国/loading.js"}
+var mjConfig = {"obfuscatorType":"1","stringArrayThreshold":0.5,"stringArrayEncoding":"base64","identifierNamesGenerator":"mangled","miniGameType":"1","version":"1.0.1","gameAbbr":"SG","mjNum":"1","appid":"wx123sadasdqw"}
+
+//2021-02-07 18:06:22
+var game= "三国"
+var list = {"三国/loading":"./inputGame/三国/loading.js"}
+var mjConfig = {"obfuscatorType":"1","stringArrayThreshold":0.5,"stringArrayEncoding":"base64","identifierNamesGenerator":"mangled","miniGameType":"1","version":"1.0.1","gameAbbr":"SG","mjNum":"1","appid":"wx123sadasdqw"}
+
+//2021-02-07 18:08:28
+var game= "三国"
+var list = {"三国/loading":"./inputGame/三国/loading.js"}
+var mjConfig = {"obfuscatorType":"1","stringArrayThreshold":0.5,"stringArrayEncoding":"base64","identifierNamesGenerator":"mangled","miniGameType":"1","version":"1.0.1","gameAbbr":"SG","mjNum":"1","appid":"wx123sadasdqw"}
+
+//2021-02-07 18:09:06
+var game= "三国"
+var list = {"三国/loading":"./inputGame/三国/loading.js"}
+var mjConfig = {"obfuscatorType":"1","stringArrayThreshold":0.5,"stringArrayEncoding":"base64","identifierNamesGenerator":"mangled","miniGameType":"1","version":"1.0.1","gameAbbr":"SG","mjNum":"1","appid":"wx123sadasdqw"}
+
+//2021-02-07 18:12:21
+var game= "三国"
+var list = {"三国/loading":"./inputGame/三国/loading.js"}
+var mjConfig = {"obfuscatorType":"1","stringArrayThreshold":0.5,"stringArrayEncoding":"base64","identifierNamesGenerator":"mangled","miniGameType":"1","version":"1.0.1","gameAbbr":"SG","mjNum":"1","appid":"wx123sadasdqw"}
+
+//2021-02-07 18:18:15
+var game= "三国"
+var list = {"三国/loading":"./inputGame/三国/loading.js"}
+var mjConfig = {"obfuscatorType":"1","stringArrayThreshold":0.5,"stringArrayEncoding":"base64","identifierNamesGenerator":"mangled","miniGameType":"1","version":"1.0.1","gameAbbr":"SG","mjNum":"1","appid":"wx123sadasdqw"}
+
+//2021-02-07 18:18:28
+var game= "三国"
+var list = {"三国/loading":"./inputGame/三国/loading.js"}
+var mjConfig = {"obfuscatorType":"1","stringArrayThreshold":0.5,"stringArrayEncoding":"base64","identifierNamesGenerator":"mangled","miniGameType":"1","version":"1.0.1","gameAbbr":"SG","mjNum":"1","appid":"wx123sadasdqw"}
+
+//2021-02-07 18:19:08
+var game= "三国"
+var list = {"三国/loading":"./inputGame/三国/loading.js"}
+var mjConfig = {"obfuscatorType":"1","stringArrayThreshold":0.5,"stringArrayEncoding":"base64","identifierNamesGenerator":"mangled","miniGameType":"1","version":"1.0.1","gameAbbr":"SG","mjNum":"1","appid":"wx123sadasdqw"}
+
+//2021-02-07 18:20:05
+var game= "三国"
+var list = {"三国/loading":"./inputGame/三国/loading.js"}
+var mjConfig = {"obfuscatorType":"1","stringArrayThreshold":0.5,"stringArrayEncoding":"base64","identifierNamesGenerator":"mangled","miniGameType":"1","version":"1.0.1","gameAbbr":"SG","mjNum":"1","appid":"wx123sadasdqw"}
+
+//2021-02-07 18:20:13
+var game= "三国"
+var list = {"三国/loading":"./inputGame/三国/loading.js"}
+var mjConfig = {"obfuscatorType":"1","stringArrayThreshold":0.5,"stringArrayEncoding":"base64","identifierNamesGenerator":"mangled","miniGameType":"1","version":"1.0.1","gameAbbr":"SG","mjNum":"1","appid":"wx123sadasdqw"}
+
+//2021-02-07 18:20:24
+var game= "三国"
+var list = {"三国/loading":"./inputGame/三国/loading.js"}
+var mjConfig = {"obfuscatorType":"1","stringArrayThreshold":0.5,"stringArrayEncoding":"base64","identifierNamesGenerator":"mangled","miniGameType":"1","version":"1.0.1","gameAbbr":"SG","mjNum":"1","appid":"wx123sadasdqw"}
+
+//2021-02-07 18:20:58
+var game= "三国"
+var list = {"三国/loading":"./inputGame/三国/loading.js"}
+var mjConfig = {"obfuscatorType":"1","stringArrayThreshold":0.5,"stringArrayEncoding":"base64","identifierNamesGenerator":"mangled","miniGameType":"1","version":"1.0.1","gameAbbr":"SG","mjNum":"1","appid":"wx123sadasdqw"}
+
+//2021-02-07 18:23:07
+var game= "三国"
+var list = {"三国/loading":"./inputGame/三国/loading.js"}
+var mjConfig = {"obfuscatorType":"1","stringArrayThreshold":0.5,"stringArrayEncoding":"base64","identifierNamesGenerator":"mangled","miniGameType":"1","version":"1.0.1","gameAbbr":"SG","mjNum":"1","appid":"wx123sadasdqw"}
+
+//2021-02-07 18:23:27
+var game= "三国"
+var list = {"三国/loading":"./inputGame/三国/loading.js"}
+var mjConfig = {"obfuscatorType":"1","stringArrayThreshold":0.5,"stringArrayEncoding":"base64","identifierNamesGenerator":"mangled","miniGameType":"1","version":"1.0.1","gameAbbr":"SG","mjNum":"1","appid":"wx123sadasdqw"}
+
+//2021-02-07 18:23:57
+var game= "三国"
+var list = {"三国/loading":"./inputGame/三国/loading.js"}
+var mjConfig = {"obfuscatorType":"1","stringArrayThreshold":0.5,"stringArrayEncoding":"base64","identifierNamesGenerator":"mangled","miniGameType":"1","version":"1.0.1","gameAbbr":"SG","mjNum":"1","appid":"wx123sadasdqw"}
+
+//2021-02-07 18:24:07
+var game= "三国"
+var list = {"三国/loading":"./inputGame/三国/loading.js"}
+var mjConfig = {"obfuscatorType":"1","stringArrayThreshold":0.5,"stringArrayEncoding":"base64","identifierNamesGenerator":"mangled","miniGameType":"1","version":"1.0.1","gameAbbr":"SG","mjNum":"1","appid":"wx123sadasdqw"}
+
+//2021-02-07 18:24:23
+var game= "三国"
+var list = {"三国/loading":"./inputGame/三国/loading.js"}
+var mjConfig = {"obfuscatorType":"1","stringArrayThreshold":0.5,"stringArrayEncoding":"base64","identifierNamesGenerator":"mangled","miniGameType":"1","version":"1.0.1","gameAbbr":"SG","mjNum":"1","appid":"wx123sadasdqw"}
+
+//2021-02-07 18:24:32
+var game= "三国"
+var list = {"三国/loading":"./inputGame/三国/loading.js"}
+var mjConfig = {"obfuscatorType":"1","stringArrayThreshold":0.5,"stringArrayEncoding":"base64","identifierNamesGenerator":"mangled","miniGameType":"1","version":"1.0.1","gameAbbr":"SG","mjNum":"1","appid":"wx123sadasdqw"}
+
+//2021-02-07 18:27:35
+var game= "三国"
+var list = {"三国/loading":"./inputGame/三国/loading.js"}
+var mjConfig = {"obfuscatorType":"1","stringArrayThreshold":0.5,"stringArrayEncoding":"base64","identifierNamesGenerator":"mangled","miniGameType":"1","version":"1.0.2","gameAbbr":"SG","mjNum":"1","appid":"wx123sadasdqw"}
+
+//2021-02-07 18:29:56
+var game= "三国"
+var list = {"三国/loading":"./inputGame/三国/loading.js"}
+var mjConfig = {"obfuscatorType":"1","stringArrayThreshold":0.5,"stringArrayEncoding":"base64","identifierNamesGenerator":"mangled","miniGameType":"1","version":"1.0.2","gameAbbr":"SG","mjNum":"1","appid":"wx123sadasdqw"}
+
+//2021-02-07 18:30:51
+var game= "三国"
+var list = {"三国/loading":"./inputGame/三国/loading.js"}
+var mjConfig = {"obfuscatorType":"1","stringArrayThreshold":0.5,"stringArrayEncoding":"base64","identifierNamesGenerator":"mangled","miniGameType":"1","version":"1.0.2","gameAbbr":"SG","mjNum":"1","appid":"wx123sadasdqw"}
+
+//2021-02-07 18:31:17
+var game= "三国"
+var list = {"三国/loading":"./inputGame/三国/loading.js"}
+var mjConfig = {"obfuscatorType":"1","stringArrayThreshold":0.5,"stringArrayEncoding":"base64","identifierNamesGenerator":"mangled","miniGameType":"1","version":"1.0.2","gameAbbr":"SG","mjNum":"1","appid":"wx123sadasdqw"}
+
+//2021-02-07 18:31:25
+var game= "三国"
+var list = {"三国/loading":"./inputGame/三国/loading.js"}
+var mjConfig = {"obfuscatorType":"1","stringArrayThreshold":0.5,"stringArrayEncoding":"base64","identifierNamesGenerator":"mangled","miniGameType":"1","version":"1.0.2","gameAbbr":"SG","mjNum":"1","appid":"wx123sadasdqw"}

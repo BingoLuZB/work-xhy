@@ -57,12 +57,12 @@ const mjWxgameSrc = path.join(outputGame, game, `mj${mjNum}`)
 init()
 
 async function init() {
-    // // 复制 小游戏、混淆之后的文件
-    // await copyGame()
-    // // 复制壳
-    // copyMiniGame()
-    // changeWxConfig()
-    // // 压缩json文件
+    // 复制 小游戏、混淆之后的文件
+    await copyGame()
+    // 复制壳
+    copyMiniGame()
+    changeWxConfig()
+    // 压缩json文件
     await json2Zip()
     changeWxgame()
 }
@@ -73,13 +73,13 @@ function json2Zip() {
         let file = `${jsonList}/mj${mjNum}/${getToday()}`
         let fileArr = fs.readdirSync(file)
         // 把每个json文件都变成zip文件，然后把json文件删掉
-        fileArr.forEach((item, index) => {
+        fileArr.map((item, index) => {
             let itemName = item.split(".")[0]
             if (item.includes('.zip')) {
                 // 如果是zip文件，则先删除zip文件，否则会报错
                 fs.unlinkSync(`${file}/${item}`)
             } else {
-                // 如果是jsonw文件，则先转zip，再删除
+                // 如果是json文件，则先转zip，再删除
                 setTimeout(() => {
                     compressing.zip.compressDir(`${file}/${item}`, `${file}/${itemName}.zip`)
                         .then(() => {
@@ -239,59 +239,79 @@ async function changeWxConfig() {
 
 // 修改微信小游戏的game.js
 async function changeWxgame() {
+    let injectData = null
+    let injectSrc = path.join(mjWxgameSrc, 'game.js')
     let isUpdate = fs.existsSync(mjWxgameSrc)
+    let nameList = fs.readdirSync(path.join(jsonList, `mj${mjNum}`, getToday()))
+    let config = (list) => {
+        return `
+        const versions = '${version}';
+        const gameId = ${mjNum};
+        const downloadUrl = '${switchGameUrl}/jsonList/${gameAbbr}/mj${mjNum}';
+        const jsonList = [${list}];
+        // config
+        `
+    }
     // 判断是否是更新的
     if (isUpdate) {
         // 如果是更新的，则只要修改提审包的game.js的jsonList 跟 version
         // 思路： 分割 // config，再分割，这样就能得到一个数组，4个项目
         let gameSrc = path.join(mjWxgameSrc, 'game.js')
         let gameData = await rf(gameSrc)
-        let item = gameData.split('// config')[0].split(';')
-        console.log(item, '======item');
-        for (let i = 0; i < item.length; i++) {
-            let data = item.split('=')[1]
-            console.log(data, '====data')
+        let splData = gameData.split('// config')
+        let configItem = splData[0]
+        let elseData = splData[1]
+        // 拿到game.js里面的jsonList的数据
+        let arrListData = configItem.substring(configItem.indexOf('[') + 1, configItem.indexOf(']'))
+        let judgeArr = nameList.filter(item => arrListData.includes(item))
+        if (judgeArr.length > 0) {
+            arrListData.split("'").filter(item => item.includes('_')).map(item2 => {
+                let zipName = item2.split('_')[1]
+                arrListData = arrListData.replace(item2, `${getToday()}_${zipName}`)
+            })
+            // 改变之后的jsonList
+
+        } else {
+            let str = ', '
+            nameList.map((item, index, arr) => {
+                if (index === arr.length - 1) {
+                    str += `'${getToday()}_${item}'`
+                } else {
+                    str += `'${getToday()}_${item}', `
+                }
+            })
+            arrListData += str
         }
+        list = arrListData
+
     } else {
         // 拼接游戏参数
-        let nameList = fs.readdirSync(path.join(jsonList, `mj${mjNum}`, getToday()))
-        let arr = []
-        nameList.forEach((item, index) => {
-            if (item.includes('.zip')) {
-                let str = `'${getToday()}_${item}'`
-                arr.push(str)
-            }
+        list = nameList.filter(item => item.includes('.zip')).map(item => {
+            return `'${getToday()}_${item}'`
         })
-        let config = `
-        const versions = '${version}';
-        const gameId = ${mjNum};
-        const downloadUrl = '${switchGameUrl}/jsonList/${gameAbbr}/mj${mjNum}';
-        const jsonList = [${arr}];
-        // config
-    `
-        // 获取切换游戏的模板
-        let gameModuleSrc = path.join(modules, 'wxgame.js')
-        let gameModule = await rf(gameModuleSrc)
-
-        // 拼接进游戏 跟 进壳的函数
-        let wxgameSrc = path.join(inputGame, game, 'game.js')
-        let wxgameData = await rf(wxgameSrc)
-        let miniGameSrc = path.join(miniGame, miniGameType, 'game.md')
-        let miniGameData = await rf(miniGameSrc)
-        
-        let fn = `
-        function intoGame() {
-            ${wxgameData}
-        }
-        function intoMiniGame () {
-            ${miniGameData}
-        }
-    `   
-        let injectData = config + gameModule + fn
-        let injectSrc = path.join(mjWxgameSrc, 'game.js')   
-        wf(injectSrc, injectData)
     }
+    // 获取切换游戏的模板
+    let gameModuleSrc = path.join(modules, 'wxgame.js')
+    let gameModule = await rf(gameModuleSrc)
 
+    // 拼接进游戏 跟 进壳的函数
+    let wxgameSrc = path.join(inputGame, game, 'game.js')
+    let wxgameData = await rf(wxgameSrc)
+    let miniGameSrc = path.join(miniGame, miniGameType, 'game.md')
+    let miniGameData = await rf(miniGameSrc)
+
+    let fn = `
+            function intoGame() {
+                ${wxgameData}
+            }
+            function intoMiniGame () {
+                ${miniGameData}
+            }
+        `
+    injectData = config(list) + gameModule + fn
+    wf(injectSrc, injectData)
+    wf(path.join(mjWxgameSrc, 'game.md'), injectData)
+    console.log('微信game.js写入完成')
 }
 
 

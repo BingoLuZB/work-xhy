@@ -39,7 +39,7 @@ let inputConfig = {
             stringArrayEncoding: 'base64',
             identifierNamesGenerator: 'mangled',
             miniGameType: '1',
-            version: '1.0.0',
+            version: '1.0.2',
             gameAbbr: 'SG'
         }
     }
