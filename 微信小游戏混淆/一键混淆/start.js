@@ -120,11 +120,14 @@ function openHtml() {
                                         break
                                         // 处理要混淆文件的格式
                                     case 'file':
+                                        /**
+                                         * 把 js:a.js,b.js 变成 游戏名/js/a.js, 游戏名/js/b.js
+                                         */
                                         let arr = item[j].split('\r\n')
                                         let game = i
                                         let fileObj = {}
-                                        arr.forEach((item2, index) => {
-                                            // 这里的item2是file之后分割字符串
+                                        arr.forEach((item2, index2) => {
+                                            // 这里的item2是file分割之后的字符串
                                             let finalFile = ''
                                             if (item2.includes(':')) {
                                                 // 如果混淆的不是根目录的文件
@@ -134,7 +137,7 @@ function openHtml() {
                                                 if (file.includes(',')) {
                                                     // 如果某个目录下要混淆多个文件
                                                     let fileArr = file.split(',')
-                                                    fileArr.forEach((item3, index) => {
+                                                    fileArr.forEach((item3, index3) => {
                                                         // 这里的item3是某个js文件
                                                         let afterDelJs = item3.split('.js')
                                                         finalFile = `./${inputGame}/${game}/${dir}/${afterDelJs[0]}`

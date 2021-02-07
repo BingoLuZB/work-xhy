@@ -1,5 +1,5 @@
 
-//2021-02-07 19:23:10
+//2021-02-07 19:45:41
 var game= "三国"
 var list = {"三国/js/customlib.min":"./inputGame/三国/js/customlib.min.js","三国/loading":"./inputGame/三国/loading.js"}
 var mjConfig = {"obfuscatorType":"1","stringArrayThreshold":0.5,"stringArrayEncoding":"base64","identifierNamesGenerator":"mangled","miniGameType":"1","version":"1.0.2","gameAbbr":"SG","mjNum":"1","appid":"wx123sadasdqw"}
@@ -261,7 +261,6 @@ async function changeWxgame() {
     let finalList = ''
     // 判断是否是更新的
     if (isUpdate) {
-        console.log(111111111);
         // 如果是更新的，则只要修改提审包的game.js的jsonList 跟 version
         let gameSrc = path.join(mjWxgameSrc, 'game.js')
         let gameData = await rf(gameSrc)
@@ -271,8 +270,10 @@ async function changeWxgame() {
         let judgeArr = nameList.filter(item => arrListData.includes(item))
         if (judgeArr.length > 0) {
             // 如果是之前已经混淆过的文件
+            // "20210207_a.zip, 20210207_b.zip"进行遍历
             arrListData.split("'").filter(item => item.includes('_')).map(item2 => {
                 let zipName = item2.split('_')[1]
+                // 替换旧的已混淆文件名
                 arrListData = arrListData.replace(item2, `${getDate(true)}_${zipName}`)
             })
         } else {
@@ -289,8 +290,6 @@ async function changeWxgame() {
         }
         finalList = arrListData
     } else {
-        console.log(222222222);
-        // 如果是新
         // 拼接游戏参数
         finalList = nameList.filter(item => item.includes('.zip')).map(item => {
             return `'${getDate(true)}_${item}'`
@@ -323,7 +322,6 @@ async function changeWxgame() {
 async function addHistroy(params) {
     return new Promise((resolve, reject) => {
         // 把配置都放到config对应的游戏id的js里面去
-        console.log(list, mjConfig, '======test');
         const configData = `\r\n//${getDate()}\r\nvar list = ${JSON.stringify(list)}\r\nvar mjConfig = ${JSON.stringify(mjConfig)}\r\n`
         wf(`${config}/config.${mjNum}.js`, configData, 'as')
         resolve()
