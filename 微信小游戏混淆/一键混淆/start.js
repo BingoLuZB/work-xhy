@@ -26,7 +26,7 @@ let inputConfig = {
     '三国': {
         game: '三国',
         file: {
-            // '三国/js/customlib.min': './inputGame/三国/js/customlib.min.js',
+            '三国/js/customlib.min': './inputGame/三国/js/customlib.min.js',
             // '三国/package1/main': './inputGame/三国/package1/main.js',
             '三国/loading': './inputGame/三国/loading.js',
         },
@@ -204,9 +204,6 @@ async function changePackageJson() {
             let list = JSON.stringify(itemI.file)
             let mjConfig = JSON.stringify({...itemI.obfuscatorObj, ...{mjNum: j, appid: itemI.idObj[j]}})
             const configData = `\r\n//${getDate()}\r\nvar game= "${i}"\r\nvar list = ${list}\r\nvar mjConfig = ${mjConfig}\r\n`
-            // 追加记录 config.${id}.js
-            // 把配置都放到config对应的游戏id的js里面去
-            wf(`config/config.${j}.js`, configData, 'as')
             // 新建webpack.config-${id}.js
             // const webpackData = fs.readFileSync(`./${allConfig.modules}/webpack.config.js`, 'utf-8')
             const webpackData = await rf(`./${modules}/${webpackName()}`)

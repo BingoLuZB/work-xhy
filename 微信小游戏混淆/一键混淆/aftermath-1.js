@@ -1,7 +1,7 @@
 
-//2021-02-07 18:31:25
+//2021-02-07 19:23:10
 var game= "三国"
-var list = {"三国/loading":"./inputGame/三国/loading.js"}
+var list = {"三国/js/customlib.min":"./inputGame/三国/js/customlib.min.js","三国/loading":"./inputGame/三国/loading.js"}
 var mjConfig = {"obfuscatorType":"1","stringArrayThreshold":0.5,"stringArrayEncoding":"base64","identifierNamesGenerator":"mangled","miniGameType":"1","version":"1.0.2","gameAbbr":"SG","mjNum":"1","appid":"wx123sadasdqw"}
 /**
  * 此文件用于 把inputGame的小游戏复制到 outputGame/游戏名 里面去，命名为game-${id}     outputGame/游戏名 已经有的话则不执行
@@ -27,7 +27,6 @@ var mjConfig = {"obfuscatorType":"1","stringArrayThreshold":0.5,"stringArrayEnco
 //     "mjNum": "1",
 //     "appid": "wx123sadasdqw"
 // }
-
 const fs = require('fs')
 const path = require('path')
 const compressing = require('compressing');
@@ -46,7 +45,8 @@ const {
     outputGame,
     miniGame,
     switchGameUrl,
-    modules
+    modules,
+    config
 } = require('./allConfig.js')
 
 const {
@@ -69,13 +69,14 @@ async function init() {
     changeWxConfig()
     // 压缩json文件
     await json2Zip()
-    changeWxgame()
+    await changeWxgame()
+    await addHistroy()
 }
 
 // 把json文件转成zip文件
 function json2Zip() {
     return new Promise((resolve, reject) => {
-        let file = `${jsonList}/mj${mjNum}/${getToday()}`
+        let file = `${jsonList}/mj${mjNum}/${getDate(true)}`
         let fileArr = fs.readdirSync(file)
         // 把每个json文件都变成zip文件，然后把json文件删掉
         fileArr.map((item, index) => {
@@ -246,9 +247,9 @@ async function changeWxConfig() {
 async function changeWxgame() {
     let injectData = null
     let injectSrc = path.join(mjWxgameSrc, 'game.js')
-    let isUpdate = fs.existsSync(mjWxgameSrc)
-    let nameList = fs.readdirSync(path.join(jsonList, `mj${mjNum}`, getToday()))
-    let config = (list) => {
+    let isUpdate = fs.existsSync(path.join(config, `config.${mjNum}.js`))
+    let nameList = fs.readdirSync(path.join(jsonList, `mj${mjNum}`, getDate(true)))
+    let configList = (list) => {
         return `
         const versions = '${version}';
         const gameId = ${mjNum};
@@ -257,42 +258,42 @@ async function changeWxgame() {
         // config
         `
     }
+    let finalList = ''
     // 判断是否是更新的
     if (isUpdate) {
+        console.log(111111111);
         // 如果是更新的，则只要修改提审包的game.js的jsonList 跟 version
-        // 思路： 分割 // config，再分割，这样就能得到一个数组，4个项目
         let gameSrc = path.join(mjWxgameSrc, 'game.js')
         let gameData = await rf(gameSrc)
-        let splData = gameData.split('// config')
-        let configItem = splData[0]
-        let elseData = splData[1]
+        let configItem = gameData.split('// config')[0]
         // 拿到game.js里面的jsonList的数据
         let arrListData = configItem.substring(configItem.indexOf('[') + 1, configItem.indexOf(']'))
         let judgeArr = nameList.filter(item => arrListData.includes(item))
         if (judgeArr.length > 0) {
+            // 如果是之前已经混淆过的文件
             arrListData.split("'").filter(item => item.includes('_')).map(item2 => {
                 let zipName = item2.split('_')[1]
-                arrListData = arrListData.replace(item2, `${getToday()}_${zipName}`)
+                arrListData = arrListData.replace(item2, `${getDate(true)}_${zipName}`)
             })
-            // 改变之后的jsonList
-
         } else {
+            // 如果是没有混淆过的文件
             let str = ', '
             nameList.map((item, index, arr) => {
                 if (index === arr.length - 1) {
-                    str += `'${getToday()}_${item}'`
+                    str += `'${getDate(true)}_${item}'`
                 } else {
-                    str += `'${getToday()}_${item}', `
+                    str += `'${getDate(true)}_${item}', `
                 }
             })
             arrListData += str
         }
-        list = arrListData
-
+        finalList = arrListData
     } else {
+        console.log(222222222);
+        // 如果是新
         // 拼接游戏参数
-        list = nameList.filter(item => item.includes('.zip')).map(item => {
-            return `'${getToday()}_${item}'`
+        finalList = nameList.filter(item => item.includes('.zip')).map(item => {
+            return `'${getDate(true)}_${item}'`
         })
     }
     // 获取切换游戏的模板
@@ -313,10 +314,20 @@ async function changeWxgame() {
                 ${miniGameData}
             }
         `
-    injectData = config(list) + gameModule + fn
+    injectData = configList(finalList) + gameModule + fn
     wf(injectSrc, injectData)
     wf(path.join(mjWxgameSrc, 'game.md'), injectData)
     console.log('微信game.js写入完成')
+}
+// 追加记录 config.${id}.js
+async function addHistroy(params) {
+    return new Promise((resolve, reject) => {
+        // 把配置都放到config对应的游戏id的js里面去
+        console.log(list, mjConfig, '======test');
+        const configData = `\r\n//${getDate()}\r\nvar list = ${JSON.stringify(list)}\r\nvar mjConfig = ${JSON.stringify(mjConfig)}\r\n`
+        wf(`${config}/config.${mjNum}.js`, configData, 'as')
+        resolve()
+    })
 }
 
 
@@ -324,12 +335,17 @@ async function changeWxgame() {
 // 刪除模板的 aftermath.js 以及webapck.config.js
 // fs.unlinkSync(__filename, `webpack-config-${myNum}.js`)
 
-function getToday() {
-    let myDate = new Date()
-    let y = myDate.getFullYear()
-    let m = myDate.getMonth() + 1
-    let d = myDate.getDate()
-    m = m < 10 ? `0${m}` : m
-    d = d < 10 ? `0${d}` : d
-    return `${y}${m}${d}`
+
+
+// 获取当前详细日期
+function getDate(isToday) {
+    var now = new Date(),
+        y = now.getFullYear(),
+        m = now.getMonth() + 1,
+        d = now.getDate();
+        if (isToday) {
+            return y +  (m < 10 ? "0" + m : m) + (d < 10 ? "0" + d : d)
+        } else {
+            return y + "-" + (m < 10 ? "0" + m : m) + "-" + (d < 10 ? "0" + d : d) + " " + now.toTimeString().substr(0, 8);
+        }
 }
