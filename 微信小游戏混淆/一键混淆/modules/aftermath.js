@@ -132,7 +132,7 @@ function copyDir(srcDir, tarDir, cb) {
             checkEnd()
             return
         }
-        files.forEach(function (file) {
+        files.map(function (file) {
             // 拼接地址
             var srcPath = path.join(srcDir, file)
             var tarPath = path.join(tarDir, file)
@@ -265,7 +265,7 @@ async function changeWxgame() {
         let judgeArr = nameList.filter(item => arrListData.includes(item))
         if (judgeArr.length > 0) {
             // 如果是之前已经混淆过的文件
-            // "20210207_a.zip, 20210207_b.zip"进行遍历
+            // 把原本game.js里面的jsonList "20210207_a.zip, 20210207_b.zip"进行遍历
             arrListData.split("'").filter(item => item.includes('_')).map(item2 => {
                 let zipName = item2.split('_')[1]
                 // 替换旧的已混淆文件名

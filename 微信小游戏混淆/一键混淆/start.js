@@ -120,13 +120,11 @@ function openHtml() {
                                         break
                                         // 处理要混淆文件的格式
                                     case 'file':
-                                        /**
-                                         * 把 js:a.js,b.js 变成 游戏名/js/a.js, 游戏名/js/b.js
-                                         */
+                                        // 把 js:a.js,b.js 变成 游戏名/js/a.js, 游戏名/js/b.js
                                         let arr = item[j].split('\r\n')
                                         let game = i
                                         let fileObj = {}
-                                        arr.forEach((item2, index2) => {
+                                        arr.map((item2, index2) => {
                                             // 这里的item2是file分割之后的字符串
                                             let finalFile = ''
                                             if (item2.includes(':')) {
@@ -137,31 +135,33 @@ function openHtml() {
                                                 if (file.includes(',')) {
                                                     // 如果某个目录下要混淆多个文件
                                                     let fileArr = file.split(',')
-                                                    fileArr.forEach((item3, index3) => {
+                                                    fileArr.map((item3, index3) => {
                                                         // 这里的item3是某个js文件
                                                         let afterDelJs = item3.split('.js')
                                                         finalFile = `./${inputGame}/${game}/${dir}/${afterDelJs[0]}`
                                                         fileObj[finalFile] = `${finalFile}.js`
+                                                        item.file = fileObj
                                                     })
                                                 } else {
-                                                    // 如果某个目录下要混淆某个文件
+                                                    // 如果某个目录下单独混淆某个文件
                                                     let finalFile = file.split('.js')[0]
                                                     finalFile = `./${inputGame}/${game}/${dir}/${finalFile}`
                                                     fileObj[finalFile] = `${finalFile}.js`
+                                                    item.file = fileObj
                                                 }
                                             } else {
                                                 // 如果混淆的是根目录的文件
                                                 finalFile = `./${inputGame}/${game}/${item2.split('.js')[0]}`
                                                 fileObj[finalFile] = `${finalFile}.js`
+                                                item.file = fileObj
                                             }
                                         })
-                                        item.file = fileObj
                                         break;
                                         // 把用户输入的游戏id appid 变成数组
                                     case 'idObj':
                                         let idStr = item[j].split('\r\n')
                                         let idObj = {}
-                                        idStr.forEach((item, index) => {
+                                        idStr.map((item, index) => {
                                             let str = item.split(':')
                                             let key = str[0]
                                             let value = str[1]
