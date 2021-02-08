@@ -224,7 +224,7 @@ async function changePackageJson() {
     let packageJsonData = await rf(`./${modules}/package.json`)
     if (packageJsonData) {
         packageJsonData = packageJsonData.replace(jsonCopyStr.key, 'all').replace(jsonCopyStr.value, allStr)
-        wf('package.json', packageJsonData)
+        await wf('package.json', packageJsonData)
         console.log('混淆即将开始！');
         cp.exec('npm run all', (error, stdout, stderr) => {
             if (error) {
