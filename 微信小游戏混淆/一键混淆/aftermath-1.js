@@ -1,8 +1,8 @@
 
-//2021-02-07 19:45:41
+//2021-02-08 19:24:06
 var game= "三国"
-var list = {"三国/js/customlib.min":"./inputGame/三国/js/customlib.min.js","三国/loading":"./inputGame/三国/loading.js"}
-var mjConfig = {"obfuscatorType":"1","stringArrayThreshold":0.5,"stringArrayEncoding":"base64","identifierNamesGenerator":"mangled","miniGameType":"1","version":"1.0.2","gameAbbr":"SG","mjNum":"1","appid":"wx123sadasdqw"}
+var list = {"三国/loading":"./inputGame/三国/loading.js"}
+var mjConfig = {"gameAbbr":"SG","version":"1.0.1","obfuscatorType":"1","stringArrayThreshold":"0.5","stringArrayEncoding":"base64","identifierNamesGenerator":"mangled","miniGameType":"1","mjNum":"1","appid":"wx132165"}
 /**
  * 此文件用于 把inputGame的小游戏复制到 outputGame/游戏名 里面去，命名为game-${id}     outputGame/游戏名 已经有的话则不执行
  * 压缩jsonList对应游戏的json
@@ -51,8 +51,9 @@ const {
 
 const {
     rf,
+    wf,
     checkStr,
-    wf
+    showAlert
 } = require('./nodeUtil.js');
 
 // 复制之后的微信小游戏地址
@@ -71,6 +72,7 @@ async function init() {
     await json2Zip()
     await changeWxgame()
     await addHistroy()
+    // fs.unlinkSync(__filename, `webpack-config-${myNum}.js`)
 }
 
 // 把json文件转成zip文件
@@ -137,7 +139,7 @@ function copyDir(srcDir, tarDir, cb) {
             checkEnd()
             return
         }
-        files.forEach(function (file) {
+        files.map(function (file) {
             // 拼接地址
             var srcPath = path.join(srcDir, file)
             var tarPath = path.join(tarDir, file)
@@ -270,7 +272,7 @@ async function changeWxgame() {
         let judgeArr = nameList.filter(item => arrListData.includes(item))
         if (judgeArr.length > 0) {
             // 如果是之前已经混淆过的文件
-            // "20210207_a.zip, 20210207_b.zip"进行遍历
+            // 把原本game.js里面的jsonList "20210207_a.zip, 20210207_b.zip"进行遍历
             arrListData.split("'").filter(item => item.includes('_')).map(item2 => {
                 let zipName = item2.split('_')[1]
                 // 替换旧的已混淆文件名
@@ -331,7 +333,7 @@ async function addHistroy(params) {
 
 
 // 刪除模板的 aftermath.js 以及webapck.config.js
-// fs.unlinkSync(__filename, `webpack-config-${myNum}.js`)
+
 
 
 

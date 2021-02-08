@@ -46,8 +46,9 @@ const {
 
 const {
     rf,
+    wf,
     checkStr,
-    wf
+    showAlert
 } = require('./nodeUtil.js');
 
 // 复制之后的微信小游戏地址
@@ -66,6 +67,7 @@ async function init() {
     await json2Zip()
     await changeWxgame()
     await addHistroy()
+    // fs.unlinkSync(__filename, `webpack-config-${myNum}.js`)
 }
 
 // 把json文件转成zip文件
@@ -326,7 +328,7 @@ async function addHistroy(params) {
 
 
 // 刪除模板的 aftermath.js 以及webapck.config.js
-// fs.unlinkSync(__filename, `webpack-config-${myNum}.js`)
+
 
 
 
