@@ -48,8 +48,9 @@ const {
     rf,
     wf,
     checkStr,
-    showAlert
-} = require('./nodeUtil.js');
+    showAlert,
+    getDate
+} = require('./util.js');
 
 // 复制之后的微信小游戏地址
 const mjWxgameSrc = path.join(outputGame, game, `mj${mjNum}`)
@@ -64,10 +65,9 @@ async function init() {
     copyMiniGame()
     changeWxConfig()
     // 压缩json文件
-    await json2Zip()
     await changeWxgame()
     await addHistroy()
-    // fs.unlinkSync(__filename, `webpack-config-${myNum}.js`)
+    await json2Zip()
 }
 
 // 把json文件转成zip文件
@@ -248,11 +248,11 @@ async function changeWxgame() {
     let nameList = fs.readdirSync(path.join(jsonList, `mj${mjNum}`, getDate(true)))
     let configList = (list) => {
         return `
-        const versions = '${version}';
-        const gameId = ${mjNum};
-        const downloadUrl = '${switchGameUrl}/jsonList/${gameAbbr}/mj${mjNum}';
-        const jsonList = [${list}];
-        // config
+const versions = '${version}';
+const gameId = ${mjNum};
+const downloadUrl = '${switchGameUrl}/jsonList/${gameAbbr}/mj${mjNum}';
+const jsonList = [${list}];
+// config
         `
     }
     let finalList = ''
@@ -274,7 +274,7 @@ async function changeWxgame() {
                 arrListData = arrListData.replace(item2, `${getDate(true)}_${zipName}`)
             })
         } else {
-            // 如果是没有混淆过的文件
+            // 如果是没有混淆过的文件,直接拼接jsonList
             let str = ', '
             nameList.map((item, index, arr) => {
                 if (index === arr.length - 1) {
@@ -303,44 +303,24 @@ async function changeWxgame() {
     let miniGameData = await rf(miniGameSrc)
 
     let fn = `
-            function intoGame() {
-                ${wxgameData}
-            }
-            function intoMiniGame () {
-                ${miniGameData}
-            }
-        `
+function intoGame() {
+    ${wxgameData}
+}
+function intoMiniGame () {
+    ${miniGameData}
+}
+`
     injectData = configList(finalList) + gameModule + fn
     wf(injectSrc, injectData)
     wf(path.join(mjWxgameSrc, 'game.md'), injectData)
     console.log('微信game.js写入完成')
 }
 // 追加记录 config.${id}.js
-async function addHistroy(params) {
+async function addHistroy() {
     return new Promise((resolve, reject) => {
         // 把配置都放到config对应的游戏id的js里面去
         const configData = `\r\n//${getDate()}\r\nvar list = ${JSON.stringify(list)}\r\nvar mjConfig = ${JSON.stringify(mjConfig)}\r\n`
         wf(`${config}/config.${mjNum}.js`, configData, 'as')
         resolve()
     })
-}
-
-
-
-// 刪除模板的 aftermath.js 以及webapck.config.js
-
-
-
-
-// 获取当前详细日期
-function getDate(isToday) {
-    var now = new Date(),
-        y = now.getFullYear(),
-        m = now.getMonth() + 1,
-        d = now.getDate();
-        if (isToday) {
-            return y +  (m < 10 ? "0" + m : m) + (d < 10 ? "0" + d : d)
-        } else {
-            return y + "-" + (m < 10 ? "0" + m : m) + "-" + (d < 10 ? "0" + d : d) + " " + now.toTimeString().substr(0, 8);
-        }
 }

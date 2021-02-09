@@ -6,7 +6,7 @@ const {
 } = require('./allConfig.js')
 const {
     checkStr
-} = require('./nodeUtil.js')
+} = require('./util.js')
 const {
     obfuscatorType,
     mjNum

@@ -1,5 +1,4 @@
 const fs = require('fs');
-const readline = require('readline');
 const cp = require('child_process');
 const {
     inputGame,
@@ -11,10 +10,11 @@ const http = require("http");
 const querystring = require('querystring')
 const httpUrl = 'localhost'
 const {
-    showAlert,
     rf,
-    wf
-} = require('./nodeUtil')
+    wf,
+    showAlert,
+    getDate
+} = require('./util')
 // package.json要替换的key 跟 value
 const jsonCopyStr = {
     key: 'newBuild-key',
@@ -43,7 +43,6 @@ const jsonCopyStr = {
 //         }
 //     }
 // }
-let inputConfig = {}
 
 
 
@@ -55,9 +54,8 @@ init()
 async function init() {
     // 打开网页，并拿到用户输入的数据
     try {
-        inputConfig = await openHtml()
-        console.log(inputConfig, '===inputConfig');
-        await changePackageJson()
+        openHtml(changePackageJson)
+        // await changePackageJson(inputConfig)
     } catch (error) {
         console.error(error, '===error`')
     }
@@ -65,129 +63,128 @@ async function init() {
 
 
 // 用浏览器打开index.html
-function openHtml() {
+function openHtml(cb) {
     let fileNames = fs.readdirSync(inputGame)
     // 打开html
-    return new Promise((resolve, reject) => {
-        http.createServer((req, res) => {
-            fs.readFile(__dirname + "/index.html", "utf-8", (err, data) => {
-                if (err) {
-                    res.statusCode = 404;
-                    res.setHeader("Content-Type", "text/plain");
-                    res.end("Not Found!");
-                    reject()
-                } else {
-                    res.statusCode = 200;
-                    res.setHeader("Content-Type", "text/html");
-                    res.end(data);
-                }
-            });
-        }).listen(3000, "localhost", () => {
-            console.log("Successfully");
-            cp.exec(`start http://${httpUrl}:3000`);
+    http.createServer((req, res) => {
+        fs.readFile(__dirname + "/index.html", "utf-8", (err, data) => {
+            if (err) {
+                res.statusCode = 404;
+                res.setHeader("Content-Type", "text/plain");
+                res.end("Not Found!");
+                reject()
+            } else {
+                res.statusCode = 200;
+                res.setHeader("Content-Type", "text/html");
+                res.end(data);
+            }
         });
-        // 接收请求
-        http.createServer(function (req, res) {
-            if (req.url !== "/favicon.ico") {
-                req.on('data', function (data) {
-                    let inputConfig = []
-                    let resData = decodeURIComponent(data)
-                    console.log("服务器接收到的数据：　" + resData);
-                    resData = querystring.parse(resData);
-                    if (typeof resData.game !== 'string' && resData.game.length > 1) {
-                        // 如果有多个打包配置
-                        // let gameName = Array.from(new Set(resData.game))
-                        for (let i = 0; i < resData.obfuscatorType.length; i++) {
-                            let obj = {}
-                            for (let j in resData) {
-                                obj[j] = resData[j][i]
-                            }
-                            inputConfig.push(obj)
+    }).listen(3000, "localhost", () => {
+        console.log("Successfully");
+        cp.exec(`start http://${httpUrl}:3000`);
+    });
+    // 接收请求
+    http.createServer(function (req, res) {
+        if (req.url !== "/favicon.ico") {
+            let inputConfig = []
+            req.on('data', function (data) {
+                let resData = decodeURIComponent(data)
+                console.log("服务器接收到的数据：　" + resData);
+                resData = querystring.parse(resData);
+                if (typeof resData.game !== 'string' && resData.game.length > 1) {
+                    // 如果有多个打包配置
+                    // let gameName = Array.from(new Set(resData.game))
+                    for (let i = 0; i < resData.obfuscatorType.length; i++) {
+                        let obj = {}
+                        for (let j in resData) {
+                            obj[j] = resData[j][i]
                         }
-                    } else {
-                        // 如果只有1个打包配置
-                        inputConfig.push(resData)
+                        inputConfig.push(obj)
                     }
+                } else {
+                    // 如果只有1个打包配置
+                    inputConfig.push(resData)
+                }
+                inputConfig.forEach(ArrItem => {
+                    // 这里的item是某个游戏的配置的对象
+                    let item = ArrItem
                     // 先判断inputGame目录下有没有用户输入的游戏
-                    // if (fileNames.includes(i)) {
-                    inputConfig.forEach(ArrItem => {
-                        // 这里的item是某个游戏的配置的对象
-                        let item = ArrItem
-                        if (!fileNames.includes(item.game)) {
-                            showAlert(`${inputGame}目录下没有游戏：${item.game}`)
-                            return false
-                        }
-                        let obfuscatorObj = {}
-                        for (let j in item) {
-                            switch (j) {
-                                case 'game':
-                                    break
-                                    // 处理要混淆文件的格式
-                                case 'file':
-                                    // 把 js:a.js,b.js 变成 游戏名/js/a.js, 游戏名/js/b.js
-                                    let arr = item[j].split('\r\n')
-                                    let game = item.game
-                                    // let fileObj = {}
-                                    item.file = arr.reduce((last, item, index, arr) => {
-                                        let str = `./${inputGame}${game}`
-                                        let filenName = item.split(':')
-                                        let dir = filenName[0]
-                                        let fileArr = filenName.length > 1 && filenName[1].split(',')
-                                        if (fileArr) {
-                                            // 如果混淆的不是根目录的文件
-                                            fileArr.map((item, index, arr) => {
-                                                // replace(/\s*/g,"")去除空格
-                                                let final = `${str}/${dir}/${item.replace('.js', '')}`.replace(/\s*/g, "")
-                                                let target = final.replace(`./${inputGame}`, '')
-                                                last[target] = `${final}.js`
-                                            })
-                                        } else {
-                                            // 如果混淆的是根目录的文件
-                                            let final = `${str}/${filenName[0].split('.')[0].replace(/\s*/g,"")}`
+                    if (!fileNames.includes(item.game)) {
+                        showAlert(`${inputGame}目录下没有游戏：${item.game}`)
+                        return false
+                    }
+                    let obfuscatorObj = {}
+                    for (let j in item) {
+                        switch (j) {
+                            case 'game':
+                                break
+                                // 处理要混淆文件的格式
+                            case 'file':
+                                // 把 js:a.js,b.js 变成 游戏名/js/a.js, 游戏名/js/b.js
+                                let arr = item[j].split('\r\n')
+                                let game = item.game
+                                item.file = arr.reduce((last, item, index, arr) => {
+                                    let str = `./${inputGame}${game}`
+                                    let filenName = item.split(':')
+                                    let dir = filenName[0]
+                                    let fileArr = filenName.length > 1 && filenName[1].split(',')
+                                    if (fileArr) {
+                                        // 如果混淆的不是根目录的文件
+                                        fileArr.map((item, index, arr) => {
+                                            // replace(/\s*/g,"")去除空格
+                                            let final = `${str}/${dir}/${item.replace('.js', '')}`.replace(/\s*/g, "")
                                             let target = final.replace(`./${inputGame}`, '')
                                             last[target] = `${final}.js`
-                                        }
-                                        return last
-                                    }, {})
-                                    break;
-                                    // 把用户输入的游戏id appid 变成数组
-                                case 'idObj':
-                                    let idStr = item[j].split('\r\n')
-                                    let idObj = {}
-                                    idStr.map((item, index) => {
-                                        let str = item.split(':')
-                                        let key = str[0]
-                                        let value = str[1]
-                                        idObj[key] = value
-                                    })
-                                    item[j] = idObj
-                                    break;
-                                default:
-                                    // 把game file idArr以外的混淆配置放到obfuscatorObj里面去
-                                    obfuscatorObj[j] = item[j]
-                                    delete item[j]
-                            }
+                                        })
+                                    } else {
+                                        // 如果混淆的是根目录的文件
+                                        let final = `${str}/${filenName[0].split('.')[0].replace(/\s*/g,"")}`
+                                        let target = final.replace(`./${inputGame}`, '')
+                                        last[target] = `${final}.js`
+                                    }
+                                    return last
+                                }, {})
+                                break;
+                                // 把用户输入的游戏id appid 变成数组
+                            case 'idObj':
+                                let idStr = item[j].split('\r\n')
+                                let idObj = {}
+                                idStr.map((item, index) => {
+                                    let str = item.split(':')
+                                    let key = str[0]
+                                    let value = str[1]
+                                    idObj[key] = value
+                                })
+                                item[j] = idObj
+                                break;
+                            default:
+                                // 把game file idArr以外的混淆配置放到obfuscatorObj里面去
+                                obfuscatorObj[j] = item[j]
+                                delete item[j]
                         }
-                        item.obfuscatorObj = obfuscatorObj
-                    });
-                    resolve(inputConfig)
+                    }
+                    item.obfuscatorObj = obfuscatorObj
                 });
-                req.on("end", function () {
-                    console.log('客户端请求数据全部接收完毕');
-                });
-            }
-            res.end();
-        }).listen(8080, httpUrl, function () {
-            console.log("listened");
-        });
-    })
+            });
+            req.on("end", function () {
+                console.log('客户端请求数据全部接收完毕', inputConfig);
+                if (inputConfig.length > 0 && cb) {
+                    cb(inputConfig)
+                }
+            });
+        }
+        res.end();
+    }).listen(8080, httpUrl, function () {
+        console.log("listened");
+    });
 }
 
 
 // 新增webpack.config-id.js aftermath-id.js package.json
-async function changePackageJson() {
+async function changePackageJson(inputConfig) {
     // 读取config里面的配置文件
     // let allStr = "concurrently "
+    if (!inputConfig || inputConfig.length == 0) return false
     let allStr = ""
     for (let i = 0; i < inputConfig.length; i++) {
         // itemI 某个游戏的配置
@@ -219,13 +216,16 @@ async function changePackageJson() {
         }
     }
     // 配置package.json
-    allStr = allStr.substr(0, allStr.lastIndexOf('&&'))
-    // let packageJsonData = fs.readFileSync(`./${allConfig.modules}/package.json`, 'utf-8')
+    // 把所有要执行的webpack-config.${id}.js 跟 aftermath-${id}.js拼接起来,最后再把delete.js放在尾部，写入json的all里面
+    let endStr = 'node end.js'
+    allStr = allStr + endStr
+    // allStr = allStr.substr(0, allStr.lastIndexOf('&&'))
     let packageJsonData = await rf(`./${modules}/package.json`)
     if (packageJsonData) {
         packageJsonData = packageJsonData.replace(jsonCopyStr.key, 'all').replace(jsonCopyStr.value, allStr)
         await wf('package.json', packageJsonData)
         console.log('混淆即将开始！');
+        // 执行json里面的all
         cp.exec('npm run all', (error, stdout, stderr) => {
             if (error) {
                 console.error(`exec error: ${error}`);
@@ -235,13 +235,4 @@ async function changePackageJson() {
             console.log(`stderr: ${stderr}`)
         })
     }
-}
-
-// 获取当前详细日期
-function getDate() {
-    var now = new Date(),
-        y = now.getFullYear(),
-        m = now.getMonth() + 1,
-        d = now.getDate();
-    return y + "-" + (m < 10 ? "0" + m : m) + "-" + (d < 10 ? "0" + d : d) + " " + now.toTimeString().substr(0, 8);
 }
