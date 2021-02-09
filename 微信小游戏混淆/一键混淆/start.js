@@ -217,7 +217,7 @@ async function changePackageJson(inputConfig) {
     }
     // 配置package.json
     // 把所有要执行的webpack-config.${id}.js 跟 aftermath-${id}.js拼接起来,最后再把delete.js放在尾部，写入json的all里面
-    let endStr = 'node end.js'
+    let endStr = ' node end.js'
     allStr = allStr + endStr
     // allStr = allStr.substr(0, allStr.lastIndexOf('&&'))
     let packageJsonData = await rf(`./${modules}/package.json`)
