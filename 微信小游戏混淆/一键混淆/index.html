@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <script type="text/javascript" src="http://ajax.microsoft.com/ajax/jquery/jquery-1.4.min.js"></script>
 </head>
 
 <body>
@@ -15,7 +16,7 @@
         <div id="box">
             <ul class="item">
                 <li>
-                    <label for="game">请选择或输入你要混淆的游戏:</label>
+                    <label for="game">选择或输入要混淆的游戏:</label>
                     <input list="games" name="game" id="game" onblur="getGameAbbr(this)" required>
                     <datalist id="games">
                         <option value="三国">
@@ -75,20 +76,19 @@
                 <li>
                     游戏壳:
                     <select name="miniGameType">
-                        <option value="0">不需要壳</option>
+                        <option value="none">不需要壳</option>
                         <option value="1">砍树</option>
                         <option value="2">2048</option>
-                        <option value="3">狗头</option>
-                        <option value="4">跳一跳</option>
+                        <!-- <option value="3">狗头</option> -->
+                        <!-- <option value="4">跳一跳</option> -->
                         <option value="5">拼图</option>
-                        <option value="6">随机</option>
-                        <option value="7">密室逃脱</option>
-                        <option value="8">答题</option>
-                        <option value="9">随机</option>
+                        <!-- <option value="6">密室逃脱</option> -->
+                        <option value="7">答题</option>
+                        <option value="random">随机</option>
                     </select>
                 </li>
                 <li style="text-align: center; margin-top: 20px;">
-                    <button type="button" onclick="deleteItem(this)">删除</button>
+                    <button class="delBtn" type="button" onclick="deleteItem(this)">删除</button>
                 </li>
             </ul>
         </div>
@@ -99,9 +99,11 @@
             </div>
         </div>
     </form>
-
 </body>
 <script>
+    $("#form1").submit((data) => {
+        return false
+    })
     // 删除
     function deleteItem(el) {
         let item = el.parentNode.parentNode
@@ -196,8 +198,6 @@
         //  return this.replace(/(^\s*)|(\s*$)/g, "");
         //  };
     }
-
-
     
 </script>
 
@@ -221,6 +221,15 @@
 
     button {
         outline: none;
+    }
+    .delBtn {
+        width: 110px;
+        line-height: 23px;
+        border: 2px solid yellow;
+        font-size: 17px;
+        color: yellow;
+        border-radius: 20px;
+        background-color: red;
     }
 
     #form1 #box {
@@ -270,7 +279,7 @@
 
     textarea {
         width: 280px;
-        height: 130px;
+        height: 110px;
         resize: none;
     }
 </style>

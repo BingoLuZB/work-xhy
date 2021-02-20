@@ -25,7 +25,7 @@
 const fs = require('fs')
 const path = require('path')
 const compressing = require('compressing');
-const {
+let {
     mjNum,
     appid,
     miniGameType,
@@ -39,7 +39,7 @@ const {
     inputGame,
     outputGame,
     miniGame,
-    switchGameUrl,
+    downloadUrl,
     modules,
     config
 } = require('./allConfig.js')
@@ -179,7 +179,7 @@ function mkdirs(dirname, callback) {
 }
 
 // 复制游戏
-async function copyGame(cb) {
+function copyGame(cb) {
     return new Promise((resolve, reject) => {
         let inputSrc = path.join(inputGame, game)
         let distSrc = path.join(dist, game, `mj${mjNum}`)
@@ -207,10 +207,17 @@ async function copyGame(cb) {
 }
 
 // 复制壳
-async function copyMiniGame() {
-    if (!miniGameType) return false
+function copyMiniGame() {
     let miniFile = fs.readdirSync(miniGame)
-    if (miniFile.includes(miniGameType)) {
+    if (miniGameType === 'none') {
+        // 如果选了不需要壳，则直接return false
+        return false
+    } else {
+        if (miniGameType === 'random') {
+            // 如果选了随机，则把miniGameType换成随机数字
+            let random = Math.floor(Math.random() * miniFile.length)
+            miniGameType = miniFile[random]
+        }
         let miniSrc = path.join(miniGame, miniGameType, 'tarMini')
         copyDir(miniSrc, mjWxgameSrc, () => {
             let weappStr = 'weapp-adapter.js'
@@ -221,9 +228,6 @@ async function copyMiniGame() {
                 copyFile(tarSrc, weappSrc)
             }
         })
-    } else {
-        showAlert('找不到对应的壳')
-        return false
     }
 }
 
@@ -246,15 +250,6 @@ async function changeWxgame() {
     let injectSrc = path.join(mjWxgameSrc, 'game.js')
     let isUpdate = fs.existsSync(path.join(config, `config.${mjNum}.js`))
     let nameList = fs.readdirSync(path.join(jsonList, `mj${mjNum}`, getDate(true)))
-    let configList = (list) => {
-        return `
-const versions = '${version}';
-const gameId = ${mjNum};
-const downloadUrl = '${switchGameUrl}/jsonList/${gameAbbr}/mj${mjNum}';
-const jsonList = [${list}];
-// config
-        `
-    }
     let finalList = ''
     // 判断是否是更新的
     if (isUpdate) {
@@ -292,6 +287,16 @@ const jsonList = [${list}];
             return `'${getDate(true)}_${item}'`
         })
     }
+
+    function configList(list) {
+        return `
+const versions = '${version}';
+const gameId = ${mjNum};
+const downloadUrl = '${downloadUrl}/jsonList/${gameAbbr}/mj${mjNum}';
+const jsonList = [${list}];
+// config
+`
+    }
     // 获取切换游戏的模板
     let gameModuleSrc = path.join(modules, 'wxgame.js')
     let gameModule = await rf(gameModuleSrc)
@@ -299,8 +304,11 @@ const jsonList = [${list}];
     // 拼接进游戏 跟 进壳的函数
     let wxgameSrc = path.join(inputGame, game, 'game.js')
     let wxgameData = await rf(wxgameSrc)
-    let miniGameSrc = path.join(miniGame, miniGameType, 'game.md')
-    let miniGameData = await rf(miniGameSrc)
+    let miniGameData = ''
+    if (parseInt(miniGameType)) {
+        let miniGameSrc = path.join(miniGame, `${miniGameType}`, 'game.md')
+        miniGameData = await rf(miniGameSrc)
+    }
 
     let fn = `
 function intoGame() {
@@ -315,6 +323,7 @@ function intoMiniGame () {
     wf(path.join(mjWxgameSrc, 'game.md'), injectData)
     console.log('微信game.js写入完成')
 }
+
 // 追加记录 config.${id}.js
 async function addHistroy() {
     return new Promise((resolve, reject) => {

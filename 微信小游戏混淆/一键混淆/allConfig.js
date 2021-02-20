@@ -8,7 +8,7 @@ module.exports = {
     obfuscatorCode: 'obfuscatorCode/',
     outputGame: 'outputGame/',
     config: 'config/',
-    switchGameUrl: 'https://gministatic.xinghe66.cn/',
+    downloadUrl: 'https://gministatic.xinghe66.cn/',
     webpackName: (num) => {
         let name = 'webpack.config.js'
         let nameArr = name.split('.js')

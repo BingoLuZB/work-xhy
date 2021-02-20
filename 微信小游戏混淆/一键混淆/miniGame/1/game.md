@@ -1,2 +1,2 @@
-const Main = require('./tree/miniStart/main')
+const Main = require('./tree/js/main')
 new Main.default()
