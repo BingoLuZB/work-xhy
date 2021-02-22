@@ -2,7 +2,7 @@
 const versions = '1.0.0';
 const gameId = 1;
 const downloadUrl = 'https://gministatic.xinghe66.cn//jsonList/SG/mj1';
-const jsonList = [];
+const jsonList = [, '20210222_loading.json'];
 // config
 judgegame()
 	.then(() => {

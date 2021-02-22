@@ -12,7 +12,7 @@
     <div class="title">
         BingoL的混淆工具 test
     </div>
-    <form id="form1" name="allForm" action="http://localhost:8080/" method="post">
+    <form id="form1" name="allForm">
         <div id="box">
             <ul class="item">
                 <li>
@@ -79,11 +79,11 @@
                         <option value="none">不需要壳</option>
                         <option value="1">砍树</option>
                         <option value="2">2048</option>
-                        <!-- <option value="3">狗头</option> -->
-                        <!-- <option value="4">跳一跳</option> -->
-                        <option value="5">拼图</option>
-                        <!-- <option value="6">密室逃脱</option> -->
-                        <option value="7">答题</option>
+                        <option value="3">拼图</option>
+                        <option value="4">答题</option>
+                        <!-- <option value="5">狗头</option> -->
+                        <!-- <option value="6">跳一跳</option> -->
+                        <!-- <option value="7">密室逃脱</option> -->
                         <option value="random">随机</option>
                     </select>
                 </li>
@@ -101,9 +101,27 @@
     </form>
 </body>
 <script>
-    $("#form1").submit((data) => {
+    let flag = false
+    $("#form1").submit(() => {
+        if (flag) return false
+        flag = true
+        let data = $('#form1').serializeArray()
+        $.ajax({
+            type: 'POST',
+            url: 'http://localhost:3000/sendData/',
+            data,
+            success(res) {
+                setTimeout(() => {
+                    if (res) flag = false
+                }, 3000)
+            },
+            err() {
+
+            }
+        })
         return false
     })
+
     // 删除
     function deleteItem(el) {
         let item = el.parentNode.parentNode
@@ -267,6 +285,7 @@
         line-height: 34px;
         border-radius: 20px;
         border: solid;
+        outline: none;
     }
 
     ul {

@@ -66,20 +66,13 @@ function openHtml() {
                 res.statusCode = 404;
                 res.setHeader("Content-Type", "text/plain");
                 res.end("Not Found!");
-                reject()
             } else {
                 res.statusCode = 200;
-                res.setHeader("Content-Type", "text/html");
+                // res.setHeader("Content-Type", "text/html");
                 res.end(data);
             }
         });
-    }).listen(3000, "localhost", () => {
-        console.log("Successfully");
-        cp.exec(`start http://${httpUrl}:3000`);
-    });
-    // 接收请求
-    http.createServer(function (req, res) {
-        if (req.url !== "/favicon.ico") {
+        if (req.url !== "/favicon.ico" && req.url.includes('/sendData')) {
             let inputConfig = []
             req.on('data', (data) => {
                 inputConfig = transformData(data)
@@ -87,14 +80,34 @@ function openHtml() {
             req.on("end", function () {
                 console.log('客户端请求数据全部接收完毕', inputConfig);
                 if (inputConfig.length > 0) {
-                    changePackageJson(inputConfig)
+                    // changePackageJson(inputConfig)
                 }
             });
+            let status = inputConfig && inputConfig.length > 0 ? JSON.stringify({code:200}): JSON.stringify({code: 400})
+            res.end(status);
         }
-        res.end();
-    }).listen(8080, httpUrl, function () {
-        console.log("listened");
+    }).listen(3000, httpUrl, () => {
+        console.log("Successfully");
+        cp.exec(`start http://${httpUrl}:3000`);
     });
+    // 接收请求
+    // http.createServer(function (req, res) {
+    //     if (req.url !== "/favicon.ico") {
+    //         let inputConfig = []
+    //         req.on('data', (data) => {
+    //             inputConfig = transformData(data)
+    //         });
+    //         req.on("end", function () {
+    //             console.log('客户端请求数据全部接收完毕', inputConfig);
+    //             if (inputConfig.length > 0) {
+    //                 // changePackageJson(inputConfig)
+    //             }
+    //         });
+    //     }
+    //     res.end('please waiting');
+    // }).listen(8080, httpUrl, function () {
+    //     console.log("listened");
+    // });
 }
 
 function transformData(data) {
@@ -162,7 +175,7 @@ function transformData(data) {
                     })
                     item[j] = idObj
                     break;
-                // 把stringArrayThreshold  obfuscatorType转化为number类型
+                    // 把stringArrayThreshold  obfuscatorType转化为number类型
                 case 'stringArrayThreshold':
                 case 'obfuscatorType':
                     item[j] = item[j] * 100 / 100
@@ -172,7 +185,7 @@ function transformData(data) {
                     delete item[j]
             }
         }
-        item.obfuscatorObj = obfuscatorObj  
+        item.obfuscatorObj = obfuscatorObj
         return item
     })
 }
@@ -193,8 +206,8 @@ async function changePackageJson(inputConfig) {
             // 判断要混淆的游戏，有没有填入的混淆文件
             let arr = Object.values(itemI.file)
             for (let q of arr) {
-                if(!fs.existsSync(q))  {
-                    showAlert(`缺失文件:${q}`)
+                if (!fs.existsSync(q)) {
+                    showAlert(`找不到文件:${q}`)
                     return false
                 }
             }
