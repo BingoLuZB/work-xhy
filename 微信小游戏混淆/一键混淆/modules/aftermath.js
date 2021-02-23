@@ -262,6 +262,8 @@ async function changeWxgame() {
         // 拿到game.js里面的jsonList的数据
         let arrListData = configItem.substring(configItem.indexOf('[') + 1, configItem.indexOf(']'))
         let judgeArr = nameList.filter(item => arrListData.includes(item))
+        console.log(judgeArr, '===judgeArr');
+        console.log(nameList, '=======nameList')
         if (judgeArr.length > 0) {
             // 如果是之前已经混淆过的文件
             // 把原本game.js里面的jsonList "20210207_a.zip, 20210207_b.zip"进行遍历
