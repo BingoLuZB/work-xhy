@@ -251,7 +251,7 @@ async function changeWxgame() {
     let injectData = null
     let injectSrc = path.join(mjWxgameSrc, 'game.js')
     let isUpdate = fs.existsSync(path.join(config, `config.${mjNum}.js`))
-    let nameList = fs.readdirSync(path.join(jsonList, `mj${mjNum}`, getDate(true)))
+    let nameList = fs.readdirSync(path.join(jsonList, `mj${mjNum}`, getDate(true))).filter(item => item.includes('.zip'))
     let finalList = ''
     // 判断是否是更新的
     if (isUpdate) {
@@ -261,34 +261,30 @@ async function changeWxgame() {
         let configItem = gameData.split('// config')[0]
         // 拿到game.js里面的jsonList的数据
         let arrListData = configItem.substring(configItem.indexOf('[') + 1, configItem.indexOf(']'))
-        let judgeArr = nameList.filter(item => arrListData.includes(item))
-        console.log(judgeArr, '===judgeArr');
-        console.log(nameList, '=======nameList')
-        if (judgeArr.length > 0) {
-            // 如果是之前已经混淆过的文件
-            // 把原本game.js里面的jsonList "20210207_a.zip, 20210207_b.zip"进行遍历
-            arrListData.split("'").filter(item => item.includes('_')).map(item2 => {
-                let zipName = item2.split('_')[1]
-                // 替换旧的已混淆文件名
-                arrListData = arrListData.replace(item2, `${getDate(true)}_${zipName}`)
-            })
-        } else {
-            // 如果是没有混淆过的文件,直接拼接jsonList
-            let str = ', '
-            nameList.map((item, index, arr) => {
+        // let judgeArr = nameList.filter(item => arrListData.includes(item))
+        // 如果是之前已经混淆过的文件
+        // 把原本game.js里面的jsonList "20210207_a.zip, 20210207_b.zip"进行遍历替换
+        arrListData.split("'").filter(item => item.includes('_')).map(item2 => {
+            let zipName = item2.split('_')[1]
+            // 替换旧的已混淆文件名
+            arrListData = arrListData.replace(item2, `${getDate(true)}_${zipName}`)
+        })
+        // 如果是没有混淆过的文件,直接拼接jsonList
+        let str = ', '
+        nameList.map((item, index, arr) => {
+            if (!arrListData.includes(item)) {
                 if (index === arr.length - 1) {
                     str += `'${getDate(true)}_${item}'`
                 } else {
                     str += `'${getDate(true)}_${item}', `
                 }
-            })
-            arrListData += str
-        }
-        console.log(arrListData, '=======arrListData')
+                arrListData += str
+            }
+        })
         finalList = arrListData
     } else {
         // 拼接游戏参数
-        finalList = nameList.filter(item => item.includes('.zip')).map(item => {
+        finalList = nameList.map(item => {
             return `'${getDate(true)}_${item}'`
         })
     }
