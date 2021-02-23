@@ -33,12 +33,12 @@
                 <li>
                     <div> 要混淆的文件：</div>
                     <textarea required name="file"
-                        placeholder="例：要混淆的游戏选择了三国的前提下 js:a.js,b.js                             三国文件夹下，js文件夹的a.js b.js                   game.js                                    三国文件夹下的game.js                  注意：所有标点符号都要用英文输入法的             不同文件之间要用英文的,隔开"></textarea>
+                        placeholder="例：要混淆的游戏选择了三国的前提下 js:a.js,b.js                             三国文件夹下，js文件夹的a.js b.js                   game.js                                    三国文件夹下的game.js                  注意：所有标点符号都要用英文输入法,             不同文件之间要用英文的逗号隔开"></textarea>
                 </li>
                 <li>
                     游戏ID及其对应的小游戏appid：
                     <textarea required name="idObj"
-                        placeholder="例：1: wx6515165132,                         2:wx65123184891,                   3:wx6165165165                            注意：所有标点符号都要用英文输入法的             不同文件之间要用英文的,隔开"></textarea>
+                        placeholder="例：1: wx6515165132,                         2:wx65123184891,                   3:wx6165165165                            注意：所有标点符号都要用英文输入法,             不同文件之间要用英文的逗号隔开"></textarea>
                 </li>
                 <li>
                     提审版本:
@@ -51,13 +51,11 @@
                         <option value="2">对象相加</option>
                         <option value="3">数组</option>
                         <option value="4">数组相加</option>
-                        <option value="5">杀手锏</option>
                     </select>
                 </li>
                 <li>
                     混淆程度:
-                    <input style="width: 80px;" type='number' name="stringArrayThreshold"
-                        placeholder="0~1逐步增大" value=0.5>
+                    <input style="width: 90px;" name="stringArrayThreshold" placeholder="0~1逐步增大" value=0.5 >
                 </li>
                 <li>
                     编码方式：
@@ -76,7 +74,7 @@
                 <li>
                     游戏壳:
                     <select name="miniGameType">
-                        <option value="none">不需要壳</option>
+                        <option value="none">不需要</option>
                         <option value="1">砍树</option>
                         <option value="2">2048</option>
                         <option value="3">拼图</option>
@@ -119,6 +117,7 @@
 
             }
         })
+        alert('混淆开始，请稍后')
         return false
     })
 
@@ -248,6 +247,7 @@
         color: yellow;
         border-radius: 20px;
         background-color: red;
+        cursor: pointer;
     }
 
     #form1 #box {
@@ -263,6 +263,7 @@
         padding: 20px;
         border: solid 6px #87CEFA;
         flex: 0;
+        border-radius: 30px;
     }
 
     #form1 .addBtn {
@@ -286,6 +287,7 @@
         border-radius: 20px;
         border: solid;
         outline: none;
+        cursor: pointer;
     }
 
     ul {

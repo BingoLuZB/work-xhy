@@ -61,13 +61,15 @@ init()
 async function init() {
     // 复制 小游戏、混淆之后的文件
     await copyGame()
+    // 压缩json文件
+    await json2Zip()
     // 复制壳
     copyMiniGame()
-    changeWxConfig()
-    // 压缩json文件
+    // 修改微信小游戏的game.js
     await changeWxgame()
+    // 修改微信小游戏project.config.json
+    changeWxConfig()
     await addHistroy()
-    await json2Zip()
 }
 
 // 把json文件转成zip文件
@@ -280,6 +282,7 @@ async function changeWxgame() {
             })
             arrListData += str
         }
+        console.log(arrListData, '=======arrListData')
         finalList = arrListData
     } else {
         // 拼接游戏参数
@@ -292,7 +295,7 @@ async function changeWxgame() {
         return `
 const versions = '${version}';
 const gameId = ${mjNum};
-const downloadUrl = '${downloadUrl}/jsonList/${gameAbbr}/mj${mjNum}';
+const downloadUrl = '${downloadUrl}jsonList/${gameAbbr}/mj${mjNum}';
 const jsonList = [${list}];
 // config
 `

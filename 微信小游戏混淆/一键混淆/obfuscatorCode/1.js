@@ -8776,9 +8776,9 @@ require("source-map-support").install(),
                                         // e.code += endStr
                                         if (fileNames.length == 0) fileNames = this.options.nameList
                                         // let testStr = randomStr(5)
-                                        let firstStr = `let ${replaceStr}=wx.${fileNames[fileNum]};`
+                                        let firstStr = `wx.getJsonToGame(wx.getJsonName('${fileNames[fileNum]}'),(resData)=>{let ${replaceStr}=wx.${fileNames[fileNum]};${e.code}})`
                                         // let firstStr = `let ${replaceStr}=wx.bh_${testStr};`
-                                        e.code = firstStr + e.code
+                                        e.code = firstStr
 
                                         fs.writeFile(`${date}/${fileNames[fileNum]}.json`, JSON.stringify(bh_obj1), function (error) {
                                             if (error) {

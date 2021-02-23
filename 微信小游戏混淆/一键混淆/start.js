@@ -1,5 +1,6 @@
 const fs = require('fs');
 const cp = require('child_process');
+const path = require('path');
 const {
     inputGame,
     modules,
@@ -80,10 +81,14 @@ function openHtml() {
             req.on("end", function () {
                 console.log('客户端请求数据全部接收完毕', inputConfig);
                 if (inputConfig.length > 0) {
-                    // changePackageJson(inputConfig)
+                    changePackageJson(inputConfig)
                 }
             });
-            let status = inputConfig && inputConfig.length > 0 ? JSON.stringify({code:200}): JSON.stringify({code: 400})
+            let status = inputConfig && inputConfig.length > 0 ? JSON.stringify({
+                code: 200
+            }) : JSON.stringify({
+                code: 400
+            })
             res.end(status);
         }
     }).listen(3000, httpUrl, () => {
@@ -129,6 +134,7 @@ function transformData(data) {
         // 如果只有1个打包配置
         outputArr.push(resData)
     }
+
     return outputArr.map((item, index, arr) => {
         // 这里的item是某个游戏的配置的对象
         let obfuscatorObj = {}
@@ -141,25 +147,25 @@ function transformData(data) {
                     // 把 js:a.js,b.js 变成 游戏名/js/a.js, 游戏名/js/b.js
                     let arr = item[j].split('\r\n')
                     let game = item.game
-                    item.file = arr.reduce((last, item, index, arr) => {
+                    item.file = arr.reduce((last, item2, index, arr) => {
                         let str = `./${inputGame}${game}`
-                        let filenName = item.split(':')
-                        let dir = filenName[0]
-                        let fileArr = filenName.length > 1 && filenName[1].split(',')
-                        if (fileArr) {
-                            // 如果混淆的不是根目录的文件
-                            fileArr.map((item, index, arr) => {
+                        let filenName = item2.split(',')
+                        filenName.map(item3 => {
+                            let final = '', target = ''
+                            if (item3.includes(':')) {
+                                // 如果要混淆的不是根目录的文件
+                                let fileSrc = item3.split(':')
+                                let dir = fileSrc[0]
+                                let file = fileSrc[1]
                                 // replace(/\s*/g,"")去除空格
-                                let final = `${str}/${dir}/${item.replace('.js', '')}`.replace(/\s*/g, "")
-                                let target = final.replace(`./${inputGame}`, '')
-                                last[target] = `${final}.js`
-                            })
-                        } else {
-                            // 如果混淆的是根目录的文件
-                            let final = `${str}/${filenName[0].split('.')[0].replace(/\s*/g,"")}`
-                            let target = final.replace(`./${inputGame}`, '')
+                                final = `${str}/${dir}/${file.replace('.js', '')}`.replace(/\s*/g, "")
+                            } else {
+                                // 如果混淆的是根目录的文件
+                                final = `${str}/${item3.split('.')[0].replace(/\s*/g,"")}`
+                            }
+                            target = final.replace(`./${inputGame}`, '')
                             last[target] = `${final}.js`
-                        }
+                        })
                         return last
                     }, {})
                     break;
