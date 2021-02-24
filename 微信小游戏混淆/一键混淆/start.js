@@ -69,15 +69,15 @@ function openHtml() {
                 console.log('客户端请求数据全部接收完毕', inputConfig);
                 if (inputConfig.length > 0) {
                     changePackageJson(inputConfig)
+                    let status = inputConfig && inputConfig.length > 0 ? JSON.stringify({
+                        code: 200
+                    }) : JSON.stringify({
+                        code: 400
+                    })
+                    res.write(status)
+                    res.end();
                 }
             });
-            let status = inputConfig && inputConfig.length > 0 ? JSON.stringify({
-                code: 200
-            }) : JSON.stringify({
-                code: 400
-            })
-            res.write(status)
-            res.end();
         } else {
             // 打开html
             fs.readFile(__dirname + "/index.html", "utf-8", (err, data) => {
