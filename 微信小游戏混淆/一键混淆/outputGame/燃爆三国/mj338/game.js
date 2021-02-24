@@ -2,7 +2,7 @@
 const versions = '1.0.0';
 const gameId = 338;
 const downloadUrl = 'https://gministatic.xinghe66.cn/jsonList/RBSG/mj338';
-const jsonList = ['20210223_bootbootmax.zip'];
+const jsonList = ['20210224_jsts.zip', '20210224_boax.zip', , '20210224_boax.zip', '20210224_jsha.zip', , '20210224_xixi.zip'];
 // config
 const rootPath = wx.env.USER_DATA_PATH
 const fs = wx.getFileSystemManager();

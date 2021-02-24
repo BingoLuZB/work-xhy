@@ -15,7 +15,8 @@ const {
     wf,
     showAlert,
     getDate
-} = require('./util')
+} = require('./util');
+const { log } = require('console');
 // package.json要替换的key 跟 value
 const jsonCopyStr = {
     key: 'newBuild-key',
@@ -60,19 +61,7 @@ function init() {
 
 // 用浏览器打开index.html
 function openHtml() {
-    // 打开html
     http.createServer((req, res) => {
-        fs.readFile(__dirname + "/index.html", "utf-8", (err, data) => {
-            if (err) {
-                res.statusCode = 404;
-                res.setHeader("Content-Type", "text/plain");
-                res.end("Not Found!");
-            } else {
-                res.statusCode = 200;
-                // res.setHeader("Content-Type", "text/html");
-                res.end(data);
-            }
-        });
         if (req.url !== "/favicon.ico" && req.url.includes('/sendData')) {
             let inputConfig = []
             req.on('data', (data) => {
@@ -89,30 +78,33 @@ function openHtml() {
             }) : JSON.stringify({
                 code: 400
             })
-            res.end(status);
+            res.write(status)
+            res.end();
+        } else {
+            // 打开html
+            fs.readFile(__dirname + "/index.html", "utf-8", (err, data) => {
+                if (err) {
+                    res.statusCode = 404;
+                    res.writeHead(200, {
+                        'Content-Type': 'text/html'
+                    });
+                    res.write("Not Found!");
+                    res.end();
+                } else {
+                    res.statusCode = 200;
+                    // res.setHeader("Content-Type", "text/html");
+                    res.writeHead(200, {
+                        'Content-Type': 'text/html'
+                    });
+                    res.write(data)
+                    res.end();
+                }
+            });
         }
     }).listen(3000, httpUrl, () => {
         console.log("Successfully");
         cp.exec(`start http://${httpUrl}:3000`);
     });
-    // 接收请求
-    // http.createServer(function (req, res) {
-    //     if (req.url !== "/favicon.ico") {
-    //         let inputConfig = []
-    //         req.on('data', (data) => {
-    //             inputConfig = transformData(data)
-    //         });
-    //         req.on("end", function () {
-    //             console.log('客户端请求数据全部接收完毕', inputConfig);
-    //             if (inputConfig.length > 0) {
-    //                 // changePackageJson(inputConfig)
-    //             }
-    //         });
-    //     }
-    //     res.end('please waiting');
-    // }).listen(8080, httpUrl, function () {
-    //     console.log("listened");
-    // });
 }
 
 function transformData(data) {
@@ -145,27 +137,27 @@ function transformData(data) {
                     // 处理要混淆文件的格式
                 case 'file':
                     // 把 js:a.js,b.js 变成 游戏名/js/a.js, 游戏名/js/b.js
-                    let arr = item[j].split('\r\n')
+                    let arr = item[j].split('\n')
                     let game = item.game
-                    item.file = arr.reduce((last, item2, index, arr) => {
+                    item.file = arr.reduce((last, item, index, arr) => {
                         let str = `./${inputGame}${game}`
-                        let filenName = item2.split(',')
-                        filenName.map(item3 => {
-                            let final = '', target = ''
-                            if (item3.includes(':')) {
-                                // 如果要混淆的不是根目录的文件
-                                let fileSrc = item3.split(':')
-                                let dir = fileSrc[0]
-                                let file = fileSrc[1]
+                        console.log(item, '=====item')
+                        let filenName = item.split(':')
+                        let dir = filenName[0]
+                        let fileArr = filenName.length > 1 && filenName[1].split(',')
+                        let final = ''
+                        if (fileArr) {
+                            // 如果混淆的不是根目录的文件
+                            fileArr.map((item, index, arr) => {
                                 // replace(/\s*/g,"")去除空格
-                                final = `${str}/${dir}/${file.replace('.js', '')}`.replace(/\s*/g, "")
-                            } else {
-                                // 如果混淆的是根目录的文件
-                                final = `${str}/${item3.split('.')[0].replace(/\s*/g,"")}`
-                            }
-                            target = final.replace(`./${inputGame}`, '')
-                            last[target] = `${final}.js`
-                        })
+                                final = `${str}/${dir}/${item.replace('.js', '')}`.replace(/\s*/g, "")
+                            })
+                        } else {
+                            // 如果混淆的是根目录的文件
+                            final = `${str}/${filenName[0].split('.')[0].replace(/\s*/g,"")}`
+                        }
+                        let target = final.replace(`./${inputGame}`, '')
+                        last[target] = `${final}.js`
                         return last
                     }, {})
                     break;
@@ -261,7 +253,7 @@ async function changePackageJson(inputConfig) {
                 return;
             }
             console.log(`stdout: ${stdout}`);
-            console.log(`stderr: ${stderr}`)
+            console.log(`混淆结束！ stderr: ${stderr}`)
         })
     }
 }
