@@ -1,1 +1,0 @@
-require("laya.js"),require("boot.max.js");
