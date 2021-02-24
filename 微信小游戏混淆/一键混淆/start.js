@@ -1,6 +1,5 @@
 const fs = require('fs');
 const cp = require('child_process');
-const path = require('path');
 const {
     inputGame,
     modules,
@@ -16,7 +15,6 @@ const {
     showAlert,
     getDate
 } = require('./util');
-const { log } = require('console');
 // package.json要替换的key 跟 value
 const jsonCopyStr = {
     key: 'newBuild-key',
