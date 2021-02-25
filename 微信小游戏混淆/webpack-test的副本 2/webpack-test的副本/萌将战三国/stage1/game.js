@@ -1,5 +1,0 @@
-require("tween.min.js")
-require("game.min.js")
-require("socket.min.js")
-require("default.thm.min.js")
-require("login.min.js")
