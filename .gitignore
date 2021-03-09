@@ -1,4 +1,4 @@
-.history/
-node_modules/
-dist/
-jsonList/
+**/.history/
+**/node_modules/
+**/dist/
+**/jsonList/
