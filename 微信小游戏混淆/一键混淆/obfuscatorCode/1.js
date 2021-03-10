@@ -8753,7 +8753,7 @@ require("source-map-support").install(),
                                     bhNum++
                                     if (bhNum == 3) {
                                         bhNum = 0
-                                        console.log('执行了一个文件')
+                                        // console.log('执行了一个文件')
                                         // 创建目录
                                         let dir
                                         let date 
@@ -8777,17 +8777,17 @@ require("source-map-support").install(),
                                         if (fileNames.length == 0) fileNames = this.options.nameList
                                         // let testStr = randomStr(5)
                                         let firstStr = `let ${replaceStr}=wx.${fileNames[fileNum]};${e.code}`
-                                        let startGameFn = `wx.getJsonToGame(wx.getJsonName('${fileNames[fileNum]}'),(resData)=>{putFirstStr})`
-                                        let FinnalStr = startGameFn.replace('putFirstStr', firstStr)
+                                        // let startGameFn = `wx.getJsonToGame(wx.getJsonName('${fileNames[fileNum]}'),(resData)=>{putFirstStr})`
+                                        // let FinnalStr = startGameFn.replace('putFirstStr', firstStr)
                                         // let firstStr = `let ${replaceStr}=wx.bh_${testStr};`
-                                        e.code = FinnalStr
+                                        e.code = firstStr
 
                                         fs.writeFile(`${date}/${fileNames[fileNum]}.json`, JSON.stringify(bh_obj1), function (error) {
                                             if (error) {
                                                 console.log(error);
                                                 return false;
                                             }
-                                            console.log('写入成功');
+                                            // console.log('写入成功');
                                         })
                                         
                                         fileNum++

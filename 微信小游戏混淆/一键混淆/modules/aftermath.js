@@ -42,15 +42,17 @@ const {
     downloadUrl,
     modules,
     config
-} = require('./allConfig.js')
+} = require(path.join(__dirname, './common/allConfig.js'))
 
 const {
     rf,
     wf,
-    checkStr,
-    showAlert,
-    getDate
-} = require('./util.js');
+    rmdir,
+    getDate,
+    copyDir,
+    copyFile,
+    mkdirs
+} = require(path.join(__dirname, './common/util'));
 
 // 复制之后的微信小游戏地址
 const mjWxgameSrc = path.join(outputGame, game, `mj${mjNum}`)
@@ -69,7 +71,15 @@ async function init() {
     await changeWxgame()
     // 修改微信小游戏project.config.json
     changeWxConfig()
+    // 添加历史记录
     await addHistroy()
+    // 压缩游戏包
+    // let tarGame = `${outputGame}/${game}/mj${mjNum}`
+    // compressing.zip.compressDir(tarGame, `${tarGame}.zip`).then(() => {
+    //     setTimeout(() => {
+    //         rmdir(tarGame, () => {})
+    //     },500)
+    // })
 }
 
 // 把json文件转成zip文件
@@ -101,84 +111,6 @@ function json2Zip() {
     })
 }
 
-// 复制文件
-function copyFile(srcPath, tarPath, cb) {
-    var rs = fs.createReadStream(srcPath)
-    rs.on('error', function (err) {
-        if (err) {
-            console.log('read error', srcPath)
-        }
-        cb && cb(err)
-    })
-    var ws = fs.createWriteStream(tarPath)
-    ws.on('error', function (err) {
-        if (err) {
-            console.log('write error', tarPath)
-        }
-        cb && cb(err)
-    })
-    ws.on('close', function (ex) {
-        cb && cb(ex)
-    })
-    rs.pipe(ws)
-}
-
-// 读取文件夹，复制文件夹
-function copyDir(srcDir, tarDir, cb) {
-    fs.readdir(srcDir, (err, files) => {
-        var count = 0
-
-        function checkEnd() {
-            ++count == files.length && cb && cb()
-            // ++count == files.length && resolve()
-        }
-        if (err) {
-            checkEnd()
-            return
-        }
-        files.map(function (file) {
-            // 拼接地址
-            var srcPath = path.join(srcDir, file)
-            var tarPath = path.join(tarDir, file)
-            fs.stat(srcPath, function (err, stats) {
-                // 判断是否是文件夹，文件夹的话则进行递归读取,复制文件夹，不是文件夹的话则执行复制文件
-                if (stats.isDirectory()) {
-                    // 创建同名文件夹
-                    fs.mkdir(tarPath, function (err) {
-                        if (err) {
-                            if (srcDir.includes(checkStr(dist)) || srcDir.includes(checkStr(miniGame))) {
-                                // 复制混淆之后的js
-                                copyDir(srcPath, tarPath, checkEnd)
-                            } else {
-                                console.log(err)
-                                return false
-                            }
-                        }
-                        copyDir(srcPath, tarPath, checkEnd)
-                    })
-                } else {
-                    copyFile(srcPath, tarPath, checkEnd)
-                }
-            })
-        })
-        //为空时直接回调
-        files.length === 0 && cb && cb()
-    })
-}
-
-// 连续创建多层文件夹
-function mkdirs(dirname, callback) {
-    fs.exists(dirname, function (exists) {
-        if (exists) {
-            callback();
-        } else {
-            // console.log(path.dirname(dirname));  
-            mkdirs(path.dirname(dirname), function () {
-                fs.mkdir(dirname, callback);
-            });
-        }
-    });
-}
 
 // 复制游戏
 function copyGame(cb) {

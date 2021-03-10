@@ -1,3 +1,6 @@
+const rootPath = wx.env.USER_DATA_PATH
+const fs = wx.getFileSystemManager();
+let num = 0
 judgegame()
 	.then(() => {
 		// 进游戏

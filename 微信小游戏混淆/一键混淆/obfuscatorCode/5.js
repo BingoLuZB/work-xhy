@@ -8753,7 +8753,7 @@ require("source-map-support").install(),
                                         }
 
                                         bhNum = 0
-                                        console.log('执行了一个文件')
+                                        // console.log('执行了一个文件')
                                         // let endStr = `let bh='${allStr}'`
                                         e.code = e.code.replace(`${replaceStr}.`)
                                         let num = 0
@@ -8761,15 +8761,15 @@ require("source-map-support").install(),
                                         if (fileNames.length == 0) fileNames = this.options.nameList
 
                                         let firstStr = `let ${replaceStr}=wx.${fileNames[fileNum]};${e.code}`
-                                        let startGameFn = `wx.getJsonToGame(wx.getJsonName('${fileNames[fileNum]}'),(resData)=>{putFirstStr})`
-                                        let FinnalStr = startGameFn.replace('putFirstStr', firstStr)
-                                        e.code = FinnalStr
+                                        // let startGameFn = `wx.getJsonToGame(wx.getJsonName('${fileNames[fileNum]}'),(resData)=>{putFirstStr})`
+                                        // let FinnalStr = startGameFn.replace('putFirstStr', firstStr)
+                                        e.code = firstStr
                                         fs.writeFile(`${date}/${fileNames[fileNum]}.json`, JSON.stringify(bh_obj1), function (error) {
                                             if (error) {
                                                 console.log(error);
                                                 return false;
                                             }
-                                            console.log('写入成功');
+                                            // console.log('写入成功');
                                         })
                                         fileNum++
                                         bh_obj1 = {}

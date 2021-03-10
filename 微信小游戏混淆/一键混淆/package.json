@@ -5,9 +5,9 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "set NODE_ENV=build&webpack --config webpack.config.js",
+    "build": "set NODE_ENV=build&webpack --config webpack.build.js",
     "start": "node start.js",
-    "all":"set NODE_ENV=build&webpack --config webpack.config-338.js && node aftermath-338.js && node end.js"
+    "all":"concurrently  \"node changeTool-9.js && set NODE_ENV=build&webpack --config webpack.config-9.js && node aftermath-9.js \"  \"node changeTool-10.js && set NODE_ENV=build&webpack --config webpack.config-10.js && node aftermath-10.js \" "
   },
   "author": "",
   "license": "ISC",

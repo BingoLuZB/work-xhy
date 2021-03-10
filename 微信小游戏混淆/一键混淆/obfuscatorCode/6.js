@@ -1,103 +1,15 @@
-/*!
-Copyright (C) 2016-2018 Timofey Kachalov <sanex3339@yandex.ru>
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are met:
-  * Redistributions of source code must retain the above copyright
-    notice, this list of conditions and the following disclaimer.
-  * Redistributions in binary form must reproduce the above copyright
-    notice, this list of conditions and the following disclaimer in the
-    documentation and/or other materials provided with the distribution.
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-ARE DISCLAIMED. IN NO EVENT SHALL <COPYRIGHT HOLDER> BE LIABLE FOR ANY
-DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
-(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
-ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
-THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-*/
-let arr1 = []
-let arr2 = []
-let downArr1 = []
-let downArr2 = []
-let arr1Str = randomStr(2)
-let arr2Str = randomStr(2)
-let downArr1Str = randomStr(2)
-let downArr2Str = randomStr(2)
-let oneJson = {}
-
-
 const fs = require('fs');
 const path = require('path');
 let bh_obj1 = {}
 let bh = 0
 let bhNum = 0
 let replaceStr = `${randomStr(2)}` //替换之后的前缀
-let strLeft = 'xixixi_',
-    strRight = '_hahahah',
-    bhstr = randomStr(2) //要替换字符串的左边 跟 右边  bhstr: 数组里面的中间的字符串
-let allStr = '' //输出的字符串
-
-// json要输出的文件夹
+let strLeft = "BHAAA",
+    strRight = "BHBBB",
+    bhstr = randomStr(1) //要替换字符串的左边 跟 右边  bhstr: 数组里面的中间的字符串
 let fileNames = [] //要打包的文件
 const outputFileName = 'jsonList' //json要放的文件夹名
 let fileNum = 0
-
-
-// // 创建放json的目录
-// fs.exists(outputFileName, function (exists) {
-//     if (exists) {
-//         console.log("该文件存在！");
-//         removeDir(outputFileName, (res) => {
-//             createDir()
-//         })
-//     } else {
-//         // console.log("该文件不存在！");
-//         createDir()
-//     }
-// });
-
-// // 删除目录
-// function removeDir(dir, callback) {
-//     fs.readdir(dir, (err, files) => {
-//         /**
-//          * @desc 内部循环遍历使用的工具函数
-//          * @param {Number} index 表示读取files的下标
-//          */
-//         function next(index) {
-//             // 如果index 等于当前files的时候说明循环遍历已经完毕，可以删除dir，并且调用callback
-//             if (index == files.length) return fs.rmdir(dir, callback)
-//             // 如果文件还没有遍历结束的话，继续拼接新路径，使用fs.stat读取该路径
-//             let newPath = path.join(dir, files[index])
-//             // 读取文件，判断是文件还是文件目录
-
-//             fs.stat(newPath, (err, stat) => {
-//                 if (stat.isDirectory()) {
-//                     // 因为我们这里是深度循环，也就是说遍历玩files[index]的目录以后，才会去遍历files[index+1]
-//                     // 所以在这里直接继续调用rmdir，然后把循环下一个文件的调用放在当前调用的callback中
-//                     rmdir(newPath, () => next(index + 1))
-//                 } else {
-//                     // 如果是文件，则直接删除该文件，然后在回调函数中调用遍历nextf方法，并且index+1传进去
-//                     fs.unlink(newPath, () => next(index + 1))
-//                 }
-//             })
-//         }
-//         next(0)
-//     })
-// }
-
-// // 创建目录
-// function createDir() {
-//     fs.mkdir(outputFileName, function (error) {
-//         if (error) {
-//             console.log(error);
-//             return false;
-//         }
-//         console.log('创建目录成功');
-//     })
-// }
 
 // 创建目录
 function createDir(dir) {
@@ -109,6 +21,7 @@ function createDir(dir) {
         console.log('创建目录成功');
     })
 }
+
 
 // 获取随机字母字符串 long为字符串长度
 function randomStr(long) {
@@ -142,9 +55,6 @@ function getToday() {
     d = d < 10 ? `0${d}`: d
     return `${y}${m}${d}`
 }
-
-
-
 
 require("source-map-support").install(),
     module.exports = function (e) {
@@ -7025,26 +6935,12 @@ require("source-map-support").install(),
                                     var r = v.NumberUtils.toHex(t),
                                         n = "".concat(y.Utils.hexadecimalPrefix).concat(r);
                                     // console.log(e, t, r, n)
-                                    // 处理下面的字符串
-                                    // bh++
-                                    // bh_obj1[bhstr + fun10to64(bh)] = n
-                                    // console.log(n)
-                                    function getRndInteger(min, max) {
-                                        return Math.floor(Math.random() * (max - min)) + min;
-                                    }
-                                    let strNum = getRndInteger(1, n.length - 1)
 
-                                    // downArr1.push(`downL_${n.slice(0,strNum)}_downR`)
-                                    // downArr2.push(`downL_${n.slice(strNum,n.length)}_downR`)
-
-                                    // downArr1.push(`${n.slice(0,strNum)}`)
-                                    // downArr2.push(`${n.slice(strNum,n.length)}`)
-                                    downArr1.push(n)
+                                    bh++
+                                    bh_obj1[bhstr + fun10to64(bh)] = n
                                     // allStr += `${bhstr + fun10to64(bh)}_:_${n}_&_`
-                                    // n = `${strLeft + bhstr + fun10to64(bh) + strRight}`
-                                    // n = `${strLeft + bhstr}arr1[${bh}]+arr2[${bh}]${strRight}`
+                                    n = `${strLeft + bhstr + fun10to64(bh) + strRight}`
 
-                                    n = `${strLeft}${downArr1Str}[${t}]${strRight}`
                                     return this.stringLiteralHexadecimalIndexCache.set(e, n), {
                                         fromCache: !1,
                                         index: n
@@ -8603,24 +8499,11 @@ require("source-map-support").install(),
                                         if ((n = e.charCodeAt(a += .75)) > 255) throw new Error("'btoa' failed: The string to be encoded contains characters outside of the Latin1 range.");
                                         r = r << 8 | n
                                     }
-                                    // 处理上面的大数组
+                                    // console.log(11)
                                     bh++
-                                    // bh_obj1[bhstr + fun10to64(bh)] = t
-
-                                    // function getRndInteger(min, max) {
-                                    //     return Math.floor(Math.random() * (max - min)) + min;
-                                    // }
-                                    // let strNum = getRndInteger(1, t.length - 1)
-                                    arr1.push(t)
-                                    // arr1.push(t.slice(0, strNum))
-                                    // arr2.push(t.slice(strNum, t.length))
-                                    // console.log(t.slice(0,strNum))
-                                    // console.log(t.slice(strNum,t.lngth))
-                                    // return "thisIsFun"
+                                    bh_obj1[bhstr + fun10to64(bh)] = t
                                     // allStr += `${bhstr + fun10to64(bh)}_:_${t}_&_`
-
-                                    return `${strLeft}${arr1Str}[${bh-1}]${strRight}`
-                                    // return `${strLeft + bhstr + fun10to64(bh) + strRight}`
+                                    return `${strLeft + bhstr + fun10to64(bh) + strRight}`
                                     // return t
                                 }
                             },
@@ -8783,11 +8666,9 @@ require("source-map-support").install(),
                                 value: function (e) {
                                     bhNum++
                                     if (bhNum == 3) {
-                                        bhNum = 0
-                                        console.log('执行了一个文件')
                                         // 创建目录
                                         let dir
-                                        let date
+                                        let date 
                                         if (this.options.isDelJsonList) {
                                             //要清空jsonList文件夹然后重新生成
                                             dir = `${outputFileName}`
@@ -8801,38 +8682,28 @@ require("source-map-support").install(),
                                             createDir(dir)
                                             createDir(date)
                                         }
-                                        // let str2 = e.code.substr(0,e.code.indexOf(";")+1)
-                                        // let endStr = str2.substr(str2.indexOf("=")+1,str2.indexOf(";")+1)
-                                        // e.code = e.code.replace(endStr, "getAllArr(arr1, arr2);")
 
-                                        // e.code = e.code.replace(new RegExp(`'${strLeft}`,'g'),`${replaceStr}.`).replace(new RegExp(`${strRight}'`,'g'),"")
-                                        e.code = e.code.replace(new RegExp(`'${strLeft}`, 'g'), "").replace(new RegExp(`${strRight}'`, 'g'), "")
-                                        // e.code += endStr
-                                        if (fileNames.length == 0) fileNames = this.options.nameList
-                                        // let firstStr = `const {${arr1Str},${arr2Str},${downArr1Str},${downArr2Str}}=wx.${fileNames[fileNum]};`
-                                        let firstStr = `const {${arr1Str},${downArr1Str}}=wx.${fileNames[fileNum]};`
+                                        bhNum = 0
+                                        // console.log('执行了一个文件')
+                                        // let endStr = `let bh='${allStr}'`
+                                        e.code = e.code.replace(`${replaceStr}.`)
+                                        let firstStr = `const t=wx;`
                                         e.code = firstStr + e.code
-                                        bh_obj1[`${downArr1Str}`] = downArr1
-                                        // bh_obj1[`${downArr2Str}`] = downArr2
-                                        bh_obj1[`${arr1Str}`] = arr1
-                                        // bh_obj1[`${arr2Str}`] = arr2
-
-                                    
+                                        let num = 0
+                                        if (fileNames.length == 0) fileNames = this.options.nameList
+                                        e.code = e.code.replace(new RegExp(`'${strLeft}`, 'g'), `t['${fileNames[fileNum]}']['`).replace(new RegExp(`${strRight}'`, 'g'), "']")
+                                        // let startGameFn = `wx.getJsonToGame(wx.getJsonName('${fileNames[fileNum]}'),(resData)=>{putFirstStr})`
+                                        // let FinnalStr = startGameFn.replace('putFirstStr', e.code)
+                                        // e.code = FinnalStr
                                         fs.writeFile(`${date}/${fileNames[fileNum]}.json`, JSON.stringify(bh_obj1), function (error) {
                                             if (error) {
                                                 console.log(error);
                                                 return false;
                                             }
-                                            console.log('写入成功');
+                                            // console.log('写入成功');
                                         })
-
                                         fileNum++
-                                        bh = 0
                                         bh_obj1 = {}
-                                        downArr1 = []
-                                        downArr2 = []
-                                        arr1 = []
-                                        arr2 = []
                                         // allStr = ''
                                     }
                                     return this.obfuscatedCodeFactory(e.code, e.map)

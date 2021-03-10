@@ -18,6 +18,8 @@ foreach ($n in $array){npm run build-$n} -->
             wxgame.js 微信小游戏模板 
             afterMath 善后模板，处理混淆之后的所有事情
         ）
+    common
+        公用函数，以及配置
     inputGame
         各个游戏的源吗/要混淆的游戏的源码 的文件夹
     miniGame
@@ -31,13 +33,13 @@ foreach ($n in $array){npm run build-$n} -->
 
 
 思路：
-    1、用node把config里面的对应的配置文件内容给复制了，然后把内容放到一个新的webpack.config.js里面去
+    1、用node把用户输入的配置给转化好自己要用的数据格式，然后把内容放到一个新的webpack.config.js aftermath.js里面去
 
-    2、用node，根据config里面的配置，判断是用哪种混淆方式，用在indexCode对应的源码文件复制/覆盖到打包工具里面去，然后打包多个游戏
+    2、根据用户输入的配置，判断是用哪种混淆方式，用在obfuscatorCode对应的源码文件复制/覆盖到打包工具里面去，然后打包多个游戏
 
-    3、打包结束后，用node在input里面复制对应的游戏包到output，然后在output里面修改对应游戏的appid,游戏id（这些在config里面的配置文件设置），再把dist里面混淆好的文件覆盖到output的游戏里面去
+    3、打包结束后，用node在input里面复制对应的游戏包到output，然后在output里面修改对应用户填的游戏的appid,游戏id，再把dist里面混淆好的文件覆盖到output的游戏里面去
 
-    4、用node删除步骤1新生成的webpack.config.js，压缩config里面规定的文件，打包结束
+    4、用node删除步骤1新生成的webpack.config.js，aftermath.js 压缩jsonList里面对应的混淆文件，打包结束
 
     5、混淆结束之后，直接把jonsList对应的压缩文件上到线上就行了，地址要去看outGame对应的游戏的game.js里面的 downloadUrl，再去http://www.jshaman.com/#section2，把game.js简单混淆一下就可以了上传代码进行提审
 

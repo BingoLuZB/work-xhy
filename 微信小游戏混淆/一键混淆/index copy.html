@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>客户资料上传</title>
+</head>
+
+<style type="text/css">
+    body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+    }
+
+    h1 {
+        text-align: center;
+    }
+
+    form {
+        text-align: center;
+    }
+
+    .row1 {
+        position: relative;
+        /* display:inline-block; */
+        /* padding:8px 16px; */
+        font-size: 16px;
+        /* color:white; */
+        text-decoration: none;
+        cursor: pointer;
+        overflow: hidden;
+        width: 300px;
+    }
+
+    .row1 dl {
+        display: flex;
+        border: 1px solid #ccc;
+        line-height: 30px;
+        border-radius: 2px;
+        align-items: center;
+        font-size: 14px;
+        padding: 0 4px;
+        justify-content: space-between;
+    }
+
+    .row1 dl dt {
+        color: #ccc;
+    }
+
+    .row1 dl dd {
+        color: #3399FF;
+        cursor: pointer;
+    }
+
+    .oFile {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        z-index: 10;
+        top: 0px;
+        left: 0px;
+        opacity: 0;
+    }
+
+    .btn {
+        width: 100px;
+        line-height: 32px;
+        border-radius: 4px;
+        background: #3399FF;
+        color: #fff;
+        text-align: center;
+        cursor: pointer;
+        background: #169bd5;
+        border: none;
+    }
+
+
+    .success-box {
+        display: flex;
+        align-items: center;
+    }
+
+    #img {
+        margin-right: 8px;
+        width: 20px;
+    }
+
+
+    #okFile {
+        text-align: left;
+        color: #ccc;
+    }
+</style>
+<script>
+    function fileSelected() {
+        var file = document.getElementById('fileToUpload').files[0];
+        const okFileName = document.getElementById('okFile').innerHTML;
+        // if (okFileName) {
+        //     alert('只能选择一个文件')
+        //     return;
+        // }
+        // if (file.type !== "application/zip") {
+        //     alert('请选择正确的zip类型文件')
+        //     return;
+        // }
+        if (file) {
+            var fileSize = 0;
+            if (file.size > 1024 * 1024)
+                fileSize = (Math.round(file.size * 100 / (1024 * 1024)) / 100).toString() + 'MB';
+            else
+                fileSize = (Math.round(file.size * 100 / 1024) / 100).toString() + 'KB';
+            document.getElementById('fileName').innerHTML = file.name;
+        }
+    }
+
+
+    function uploadFile() {
+        var fd = new FormData();
+        const file = document.getElementById('fileToUpload').files[0];
+        console.log(file, '===file')
+        if (!file) return;
+        fd.append('token', 'a1ca50cd8aae4df09e75ddc076f84465')
+        fd.append('dictTerminalType', 6);
+        fd.append('serialId', Math.random().toString(36).substr(2) + new Date().getTime());
+        fd.append("file", file);
+        var xhr = new XMLHttpRequest();
+        xhr.upload.addEventListener("progress", uploadProgress, false);
+        xhr.addEventListener("load", uploadComplete, false);
+        xhr.addEventListener("error", uploadFailed, false);
+        xhr.addEventListener("abort", uploadCanceled, false);
+        xhr.open("POST", 'http://xxxxxx'); //修改成自己的接口
+        xhr.send(fd);
+    }
+
+
+    function uploadProgress(evt) {
+        if (evt.lengthComputable) {
+            var percentComplete = Math.round(evt.loaded * 100 / evt.total);
+            // document.getElementById('progressNumber').innerHTML = percentComplete.toString() + '%';
+        } else {
+            document.getElementById('progressNumber').innerHTML = 'unable to compute';
+        }
+    }
+
+
+    function getUploadStatus({
+        fileId,
+        companyId
+    }) {
+        let requestData = ''
+        let data = {
+            dictTerminalType: 6,
+            serialId: Math.random().toString(36).substr(2) + new Date().getTime(),
+            fileId,
+            companyId
+        }
+        for (let key in data) {
+            requestData = requestData + key + "=" + data[key] + "&";
+        }
+        if (requestData == '') {
+            requestData = '';
+        } else {
+            requestData = requestData.substring(0, requestData.length - 1);
+        }
+        var xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function () {
+            //complete
+            if (xhr.readyState == 4) {
+                if (xhr.status == 200) {
+                    //请求成功执行的回调函数
+                    let data = JSON.parse(xhr.response)
+                    alert(data.message);
+                    document.getElementById('img').src = './完成.png';
+                    document.getElementById('fileSuccess').innerHTML = document.getElementById('fileName')
+                    .innerHTML;
+                    document.getElementById('okFile').innerHTML = '已上传文件';
+                } else {
+                    //请求失败的回调函数
+                    alert(err.message);
+                }
+            }
+        }
+        xhr.open("POST", 'http://xxxxx');
+            xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8"); xhr.send(JSON.stringify(data));
+        }
+
+
+        function getQueryString(name) {
+            var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
+            var r = window.location.search.substr(1).match(reg);
+            if (r != null) return decodeURI(r[2]);
+            return null;
+        }
+
+
+        // 上传成功后
+        function uploadComplete(evt) {
+            /* 服务器端返回响应时候触发event事件*/
+            let {
+                fileId
+            } = JSON.parse(evt.target.responseText).data
+            // getUploadStatus({fileId, companyId: getQueryString('companyId')})
+
+        }
+
+
+        // 上传时出错
+        function uploadFailed(evt) {
+            alert("尝试上传文件时出错。");
+        }
+
+
+        function uploadCanceled(evt) {
+            alert("用户已取消上传或浏览器断开了连接");
+        }
+</script>
+
+<body>
+    <div>
+        <h1>上传</h1>
+        <form id="form1" enctype="multipart/form-data" method="post" action="Upload.aspx">
+            <div class="row1">
+                <dl>
+                    <dt id="fileName">请上传压缩文件</dt>
+                    <dd>选择文件</dd>
+                </dl>
+                <input class="oFile" accept='application/zip' type="file" name="fileToUpload" id="fileToUpload"
+                    onchange="fileSelected();">
+            </div>
+            <input class="btn" type="button" onclick="uploadFile()" value="请确认上传">
+            <p id="okFile"></p>
+            <div class="success-box">
+                <img id="img" />
+                <div id="fileSuccess"></div>
+            </div>
+        </form>
+    </div>
+</body>
+
+</html>

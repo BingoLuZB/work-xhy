@@ -1,25 +1,28 @@
 const fs = require('fs');
 const cp = require('child_process');
+const path = require('path')
 const {
     inputGame,
     modules,
     webpackName,
-    aftermathName
-} = require('./allConfig.js')
-const http = require("http");
-const querystring = require('querystring')
-const httpUrl = 'localhost'
+    aftermathName,
+    changeToolName,
+    jsonCopyStr
+} = require(path.join(__dirname, './common/allConfig.js'))
 const {
     rf,
     wf,
     showAlert,
-    getDate
-} = require('./util');
-// package.json要替换的key 跟 value
-const jsonCopyStr = {
-    key: 'newBuild-key',
-    value: 'newBuild-value'
-}
+    getDate,
+    encryptFn,
+    rmdir,
+    mkdirs
+} = require(path.join(__dirname, './common/util'));
+const compressing = require('compressing');
+const http = require("http");
+const querystring = require('querystring')
+const formidable = require('formidable')
+const httpUrl = '127.0.0.1'
 // 用户选择的配置
 // let inputConfig = {
 //     '三国': {
@@ -57,30 +60,100 @@ function init() {
 }
 
 
-// 用浏览器打开index.html
+// 用浏览器打开index.html,接收数据
 function openHtml() {
     http.createServer((req, res) => {
         if (req.url !== "/favicon.ico" && req.url.includes('/sendData')) {
             let inputConfig = []
+            var form = new formidable.IncomingForm();
+            // 创建inputGame文件夹
+            mkdirs(inputGame, () => {
+                form.uploadDir = inputGame
+                form.parse(req, function (err, fields, files) {
+                    if (err) {
+                        console.log(err, '===err')
+                        res.writeHead(400, {
+                            'Content-type': 'text/html;charset=utf-8'
+                        })
+                        res.end(JSON.stringify({
+                            code: 400,
+                            msg: err
+                        }));
+                    } else {
+                        //field 表示普通控件
+                        //files  表示文件控件
+                        // console.log(fields, '====fields');
+                        // console.log(files, '===files')
+                        if (files) {
+                            inputConfig = transformData(fields)
+                            let filesL = Object.keys(files).length
+                            let num = 0
+                            for (let i in files) {
+                                let value = files[i]
+                                let tarFile = `${inputGame}${value.name}`
+                                // 压缩包重命名
+                                fs.renameSync(value.path, tarFile);
+                                // 解压
+                                compressing.zip.uncompress(tarFile, `${inputGame}`, {
+                                    zipFileNameEncoding: 'GBK'
+                                }).then(() => {
+                                    num++
+                                    if (num == filesL && inputConfig) {
+                                        changePackageJson(inputConfig)
+                                        res.writeHead(200, {
+                                            'Content-type': 'text/html;charset=utf-8'
+                                        })
+                                        res.end(JSON.stringify({
+                                            code: 200,
+                                            msg: '上报成功'
+                                        }));
+                                    }
+                                });
+                            }
+                        }
+                    }
+                });
+            })
+            // req.on('data', (data) => {
+            // inputConfig = transformData(data)
+            // });
+            // req.on("end", function () {
+            //     console.log('客户端请求数据全部接收完毕', inputConfig);
+            //     if (inputConfig.length > 0) {
+            //         changePackageJson(inputConfig)
+            //         let status = inputConfig && inputConfig.length > 0 ? JSON.stringify({
+            //             code: 200
+            //         }) : JSON.stringify({
+            //             code: 400
+            //         })
+            //         res.write(status)
+            //         res.end();
+            //     }
+            // });
+        } else if (req.url !== "/favicon.ico" && req.url.includes('/getStartCode')) {
+            let resData = null
             req.on('data', (data) => {
-                inputConfig = transformData(data)
+                resData = querystring.parse(decodeURIComponent(data))
             });
             req.on("end", function () {
-                console.log('客户端请求数据全部接收完毕', inputConfig);
-                if (inputConfig.length > 0) {
-                    changePackageJson(inputConfig)
-                    let status = inputConfig && inputConfig.length > 0 ? JSON.stringify({
-                        code: 200
-                    }) : JSON.stringify({
-                        code: 400
+                let status = null
+                if (resData && resData.author === 'BingoXhy') {
+                    status = JSON.stringify({
+                        code: 200,
+                        statrCode: encryptFn(true)
                     })
-                    res.write(status)
-                    res.end();
+                } else {
+                    status = JSON.stringify({
+                        code: 400,
+                        msg: 'author was warn'
+                    })
                 }
+                res.write(status)
+                res.end();
             });
         } else {
             // 打开html
-            fs.readFile(__dirname + "/index.html", "utf-8", (err, data) => {
+            fs.readFile('index.html', "utf-8", (err, data) => {
                 if (err) {
                     res.statusCode = 404;
                     res.writeHead(200, {
@@ -105,25 +178,40 @@ function openHtml() {
     });
 }
 
+//转化数据
 function transformData(data) {
     let outputArr = []
-    let resData = decodeURIComponent(data)
-    console.log("服务器接收到的数据：　" + resData);
-    resData = querystring.parse(resData);
-    if (typeof resData.game !== 'string' && resData.game.length > 1) {
-        // 如果有多个打包配置
-        // let gameName = Array.from(new Set(resData.game))
-        for (let i = 0; i < resData.obfuscatorType.length; i++) {
-            let obj = {}
-            for (let j in resData) {
-                obj[j] = resData[j][i]
-            }
-            outputArr.push(obj)
+    let resData = {}
+    for (let i in data) {
+        let name = i.substring(0, i.length - 1)
+        let value = data[i]
+        if (resData[name]) {
+            outputArr.push(resData)
+            resData = {}
         }
-    } else {
-        // 如果只有1个打包配置
-        outputArr.push(resData)
+        resData[name] = value
     }
+    // push最后一个resData
+    outputArr.push(resData)
+
+    // 原版inputGame文件夹的里面放游戏的版本
+    // let resData = decodeURIComponent(data)
+    // console.log("服务器接收到的数据：　" + resData);
+    // resData = querystring.parse(resData);
+    // if (typeof resData.game !== 'string' && resData.game.length > 1) {
+    //     // 如果有多个打包配置
+    //     // let gameName = Array.from(new Set(resData.game))
+    //     for (let i = 0; i < resData.obfuscatorType.length; i++) {
+    //         let obj = {}
+    //         for (let j in resData) {
+    //             obj[j] = resData[j][i]
+    //         }
+    //         outputArr.push(obj)
+    //     }
+    // } else {
+    //     // 如果只有1个打包配置
+    //     outputArr.push(resData)
+    // }
 
     return outputArr.map((item, index, arr) => {
         // 这里的item是某个游戏的配置的对象
@@ -139,33 +227,36 @@ function transformData(data) {
                     let game = item.game
                     item.file = arr.reduce((last, item, index, arr) => {
                         let str = `./${inputGame}${game}`
-                        console.log(item, '=====item')
+                        // console.log(item, '=====item')
                         let filenName = item.split(':')
                         let dir = filenName[0]
                         let fileArr = filenName.length > 1 && filenName[1].split(',')
-                        let final = ''
+                        let final = '',
+                            target = ''
                         if (fileArr) {
                             // 如果混淆的不是根目录的文件
                             fileArr.map((item, index, arr) => {
                                 // replace(/\s*/g,"")去除空格
                                 final = `${str}/${dir}/${item.replace('.js', '')}`.replace(/\s*/g, "")
+                                target = final.replace(`./${inputGame}`, '')
+                                last[target] = `${final}.js`
                             })
                         } else {
                             // 如果混淆的是根目录的文件
                             final = `${str}/${filenName[0].split('.')[0].replace(/\s*/g,"")}`
+                            target = final.replace(`./${inputGame}`, '')
+                            last[target] = `${final}.js`
                         }
-                        let target = final.replace(`./${inputGame}`, '')
-                        last[target] = `${final}.js`
                         return last
                     }, {})
                     break;
                     // 把用户输入的游戏id appid 变成数组
                 case 'idObj':
-                    let idStr = item[j].split('\r\n')
+                    let idStr = item[j].split(',')
                     let idObj = {}
                     idStr.map((item, index) => {
                         let str = item.split(':')
-                        let key = str[0]
+                        let key = str[0].replace('\n', '')
                         let value = str[1]
                         idObj[key] = value
                     })
@@ -190,13 +281,17 @@ function transformData(data) {
 async function changePackageJson(inputConfig) {
     let fileNames = fs.readdirSync(inputGame)
     if (!inputConfig || inputConfig.length == 0) return false
-    let allStr = ""
+    // let allStr = ""
+    let allStr = "concurrently "
+    // gameArr用于结束后，删除用户上传zip包，以及inputGame文件夹对应的游戏
+    let gameArr = []
     for (let i = 0; i < inputConfig.length; i++) {
         // itemI 某个游戏的配置
         let itemI = inputConfig[i]
         if (!fileNames.includes(itemI.game)) {
             // 判断inputGame目录下有没有用户输入的游戏
             showAlert(`${inputGame}目录下没有游戏：${itemI.game}`)
+            delGameData(itemI.game)
             return false
         } else {
             // 判断要混淆的游戏，有没有填入的混淆文件
@@ -204,6 +299,7 @@ async function changePackageJson(inputConfig) {
             for (let q of arr) {
                 if (!fs.existsSync(q)) {
                     showAlert(`找不到文件:${q}`)
+                    delGameData(itemI.game)
                     return false
                 }
             }
@@ -217,30 +313,66 @@ async function changePackageJson(inputConfig) {
                     appid: itemI.idObj[j]
                 }
             })
-            const configData = `\r\n//${getDate()}\r\nvar game= "${itemI.game}"\r\nvar list = ${list}\r\nvar mjConfig = ${mjConfig}\r\n`
-            // 新建webpack.config-${id}.js
-            // const webpackData = fs.readFileSync(`./${allConfig.modules}/webpack.config.js`, 'utf-8')
-            const webpackData = await rf(`./${modules}/${webpackName()}`)
-            const data = configData + webpackData;
-            wf(webpackName(j), data, 'w+')
+            gameArr.push(itemI.game)
+            const configData = `\r\n//${getDate()}\r\nvar game= "${itemI.game}"\r\nvar list = ${list}\r\nvar mjConfig = ${mjConfig}\r\nvar timeout = ${(i + 1)}`
+            // // 新建webpack.config-${id}.js
+            // const webpackData = await rf(`./${modules}/${webpackName()}`)
+            // const data = configData + webpackData;
+            // wf(webpackName(j), data, 'w+')
 
-            // 新建afterMath-${id}.js，处理压缩json，复制小游戏文件夹，添加壳，改小游戏参数
-            const afterMathDa = await rf(`./${modules}/${aftermathName()}`)
-            const data2 = configData + afterMathDa
-            wf(aftermathName(j), data2, 'w+')
+            // // 新建afterMath-${id}.js，处理压缩json，复制小游戏文件夹，添加壳，改小游戏参数等
+            // const afterMathDa = await rf(`./${modules}/${aftermathName()}`)
+            // const data2 = configData + afterMathDa
+            // wf(aftermathName(j), data2, 'w+')
 
+            // // 新建改变工具的package.json的文件
+            // const changeToolData = await rf(`./${modules}/${changeToolName()}`)
+            // const data3 = configData + changeToolData
+            // wf(changeToolName(j), data3, 'w+')
+
+            // // 新建webpack.config-${id}.js
+            // // 新建afterMath-${id}.js，处理压缩json，复制小游戏文件夹，添加壳，改小游戏参数等
+            // // 新建changeTool-${is}.js 改变工具的package.json的文件
+            let newFileName = [{
+                file: 'changeTool',
+                haveIDFile: changeToolName(j),
+                noIDFile: changeToolName(),
+                jsonStr: `node ${changeToolName(j)}`
+            }, {
+                file: 'webpack',
+                haveIDFile: webpackName(j),
+                noIDFile: webpackName(),
+                jsonStr: `set NODE_ENV=build&webpack --config ${webpackName(j)}`
+            }, {
+                file: 'aftermath',
+                haveIDFile: aftermathName(j),
+                noIDFile: aftermathName(),
+                jsonStr: `node ${aftermathName(j)}`
+            }]
+            let itemStr = ''
+            for (let k = 0; k < newFileName.length; k++) {
+                let item = newFileName[k]
+                let fileData = await rf(`./${modules}/${item.noIDFile}`)
+                let finalData = configData + fileData
+                wf(item.haveIDFile, finalData, 'w+')
+                itemStr += `${item.jsonStr} && `
+            }
             // 拼接package.json里面的要跑的字符串
-            let webpackStr = `set NODE_ENV=build&webpack --config ${webpackName(j)} && node ${aftermathName(j)} &&`
-            allStr += webpackStr
+            itemStr = itemStr.substr(0, itemStr.lastIndexOf('&&'))
+            itemStr = ` \\"${itemStr}\\" `
+            // let webpackStr = ` \\"node ${changeToolName(j)} && set NODE_ENV=build&webpack --config ${webpackName(j)} && node ${aftermathName(j)}\\" `
+            allStr += itemStr
+
         }
     }
     // 配置package.json
     // 把所有要执行的webpack-config.${id}.js 跟 aftermath-${id}.js拼接起来,最后再把delete.js放在尾部，写入json的all里面
-    let endStr = ' node end.js'
-    allStr += endStr
+    // let endStr = ' node end.js'
+    // allStr += endStr
     // allStr = allStr.substr(0, allStr.lastIndexOf('&&'))
     let packageJsonData = await rf(`./${modules}/package.json`)
     if (packageJsonData) {
+        // 把modules 里面的package.json 的 newBuild-key newBuild-value替换
         packageJsonData = packageJsonData.replace(jsonCopyStr.key, 'all').replace(jsonCopyStr.value, allStr)
         await wf('package.json', packageJsonData)
         console.log('混淆开始！');
@@ -250,8 +382,31 @@ async function changePackageJson(inputConfig) {
                 console.error(`exec error: ${error}`);
                 return;
             }
+            // 混淆完成之后
             console.log(`stdout: ${stdout}`);
+            let res = fs.readdirSync('./')
+            // 删除对应马甲的webpack.config, aftermath
+            let delteArr = ['webpack.config', 'aftermath', 'changeTool']
+            delteArr.map((item, index, arr) => {
+                res.map((item2, index2, arr2) => {
+                    if (item2.includes(item)) {
+                        fs.unlinkSync(item2)
+                    }
+                })
+            })
+            // 删除inputGame里面的游戏
+            gameArr.map(item => {
+                delGameData(item)
+            })
+            rmdir(`dist`, () => {})
+            showAlert('混淆执行完成！')
             console.log(`混淆结束！ stderr: ${stderr}`)
         })
     }
+}
+// 删除inputGame里面的游戏
+function delGameData(gameName) {
+    let res = path.join(__dirname, inputGame, gameName)
+    rmdir(res, () => {})
+    rmdir((`${res}.zip`), () => {})
 }
