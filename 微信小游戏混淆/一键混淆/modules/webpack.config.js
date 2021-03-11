@@ -31,8 +31,8 @@ const config = require(`./${modules}/defaultConfig.js`)
 let nameList = []
 Object.keys(list).forEach((item, index) => {
     let str = checkStr(item)
-    if (str.length > 4) {
-        str = str.slice(0, 2) + str.slice(str.length - 2, str.length)
+    if (str.length > 6) {
+        str = str.slice(0, 3) + str.slice(str.length - 3, str.length)
     }
     nameList.push(str)
     let gameEnd = item.indexOf('/')
