@@ -877,8 +877,8 @@ class czsdk_WeChat {
                     var resultTT = JSON.parse(result)
                     console.log("->>>>>>"+resultTT.roleInfo);
                     if ( resultTT.code == 1) {
-                        console.log("发送角色信息成功");
-                        _this.channelUpdateMethod();
+                        console.log("--发送角色信息成功--");
+                        _this.channelUpdateMethod(uploadType,roleParam);
                         callback(resultTT.code, "发送角色信息成功");
                     } else {
                         console.log("发起" + _this.configure.channelType + "失败:" + resultTT);
@@ -900,10 +900,58 @@ class czsdk_WeChat {
     }
 
 
-    channelUpdateMethod(){
+    channelUpdateMethod(uploadType,roleParam){
         var _this = this; 
         console.log("发起" + _this.configure.channelType + "上报");
+        var evelType = "other"
+        var roleUri = ""
         try {
+            switch (uploadType) {
+                case "creatRole":
+                    roleUri = "sdk/createRole";
+                    evelType = "create"
+                    console.log("channel创建角色");
+                    break;
+                case "enterGame":
+                    roleUri = "sdk/beginGame";
+                    evelType = "online"
+                    console.log("channel进入游戏");
+                    break;
+                case "updateRole":
+                    roleUri = "sdk/userUpgrade";
+                    evelType = "levelup"
+                    console.log("channel更新角色信息");
+                    break;
+                default:
+                    evelType = "other"
+                    console.log("channel输入上传角色类型有误");
+                    callback(0, "channel输入上传角色类型有误");
+                    break;
+            }
+            
+            huoSdk.updateRoleInfo({
+                data: {
+                  'role-event': evelType,
+                  'role-server_id': roleParam.serverId,
+                  'role-server_name': roleParam.serverName,
+                  'role-role_id':  roleParam.roleId,
+                  'role-role_name': roleParam.roleName,
+                  'role-role_level': roleParam.level,
+                  'role-role_vip': roleParam.vip,
+                  'role-combat_num': roleParam.rolePower,
+                  'role-onlineTime': 0,
+                  'role-scene': '背包',
+                  'role-axis': '(999,999,999)',
+                  'role-scene': '打开礼包'
+                }
+              }).then(res => {
+                // do something
+                console.log('mingri '+evelType+'is ok.')
+              }, err => {
+                // handle error
+                console.log('mingri '+evelType+'is error.')
+              })
+
             switch (_this.configure.channelType) {
                 case this.channelArr[0]:
                     console.log("进行上报")
