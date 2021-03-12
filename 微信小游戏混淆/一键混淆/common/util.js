@@ -8,28 +8,30 @@ const {
 } = require(path.join(__dirname, './allConfig.js'))
 
 // 删除文件
-function rmdir(filePath, callback) {
+function rmdir(filePath, callback = () => {}) {
     // 先判断当前filePath的类型(文件还是文件夹,如果是文件直接删除, 如果是文件夹, 去取当前文件夹下的内容, 拿到每一个递归)
-    fs.stat(filePath, function (err, stat) {
-        if (err) return console.log(err)
-        if (stat.isFile()) {
-            fs.unlink(filePath, callback)
-        } else {
-            fs.readdir(filePath, function (err, data) {
-                if (err) return console.log(err)
-                let dirs = data.map(dir => path.join(filePath, dir))
-                let index = 0
-                !(function next() {
-                    // 此处递归删除掉所有子文件 后删除当前 文件夹
-                    if (index === dirs.length) {
-                        fs.rmdir(filePath, callback)
-                    } else {
-                        rmdir(dirs[index++], next)
-                    }
-                })()
-            })
-        }
-    })
+    if (fs.existsSync(filePath)) {
+        fs.stat(filePath, function (err, stat) {
+            if (err) return console.log(err)
+            if (stat.isFile()) {
+                fs.unlink(filePath, callback)
+            } else {
+                fs.readdir(filePath, function (err, data) {
+                    if (err) return console.log(err)
+                    let dirs = data.map(dir => path.join(filePath, dir))
+                    let index = 0
+                    !(function next() {
+                        // 此处递归删除掉所有子文件 后删除当前 文件夹
+                        if (index === dirs.length) {
+                            fs.rmdir(filePath, callback)
+                        } else {
+                            rmdir(dirs[index++], next)
+                        }
+                    })()
+                })
+            }
+        })
+    }
 }
 
 // 复制文件
@@ -98,7 +100,7 @@ function copyDir(srcDir, tarDir, cb) {
 }
 
 // 连续创建多层文件夹
-function mkdirs(dirname, callback) {
+function mkdirs(dirname, callback = () => {}) {
     fs.exists(dirname, function (exists) {
         if (exists) {
             callback();

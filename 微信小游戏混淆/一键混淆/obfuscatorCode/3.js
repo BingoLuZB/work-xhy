@@ -8818,13 +8818,7 @@ require("source-map-support").install(),
                                         // bh_obj1[`${arr2Str}`] = arr2
 
                                     
-                                        fs.writeFile(`${date}/${fileNames[fileNum]}.json`, JSON.stringify(bh_obj1), function (error) {
-                                            if (error) {
-                                                console.log(error);
-                                                return false;
-                                            }
-                                            console.log('写入成功');
-                                        })
+                                        fs.writeFileSync(`${date}/${fileNames[fileNum]}.json`, JSON.stringify(bh_obj1))
 
                                         fileNum++
                                         bh = 0

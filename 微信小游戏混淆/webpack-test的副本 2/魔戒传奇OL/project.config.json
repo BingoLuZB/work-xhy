@@ -20,7 +20,7 @@
     "compileHotReLoad": false,
     "useMultiFrameRuntime": true,
     "useApiHook": true,
-    "useApiHostProcess": true,
+    "useApiHostProcess": false,
     "babelSetting": {
       "ignore": [],
       "disablePlugins": [],
@@ -38,7 +38,7 @@
   },
   "compileType": "game",
   "libVersion": "2.10.2",
-  "appid": "wx4ff5ec4ba569072f",
+  "appid": "wxb2f100795e8a8475",
   "projectname": "%E7%AD%96%E7%95%A5%E5%86%9B%E5%9B%A2",
   "qqappid": "1108023326",
   "simulatorType": "wechat",

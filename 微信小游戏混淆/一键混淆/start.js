@@ -86,6 +86,7 @@ function openHtml() {
                         // console.log(files, '===files')
                         if (files) {
                             inputConfig = transformData(fields)
+                            console.log(inputConfig, '=====inputConfig')
                             let filesL = Object.keys(files).length
                             let num = 0
                             for (let i in files) {
@@ -130,6 +131,8 @@ function openHtml() {
             //         res.end();
             //     }
             // });
+
+            // 获取开发码
         } else if (req.url !== "/favicon.ico" && req.url.includes('/getStartCode')) {
             let resData = null
             req.on('data', (data) => {
@@ -279,6 +282,8 @@ function transformData(data) {
 
 // 新增webpack.config-id.js aftermath-id.js package.json
 async function changePackageJson(inputConfig) {
+    let repeatNum = 1
+    let thisIdArr = []
     let fileNames = fs.readdirSync(inputGame)
     if (!inputConfig || inputConfig.length == 0) return false
     // let allStr = ""
@@ -286,7 +291,7 @@ async function changePackageJson(inputConfig) {
     // gameArr用于结束后，删除用户上传zip包，以及inputGame文件夹对应的游戏
     let gameArr = []
     for (let i = 0; i < inputConfig.length; i++) {
-        // itemI 某个游戏的配置
+        // itemI：某个游戏的配置
         let itemI = inputConfig[i]
         if (!fileNames.includes(itemI.game)) {
             // 判断inputGame目录下有没有用户输入的游戏
@@ -330,6 +335,12 @@ async function changePackageJson(inputConfig) {
             // const data3 = configData + changeToolData
             // wf(changeToolName(j), data3, 'w+')
 
+            // 防止同一个id的包，在跑npm run all的时候报错
+            if (fs.existsSync(webpackName(j))) {
+                j = `${j}-${repeatNum}`
+                repeatNum++
+            }
+            thisIdArr.unshift(j)
             // // 新建webpack.config-${id}.js
             // // 新建afterMath-${id}.js，处理压缩json，复制小游戏文件夹，添加壳，改小游戏参数等
             // // 新建changeTool-${is}.js 改变工具的package.json的文件
@@ -384,21 +395,21 @@ async function changePackageJson(inputConfig) {
             }
             // 混淆完成之后
             console.log(`stdout: ${stdout}`);
-            let res = fs.readdirSync('./')
             // 删除对应马甲的webpack.config, aftermath
             let delteArr = ['webpack.config', 'aftermath', 'changeTool']
-            delteArr.map((item, index, arr) => {
-                res.map((item2, index2, arr2) => {
-                    if (item2.includes(item)) {
-                        fs.unlinkSync(item2)
+            delteArr.map(item => {
+                thisIdArr.map(item2 => {
+                    let tarFile = `${item}-${item2}.js`
+                    if (fs.existsSync(tarFile)) {
+                        fs.unlinkSync(`./${tarFile}`)
                     }
                 })
             })
             // 删除inputGame里面的游戏
-            gameArr.map(item => {
-                delGameData(item)
-            })
-            rmdir(`dist`, () => {})
+            // gameArr.map(item => {
+            //     delGameData(item)
+            // })
+            rmdir(`dist`)
             showAlert('混淆执行完成！')
             console.log(`混淆结束！ stderr: ${stderr}`)
         })
@@ -407,6 +418,6 @@ async function changePackageJson(inputConfig) {
 // 删除inputGame里面的游戏
 function delGameData(gameName) {
     let res = path.join(__dirname, inputGame, gameName)
-    rmdir(res, () => {})
-    rmdir((`${res}.zip`), () => {})
+    rmdir(res)
+    rmdir((`${res}.zip`))
 }

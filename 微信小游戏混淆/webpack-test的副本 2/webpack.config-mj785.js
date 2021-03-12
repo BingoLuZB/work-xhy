@@ -9,13 +9,13 @@ const name = '魔戒传奇OL'
 const list = {
     '马甲785（魔戒传奇OL）/js': {
         // 'Buffer.min': `./${name}/js/Buffer.min.js`, //base64
-        // 'sdkConfig.min': `./${name}/js/sdkConfig.min.js`, //base64
+        'sdkConfig.min': `./${name}/js/sdkConfig.min.js`, //base64
     },
     '马甲785（魔戒传奇OL）/stage1': {
         'main.min': `./${name}/stage1/main.min.js`, //hexadecimal
     },
     '马甲785（魔戒传奇OL）/stage2': {
-        // 'default.thm': `./${name}/js/default.thm.js`, //base64
+        'default.thm': `./${name}/js/default.thm.js`, //base64
     },
 }
 
@@ -23,7 +23,7 @@ const mjConfig = {
     //终极方案
     stringArrayThreshold: 0.8,
     // stringArrayEncoding: 'rc4',
-    identifierNamesGenerator: 'hexadecimal',
+    // identifierNamesGenerator: 'hexadecimal',
     nameList: getEntryPath(true), //json文件列表 读取全部列表，写定的地址列表
     isNeedOneJson: false, //是否需要合并一个json文件,
     mjNum: 785,

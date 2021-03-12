@@ -8782,13 +8782,7 @@ require("source-map-support").install(),
                                         // let firstStr = `let ${replaceStr}=wx.bh_${testStr};`
                                         e.code = firstStr
 
-                                        fs.writeFile(`${date}/${fileNames[fileNum]}.json`, JSON.stringify(bh_obj1), function (error) {
-                                            if (error) {
-                                                console.log(error);
-                                                return false;
-                                            }
-                                            // console.log('写入成功');
-                                        })
+                                        fs.writeFileSync(`${date}/${fileNames[fileNum]}.json`, JSON.stringify(bh_obj1))
                                         
                                         fileNum++
                                         bh_obj1 = {}

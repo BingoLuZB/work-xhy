@@ -1,17 +1,13 @@
 // 更改混淆方式
-const fs = require('fs');
+// const fs = require('fs');
 const path =require('path')
 const {
-    obfuscatorCode,
-    modules,
-    jsonCopyStr
+    modules
 } = require(path.join(__dirname, './common/allConfig.js'));
 const {
-    checkStr,
-    copyFile
+    checkStr
 } = require(path.join(__dirname, './common/util'));
 const {
-    obfuscatorType,
     mjNum
 } = mjConfig
 
@@ -29,10 +25,15 @@ const config = require(`./${modules}/defaultConfig.js`)
 
 // nameList 用于混淆文件的代码命名
 let nameList = []
+let nameNum = 1
 Object.keys(list).forEach((item, index) => {
     let str = checkStr(item)
-    if (str.length > 6) {
-        str = str.slice(0, 3) + str.slice(str.length - 3, str.length)
+    if (str.length > 5) {
+        str = str.slice(str.length - 5, str.length).replace(/\d+/g,'')
+        if (nameList.includes(str)) {
+            str += nameNum
+            nameNum++
+        }
     }
     nameList.push(str)
     let gameEnd = item.indexOf('/')

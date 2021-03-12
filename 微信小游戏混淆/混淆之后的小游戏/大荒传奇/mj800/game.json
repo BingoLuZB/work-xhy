@@ -1,0 +1,20 @@
+{
+	"deviceOrientation": "portrait",
+	"networkTimeout": {
+		"request": 30000,
+		"connectSocket": 30000,
+		"uploadFile": 30000,
+		"downloadFile": 30000
+	},
+	"plugins": {},
+	"subpackages": [
+		{
+			"name": "main.min.js",
+			"root": "js/main.min.js"
+		},
+		{
+			"name": "subpack.min.js",
+			"root": "js/subpack.min.js"
+		}
+	]
+}

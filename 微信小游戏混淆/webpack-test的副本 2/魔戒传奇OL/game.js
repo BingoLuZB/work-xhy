@@ -76,8 +76,8 @@ const startFunc = function()
 
 
 var shareInfo;
-var mapp_id = 736;
-var mmp_id = "wx4ff5ec4ba569072f";
+var mapp_id = 782;//736
+var mmp_id = "wxb2f100795e8a8475";//wx4ff5ec4ba569072f
 //sdk初始化
 huoSdk.init({app_id:mapp_id,mp_id:mmp_id}).then((res) =>
 {

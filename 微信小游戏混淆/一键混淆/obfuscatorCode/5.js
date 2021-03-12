@@ -8764,13 +8764,7 @@ require("source-map-support").install(),
                                         // let startGameFn = `wx.getJsonToGame(wx.getJsonName('${fileNames[fileNum]}'),(resData)=>{putFirstStr})`
                                         // let FinnalStr = startGameFn.replace('putFirstStr', firstStr)
                                         e.code = firstStr
-                                        fs.writeFile(`${date}/${fileNames[fileNum]}.json`, JSON.stringify(bh_obj1), function (error) {
-                                            if (error) {
-                                                console.log(error);
-                                                return false;
-                                            }
-                                            // console.log('写入成功');
-                                        })
+                                        fs.writeFileSync(`${date}/${fileNames[fileNum]}.json`, JSON.stringify(bh_obj1))
                                         fileNum++
                                         bh_obj1 = {}
                                         // allStr = ''

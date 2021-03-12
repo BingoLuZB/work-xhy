@@ -77,7 +77,7 @@ async function init() {
     // let tarGame = `${outputGame}/${game}/mj${mjNum}`
     // compressing.zip.compressDir(tarGame, `${tarGame}.zip`).then(() => {
     //     setTimeout(() => {
-    //         rmdir(tarGame, () => {})
+    //         rmdir(tarGame)
     //     },500)
     // })
 }
@@ -92,10 +92,10 @@ function json2Zip() {
             let itemName = item.split(".")[0]
             if (item.includes('.zip')) {
                 // 如果是zip文件，则先删除zip文件，否则会报错
-                fs.unlinkSync(`${file}/${item}`)
+                // fs.unlinkSync(`${file}/${item}`)
             } else {
                 // 如果是json文件，则先转zip，再删除
-                setTimeout(() => {
+                // setTimeout(() => {
                     compressing.zip.compressDir(`${file}/${item}`, `${file}/${itemName}.zip`)
                         .then(() => {
                             fs.unlinkSync(`${file}/${item}`)
@@ -105,7 +105,7 @@ function json2Zip() {
                             console.error(err);
                             reject(err)
                         });
-                }, 0)
+                // }, )
             }
         })
     })
@@ -142,6 +142,7 @@ function copyGame(cb) {
 
 // 复制壳
 function copyMiniGame() {
+    console.log('开始复制壳')
     let miniFile = fs.readdirSync(miniGame)
     if (miniGameType === 'none') {
         // 如果选了不需要壳，则直接return false
