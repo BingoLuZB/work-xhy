@@ -413,7 +413,7 @@ async function changePackageJson(inputConfig) {
                 })
             })
             // 删除inputGame里面的游戏
-            console.log(gameArr, '=======gameArr');
+            console.log(gameArr);
             gameArr.map(item => {
                 delGameData(item)
             })

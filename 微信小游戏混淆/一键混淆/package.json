@@ -7,7 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "set NODE_ENV=build&webpack --config webpack.build.js",
     "start": "node start.js",
-    "all":"concurrently  \"node changeTool-9.js && set NODE_ENV=build&webpack --config webpack.config-9.js && node aftermath-9.js \" "
+    "all":"concurrently  \"node changeTool-791.js && set NODE_ENV=build&webpack --config webpack.config-791.js && node aftermath-791.js \" "
   },
   "author": "",
   "license": "ISC",

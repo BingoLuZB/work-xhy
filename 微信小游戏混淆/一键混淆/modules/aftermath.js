@@ -55,7 +55,16 @@ const {
 } = require(path.join(__dirname, './common/util'));
 
 // 复制之后的微信小游戏地址
-const mjWxgameSrc = path.join(outputGame, game, `mj${mjNum}`)
+let mjWxgameSrc = ''
+let mjConfigSrc = path.join(config, `config.${mjNum}.js`)
+let isUpdate = fs.existsSync(mjConfigSrc)
+if (isUpdate) {
+    let str = fs.readFileSync(mjConfigSrc)
+    let gameName = str.substring(str.indexOf('list'), str.length).split('var')[0].split('=')[1].split(':')[0].split('/')[0].substr(3)
+    mjWxgameSrc = path.join(outputGame, gameName, `mj${mjNum}`)
+} else {
+    mjWxgameSrc = path.join(outputGame, game.split('-')[0], `mj${mjNum}`)
+}
 
 
 init()
