@@ -59,9 +59,11 @@ let mjWxgameSrc = ''
 let mjConfigSrc = path.join(config, `config.${mjNum}.js`)
 let isUpdate = fs.existsSync(mjConfigSrc)
 if (isUpdate) {
-    let str = fs.readFileSync(mjConfigSrc)
+    let str = fs.readFileSync(mjConfigSrc).toString()
     let gameName = str.substring(str.indexOf('list'), str.length).split('var')[0].split('=')[1].split(':')[0].split('/')[0].substr(3)
     mjWxgameSrc = path.join(outputGame, gameName, `mj${mjNum}`)
+    // 更新的时候不需要变壳
+    miniGameType = 'none'
 } else {
     mjWxgameSrc = path.join(outputGame, game.split('-')[0], `mj${mjNum}`)
 }
@@ -199,10 +201,19 @@ async function changeWxgame() {
     let isUpdate = fs.existsSync(path.join(config, `config.${mjNum}.js`))
     let nameList = fs.readdirSync(path.join(jsonList, `mj${mjNum}`, getDate(true))).filter(item => item.includes('.zip'))
     let finalList = ''
+    function configList(list) {
+        return `
+const versions = '${version}';
+const gameId = ${mjNum};
+const downloadUrl = '${downloadUrl}jsonList/${gameAbbr}/mj${mjNum}';
+const jsonList = [${list}];
+// config
+`
+    }
     // 判断是否是更新的
     if (isUpdate) {
         // 如果是更新的，则只要修改提审包的game.js的jsonList 跟 version
-        let gameSrc = path.join(mjWxgameSrc, 'game.js')
+        let gameSrc = path.join(mjWxgameSrc, 'game.md')
         let gameData = await rf(gameSrc)
         let configItem = gameData.split('// config')[0]
         // 拿到game.js里面的jsonList的数据
@@ -228,29 +239,25 @@ async function changeWxgame() {
             }
         })
         finalList = arrListData
+        injectData = configList(finalList) + gameData.split('// config')[1]
+        await wf(injectSrc, injectData)
+        await wf(gameSrc, injectData)
     } else {
         // 拼接游戏参数
         finalList = nameList.map(item => {
             return `'${getDate(true)}_${item}'`
         })
-    }
+        
 
-    function configList(list) {
-        return `
-const versions = '${version}';
-const gameId = ${mjNum};
-const downloadUrl = '${downloadUrl}jsonList/${gameAbbr}/mj${mjNum}';
-const jsonList = [${list}];
-// config
-`
-    }
     // 获取切换游戏的模板
     let gameModuleSrc = path.join(modules, 'wxgame.js')
     let gameModule = await rf(gameModuleSrc)
 
-    // 拼接进游戏 跟 进壳的函数
+    // 拼接进游戏的模板
     let wxgameSrc = path.join(inputGame, game, 'game.js')
     let wxgameData = await rf(wxgameSrc)
+
+    // 拼接进壳的模板
     let miniGameData = ''
     if (parseInt(miniGameType)) {
         let miniGameSrc = path.join(miniGame, `${miniGameType}`, 'game.md')
@@ -268,6 +275,8 @@ function intoMiniGame () {
     injectData = configList(finalList) + gameModule + fn
     wf(injectSrc, injectData)
     wf(path.join(mjWxgameSrc, 'game.md'), injectData)
+    }
+
     console.log('微信game.js写入完成')
 }
 

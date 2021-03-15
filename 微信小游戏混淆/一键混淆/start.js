@@ -102,7 +102,14 @@ function openHtml() {
                                 }).then(() => {
                                     num++
                                     // 把解压出来的游戏文件夹重命名为 游戏-id（这是为了区分不同混淆游戏时候的混淆源码）
-                                    fs.renameSync(`${inputGame}${gameName}`, tarFile);
+                                    try {
+                                        fs.renameSync(`${inputGame}${gameName}`, tarFile);
+                                    } catch (error) {
+                                        console.error(error);
+                                        rmdir(`${inputGame}${gameName}`, () => {
+                                            fs.renameSync(`${inputGame}${gameName}`, tarFile);
+                                        })
+                                    }
                                     if (num - 1 == filesL && inputConfig) {
                                         changePackageJson(inputConfig)
                                         res.writeHead(200, {
@@ -417,7 +424,6 @@ async function changePackageJson(inputConfig) {
             gameArr.map(item => {
                 delGameData(item)
             })
-            rmdir(`dist`)
             showAlert('混淆执行完成！')
             console.log(`混淆结束！ stderr: ${stderr}`)
         })
