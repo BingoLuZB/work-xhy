@@ -46,3 +46,10 @@ foreach ($n in $array){npm run build-$n} -->
 需要工具：
 npm install concurrently --save 这个可以同时执行多个命令
 compressing 用于压缩
+
+
+
+
+注意事项：
+1.压缩包名字跟解压出来的文件名字，一定要相同
+2.填混淆文件的时候，一定要按照文件夹列表里面从上往下的顺序去填写

@@ -88,18 +88,22 @@ function openHtml() {
                             inputConfig = transformData(fields)
                             console.log(inputConfig, '=====inputConfig')
                             let filesL = Object.keys(files).length
-                            let num = 0
+                            let num = 1
                             for (let i in files) {
                                 let value = files[i]
-                                let tarFile = `${inputGame}${value.name}`
+                                let gameId = fields[`idObj${num}`].split(':')[0]
+                                let gameName = fields[`game${num}`]
+                                let tarFile = `${inputGame}${gameName}-${gameId}`
                                 // 压缩包重命名
-                                fs.renameSync(value.path, tarFile);
+                                fs.renameSync(value.path, `${tarFile}.zip`);
                                 // 解压
-                                compressing.zip.uncompress(tarFile, `${inputGame}`, {
+                                compressing.zip.uncompress(`${tarFile}.zip`, `${inputGame}`, {
                                     zipFileNameEncoding: 'GBK'
                                 }).then(() => {
                                     num++
-                                    if (num == filesL && inputConfig) {
+                                    // 把解压出来的游戏文件夹重命名为 游戏-id（这是为了区分不同混淆游戏时候的混淆源码）
+                                    fs.renameSync(`${inputGame}${gameName}`, tarFile);
+                                    if (num - 1 == filesL && inputConfig) {
                                         changePackageJson(inputConfig)
                                         res.writeHead(200, {
                                             'Content-type': 'text/html;charset=utf-8'
@@ -215,13 +219,14 @@ function transformData(data) {
     //     // 如果只有1个打包配置
     //     outputArr.push(resData)
     // }
-
+    console.log(outputArr, '===outputArr');
     return outputArr.map((item, index, arr) => {
         // 这里的item是某个游戏的配置的对象
         let obfuscatorObj = {}
         for (let j in item) {
             switch (j) {
                 case 'game':
+                    item.game = `${item.game}-${item.idObj.split(':')[0]}`
                     break
                     // 处理要混淆文件的格式
                 case 'file':
@@ -318,7 +323,9 @@ async function changePackageJson(inputConfig) {
                     appid: itemI.idObj[j]
                 }
             })
-            gameArr.push(itemI.game)
+            if (!gameArr.includes(itemI.game)) {
+                gameArr.push(itemI.game)
+            }
             const configData = `\r\n//${getDate()}\r\nvar game= "${itemI.game}"\r\nvar list = ${list}\r\nvar mjConfig = ${mjConfig}\r\nvar timeout = ${(i + 1)}`
             // // 新建webpack.config-${id}.js
             // const webpackData = await rf(`./${modules}/${webpackName()}`)
@@ -406,18 +413,19 @@ async function changePackageJson(inputConfig) {
                 })
             })
             // 删除inputGame里面的游戏
-            // gameArr.map(item => {
-            //     delGameData(item)
-            // })
+            console.log(gameArr, '=======gameArr');
+            gameArr.map(item => {
+                delGameData(item)
+            })
             rmdir(`dist`)
             showAlert('混淆执行完成！')
             console.log(`混淆结束！ stderr: ${stderr}`)
         })
     }
-}
+}   
 // 删除inputGame里面的游戏
 function delGameData(gameName) {
     let res = path.join(__dirname, inputGame, gameName)
     rmdir(res)
-    rmdir((`${res}.zip`))
+    rmdir(`${res}.zip`)
 }

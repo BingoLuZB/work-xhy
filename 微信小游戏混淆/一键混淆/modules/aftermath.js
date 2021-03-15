@@ -89,16 +89,20 @@ function json2Zip() {
         let fileArr = fs.readdirSync(file)
         // 把每个json文件都变成zip文件，然后把json文件删掉
         fileArr.map((item, index) => {
-            let itemName = item.split(".")[0]
-            if (item.includes('.zip')) {
+            let {
+                base,
+                ext,
+                name
+            } = path.parse(item)
+            if (ext === '.zip') {
                 // 如果是zip文件，则先删除zip文件，否则会报错
                 // fs.unlinkSync(`${file}/${item}`)
             } else {
                 // 如果是json文件，则先转zip，再删除
                 // setTimeout(() => {
-                    compressing.zip.compressDir(`${file}/${item}`, `${file}/${itemName}.zip`)
+                    compressing.zip.compressDir(`${file}/${base}`, `${file}/${name}.zip`)
                         .then(() => {
-                            fs.unlinkSync(`${file}/${item}`)
+                            fs.unlinkSync(`${file}/${base}`)
                             resolve()
                         })
                         .catch(err => {

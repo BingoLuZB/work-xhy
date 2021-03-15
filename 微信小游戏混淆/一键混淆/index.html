@@ -12,6 +12,13 @@
     <div class="title">
         BingoL的混淆工具
     </div>
+    <!-- <div>
+        <ul style="text-align: left;width:fit-content;margin: 0 auto;">
+            <li>注意事项：</li>
+            <li>1.压缩包名字跟解压出来的文件夹名字，一定要相同</li>
+            <li>2.填混淆文件的时候，一定要按照文件夹列表里面从上往下的顺序去填写</li>
+        </ul>
+    </div> -->
     <!-- <div class="startCode">
         <span>请先输入密码1</span>
         <input class="code1" type="text">
@@ -33,7 +40,7 @@
                 <li class="uploadZip">
                     <div style="font-size: 15px;">要混淆的游戏：</div>
                     <dl>
-                        <dt class="fileName">请上传压缩文件</dt>
+                        <dt class="fileName">请上传:压缩包与解压文件名要相同</dt>
                         <dd>选择文件</dd>
                     </dl>
                     <input class="fileToUpload" accept='application/zip' type="file" name="fileToUpload"
@@ -47,12 +54,12 @@
                 <li>
                     <div> 要混淆的文件：</div>
                     <textarea required name="file"
-                        placeholder="例：要混淆的游戏选择了三国的前提下 js:a.js,b.js                             三国文件夹下，js文件夹的a.js b.js                   game.js                                    三国文件夹下的game.js                  注意：所有标点符号都要用英文输入法,             不同文件之间要用英文的逗号隔开"></textarea>
+                        placeholder="例：js:a.js,b.js   js文件夹的a.js b.js                   game.js     游戏根目录下的game.js                  注意：所有标点符号都要用英文输入法,多个文件要用逗号隔开，不同目录的直接用回车。填混淆文件的时候，一定要按照文件夹列表里面从上往下的顺序去填写"></textarea>
                 </li>
                 <li>
                     游戏ID及其对应的小游戏appid：
                     <textarea required name="idObj"
-                        placeholder="例：1: wx6515165132,                         2:wx65123184891,                   3:wx6165165165                            注意：所有标点符号都要用英文输入法,             不同文件之间要用英文的逗号隔开"></textarea>
+                        placeholder="例：                                             1:wx6515165132,                         2:wx65123184891,                   3:wx6165165165                            注意：所有标点符号都要用英文输入法,             不同文件之间要用逗号隔开"></textarea>
                 </li>
                 <li>
                     提审版本:
@@ -129,9 +136,11 @@
         let data3 = new FormData()
         let num = 1
         data.map(item => {
+            let time = Date.now()
             let file = $('.fileToUpload')[num-1].files[0]
             data3.set(`fileToUpload${num}`, file)
             data3.set(`game${num}`,file.name.split('.')[0])
+            data3.set(`time${num}`, time)
             data3.set(`${item.name}${num}`, item.value)
             // 如果是遍历去到一组的最后
             if (item.name === 'miniGameType') {
