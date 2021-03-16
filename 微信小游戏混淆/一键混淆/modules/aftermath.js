@@ -64,6 +64,10 @@ if (isUpdate) {
     mjWxgameSrc = path.join(outputGame, gameName, `mj${mjNum}`)
     // 更新的时候不需要变壳
     miniGameType = 'none'
+    // 更新的时候 gameAbbr 用回第一次的gameAbbr
+    let initgameAbbr = str.substring(str.indexOf('mjConfig'), str.length).split('var')[0].split('=')[1].split(':')[1].split(',')[0].replace(/\"/g, '')
+    // initgameAbbr = initgameAbbr.substr(0, initgameAbbr.length - 1)
+    gameAbbr = initgameAbbr
 } else {
     mjWxgameSrc = path.join(outputGame, game.split('-')[0], `mj${mjNum}`)
 }
@@ -79,7 +83,7 @@ async function init() {
     // 复制壳
     copyMiniGame()
     // 修改微信小游戏的game.js
-    await changeWxgame()
+    await changeWxgameJS()
     // 修改微信小游戏project.config.json
     changeWxConfig()
     // 添加历史记录
@@ -111,15 +115,15 @@ function json2Zip() {
             } else {
                 // 如果是json文件，则先转zip，再删除
                 // setTimeout(() => {
-                    compressing.zip.compressDir(`${file}/${base}`, `${file}/${name}.zip`)
-                        .then(() => {
-                            fs.unlinkSync(`${file}/${base}`)
-                            resolve()
-                        })
-                        .catch(err => {
-                            console.error(err);
-                            reject(err)
-                        });
+                compressing.zip.compressDir(`${file}/${base}`, `${file}/${name}.zip`)
+                    .then(() => {
+                        fs.unlinkSync(`${file}/${base}`)
+                        resolve()
+                    })
+                    .catch(err => {
+                        console.error(err);
+                        reject(err)
+                    });
                 // }, )
             }
         })
@@ -195,20 +199,20 @@ async function changeWxConfig() {
 }
 
 // 修改微信小游戏的game.js
-async function changeWxgame() {
+async function changeWxgameJS() {
     let injectData = null
     let injectSrc = path.join(mjWxgameSrc, 'game.js')
     let isUpdate = fs.existsSync(path.join(config, `config.${mjNum}.js`))
     let nameList = fs.readdirSync(path.join(jsonList, `mj${mjNum}`, getDate(true))).filter(item => item.includes('.zip'))
     let finalList = ''
+
     function configList(list) {
         return `
 const versions = '${version}';
 const gameId = ${mjNum};
 const downloadUrl = '${downloadUrl}jsonList/${gameAbbr}/mj${mjNum}';
 const jsonList = [${list}];
-// config
-`
+// config`
     }
     // 判断是否是更新的
     if (isUpdate) {
@@ -243,28 +247,28 @@ const jsonList = [${list}];
         await wf(injectSrc, injectData)
         await wf(gameSrc, injectData)
     } else {
-        // 拼接游戏参数
+        // 拼接游戏参数 //config
         finalList = nameList.map(item => {
             return `'${getDate(true)}_${item}'`
         })
-        
 
-    // 获取切换游戏的模板
-    let gameModuleSrc = path.join(modules, 'wxgame.js')
-    let gameModule = await rf(gameModuleSrc)
 
-    // 拼接进游戏的模板
-    let wxgameSrc = path.join(inputGame, game, 'game.js')
-    let wxgameData = await rf(wxgameSrc)
+        // 获取切换游戏的模板 judgeGame
+        let gameModuleSrc = path.join(modules, 'wxgame.js')
+        let gameModule = await rf(gameModuleSrc)
 
-    // 拼接进壳的模板
-    let miniGameData = ''
-    if (parseInt(miniGameType)) {
-        let miniGameSrc = path.join(miniGame, `${miniGameType}`, 'game.md')
-        miniGameData = await rf(miniGameSrc)
-    }
+        // 拼接进游戏的模板 intoGame intoMiniGame
+        let wxgameSrc = path.join(inputGame, game, 'game.js')
+        let wxgameData = await rf(wxgameSrc)
 
-    let fn = `
+        // 拼接进壳的模板
+        let miniGameData = ''
+        if (parseInt(miniGameType)) {
+            let miniGameSrc = path.join(miniGame, `${miniGameType}`, 'game.md')
+            miniGameData = await rf(miniGameSrc)
+        }
+
+        let fn = `
 function intoGame() {
     ${wxgameData}
 }
@@ -272,11 +276,10 @@ function intoMiniGame () {
     ${miniGameData}
 }
 `
-    injectData = configList(finalList) + gameModule + fn
-    wf(injectSrc, injectData)
-    wf(path.join(mjWxgameSrc, 'game.md'), injectData)
+        injectData = configList(finalList) + gameModule + fn
+        wf(injectSrc, injectData)
+        wf(path.join(mjWxgameSrc, 'game.md'), injectData)
     }
-
     console.log('微信game.js写入完成')
 }
 

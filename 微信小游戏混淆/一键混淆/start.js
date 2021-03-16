@@ -423,6 +423,7 @@ async function changePackageJson(inputConfig) {
             console.log(gameArr);
             gameArr.map(item => {
                 delGameData(item)
+                rmdir(path.join('dist', item))
             })
             showAlert('混淆执行完成！')
             console.log(`混淆结束！ stderr: ${stderr}`)
