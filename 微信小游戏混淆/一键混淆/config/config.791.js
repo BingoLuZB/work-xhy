@@ -83,38 +83,3 @@ var mjConfig = {"time":"1615807247790","gameAbbr":"mj791","version":"1.0.0","obf
 var list = {"三国-791/js/customlib.min":"./inputGame/三国-791/js/customlib.min.js","三国-791/package1/main":"./inputGame/三国-791/package1/main.js"}
 var mjConfig = {"time":"1615860620499","gameAbbr":"SG","version":"1.0.0","obfuscatorType":6,"stringArrayThreshold":0.9,"stringArrayEncoding":"base64","identifierNamesGenerator":"hexadecimal","miniGameType":"1","mjNum":"791","appid":"wx3bffdca979348329"}
 
-//2021-03-16 10:12:18
-var list = {"三国-791/js/customlib.min":"./inputGame/三国-791/js/customlib.min.js"}
-var mjConfig = {"time":"1615860731405","gameAbbr":"SG","version":"1.0.0","obfuscatorType":6,"stringArrayThreshold":0.9,"stringArrayEncoding":"base64","identifierNamesGenerator":"hexadecimal","miniGameType":"1","mjNum":"791","appid":"wx3bffdca979348329"}
-
-//2021-03-16 10:12:24
-var list = {"三国-791/package1/main":"./inputGame/三国-791/package1/main.js"}
-var mjConfig = {"time":"1615860731405","gameAbbr":"SG","version":"1.0.0","obfuscatorType":6,"stringArrayThreshold":0.9,"stringArrayEncoding":"base64","identifierNamesGenerator":"hexadecimal","miniGameType":"1","mjNum":"791","appid":"wx3bffdca979348329"}
-
-//2021-03-16 10:27:48
-var list = {"三国-791/js/customlib.min":"./inputGame/三国-791/js/customlib.min.js","三国-791/package1/main":"./inputGame/三国-791/package1/main.js"}
-var mjConfig = {"time":"1615861653756","gameAbbr":"SG","version":"1.0.0","obfuscatorType":6,"stringArrayThreshold":0.9,"stringArrayEncoding":"base64","identifierNamesGenerator":"hexadecimal","miniGameType":"1","mjNum":"791","appid":"wx3bffdca979348329"}
-
-//2021-03-16 10:28:12
-var list = {"三国-791/js/customlib.min":"./inputGame/三国-791/js/customlib.min.js","三国-791/package1/main":"./inputGame/三国-791/package1/main.js"}
-var mjConfig = {"time":"1615861677543","gameAbbr":"SG","version":"1.0.0","obfuscatorType":6,"stringArrayThreshold":0.9,"stringArrayEncoding":"base64","identifierNamesGenerator":"hexadecimal","miniGameType":"1","mjNum":"791","appid":"wx3bffdca979348329"}
-
-//2021-03-16 10:44:59
-var list = {"mj791-791/js/customlib.min":"./inputGame/mj791-791/js/customlib.min.js"}
-var mjConfig = {"time":"1615862651379","gameAbbr":"mj791","version":"1.0.0","obfuscatorType":1,"stringArrayThreshold":0.2,"stringArrayEncoding":"base64","identifierNamesGenerator":"mangled","miniGameType":"1","mjNum":"791","appid":"wx3bffdca979348329"}
-
-//2021-03-16 11:01:20
-var list = {"mj791-791/js/customlib.min":"./inputGame/mj791-791/js/customlib.min.js"}
-var mjConfig = {"time":"1615863642640","gameAbbr":"mj791","version":"1.0.0","obfuscatorType":1,"stringArrayThreshold":0.2,"stringArrayEncoding":"base64","identifierNamesGenerator":"mangled","miniGameType":"1","mjNum":"791","appid":"wx3bffdca979348329"}
-
-//2021-03-16 11:10:16
-var list = {"mj791-791/js/customlib.min":"./inputGame/mj791-791/js/customlib.min.js"}
-var mjConfig = {"time":"1615864178249","gameAbbr":"mj791","version":"1.0.0","obfuscatorType":1,"stringArrayThreshold":0.2,"stringArrayEncoding":"base64","identifierNamesGenerator":"mangled","miniGameType":"1","mjNum":"791","appid":"wx3bffdca979348329"}
-
-//2021-03-16 11:11:10
-var list = {"mj791-791/js/customlib.min":"./inputGame/mj791-791/js/customlib.min.js"}
-var mjConfig = {"time":"1615864233727","gameAbbr":"mj791","version":"1.0.0","obfuscatorType":1,"stringArrayThreshold":0.2,"stringArrayEncoding":"base64","identifierNamesGenerator":"mangled","miniGameType":"1","mjNum":"791","appid":"wx3bffdca979348329"}
-
-//2021-03-16 11:12:22
-var list = {"mj791-791/js/customlib.min":"./inputGame/mj791-791/js/customlib.min.js"}
-var mjConfig = {"time":"1615864305543","gameAbbr":"mj791","version":"1.0.0","obfuscatorType":1,"stringArrayThreshold":0.2,"stringArrayEncoding":"base64","identifierNamesGenerator":"mangled","miniGameType":"1","mjNum":"791","appid":"wx3bffdca979348329"}

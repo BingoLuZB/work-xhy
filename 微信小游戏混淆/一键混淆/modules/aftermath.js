@@ -202,7 +202,6 @@ async function changeWxConfig() {
 async function changeWxgameJS() {
     let injectData = null
     let injectSrc = path.join(mjWxgameSrc, 'game.js')
-    let isUpdate = fs.existsSync(path.join(config, `config.${mjNum}.js`))
     let nameList = fs.readdirSync(path.join(jsonList, `mj${mjNum}`, getDate(true))).filter(item => item.includes('.zip'))
     let finalList = ''
 
@@ -257,11 +256,11 @@ const jsonList = [${list}];
         let gameModuleSrc = path.join(modules, 'wxgame.js')
         let gameModule = await rf(gameModuleSrc)
 
-        // 拼接进游戏的模板 intoGame intoMiniGame
+        // 拼接进游戏的模板 intoGame
         let wxgameSrc = path.join(inputGame, game, 'game.js')
         let wxgameData = await rf(wxgameSrc)
 
-        // 拼接进壳的模板
+        // 拼接进壳的模板 intoMiniGame
         let miniGameData = ''
         if (parseInt(miniGameType)) {
             let miniGameSrc = path.join(miniGame, `${miniGameType}`, 'game.md')
