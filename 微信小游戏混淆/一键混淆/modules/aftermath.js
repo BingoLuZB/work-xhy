@@ -213,11 +213,11 @@ const downloadUrl = '${downloadUrl}jsonList/${gameAbbr}/mj${mjNum}';
 const jsonList = [${list}];
 // config`
     }
+    let gameMDSrc = path.join(mjWxgameSrc, 'game.md')
     // 判断是否是更新的
-    if (isUpdate) {
+    if (isUpdate && fs.existsSync(gameMDSrc)) {
         // 如果是更新的，则只要修改提审包的game.js的jsonList 跟 version
-        let gameSrc = path.join(mjWxgameSrc, 'game.md')
-        let gameData = await rf(gameSrc)
+        let gameData = await rf(gameMDSrc)
         let configItem = gameData.split('// config')[0]
         // 拿到game.js里面的jsonList的数据
         let arrListData = configItem.substring(configItem.indexOf('[') + 1, configItem.indexOf(']'))
@@ -244,7 +244,7 @@ const jsonList = [${list}];
         finalList = arrListData
         injectData = configList(finalList) + gameData.split('// config')[1]
         await wf(injectSrc, injectData)
-        await wf(gameSrc, injectData)
+        await wf(gameMDSrc, injectData)
     } else {
         // 拼接游戏参数 //config
         finalList = nameList.map(item => {
