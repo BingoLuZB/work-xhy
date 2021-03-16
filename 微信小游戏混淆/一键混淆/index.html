@@ -125,12 +125,12 @@
 <script>
     const httpUrl = '127.0.0.1'
     let flag = false
-    let time = 2
+    let time = 6
     let timeInterval = null
     
     $("#form1").submit(() => {
-        // if (flag) return false
-        // flag = true
+        if (flag) return false
+        flag = true
         let data = $('#form1').serializeArray()
         let data2 = new FormData($('#form1')[0])
         let data3 = new FormData()
@@ -147,6 +147,7 @@
                 num++
             }
         })
+        $('#uploadBtn')[0].value = `混淆开始，请稍后`
         ajax({
             method: 'POST',
             url: `/sendData`,
@@ -156,20 +157,24 @@
             // processData: false,                // jQuery不要去处理发送的数据
             // contentType: false,  
             success(res) {
-                let time2 = time + 1
-                    // $('#uploadBtn')[0].disabled = 'disabled'
-                        timeInterval = setInterval(() => {
-                        time2--
-                        $('#uploadBtn')[0].value = `混淆开始，请稍后 ${time2}`
-                            if (time2 == 0) {
-                                $('#uploadBtn')[0].value = '开始混淆'
-                                console.log(time2, '=====time2')
-                                // $('#uploadBtn')[0].disabled = ''
-                                clearInterval(timeInterval)
-                                // flag = false
-                                time2 = time
-                            }
-                        }, 1000) 
+                if (res && JSON.parse(res).code == 200) {
+                    $('#uploadBtn')[0].value = '开始混淆'
+                    flag = false
+                }
+                // let time2 = time + 1
+                //     // $('#uploadBtn')[0].disabled = 'disabled'
+                //         timeInterval = setInterval(() => {
+                //         time2--
+                //         $('#uploadBtn')[0].value = `混淆开始，请稍后 ${time2}`
+                //             if (time2 == 0) {
+                //                 $('#uploadBtn')[0].value = '开始混淆'
+                //                 console.log(time2, '=====time2')
+                //                 // $('#uploadBtn')[0].disabled = ''
+                //                 clearInterval(timeInterval)
+                //                 // flag = false
+                //                 time2 = time
+                //             }
+                //         }, 1000) 
             },
             err() {
             }

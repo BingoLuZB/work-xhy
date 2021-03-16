@@ -1,6 +1,8 @@
 const fs = require('fs');
 const cp = require('child_process');
 const path = require('path')
+const EventEmitter = require('events').EventEmitter; 
+const event = new EventEmitter(); 
 const {
     inputGame,
     modules,
@@ -106,19 +108,21 @@ function openHtml() {
                                         fs.renameSync(`${inputGame}${gameName}`, tarFile);
                                     } catch (error) {
                                         console.error(error);
-                                        rmdir(`${inputGame}${gameName}`, () => {
+                                        rmdir(`${tarFile}`, () => {
                                             fs.renameSync(`${inputGame}${gameName}`, tarFile);
                                         })
                                     }
                                     if (num - 1 == filesL && inputConfig) {
                                         changePackageJson(inputConfig)
-                                        res.writeHead(200, {
-                                            'Content-type': 'text/html;charset=utf-8'
+                                        event.on('responce', () => {
+                                            res.writeHead(200, {
+                                                'Content-type': 'text/html;charset=utf-8'
+                                            })
+                                            res.end(JSON.stringify({
+                                                code: 200,
+                                                msg: '上报成功'
+                                            }));
                                         })
-                                        res.end(JSON.stringify({
-                                            code: 200,
-                                            msg: '上报成功'
-                                        }));
                                     }
                                 });
                             }
@@ -334,20 +338,6 @@ async function changePackageJson(inputConfig) {
                 gameArr.push(itemI.game)
             }
             const configData = `\r\n//${getDate()}\r\nvar game= "${itemI.game}"\r\nvar list = ${list}\r\nvar mjConfig = ${mjConfig}\r\nvar timeout = ${(i + 1)}`
-            // // 新建webpack.config-${id}.js
-            // const webpackData = await rf(`./${modules}/${webpackName()}`)
-            // const data = configData + webpackData;
-            // wf(webpackName(j), data, 'w+')
-
-            // // 新建afterMath-${id}.js，处理压缩json，复制小游戏文件夹，添加壳，改小游戏参数等
-            // const afterMathDa = await rf(`./${modules}/${aftermathName()}`)
-            // const data2 = configData + afterMathDa
-            // wf(aftermathName(j), data2, 'w+')
-
-            // // 新建改变工具的package.json的文件
-            // const changeToolData = await rf(`./${modules}/${changeToolName()}`)
-            // const data3 = configData + changeToolData
-            // wf(changeToolName(j), data3, 'w+')
 
             // 防止同一个id的包，在跑npm run all的时候报错
             if (fs.existsSync(webpackName(j))) {
@@ -425,8 +415,9 @@ async function changePackageJson(inputConfig) {
                 delGameData(item)
                 rmdir(path.join('dist', item))
             })
-            showAlert('混淆执行完成！')
+            // showAlert('混淆执行完成！')
             console.log(`混淆结束！ stderr: ${stderr}`)
+            event.emit('responce')
         })
     }
 }   
