@@ -96,7 +96,8 @@ function openHtml() {
                                 let value = files[i]
                                 let gameId = fields[`idObj${num}`].split(':')[0]
                                 let gameName = fields[`game${num}`]
-                                let tarFile = `${inputGame}${gameName}-${gameId}`
+                                let oldGameName = `${inputGame}${gameName}`
+                                let tarFile = `${oldGameName}-${gameId}`
                                 // 压缩包重命名
                                 fs.renameSync(value.path, `${tarFile}.zip`);
                                 // 解压
@@ -106,16 +107,16 @@ function openHtml() {
                                     num++
                                     // 把解压出来的游戏文件夹重命名为 游戏-id（这是为了区分不同混淆游戏时候的混淆源码）
                                     try {
-                                        fs.renameSync(`${inputGame}${gameName}`, tarFile);
+                                        fs.renameSync(`${oldGameName}`, tarFile);
                                     } catch (error) {
                                         console.error(error);
-                                        rmdir(`${tarFile}`, () => {
-                                            fs.renameSync(`${inputGame}${gameName}`, tarFile);
-                                        })
+                                        // rmdir(`${tarFile}`, () => {
+                                        //     fs.renameSync(`${inputGame}${gameName}`, tarFile);
+                                        // })
                                     }
                                     if (num - 1 == filesL && inputConfig) {
                                         changePackageJson(inputConfig)
-                                        // event.on('responce', () => {
+                                        event.on('responce', () => {
                                             res.writeHead(200, {
                                                 'Content-type': 'text/html;charset=utf-8'
                                             })
@@ -123,7 +124,7 @@ function openHtml() {
                                                 code: 200,
                                                 msg: '上报成功',
                                             }));
-                                        // })
+                                        })
                                     }
                                 });
                             }

@@ -89,11 +89,11 @@ async function init() {
     // 添加历史记录
     await addHistroy()
     // 压缩游戏包
-    // compressing.zip.compressDir(mjWxgameSrc, `${mjWxgameSrc}.zip`).then(() => {
-    //     // setTimeout(() => {
-    //         rmdir(mjWxgameSrc)
-    //     // },500)
-    // })
+    compressing.zip.compressDir(mjWxgameSrc, `${mjWxgameSrc}.zip`).then(() => {
+        // setTimeout(() => {
+            // rmdir(mjWxgameSrc)
+        // },500)
+    })
 }
 
 // 把json文件转成zip文件

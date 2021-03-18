@@ -27,16 +27,6 @@
     <form id="form1" name="allForm" encType="multipart/form-data">
         <div id="box">
             <ul class="item">
-                <!-- <li>
-                    <label for="game">选择或输入要混淆的游戏:</label>
-                    <input list="games" name="game" id="game" onblur="getGameAbbr(this)" required>
-                    <datalist id="games">
-                        <option value="三国">
-                        <option value="魔戒传奇">
-                        <option value="魔戒传奇OL">
-                        <option value="梵天仙决">
-                    </datalist>
-                </li> -->
                 <li class="uploadZip">
                     <div style="font-size: 15px;">上传混淆的游戏：</div>
                     <dl>
@@ -127,6 +117,7 @@
     let flag = false
     let time = 6
     let timeInterval = null
+    
     
     $("#form1").submit(() => {
         // if (flag) return false
