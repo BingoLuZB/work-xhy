@@ -1,0 +1,31 @@
+{
+	"deviceOrientation": "portrait",
+	"networkTimeout": {
+		"request": 5000,
+		"connectSocket": 5000,
+		"uploadFile": 5000,
+		"downloadFile": 5000
+	},
+	"openDataContext": "openDataContext",
+	"navigateToMiniProgramAppIdList": [
+		"wxfcc1dde1fe32955a"
+	],
+	"subpackages": [
+		{
+			"name": "stage1",
+			"root": "stage1"
+		},
+		{
+			"name": "stage2",
+			"root": "stage2"
+		},
+		{
+			"name": "stage3",
+			"root": "stage3"
+		},
+		{
+			"name": "stage4",
+			"root": "stage4"
+		}
+	]
+}

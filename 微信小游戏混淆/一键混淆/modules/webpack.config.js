@@ -46,6 +46,8 @@ Object.keys(list).forEach((item, index) => {
 mjConfig.nameList = nameList
 mjConfig.stringArrayThreshold = mjConfig.stringArrayThreshold * 10 / 10
 
+console.log(nameList, '==nameList');
+
 // 合成最终配置
 const finalConfig = Object.assign(config, mjConfig)
 

@@ -129,7 +129,7 @@
     let timeInterval = null
     
     $("#form1").submit(() => {
-        if (flag) return false
+        // if (flag) return false
         flag = true
         let data = $('#form1').serializeArray()
         let data2 = new FormData($('#form1')[0])
@@ -140,7 +140,7 @@
             let file = $('.fileToUpload')[num-1].files[0]
             data3.set(`fileToUpload${num}`, file)
             data3.set(`game${num}`,file.name.split('.')[0])
-            data3.set(`time${num}`, time)
+            // data3.set(`time${num}`, time)
             data3.set(`${item.name}${num}`, item.value)
             // 如果是遍历去到一组的最后
             if (item.name === 'miniGameType') {
@@ -161,20 +161,6 @@
                     $('#uploadBtn')[0].value = '开始混淆'
                     flag = false
                 }
-                // let time2 = time + 1
-                //     // $('#uploadBtn')[0].disabled = 'disabled'
-                //         timeInterval = setInterval(() => {
-                //         time2--
-                //         $('#uploadBtn')[0].value = `混淆开始，请稍后 ${time2}`
-                //             if (time2 == 0) {
-                //                 $('#uploadBtn')[0].value = '开始混淆'
-                //                 console.log(time2, '=====time2')
-                //                 // $('#uploadBtn')[0].disabled = ''
-                //                 clearInterval(timeInterval)
-                //                 // flag = false
-                //                 time2 = time
-                //             }
-                //         }, 1000) 
             },
             err() {
             }
@@ -206,16 +192,11 @@
     function fileSelected(el) {
         var file = el.files[0];
         getGameAbbr(el)
-        // const okFileName = document.getElementById('okFile').innerHTML;
-        // if (okFileName) {
-        //     alert('只能选择一个文件')
-        //     return;
-        // }
-        console.log(file.type, '==file.type')
-        // if (file.type != 'application/x-zip-compressed' || file.type != "application/zip") {
-        //     alert('请选择正确的zip类型文件')
-        //     return;
-        // }``
+        let type = ['application/x-zip-compressed', 'application/zip']
+        if (!type.includes(file.type)) {
+            alert('请选择正确的zip类型文件')
+            return;
+        }
         if (file) {
             let fileSize = 0;
             if (file.size > 1024 * 1024) {

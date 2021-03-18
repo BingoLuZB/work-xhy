@@ -51,7 +51,8 @@ const {
     getDate,
     copyDir,
     copyFile,
-    mkdirs
+    mkdirs,
+    getGameSrc
 } = require(path.join(__dirname, './common/util'));
 
 // 复制之后的微信小游戏地址
@@ -60,14 +61,13 @@ let mjConfigSrc = path.join(config, `config.${mjNum}.js`)
 let isUpdate = fs.existsSync(mjConfigSrc)
 if (isUpdate) {
     let str = fs.readFileSync(mjConfigSrc).toString()
-    let gameName = str.substring(str.indexOf('list'), str.length).split('var')[0].split('=')[1].split(':')[0].split('/')[0].substr(3)
-    mjWxgameSrc = path.join(outputGame, gameName, `mj${mjNum}`)
-    // 更新的时候不需要变壳
-    miniGameType = 'none'
+    mjWxgameSrc = getGameSrc(outputGame, `mj${mjNum}`)
     // 更新的时候 gameAbbr 用回第一次的gameAbbr
     let initgameAbbr = str.substring(str.indexOf('mjConfig'), str.length).split('var')[0].split('=')[1].split(':')[1].split(',')[0].replace(/\"/g, '')
     // initgameAbbr = initgameAbbr.substr(0, initgameAbbr.length - 1)
     gameAbbr = initgameAbbr
+    // 更新的时候不需要变壳
+    miniGameType = 'none'
 } else {
     mjWxgameSrc = path.join(outputGame, game.split('-')[0], `mj${mjNum}`)
 }
@@ -89,11 +89,10 @@ async function init() {
     // 添加历史记录
     await addHistroy()
     // 压缩游戏包
-    // let tarGame = `${outputGame}/${game}/mj${mjNum}`
-    // compressing.zip.compressDir(tarGame, `${tarGame}.zip`).then(() => {
-    //     setTimeout(() => {
-    //         rmdir(tarGame)
-    //     },500)
+    // compressing.zip.compressDir(mjWxgameSrc, `${mjWxgameSrc}.zip`).then(() => {
+    //     // setTimeout(() => {
+    //         rmdir(mjWxgameSrc)
+    //     // },500)
     // })
 }
 
@@ -211,7 +210,8 @@ const versions = '${version}';
 const gameId = ${mjNum};
 const downloadUrl = '${downloadUrl}jsonList/${gameAbbr}/mj${mjNum}';
 const jsonList = [${list}];
-// config`
+// config
+`
     }
     let gameMDSrc = path.join(mjWxgameSrc, 'game.md')
     // 判断是否是更新的

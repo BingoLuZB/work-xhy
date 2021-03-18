@@ -5,6 +5,7 @@ const EventEmitter = require('events').EventEmitter;
 const event = new EventEmitter(); 
 const {
     inputGame,
+    outputGame,
     modules,
     webpackName,
     aftermathName,
@@ -114,15 +115,15 @@ function openHtml() {
                                     }
                                     if (num - 1 == filesL && inputConfig) {
                                         changePackageJson(inputConfig)
-                                        event.on('responce', () => {
+                                        // event.on('responce', () => {
                                             res.writeHead(200, {
                                                 'Content-type': 'text/html;charset=utf-8'
                                             })
                                             res.end(JSON.stringify({
                                                 code: 200,
-                                                msg: '上报成功'
+                                                msg: '上报成功',
                                             }));
-                                        })
+                                        // })
                                     }
                                 });
                             }
@@ -230,7 +231,6 @@ function transformData(data) {
     //     // 如果只有1个打包配置
     //     outputArr.push(resData)
     // }
-    console.log(outputArr, '===outputArr');
     return outputArr.map((item, index, arr) => {
         // 这里的item是某个游戏的配置的对象
         let obfuscatorObj = {}
@@ -339,7 +339,7 @@ async function changePackageJson(inputConfig) {
             }
             const configData = `\r\n//${getDate()}\r\nvar game= "${itemI.game}"\r\nvar list = ${list}\r\nvar mjConfig = ${mjConfig}\r\nvar timeout = ${(i + 1)}`
 
-            // 防止同一个id的包，在跑npm run all的时候报错
+            //在重复一个id的时候，加上 - , 防止同一个id的包，在跑npm run all的时候报错
             if (fs.existsSync(webpackName(j))) {
                 j = `${j}-${repeatNum}`
                 repeatNum++
@@ -421,9 +421,19 @@ async function changePackageJson(inputConfig) {
         })
     }
 }   
+
 // 删除inputGame里面的游戏
 function delGameData(gameName) {
     let res = path.join(__dirname, inputGame, gameName)
     rmdir(res)
     rmdir(`${res}.zip`)
+}
+
+function getDownloadUrl (host, idArr = []) {
+    return idArr.reduce((last, item, index, arr) => {
+        
+        let str = `${host}/${outputGame}${item.game}/mj${item.id}.zip`
+        last.push(str)
+        return last
+    }, [])
 }

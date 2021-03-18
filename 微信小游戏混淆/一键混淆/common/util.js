@@ -99,6 +99,32 @@ function copyDir(srcDir, tarDir, cb) {
     })
 }
 
+// 根据目标文件/文件夹名，找出这个文件夹的地址
+function getGameSrc(srcDir, targetName) {
+    let dirList = fs.readdirSync(srcDir);
+    for (let i = 0; i < dirList.length; i++) {
+        let item = dirList[i];
+        let src = path.join(srcDir, item)
+        if (fs.statSync(src).isDirectory()) {
+            if (item == targetName) {
+                return src;
+            } else {
+                let j = getGameSrc(src, targetName);
+                if (j) {
+                    return j;
+                } else {
+                    continue;
+                }
+            }
+        } else if (fs.statSync(src).isFile()) {
+            if (item == targetName) {
+                console.log(3);
+                return src;
+            }
+        }
+    }
+}
+
 // 连续创建多层文件夹
 function mkdirs(dirname, callback = () => {}) {
     fs.exists(dirname, function (exists) {
@@ -193,5 +219,6 @@ module.exports = {
     checkStr,
     getDate,
     encryptFn,
-    mkdirs
+    mkdirs,
+    getGameSrc
 }
