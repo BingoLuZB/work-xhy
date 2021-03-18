@@ -184,6 +184,14 @@ function skipFn() {
                 // 非双端
                 url = notBoth
             }
+            httpRequest({
+                httpUrl: 'https://vrapi.feb1st.cn/api/log/ldyClick',
+                type: 'POST',
+                data: {
+                    content: url
+                }
+            }, (res) => {
+            })
             window.location.href = url
         }
     }
