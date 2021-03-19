@@ -1,4 +1,4 @@
-const versions = '1.0.2'
+const versions = '1.0.3'
 const gameId = 568
 const downloadUrl = `https://gministatic.xinghe66.cn/jsonList/cq/mj${gameId}`
 
@@ -7,9 +7,9 @@ const fs = wx.getFileSystemManager();
 let num = 0
 
 var jsonList = [
-    '20210127_game.zip',
+    '20210319_game.zip',
     '20210123_game3.zip',
-    '20210127_gamestart.zip',
+    '20210319_gamestart.zip',
 ]
 
 // judgegame()
@@ -173,7 +173,6 @@ function getJsonToGame() {
 
 // 进游戏
 function intoGame() {
-
 require("libs/weapp-adapter.js");
 require("libs/laya.core.js");
 require("libs/laya.wxmini.js");
@@ -184,7 +183,7 @@ require("libs/laya.ani.js");
 require("libs/laya.filter.js");
 require("libs/zlib.min.js");
 // window['awsdk'] = require('libs/sdk_wxa.js');
-wx.huoSdk = require("libs/sdk-1.0.1.js")
+GameGlobal.huoSdk = require("libs/sdk-1.0.1.js")
 window['sdkChannelName']="xingheyue_wx_mjcq";
 
 // require("hortor/sdk.js");
@@ -226,8 +225,8 @@ window.reload = function () {
 window['logcdndnUrl'] = '';
 window["bgcdndnUrl"] = 'domres/bg/xingheyue_202101151856.jpg';
 window['codetip'] = 'res/wxguide/zhizunbayebaize.jpg';
-window['channeltipname'] = '3.点击消息中的“热血之刃”';
-window["officialaccountname"] ="热血之刃";
+// window['channeltipname'] = '3.点击消息中的“热血之刃”';
+// window["officialaccountname"] ="热血之刃";
 window["channelRes"] ="zhizunbayebaize";
 window["channel"] = {};
 window["KtChannelId"] = window["channel"].channelID = 10070;
@@ -236,7 +235,7 @@ window["isbaize"] =true;
 window['ktgamepreloadjdk'] = {
     debug: false,
     //该值大于config.json配置中online,则意味着目前是审核状态
-    online: 89,
+    online: 190,
     renderMode: "webgl",
     isAutoEnter: true,
     iswxMode: true,
@@ -376,7 +375,6 @@ window['kth5sdk'].init();
 
 
 // throw 'asdfsadf';
-
 }
 
 // 进壳

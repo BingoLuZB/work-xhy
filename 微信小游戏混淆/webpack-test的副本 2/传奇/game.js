@@ -50,8 +50,8 @@ window.reload = function () {
 window['logcdndnUrl'] = '';
 window["bgcdndnUrl"] = 'domres/bg/xingheyue_202101151856.jpg';
 window['codetip'] = 'res/wxguide/zhizunbayebaize.jpg';
-window['channeltipname'] = '3.点击消息中的“热血之刃”';
-window["officialaccountname"] ="热血之刃";
+// window['channeltipname'] = '3.点击消息中的“热血之刃”';
+// window["officialaccountname"] ="热血之刃";
 window["channelRes"] ="zhizunbayebaize";
 window["channel"] = {};
 window["KtChannelId"] = window["channel"].channelID = 10070;
@@ -60,7 +60,7 @@ window["isbaize"] =true;
 window['ktgamepreloadjdk'] = {
     debug: false,
     //该值大于config.json配置中online,则意味着目前是审核状态
-    online: 89,
+    online: 190,
     renderMode: "webgl",
     isAutoEnter: true,
     iswxMode: true,
